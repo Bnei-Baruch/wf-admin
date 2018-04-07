@@ -1,0 +1,33 @@
+body {
+    margin: 10px;
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+}
+
+.table_inouts {
+    min-width: 310px!important;
+    max-width: 310px!important;
+}
+
+.table_ctls{
+    min-width: 140px!important;
+    max-width: 140px!important;
+}
+
+.table_media {
+    min-width: 650px!important;
+    max-width: 650px!important;
+}
+
+.table_main {
+    min-width: 1120px!important;
+    max-width: 1120px!important;
+}
+
+.btn_speed {
+    width: 1px!important;
+    padding: .18571429em 0.9em 1.8571429em!important;
+}
+
+.trimmer_control {
+    padding: .5em .5em!important;
+}
