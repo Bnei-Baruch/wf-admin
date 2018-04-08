@@ -3,6 +3,14 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.mejs__overlay-button {
+    display: none;
+}
+
+.mejs__overlay-loading {
+    display: none;
+}
+
 .table_inouts {
     min-width: 310px!important;
     max-width: 310px!important;

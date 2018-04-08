@@ -45,7 +45,7 @@ class Upload extends Component {
             let name = (state === "running") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
             let ncolor = (state === "running") ? true : false;
             return (
-                <Table.Row warning={ncolor}>
+                <Table.Row warning={ncolor} className="monitor_tr">
                     <Table.Cell>{task}</Table.Cell>
                     <Table.Cell>{dest}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>

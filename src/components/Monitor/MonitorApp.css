@@ -2,11 +2,7 @@
     font-size: 12px;
 }
 
-.ui.segment {
-    padding-top: 0em;
-}
-
-tr {
+.monitor_tr {
     background: #eaeaea;
     font-weight: bolder;
 }

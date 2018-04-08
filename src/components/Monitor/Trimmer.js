@@ -32,7 +32,7 @@ class Trimmer extends Component {
             let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
             return (
-                <Table.Row negative={rowcolor} positive={data.wfstatus.wfsend} warning={!data.wfstatus.trimmed} disabled={data.wfstatus.removed}>
+                <Table.Row negative={rowcolor} positive={data.wfstatus.wfsend} warning={!data.wfstatus.trimmed} disabled={data.wfstatus.removed} className="monitor_tr">
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{renamed}</Table.Cell>

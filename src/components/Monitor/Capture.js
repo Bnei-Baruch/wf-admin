@@ -26,7 +26,7 @@ class Capture extends Component {
             let capture_src = data.capture_src;
             let trim = data.wfstatus.trimmed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             return (
-                <Table.Row positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf}>
+                <Table.Row positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{stop_name}</Table.Cell>
                     <Table.Cell>{capture_src}</Table.Cell>

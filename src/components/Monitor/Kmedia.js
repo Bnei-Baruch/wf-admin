@@ -56,7 +56,7 @@ class Kmedia extends Component {
                         });
                     return (
                         <Fragment>
-                            <Table.Row><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
+                            <Table.Row className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
                             <Table.Row>{languages}</Table.Row>
                         </Fragment>
                     );

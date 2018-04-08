@@ -17,6 +17,8 @@ export default class MediaPlayer extends Component {
                 alwaysShowControls: true,
                 autoRewind: false,
                 alwaysShowHours: true,
+                showTimecodeFrameCount: false,
+                useSmoothHover: false,
                 features : ['playpause','tracks','current','progress','duration','volume'],
                 // markers: [3, 1000, 3000],
                 // markerColor: '#ff122b',

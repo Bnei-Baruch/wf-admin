@@ -27,7 +27,7 @@ class Carbon extends Component {
             let ncolor = data[id].progress !== "done" ? true : false;
             let pcolor = data[id].progress === "done" ? true : false;
             return (
-                <Table.Row warning={ncolor} positive={pcolor}>
+                <Table.Row warning={ncolor} positive={pcolor} className="monitor_tr">
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{progress}</Table.Cell>

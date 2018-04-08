@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Segment, Popup, Button, Checkbox } from 'semantic-ui-react'
+import { Grid, Popup, Button, Checkbox } from 'semantic-ui-react'
 import Capture from './Capture';
 import Trimmer from './Trimmer';
 import Carbon from './Carbon';
@@ -23,28 +23,27 @@ class MonitorApp extends Component {
     render() {
         return (
             <Fragment>
-                <Segment.Group>
-                    <Segment.Group horizontal>
-                        <Segment>
-                            <Popup
-                                trigger={<Button size='mini' circular icon='settings' className="settings_btn"></Button>}
-                                flowing
-                                hoverable
-                            >
-                                <p><Checkbox label='Hide Removed' onClick={this.toggleRemoved} checked={this.state.removed} /></p>
-                                <p><Checkbox label='Hide Lessons' onClick={this.toggleLesson} checked={this.state.lesson} /></p>
-                                <p><Checkbox label='Hide Programs' onClick={this.toggleProgram} checked={this.state.program} /></p>
-                            </Popup>
-                            <Capture />
-                            <Trimmer {...this.state} />
-                            <Upload />
-                        </Segment>
-                        <Segment>
-                            <Carbon />
-                            <Kmedia />
-                        </Segment>
-                    </Segment.Group>
-                </Segment.Group>
+                <Grid columns={2} padded='horizontally'>
+                    <Grid.Column>
+                        <Popup
+                            trigger={<Button size='mini' circular icon='settings' className="settings_btn"></Button>}
+                            flowing
+                            hoverable
+                        >
+                            <p><Checkbox label='Hide Removed' onClick={this.toggleRemoved} checked={this.state.removed} /></p>
+                            <p><Checkbox label='Hide Lessons' onClick={this.toggleLesson} checked={this.state.lesson} /></p>
+                            <p><Checkbox label='Hide Programs' onClick={this.toggleProgram} checked={this.state.program} /></p>
+                        </Popup>
+                        <Capture />
+                        <Trimmer {...this.state} />
+                        <Upload />
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Carbon />
+                        <Kmedia />
+                    </Grid.Column>
+                </Grid>
+
             </Fragment>
         );
     }
