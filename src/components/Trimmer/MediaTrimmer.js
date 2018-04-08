@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Table, } from 'semantic-ui-react'
+import { Segment, Table, Message, Button } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
@@ -32,6 +32,11 @@ export default class MediaTrimmer extends Component {
                             <InoutControls player={this.state.player}/>
                         </Segment>
                     </Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Cell><Message>mlt_o_rav_2018-04-07_lesson_n6_p0_c1523061620265p.mp4</Message></Table.Cell>
+                    <Table.Cell><Button color='red'>Trim</Button></Table.Cell>
+                    <Table.Cell></Table.Cell>
                 </Table.Row>
             </Table>
         );
