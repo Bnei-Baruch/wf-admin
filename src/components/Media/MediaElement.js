@@ -11,7 +11,7 @@ export default class MediaElement extends Component {
 
     success = (media, node, instance) => {
         // Your action when media was successfully loaded
-        console.log(':: Success: ', media, node, instance);
+        //console.log(':: Success: ', media, node, instance);
         this.props.player(instance);
     }
 

@@ -9,8 +9,8 @@ class App extends Component {
   render() {
 
       const panes = [
-          { menuItem: 'Monitor', render: () => <Tab.Pane attached={false}><MonitorApp /></Tab.Pane> },
           { menuItem: 'Trimmer', render: () => <Tab.Pane attached={false}><MediaTrimmer /></Tab.Pane> },
+          { menuItem: 'Monitor', render: () => <Tab.Pane attached={false}><MonitorApp /></Tab.Pane> },
           { menuItem: 'Ingest', render: () => <Tab.Pane attached={false}>Tab 3 Content</Tab.Pane> },
       ]
 

@@ -12,7 +12,7 @@ export default class MediaTrimmer extends Component {
     };
 
     getPlayer = (player) => {
-        console.log(":: Trimmer: ", player);
+        console.log(":: Trimmer - got player: ", player);
         this.setState({player: player});
     };
 
