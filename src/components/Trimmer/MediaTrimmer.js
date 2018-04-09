@@ -22,7 +22,7 @@ export default class MediaTrimmer extends Component {
             <Table className="table_main">
                 <Table.Row>
                     <Table.Cell width={5} className="table_media">
-                        <MediaPlayer player={this.getPlayer}/>
+                        <MediaPlayer player={this.getPlayer} source={this.props.source}/>
                     </Table.Cell>
                     <Table.Cell width={1} className="table_ctls">
                         <TrimmerControls player={this.state.player}/>

@@ -2,16 +2,19 @@ import React, { Component } from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { getData } from '../shared/tools';
-import { Grid, Segment, Container, Dropdown } from 'semantic-ui-react'
+import { Grid, Segment, Modal, Dropdown } from 'semantic-ui-react'
+import MediaTrimmer from "../Trimmer/MediaTrimmer";
 
 class IngestCapture extends Component {
 
     state = {
         ingest: [],
+        open: false,
         capture_src: "main",
         capture_file: null,
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
+        source: "http://10.66.1.122/backup/trimmed/2018-04-05/mlt_o_norav_2018-04-05_lesson_achana_n2_p0_t1522922675p.mp4",
 
     };
 
@@ -34,7 +37,15 @@ class IngestCapture extends Component {
     };
 
     selectCaptureFile = (e, data) => {
-        this.setState({capture_file: data.value});
+        console.log(":: Select file: ",e ,data);
+        let url = 'http://10.66.1.122';
+        let path = this.state.ingest[data.value].proxy.format.filename;
+        let source = `${url}${path}`;
+        this.setState({capture_file: data.value, source: source, open: true});
+    };
+
+    handleOnClose = () => {
+        this.setState({open: false});
     };
 
     render() {
@@ -46,7 +57,8 @@ class IngestCapture extends Component {
 
         let ingest_data = this.state.ingest.map((data, i) => {
             let name = data.stop_name || "recording...";
-            return ({ key: i, text: name, value: name })
+            let id = data.capture_id;
+            return ({ key: id, text: name, value: i })
         });
 
         return (
@@ -89,6 +101,16 @@ class IngestCapture extends Component {
                         </Dropdown>
                     </Grid.Column>
                 </Grid>
+                <Modal
+                       closeOnDimmerClick={true}
+                       closeIcon={true}
+                       defaultOpen={false}
+                       onClose={this.handleOnClose}
+                       open={this.state.open}
+                       size="large"
+                >
+                    <MediaTrimmer source={this.state.source} />
+                </Modal>
             </Segment>
         );
     }
