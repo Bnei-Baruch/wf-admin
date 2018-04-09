@@ -13,6 +13,7 @@ export default class MediaTrimmer extends Component {
         lelomikud: false,
         player: null,
         trim_meta: {},
+        ioValid: false,
     };
 
     componentDidMount() {
@@ -42,10 +43,14 @@ export default class MediaTrimmer extends Component {
         this.setState({player: player});
     };
 
-    getInouts = (inp, outp) => {
-        let inpoints = [...inp];
-        let outpoints = [...outp];
-        this.setState({trim_meta: {...this.state.trim_meta, inpoints: inpoints, outpoints: outpoints}});
+    getInouts = (inpoints, outpoints) => {
+        this.setState({ioValid: true})
+        for(let i=0; i<inpoints.length; i++) {
+            if(inpoints[i] > outpoints[i]) {
+                this.setState({ioValid: false});
+            }
+        }
+        this.setState({trim_meta: {...this.state.trim_meta, inpoints, outpoints}});
     };
 
     postTrimMeta = () => {
@@ -85,7 +90,7 @@ export default class MediaTrimmer extends Component {
                         <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
                     </Table.Cell>
                     <Table.Cell textAlign='center'>
-                        <Button size='big' color='red' onClick={this.postTrimMeta}>Trim</Button>
+                        <Button size='big' color='red' disabled={!this.state.ioValid} onClick={this.postTrimMeta}>Trim</Button>
                     </Table.Cell>
                 </Table.Row>
             </Table>

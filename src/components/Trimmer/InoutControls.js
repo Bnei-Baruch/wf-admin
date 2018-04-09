@@ -6,15 +6,20 @@ import { toHms } from '../shared/tools';
 export default class InoutControls extends Component {
 
     state = {
-        inpoints: [null],
-        outpoints: [null],
+        inpoints: [],
+        outpoints: [],
     };
 
     setIn = (i) => {
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));
-        //console.log(":: HMS: ",toHms(currentTime) + ":: SEC: ",currentTime + ":: Index: ",i);
         let inpoints = this.state.inpoints;
-        inpoints[i] = currentTime;
+        let outpoints = this.state.outpoints;
+        if(i === null) {
+            inpoints[outpoints.length] = currentTime;
+        } else {
+            inpoints[i] = currentTime;
+            this.props.onSetPoints(inpoints, outpoints);
+        }
         this.setState({inpoints});
     };
 
@@ -22,16 +27,13 @@ export default class InoutControls extends Component {
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));
         let inpoints = this.state.inpoints;
         let outpoints = this.state.outpoints;
-        //console.log(":: In: ",inpoints[i] + "-- Out: ",currentTime + "-- Index: ",i);
-        outpoints[i] = currentTime;
-        this.setState({outpoints: outpoints});
-        this.props.onSetPoints(inpoints, outpoints);
-        //FIXME: null in array work very strang maybe need to avoid using this
-        if(i === (outpoints.length - 1) && inpoints[i] !== null) {
-            inpoints.push(null);
-            outpoints.push(null);
-            this.setState({inpoints, outpoints});
+        if(i === null) {
+            outpoints[inpoints.length - 1] = currentTime;
+        } else {
+            outpoints[i] = currentTime;
         }
+        this.setState({outpoints});
+        this.props.onSetPoints(inpoints, outpoints);
     };
 
     jumpPoint = (point, i) => {
@@ -39,8 +41,8 @@ export default class InoutControls extends Component {
     };
 
     render() {
-        let inout = this.state.inpoints.map((inp, i) => {
-            let outp = this.state.outpoints[i];
+        let inout = this.state.outpoints.map((outp, i) => {
+            let inp = this.state.inpoints[i];
             return (
                 <Fragment>
                     <Button as='div' labelPosition='right'>
@@ -58,6 +60,16 @@ export default class InoutControls extends Component {
         return (
             <Fragment >
                 {inout}
+                <Button as='div' labelPosition='right'>
+                    <Button icon onClick={() => this.setIn(null)} color='grey' />
+                    <Label as='a' basic pointing='left' >{
+                        this.state.inpoints[this.state.outpoints.length] !== undefined ?
+                            toHms(this.state.inpoints[this.state.outpoints.length]) : "<- Set in"}</Label>
+                </Button>
+                <Button as='div' labelPosition='left'>
+                    <Label as='a' basic pointing='right' >{"Set out ->"}</Label>
+                    <Button icon onClick={() => this.setOut(null)} color='grey' />
+                </Button>
             </Fragment>
         );
     }
