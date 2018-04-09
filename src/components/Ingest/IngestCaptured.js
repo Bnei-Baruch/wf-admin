@@ -10,6 +10,7 @@ class IngestCaptured extends Component {
     state = {
         captured: [],
         ingest: [],
+        ingest_meta: {},
         open: false,
         capture_src: "main",
         capture_file: null,
@@ -49,10 +50,11 @@ class IngestCaptured extends Component {
 
     selectCaptureFile = (e, data) => {
         console.log(":: Select file: ",e ,data);
+        let ingest_meta = this.state.ingest[data.value];
         let url = 'http://10.66.1.122';
-        let path = this.state.ingest[data.value].proxy.format.filename;
+        let path = ingest_meta.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({capture_file: data.value, source: source});
+        this.setState({capture_file: data.value, source: source, ingest_meta: ingest_meta});
     };
 
     sendToTrim = () => {
@@ -128,7 +130,12 @@ class IngestCaptured extends Component {
                        open={this.state.open}
                        size="large"
                 >
-                    <MediaTrimmer source={this.state.source} />
+                    <MediaTrimmer
+                        source={this.state.source}
+                        ingest_meta={this.state.ingest_meta}
+                        source_meta={this.state.capture_src}
+                        mode="ingest"
+                    />
                 </Modal>
             </Segment>
         );

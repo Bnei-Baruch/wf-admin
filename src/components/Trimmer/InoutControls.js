@@ -25,12 +25,12 @@ export default class InoutControls extends Component {
         //console.log(":: In: ",inpoints[i] + "-- Out: ",currentTime + "-- Index: ",i);
         outpoints[i] = currentTime;
         this.setState({outpoints: outpoints});
+        this.props.onSetPoints(inpoints, outpoints);
         if(i === (outpoints.length - 1) && inpoints[i] !== null) {
             inpoints.push(null);
             outpoints.push(null);
             this.setState({inpoints: inpoints, outpoints: outpoints});
         }
-
     };
 
     jumpPoint = (point, i) => {

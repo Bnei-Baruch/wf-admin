@@ -28,6 +28,18 @@ export const getData = (path, cb) => fetch(`${API_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
+export const putData = (path, data, cb) => fetch(`${path}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body:  JSON.stringify(data)
+    })
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(respond => cb(respond));
+        }
+    })
+    .catch(ex => console.log("Post Trim Meta:", ex));
+
 export const getConv = (path, cb) => fetch(`${API_STATE}/${path}`)
     .then((response) => {
         if (response.ok) {
