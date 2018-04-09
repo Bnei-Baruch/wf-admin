@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Segment, Table, Message, Button } from 'semantic-ui-react'
+import { Segment, Table, Message, Button, Checkbox } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
@@ -10,7 +10,7 @@ import {putData} from "../shared/tools";
 export default class MediaTrimmer extends Component {
 
     state = {
-        lelomikud: 0,
+        lelomikud: false,
         player: null,
         trim_meta: {},
     };
@@ -52,9 +52,13 @@ export default class MediaTrimmer extends Component {
         let wfid = this.state.trim_meta.trim_id;
         putData('http://wfdb.bbdomain.org:8080/trimmer/'+this.state.trim_meta.trim_id, this.state.trim_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
-            //fetch("http://wfdb.bbdomain.org:8080/hooks/trim?id="+wfid+"&spc="+this.state.lelomikud);
+            let lelomikud = this.state.lelomikud ? 1 : 0;
+            // FIXME: When API change this must be error recovering
+            fetch("http://wfdb.bbdomain.org:8080/hooks/trim?id="+wfid+"&spc="+lelomikud);
         });
     };
+
+    toggleLelomikud = () => this.setState({ lelomikud: !this.state.lelomikud })
 
     render() {
 
@@ -68,15 +72,21 @@ export default class MediaTrimmer extends Component {
                         <TrimmerControls player={this.state.player}/>
                     </Table.Cell>
                     <Table.Cell width={3} className="table_inouts">
-                        <Segment raised textAlign='center'>
+                        <Segment raised textAlign='center' className="inout_content">
                             <InoutControls onSetPoints={this.getInouts} player={this.state.player}/>
                         </Segment>
                     </Table.Cell>
                 </Table.Row>
                 <Table.Row>
-                    <Table.Cell><Message>{this.props.ingest_meta.stop_name}</Message></Table.Cell>
-                    <Table.Cell><Button color='red' onClick={this.postTrimMeta}>Trim</Button></Table.Cell>
-                    <Table.Cell></Table.Cell>
+                    <Table.Cell>
+                        <Message>{this.props.ingest_meta.stop_name}</Message>
+                    </Table.Cell>
+                    <Table.Cell>
+                        <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
+                    </Table.Cell>
+                    <Table.Cell textAlign='center'>
+                        <Button size='big' color='red' onClick={this.postTrimMeta}>Trim</Button>
+                    </Table.Cell>
                 </Table.Row>
             </Table>
         );

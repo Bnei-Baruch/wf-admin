@@ -83,7 +83,7 @@ class IngestTrimmed extends Component {
                             </Dropdown>
 
                             <Menu.Item>
-                                <Button primary>Sign Up</Button>
+                                <Button positive>Send</Button>
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>

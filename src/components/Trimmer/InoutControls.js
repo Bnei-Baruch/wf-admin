@@ -15,7 +15,7 @@ export default class InoutControls extends Component {
         //console.log(":: HMS: ",toHms(currentTime) + ":: SEC: ",currentTime + ":: Index: ",i);
         let inpoints = this.state.inpoints;
         inpoints[i] = currentTime;
-        this.setState({inpoints: inpoints});
+        this.setState({inpoints});
     };
 
     setOut = (i) => {
@@ -26,10 +26,11 @@ export default class InoutControls extends Component {
         outpoints[i] = currentTime;
         this.setState({outpoints: outpoints});
         this.props.onSetPoints(inpoints, outpoints);
+        //FIXME: null in array work very strang maybe need to avoid using this
         if(i === (outpoints.length - 1) && inpoints[i] !== null) {
             inpoints.push(null);
             outpoints.push(null);
-            this.setState({inpoints: inpoints, outpoints: outpoints});
+            this.setState({inpoints, outpoints});
         }
     };
 
