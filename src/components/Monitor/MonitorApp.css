@@ -23,6 +23,11 @@
     background: #e1e6d4!important;
 }
 
+.ui.table td.active, .ui.table tr.active {
+    background: #efeff5!important;
+    color: #287ab7!important;
+}
+
 .ui[class*="very compact"].table td {
     padding: .1em .3em;
 }

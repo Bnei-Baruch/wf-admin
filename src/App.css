@@ -17,8 +17,17 @@ body {
     transition: all ease .5s;
 }
 
+.ingest_table {
+    cursor: pointer!important;
+}
+
 .ui.fullscreen.modal {
     width: 100% !important;
+}
+
+.ingest_segment {
+    max-width: 900px;
+    min-width: 900px;
 }
 
 .ingest_files {
