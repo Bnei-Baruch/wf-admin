@@ -31,7 +31,7 @@ body {
 }
 
 .ingest_files {
-    min-width: 40em!important;
+    min-width: 30em!important;
 }
 
 .mejs__overlay-button {

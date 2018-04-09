@@ -2,13 +2,14 @@ import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, IVAL} from '../shared/tools';
-import { Container, Grid, Segment, Modal, Dropdown, Icon, Table, Loader } from 'semantic-ui-react'
+import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
 import MediaTrimmer from "../Trimmer/MediaTrimmer";
 
 class IngestCapture extends Component {
 
     state = {
         active: null,
+        captured: [],
         ingest: [],
         trimmed: [],
         open: false,
@@ -23,8 +24,11 @@ class IngestCapture extends Component {
 
     componentDidMount() {
         getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-            if (JSON.stringify(this.state.ingest) !== JSON.stringify(data))
-                this.setState({ingest: data});
+            if (JSON.stringify(this.state.captured) !== JSON.stringify(data)) {
+                let ingest = data.filter(data => data.capture_src.match(/^(mltcap|main)$/));
+                console.log(":: INgest: ",ingest);
+                this.setState({captured: data, ingest: ingest});
+            }
         });
 
             let ival = setInterval(() => getData('trim', (data) => {
@@ -48,7 +52,11 @@ class IngestCapture extends Component {
     };
 
     setCaptureSrc = (e, data) => {
-        this.setState({capture_src: data.value});
+        if(data.value === "main")
+            var ingest = this.state.captured.filter(data => data.capture_src.match(/^(mltcap|main)$/));
+        if(data.value === "backup")
+            var ingest = this.state.captured.filter(data => data.capture_src.match(/^(mltbackup|backup)$/));
+        this.setState({capture_src: data.value, ingest: ingest});
     };
 
     selectCaptureFile = (e, data) => {
@@ -56,7 +64,11 @@ class IngestCapture extends Component {
         let url = 'http://10.66.1.122';
         let path = this.state.ingest[data.value].proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({capture_file: data.value, source: source, open: true});
+        this.setState({capture_file: data.value, source: source});
+    };
+
+    sendToTrim = () => {
+        this.setState({open: true});
     };
 
     handleOnClose = () => {
@@ -70,6 +82,8 @@ class IngestCapture extends Component {
     };
 
     render() {
+
+        const { activeItem } = this.state
 
         const options = [
             { key: 1, text: 'Main', value: 'main' },
@@ -113,8 +127,9 @@ class IngestCapture extends Component {
 
         return (
             <Fragment>
-            <Segment textAlign='left' className="ingest_segment">
-                <Grid>
+            <Segment textAlign='left' className="ingest_segment" color='orange'>
+                <Header as='h3' textAlign='center'>Captured</Header>
+                <Grid >
                     <Grid.Column width={2}>
                         <Dropdown
                             compact
@@ -141,7 +156,7 @@ class IngestCapture extends Component {
                             //highlightDates={moment().add(-1, "months")}
                         />
                     </Grid.Column>
-                    <Grid.Column width={7}>
+                    <Grid.Column width={8}>
                         <Dropdown
                             className="ingest_files"
                             placeholder="Select File To Trim:"
@@ -150,6 +165,9 @@ class IngestCapture extends Component {
                             onChange={this.selectCaptureFile}
                              >
                         </Dropdown>
+                    </Grid.Column>
+                    <Grid.Column width={2}>
+                        <Button primary onClick={this.sendToTrim}>Trimmer</Button>
                     </Grid.Column>
                 </Grid>
                 <Modal
@@ -163,7 +181,26 @@ class IngestCapture extends Component {
                     <MediaTrimmer source={this.state.source} />
                 </Modal>
             </Segment>
-                <Segment textAlign='left' className="ingest_segment">
+                <Segment textAlign='left' className="ingest_segment" color='brown'>
+                    <Header as='h3' textAlign='center'>Trimmed</Header>
+                    <Menu>
+                        <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
+                        <Menu.Item name='messages' active={activeItem === 'messages'} onClick={this.handleItemClick} />
+
+                        <Menu.Menu position='right'>
+                            <Dropdown item text='Language'>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item>English</Dropdown.Item>
+                                    <Dropdown.Item>Russian</Dropdown.Item>
+                                    <Dropdown.Item>Spanish</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+
+                            <Menu.Item>
+                                <Button primary>Sign Up</Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
