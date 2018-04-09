@@ -1,13 +1,14 @@
 import React, {Component, Fragment} from 'react'
 import moment from 'moment';
 import {getData, IVAL} from '../shared/tools';
-import { Menu, Segment, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
+import { Menu, Segment, Dropdown, Icon, Table, Loader, Button, Header, Message } from 'semantic-ui-react'
 
 class IngestTrimmed extends Component {
 
     state = {
         active: null,
         trimmed: [],
+        trimmer: {},
         ival: null,
 
     };
@@ -29,7 +30,7 @@ class IngestTrimmed extends Component {
     handleClick = (data) => {
         console.log(":: Selected trim: ",data);
         //this.props.onUidSelect(unit);
-        this.setState({active: data.trim_id});
+        this.setState({active: data.trim_id, trimmer: data});
     };
 
     render() {
@@ -67,21 +68,21 @@ class IngestTrimmed extends Component {
 
         return (
 
-                <Segment textAlign='left' className="ingest_segment" color='brown'>
-                    <Header as='h3' textAlign='center'>Trimmed</Header>
-                    <Menu>
-                        <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
-                        <Menu.Item name='messages' active={activeItem === 'messages'} onClick={this.handleItemClick} />
-
+                <Segment textAlign='center' className="ingest_segment" color='brown'>
+                    <Header as='h3' textAlign='left' icon='settings' >Trimmed<Icon name='settings' />
+                    <Header.Content>
+                    <Header.Subheader>{this.state.trimmer.file_name}</Header.Subheader>
+                    </Header.Content>
+                    </Header>
+                    <Menu size='mini'>
+                        <Menu.Item name='video play' active={activeItem === 'video play'} onClick={this.handleItemClick}>
+                            <Icon name='video play' />
+                        </Menu.Item>
+                        <Menu.Menu position='left'>
+                            <Menu.Item>
+                            </Menu.Item>
+                        </Menu.Menu>
                         <Menu.Menu position='right'>
-                            <Dropdown item text='Language'>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item>English</Dropdown.Item>
-                                    <Dropdown.Item>Russian</Dropdown.Item>
-                                    <Dropdown.Item>Spanish</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-
                             <Menu.Item>
                                 <Button positive>Send</Button>
                             </Menu.Item>

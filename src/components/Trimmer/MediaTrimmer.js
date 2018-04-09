@@ -63,7 +63,7 @@ export default class MediaTrimmer extends Component {
         });
     };
 
-    toggleLelomikud = () => this.setState({ lelomikud: !this.state.lelomikud })
+    toggleLelomikud = () => this.setState({ lelomikud: !this.state.lelomikud });
 
     render() {
 

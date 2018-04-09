@@ -1,5 +1,6 @@
 body {
     margin: 10px;
+    height: 90%;
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
@@ -11,6 +12,7 @@ body {
 .ui.modal,
 .ui.active.modal {
     margin: 0 auto!important;
+    margin-top: 50px !important;
     top: auto !important;
     left: auto !important;
     transform-origin: center !important;
@@ -24,7 +26,9 @@ body {
 }
 
 .ingest_table {
+    font-size: 15px!important;
     cursor: pointer!important;
+    font-weight: lighter;
 }
 
 .ui.fullscreen.modal {

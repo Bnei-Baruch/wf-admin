@@ -80,7 +80,7 @@ class IngestCaptured extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='orange'>
-                <Header as='h3' textAlign='center'>Captured</Header>
+                <Header as='h3' textAlign='left'>Captured</Header>
                 <Grid >
                     <Grid.Column width={2}>
                         <Dropdown
