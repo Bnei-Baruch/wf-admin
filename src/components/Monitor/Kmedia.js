@@ -8,10 +8,11 @@ class Kmedia extends Component {
     state = {
         kmedia: [],
         json: {},
+        ival: null,
     };
 
     componentDidMount() {
-        setInterval(() =>
+        let ival = setInterval(() =>
             getData('kmedia/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.kmedia) !== JSON.stringify(data)) {
                     this.setState({kmedia: data});
@@ -19,6 +20,12 @@ class Kmedia extends Component {
                 }
             }), IVAL
         );
+        this.setState({ival: ival});
+    };
+
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     restructure = (data) => {

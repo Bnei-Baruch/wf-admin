@@ -6,16 +6,23 @@ import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 class Trimmer extends Component {
 
     state = {
-            trimmer: [],
+        trimmer: [],
+        ival: null,
     };
 
     componentDidMount() {
-        setInterval(() =>
+        let ival = setInterval(() =>
             getData('trimmer/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
                     this.setState({trimmer: data})
             }), IVAL
         );
+        this.setState({ival: ival});
+    };
+
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     render() {

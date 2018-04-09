@@ -6,16 +6,23 @@ import { Table, Container, Loader } from 'semantic-ui-react'
 class Carbon extends Component {
 
     state = {
-            carbon: {},
+        carbon: {},
+        ival: null,
     };
 
     componentDidMount() {
-        setInterval(() =>
+        let ival = setInterval(() =>
             getConv('state/carbon/'+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                     this.setState({carbon: data})
             }), IVAL
         );
+        this.setState({ival: ival});
+    };
+
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     render() {

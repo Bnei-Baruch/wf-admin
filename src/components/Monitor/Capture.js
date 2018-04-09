@@ -6,16 +6,22 @@ import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 class Capture extends Component {
 
     state = {
-            capture: [],
+        capture: [],
+        ival: null,
     };
 
     componentDidMount() {
-        setInterval(() =>
+        let ival = setInterval(() =>
             getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.capture) !== JSON.stringify(data))
                     this.setState({capture: data})
             }), IVAL
         );
+        this.setState({ival: ival});
+    };
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     render() {

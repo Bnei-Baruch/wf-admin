@@ -6,10 +6,11 @@ class Upload extends Component {
 
     state = {
         upload: [],
+        ival: null,
     };
 
     componentDidMount() {
-        setInterval(() =>
+        let ival = setInterval(() =>
             getUpload((data) => {
                 data.splice(0,1);
                 if (JSON.stringify(this.state.upload) !== JSON.stringify(data)) {
@@ -35,6 +36,12 @@ class Upload extends Component {
                 }
             }), IVAL
         );
+        this.setState({ival: ival});
+    };
+
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     render() {

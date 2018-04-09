@@ -17,6 +17,7 @@ class IngestCapture extends Component {
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "http://10.66.1.122/backup/trimmed/2018-04-05/mlt_o_norav_2018-04-05_lesson_achana_n2_p0_t1522922675p.mp4",
+        ival: null,
 
     };
 
@@ -25,13 +26,19 @@ class IngestCapture extends Component {
             if (JSON.stringify(this.state.ingest) !== JSON.stringify(data))
                 this.setState({ingest: data});
         });
-        setInterval(() =>
-            getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
-            }), 1000
-        );
+
+            let ival = setInterval(() => getData('trim', (data) => {
+                    if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
+                        this.setState({trimmed: data})
+                }), 1000
+            );
+        this.setState({ival: ival});
     };
+
+    componentWillUnmount() {
+        console.log("-- Ingest unmount");
+        clearInterval(this.state.ival);
+    }
 
     handleDateChange = (data) => {
         let date = data.format('YYYY-MM-DD');
