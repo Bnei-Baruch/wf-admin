@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import moment from 'moment';
-import {getData, IVAL} from '../shared/tools';
+import {getData, getUnits, IVAL} from '../shared/tools';
 import { Menu, Segment, Dropdown, Icon, Table, Loader, Button, Header, Message } from 'semantic-ui-react'
 
 class IngestTrimmed extends Component {
@@ -10,6 +10,7 @@ class IngestTrimmed extends Component {
         trimmed: [],
         trimmer: {},
         ival: null,
+        units: [],
 
     };
 
@@ -29,8 +30,11 @@ class IngestTrimmed extends Component {
 
     handleClick = (data) => {
         console.log(":: Selected trim: ",data);
-        //this.props.onUidSelect(unit);
-        this.setState({active: data.trim_id, trimmer: data});
+        let sha1 = data.original.format.sha1;
+        getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
+            console.log(":: Trimmer - got units: ", units);
+            this.setState({active: data.trim_id, trimmer: data, units: units});
+        });
     };
 
     render() {

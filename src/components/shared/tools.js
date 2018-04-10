@@ -28,6 +28,14 @@ export const getData = (path, cb) => fetch(`${API_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
+export const getUnits = (path, cb) => fetch(`${path}`)
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+    })
+    .catch(ex => console.log(`get ${path}`, ex));
+
 export const putData = (path, data, cb) => fetch(`${path}`, {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, IVAL} from '../shared/tools';
+import {getData, getUnits, IVAL} from '../shared/tools';
 import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
 import MediaTrimmer from "../Trimmer/MediaTrimmer";
 
@@ -17,6 +17,7 @@ class IngestCaptured extends Component {
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "http://10.66.1.122/backup/trimmed/2018-04-05/mlt_o_norav_2018-04-05_lesson_achana_n2_p0_t1522922675p.mp4",
+        units: [],
     };
 
     componentDidMount() {
@@ -53,8 +54,12 @@ class IngestCaptured extends Component {
         let ingest_meta = this.state.ingest[data.value];
         let url = 'http://10.66.1.122';
         let path = ingest_meta.proxy.format.filename;
+        let sha1 = ingest_meta.original.format.sha1;
         let source = `${url}${path}`;
-        this.setState({capture_file: data.value, source: source, ingest_meta: ingest_meta});
+        getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
+            console.log(":: Ingest - got units: ", units);
+            this.setState({capture_file: data.value, source: source, ingest_meta: ingest_meta, units: units});
+        });
     };
 
     sendToTrim = () => {
