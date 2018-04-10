@@ -47,10 +47,10 @@ export default class InoutControls extends Component {
                 <Fragment>
                     <Button as='div' labelPosition='right'>
                         <Button icon onClick={() => this.setIn(i)} color='grey' />
-                        <Label as='a' basic pointing='left' color={inp > outp ? "red" : ""} onDoubleClick={() => this.jumpPoint(inp ,i)}>{inp !== null ? toHms(inp) : "<- Set in"}</Label>
+                        <Label as='a' basic pointing='left' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(inp ,i)}>{inp !== null ? toHms(inp) : "<- Set in"}</Label>
                     </Button>
                     <Button as='div' labelPosition='left'>
-                        <Label as='a' basic pointing='right' color={inp > outp ? "red" : ""} onDoubleClick={() => this.jumpPoint(outp, i)}>{outp !== null ? toHms(outp) : "Set out ->"}</Label>
+                        <Label as='a' basic pointing='right' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(outp, i)}>{outp !== null ? toHms(outp) : "Set out ->"}</Label>
                         <Button icon onClick={() => this.setOut(i)} color='grey' />
                     </Button>
                 </Fragment>

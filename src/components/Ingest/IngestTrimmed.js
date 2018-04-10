@@ -73,7 +73,7 @@ class IngestTrimmed extends Component {
         return (
 
                 <Segment textAlign='center' className="ingest_segment" color='brown'>
-                    <Header as='h3' textAlign='left' icon='settings' >Trimmed<Icon name='settings' />
+                    <Header as='h3' textAlign='left' icon='settings' ><u>Trimmed</u><Icon name='settings' />
                     <Header.Content>
                     <Header.Subheader>{this.state.trimmer.file_name}</Header.Subheader>
                     </Header.Content>

@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import IngestTrimmed from "./IngestTrimmed";
 import IngestCaptured from "./IngestCaptured";
+import IngestTrimmer from "../Trimmer/IngestTrimmer";
 
 class IngestApp extends Component {
 
@@ -20,7 +21,7 @@ class IngestApp extends Component {
 
         return (
             <Fragment>
-                <IngestCaptured/>
+                <IngestTrimmer />
                 <IngestTrimmed />
             </Fragment>
         );

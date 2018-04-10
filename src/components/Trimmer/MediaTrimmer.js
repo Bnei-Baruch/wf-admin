@@ -17,7 +17,8 @@ export default class MediaTrimmer extends Component {
     };
 
     componentDidMount() {
-        let data = this.props.ingest_meta;
+        console.log("-- MediaTrimmer Did Mount: ", this.props.file_data);
+        let data = this.props.file_data;
         let wfid = "t"+moment().format('X');
         let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
         let line = data.line;
@@ -26,10 +27,10 @@ export default class MediaTrimmer extends Component {
         //let inouts = {"inpoints": []};
         //let outpoints = {"outpoints": []};
         let filename = data.stop_name;
-        let censored = (this.props.mode == "censor") ? true : false;
-        //let buffer = (this.props.mode == "wfadmin") ? true : false;
+        let censored = (this.props.mode === "censor") ? true : false;
+        //let buffer = (this.props.mode === "wfadmin") ? true : false;
         let secured = (data.wfstatus.secured) ? true : false;
-        var trim_meta = {
+        let trim_meta = {
             "trim_id":wfid, "date":date, "file_name":filename,
             "parent": { "id": data.capture_id, "capture_id": data.capture_id, "original_sha1": originalsha1, "proxy_sha1": proxysha1, "file_name":filename, "source":this.props.source_meta },
             "line":line, "inpoints": [], "outpoints": [],
@@ -84,7 +85,7 @@ export default class MediaTrimmer extends Component {
                 </Table.Row>
                 <Table.Row>
                     <Table.Cell>
-                        <Message>{this.props.ingest_meta.stop_name}</Message>
+                        <Message>{this.state.trim_meta.file_name}</Message>
                     </Table.Cell>
                     <Table.Cell>
                         <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
