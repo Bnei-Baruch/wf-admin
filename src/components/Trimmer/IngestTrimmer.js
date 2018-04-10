@@ -34,6 +34,9 @@ class IngestTrimmer extends Component {
             var backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
             this.setState({main, backup});
         });
+        getData('trimmer/find?key=date&value='+date, (data) => {
+            this.setState({trimmed: data});
+        });
     };
 
     handleDateChange = (data) => {
@@ -84,9 +87,9 @@ class IngestTrimmer extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='orange'>
-                <Header as='h3' textAlign='left'><u>Captured</u></Header>
-                <Grid >
-                    <Grid.Column width={2}>
+                <Header as='h3' textAlign='left'><u>Trimmer</u></Header>
+                <Menu secondary>
+                    <Menu.Item>
                         <Dropdown
                             compact
                             className="large"
@@ -96,8 +99,8 @@ class IngestTrimmer extends Component {
                             onChange={this.setCaptureSrc}
                              >
                         </Dropdown>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
+                    </Menu.Item>
+                    <Menu.Item>
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
@@ -111,8 +114,8 @@ class IngestTrimmer extends Component {
                             //excludeDates={[moment(), moment().add(1, "months")]}
                             //highlightDates={moment().add(-1, "months")}
                         />
-                    </Grid.Column>
-                    <Grid.Column width={8}>
+                    </Menu.Item>
+                    <Menu.Item>
                         <Dropdown
                             className="ingest_files"
                             placeholder="Select File To Trim:"
@@ -121,11 +124,11 @@ class IngestTrimmer extends Component {
                             onChange={this.selectFile}
                              >
                         </Dropdown>
-                    </Grid.Column>
-                    <Grid.Column width={2}>
-                        <Button primary onClick={this.sendToTrim}>Trimmer</Button>
-                    </Grid.Column>
-                </Grid>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button primary onClick={this.sendToTrim}>Open</Button>
+                    </Menu.Item>
+                </Menu>
                 <Modal
                        closeOnDimmerClick={true}
                        closeIcon={true}

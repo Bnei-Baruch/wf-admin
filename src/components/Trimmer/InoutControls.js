@@ -5,10 +5,21 @@ import { toHms } from '../shared/tools';
 
 export default class InoutControls extends Component {
 
+
     state = {
         inpoints: [],
         outpoints: [],
     };
+
+    componentDidMount() {
+        console.log("-- InoutControls Did Mount :");
+    };
+
+    componentDidUpdate(prevProps) {
+        console.log("-- InoutControls Did Update :");
+        //if(this.state.inpoints.length === 0)
+         //   this.setState({inpoints: this.props.inpoints, outpoints: this.props.outpoints});
+    }
 
     setIn = (i) => {
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));

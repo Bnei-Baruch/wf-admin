@@ -1,14 +1,15 @@
 import React, {Component, Fragment} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL} from '../shared/tools';
-import { Menu, Segment, Dropdown, Icon, Table, Loader, Button, Header, Message } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
+import MediaPlayer from "../Media/MediaPlayer";
 
 class IngestTrimmed extends Component {
 
     state = {
         active: null,
         trimmed: [],
-        trimmer: {},
+        file_data: {},
         ival: null,
         units: [],
 
@@ -30,11 +31,20 @@ class IngestTrimmed extends Component {
 
     handleClick = (data) => {
         console.log(":: Selected trim: ",data);
+        let url = 'http://10.66.1.122';
+        let path = data.proxy.format.filename;
+        let source = `${url}${path}`;
+        this.setState({source});
         let sha1 = data.original.format.sha1;
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
-            this.setState({active: data.trim_id, trimmer: data, units: units});
+            this.setState({active: data.trim_id, file_data: data, units: units});
         });
+    };
+
+    getPlayer = (player) => {
+        console.log(":: Trimmed - got player: ", player);
+        //this.setState({player: player});
     };
 
     render() {
@@ -73,14 +83,12 @@ class IngestTrimmed extends Component {
         return (
 
                 <Segment textAlign='center' className="ingest_segment" color='brown'>
-                    <Header as='h3' textAlign='left' icon='settings' ><u>Trimmed</u><Icon name='settings' />
-                    <Header.Content>
-                    <Header.Subheader>{this.state.trimmer.file_name}</Header.Subheader>
-                    </Header.Content>
-                    </Header>
-                    <Menu size='mini'>
-                        <Menu.Item name='video play' active={activeItem === 'video play'} onClick={this.handleItemClick}>
-                            <Icon name='video play' />
+                    <Label attached='top' size='large'> {this.state.file_data.file_name} </Label>
+                    <Menu size='mini' secondary>
+                        <Menu.Item>
+                            <Modal trigger={<Button><Icon name='play' /></Button>} size='tiny'>
+                                <MediaPlayer player={this.getPlayer} source={this.state.source} />
+                            </Modal>
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
