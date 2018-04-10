@@ -1,0 +1,37 @@
+.ui.selection.dropdown {
+  border: 1px solid rgb(150, 200, 218) !important;
+  box-shadow: 0 1px 5px 0 rgb(150, 200, 218) !important;
+}
+
+.bb-interesting .ui.input input {
+  border: 1px solid rgb(150, 200, 218);
+  box-shadow: 0 1px 5px 0 rgb(150, 200, 218) !important;
+}
+
+.bb-interesting {
+  background-color: rgba(33, 133, 208, .1);
+  border: 1px solid rgba(33, 133, 208, 0.6);
+  border-radius: 8px;
+  margin: 1rem;
+  box-shadow: 0 0 0.5rem #666;
+}
+
+.bb-less-interesting {
+  background-color: rgba(176, 196, 222, .3);
+}
+
+.bb-manual-name-input input {
+  border: none !important;
+  font-size: 14px !important;
+  padding: .8em !important;
+}
+
+.bb-selected-sources-list,
+.bb-selected-tags-list {
+  padding: 1rem !important;
+  margin: 1rem 0 !important;
+  border: 1px solid rgb(150, 200, 218);
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 2px 2px 5px 0 rgb(150, 200, 218) !important;
+}

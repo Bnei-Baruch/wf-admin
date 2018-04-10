@@ -3,11 +3,13 @@ import moment from 'moment';
 import {getData, getUnits, IVAL} from '../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
+import CIT from '../../CIT';
 
 class IngestTrimmed extends Component {
 
     state = {
         active: null,
+        open: false,
         trimmed: [],
         file_data: {},
         ival: null,
@@ -45,6 +47,20 @@ class IngestTrimmed extends Component {
     getPlayer = (player) => {
         console.log(":: Trimmed - got player: ", player);
         //this.setState({player: player});
+    };
+
+    renameFile = () => {
+        this.setState({open: true});
+    };
+
+    onComplete = (data) => {
+        console.log(":: Cit back: ", data);
+        this.setState({open: false})
+    };
+
+    onCancel = (data) => {
+        console.log(":: Cit cansel: ", data);
+        this.setState({open: false});
     };
 
     render() {
@@ -92,6 +108,11 @@ class IngestTrimmed extends Component {
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
+                                <Modal trigger={<Button color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close">
+                                    <Modal.Content>
+                                        <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
+                                    </Modal.Content>
+                                </Modal>
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
