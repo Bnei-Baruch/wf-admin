@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL} from '../shared/tools';
+import {getData, getUnits, IVAL, putData} from '../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Grid } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
@@ -44,6 +44,8 @@ class IngestTrimmed extends Component {
         let sha1 = data.original.format.sha1;
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
+            if(units.total > 0)
+                alert("The file already got unit!");
             this.setState({ units: units, disabled: false});
         });
     };
@@ -53,14 +55,30 @@ class IngestTrimmed extends Component {
         //this.setState({player: player});
     };
 
-    renameFile = () => {
+    openCit = () => {
         this.setState({open: true});
     };
 
-    onComplete = (data) => {
-        console.log(":: Cit callback: ", data);
-        let line = this.state[data.pattern] || "";
-        this.setState({file_data: {...this.state.file_data, line}, open: false});
+    onComplete = (newline) => {
+        console.log(":: Cit callback: ", newline);
+        let file_data = this.state.file_data;
+        let newfile_name = newline.final_name;
+        let oldfile_name = file_data.file_name;
+        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
+        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}p.mp4`;
+        file_data.line = newline;
+        file_data.line.title = this.state.tags[newline.pattern] || "";
+        file_data.original.format.filename = opath;
+        file_data.proxy.format.filename = ppath;
+        file_data.file_name = newfile_name;
+        file_data.wfstatus.renamed = true;
+        console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
+        this.setState({...file_data, open: false});
+        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+            console.log(":: PUT Respond: ",cb);
+            // FIXME: When API change this must be error recovering
+            fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+        });
     };
 
     onCancel = (data) => {
@@ -112,7 +130,7 @@ class IngestTrimmed extends Component {
                     </Menu.Item>
                     <Menu.Menu position='left'>
                         <Menu.Item>
-                            <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
+                            <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content>
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
