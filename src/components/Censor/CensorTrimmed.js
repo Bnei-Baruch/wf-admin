@@ -5,7 +5,7 @@ import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Grid
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
-class IngestTrimmed extends Component {
+class CensorTrimmed extends Component {
 
     state = {
         active: null,
@@ -47,7 +47,7 @@ class IngestTrimmed extends Component {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 alert("The file already got unit!");
-            this.setState({ units: units, disabled: (units.total > 0)});
+            this.setState({ units: units, disabled: false});
         });
     };
 
@@ -205,4 +205,4 @@ class IngestTrimmed extends Component {
     }
 }
 
-export default IngestTrimmed;
+export default CensorTrimmed;
