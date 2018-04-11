@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, IVAL} from '../shared/tools';
 import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
-import MediaTrimmer from "../Trimmer/MediaTrimmer";
+import TrimmerApp from "./TrimmerApp";
 
 class IngestTrimmer extends Component {
 
@@ -45,7 +45,7 @@ class IngestTrimmer extends Component {
         this.setState({startDate: data, date: date});
     };
 
-    setCaptureSrc = (e, data) => {
+    setTrimSrc = (e, data) => {
         this.setState({trim_src: data.value});
     };
 
@@ -96,7 +96,7 @@ class IngestTrimmer extends Component {
                             selection
                             options={options}
                             defaultValue="main"
-                            onChange={this.setCaptureSrc}
+                            onChange={this.setTrimSrc}
                              >
                         </Dropdown>
                     </Menu.Item>
@@ -137,7 +137,7 @@ class IngestTrimmer extends Component {
                        open={this.state.open}
                        size="large"
                 >
-                    <MediaTrimmer
+                    <TrimmerApp
                         source={this.state.source}
                         file_data={this.state.file_data}
                         source_meta={this.state.trim_src}
