@@ -108,7 +108,7 @@ class IngestTrimmed extends Component {
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
-                                <Modal trigger={<Button color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close">
+                                <Modal trigger={<Button color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
                                     <Modal.Content>
                                         <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                     </Modal.Content>

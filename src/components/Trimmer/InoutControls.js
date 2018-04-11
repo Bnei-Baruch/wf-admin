@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { Button, Label } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.min.css';
 import { toHms } from '../shared/tools';
 
 export default class InoutControls extends Component {

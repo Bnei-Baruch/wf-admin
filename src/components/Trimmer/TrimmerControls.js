@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { Segment, Button } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.min.css';
 
 export default class TrimmerControls extends Component {
 

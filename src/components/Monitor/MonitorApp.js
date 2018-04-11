@@ -5,7 +5,6 @@ import Trimmer from './Trimmer';
 import Carbon from './Carbon';
 import Kmedia from './Kmedia';
 import Upload from './Upload';
-import 'semantic-ui-css/semantic.min.css';
 import './MonitorApp.css';
 
 class MonitorApp extends Component {

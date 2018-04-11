@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Tab, Segment, Container } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.min.css';
+// import 'semantic-ui-css/semantic.min.css';
+import './stylesheets/sematic-reset.css';
+import './stylesheets/scoped_semantic_ltr.css';
+import './stylesheets/scoped_semantic_rtl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import MonitorApp from "./components/Monitor/MonitorApp";

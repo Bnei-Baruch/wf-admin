@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import MediaElement from './MediaElement';
-import 'semantic-ui-css/semantic.min.css';
 
 export default class MediaPlayer extends Component {
 

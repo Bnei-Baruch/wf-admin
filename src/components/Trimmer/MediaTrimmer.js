@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Segment, Table, Message, Button, Checkbox } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.min.css';
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
