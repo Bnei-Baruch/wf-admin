@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Grid } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
@@ -9,10 +9,12 @@ class IngestTrimmed extends Component {
 
     state = {
         active: null,
+        disabled: true,
         open: false,
         trimmed: [],
         file_data: {},
         ival: null,
+        tags: {},
         units: [],
 
     };
@@ -24,6 +26,10 @@ class IngestTrimmed extends Component {
                 }), 1000
             );
         this.setState({ival: ival});
+        getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
+            console.log(":: Trimmer - got tagss: ", tags);
+            this.setState({tags});
+        });
     };
 
     componentWillUnmount() {
@@ -31,8 +37,9 @@ class IngestTrimmed extends Component {
         clearInterval(this.state.ival);
     };
 
-    handleClick = (data) => {
+    selectFile = (data) => {
         console.log(":: Selected trim: ",data);
+        this.setState({active: data.trim_id, file_data: data, disabled: true });
         let url = 'http://10.66.1.122';
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
@@ -40,7 +47,7 @@ class IngestTrimmed extends Component {
         let sha1 = data.original.format.sha1;
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
-            this.setState({active: data.trim_id, file_data: data, units: units});
+            this.setState({ units: units, disabled: false});
         });
     };
 
@@ -55,7 +62,8 @@ class IngestTrimmed extends Component {
 
     onComplete = (data) => {
         console.log(":: Cit callback: ", data);
-        this.setState({file_data: {...this.state.file_data, line: data}, open: false});
+        let line = this.state[data.pattern] || "";
+        this.setState({file_data: {...this.state.file_data, line}, open: false});
     };
 
     onCancel = (data) => {
@@ -85,7 +93,7 @@ class IngestTrimmed extends Component {
                     negative={rowcolor}
                     positive={data.wfstatus.wfsend}
                     warning={!data.wfstatus.trimmed}
-                    className={active} key={data.trim_id} onClick={() => this.handleClick(data)}
+                    className={active} key={data.trim_id} onClick={() => this.selectFile(data)}
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
@@ -99,16 +107,16 @@ class IngestTrimmed extends Component {
         return (
 
                 <Segment textAlign='center' className="ingest_segment" color='brown'>
-                    <Label attached='top' size='large'> {this.state.file_data.file_name} </Label>
-                    <Menu size='mini' secondary>
+                    <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                    <Menu size='mini' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
+                            <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
-                                <Modal trigger={<Button color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
+                                <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.renameFile} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
                                     <Modal.Content>
                                         <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                     </Modal.Content>
@@ -117,7 +125,7 @@ class IngestTrimmed extends Component {
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                <Button positive>Send</Button>
+                                <Button positive disabled={this.state.disabled} >Send</Button>
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>

@@ -8,6 +8,7 @@ import TrimmerApp from "./TrimmerApp";
 class IngestTrimmer extends Component {
 
     state = {
+        disabled: true,
         main: [],
         backup: [],
         trimmed: [],
@@ -30,8 +31,8 @@ class IngestTrimmer extends Component {
 
     getCaptured = (date) => {
         getData('ingest/find?key=date&value='+date, (data) => {
-            var main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
-            var backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
+            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
+            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
             this.setState({main, backup});
         });
         getData('trimmer/find?key=date&value='+date, (data) => {
@@ -42,11 +43,11 @@ class IngestTrimmer extends Component {
     handleDateChange = (data) => {
         let date = data.format('YYYY-MM-DD');
         this.getCaptured(date);
-        this.setState({startDate: data, date: date});
+        this.setState({startDate: data, date: date, disabled: true});
     };
 
     setTrimSrc = (e, data) => {
-        this.setState({trim_src: data.value});
+        this.setState({trim_src: data.value, disabled: true});
     };
 
     selectFile = (e, data) => {
@@ -56,7 +57,7 @@ class IngestTrimmer extends Component {
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
-        this.setState({source, file_data});
+        this.setState({source, file_data, disabled: false});
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
@@ -87,8 +88,7 @@ class IngestTrimmer extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='orange'>
-                <Header as='h3' textAlign='left'><u>Trimmer</u></Header>
-                <Menu secondary>
+                <Menu secondary >
                     <Menu.Item>
                         <Dropdown
                             compact
@@ -126,7 +126,7 @@ class IngestTrimmer extends Component {
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
-                        <Button primary onClick={this.sendToTrim}>Open</Button>
+                        <Button primary disabled={this.state.disabled} onClick={this.sendToTrim}>Open</Button>
                     </Menu.Item>
                 </Menu>
                 <Modal
