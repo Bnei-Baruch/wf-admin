@@ -19,6 +19,14 @@ body {
     /*transition: all ease .5s;*/
 /*}*/
 
+.trim_src_dropdown {
+    min-width: 7em!important;
+}
+
+.trim_files_dropdown {
+    min-width: 39em!important;
+}
+
 .inout_content{
     overflow-y:scroll;
     top:0px; left:0px;
@@ -36,12 +44,8 @@ body {
 }
 
 .ingest_segment {
-    max-width: 900px;
-    min-width: 900px;
-}
-
-.ingest_files {
-    min-width: 30em!important;
+    max-width: 1000px;
+    min-width: 1000px;
 }
 
 .mejs__overlay-button {
@@ -100,7 +104,7 @@ body {
 }
 
 .react-datepicker {
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 .react-datepicker__header {
     padding-top: 0.8em;
@@ -115,7 +119,6 @@ body {
 }
 .react-datepicker__current-month {
     font-size: 1em;
-    display: none;
 }
 
 .react-datepicker__month-read-view--selected-month {

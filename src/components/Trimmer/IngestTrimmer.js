@@ -40,7 +40,7 @@ class IngestTrimmer extends Component {
         });
     };
 
-    handleDateChange = (data) => {
+    changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
         this.getCaptured(date);
         this.setState({startDate: data, date: date, disabled: true});
@@ -68,7 +68,7 @@ class IngestTrimmer extends Component {
         this.setState({open: true});
     };
 
-    handleOnClose = () => {
+    onClose = () => {
         this.setState({open: false});
     };
 
@@ -87,12 +87,12 @@ class IngestTrimmer extends Component {
         });
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='orange'>
+            <Segment textAlign='center' className="ingest_segment" color='blue'>
                 <Menu secondary >
                     <Menu.Item>
                         <Dropdown
                             compact
-                            className="large"
+                            className="trim_src_dropdown"
                             selection
                             options={options}
                             defaultValue="main"
@@ -104,20 +104,21 @@ class IngestTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
-                            showYearDropdown
-                            showMonthDropdown
-                            scrollableYearDropdown
+                            //showYearDropdown
+                            //showMonthDropdown
+                            //scrollableYearDropdown
                             maxDate={moment()}
+                            minDate={moment().add(-40, "days")}
                             //openToDate={moment(this.state.start_date)}
                             selected={this.state.startDate}
-                            onChange={this.handleDateChange}
-                            //excludeDates={[moment(), moment().add(1, "months")]}
+                            onChange={this.changeDate}
+                            //excludeDates={[moment(), moment().add(40, "days")]}
                             //highlightDates={moment().add(-1, "months")}
                         />
                     </Menu.Item>
                     <Menu.Item>
                         <Dropdown
-                            className="ingest_files"
+                            className="trim_files_dropdown"
                             placeholder="Select File To Trim:"
                             selection
                             options={trim_data}
@@ -133,8 +134,7 @@ class IngestTrimmer extends Component {
                     className="trimmer_modal"
                        closeOnDimmerClick={true}
                        closeIcon={true}
-                       defaultOpen={false}
-                       onClose={this.handleOnClose}
+                       onClose={this.onClose}
                        open={this.state.open}
                        size="large"
                        mountNode={document.getElementById("ltr-modal-mount")}
