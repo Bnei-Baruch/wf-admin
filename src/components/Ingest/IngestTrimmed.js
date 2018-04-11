@@ -102,7 +102,7 @@ class IngestTrimmed extends Component {
                     <Label attached='top' size='large'> {this.state.file_data.file_name} </Label>
                     <Menu size='mini' secondary>
                         <Menu.Item>
-                            <Modal trigger={<Button><Icon name='play' /></Button>} size='tiny'>
+                            <Modal trigger={<Button><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
                         </Menu.Item>

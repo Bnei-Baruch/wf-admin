@@ -136,6 +136,7 @@ class IngestTrimmer extends Component {
                        onClose={this.handleOnClose}
                        open={this.state.open}
                        size="large"
+                       mountNode={document.getElementById("ltr-modal-mount")}
                 >
                     <TrimmerApp
                         source={this.state.source}
