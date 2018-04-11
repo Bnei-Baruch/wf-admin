@@ -54,12 +54,12 @@ class IngestTrimmed extends Component {
     };
 
     onComplete = (data) => {
-        console.log(":: Cit back: ", data);
-        this.setState({open: false})
+        console.log(":: Cit callback: ", data);
+        this.setState({file_data: {...this.state.file_data, line: data}, open: false});
     };
 
     onCancel = (data) => {
-        console.log(":: Cit cansel: ", data);
+        console.log(":: Cit cancel: ", data);
         this.setState({open: false});
     };
 

@@ -7,7 +7,7 @@ import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
 import {putData} from "../shared/tools";
 
-export default class MediaTrimmer extends Component {
+export default class TrimmerApp extends Component {
 
     state = {
         lelomikud: false,
