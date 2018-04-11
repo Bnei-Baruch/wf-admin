@@ -1,0 +1,36 @@
+We've built semantic-ui css with a scoping class
+so that ltr and rtl could co-exist.
+
+Follow the normal procedure to obtain semantic-ui docs
+as found at https://semantic-ui.com/introduction/getting-started.html
+
+Better do it in a clean folder.
+The version we used was 2.2.14
+So npm install semantic-ui@2.2.14 --save
+
+choose all components, default directories and compile *both* ltr and rtl.
+
+next in /src create 2 less files
+
+$ cat scoped_semantic_*.less
+
+.scoped-semantic-ltr {
+  @import (less) "dist/semantic.css";
+}
+
+.scoped-semantic-rtl {
+  @import (less) "dist/semantic.rtl.css";
+}
+
+install less.js with
+sudo npm install -g less
+
+then compile the 2 files:
+$ lessc scoped_semantic_ltr.less scoped_semantic_ltr.css
+$ lessc scoped_semantic_rtl.less scoped_semantic_rtl.css
+
+and copy them to src/stylesheets along with the themes folder
+from the semantic dist folder generated during your gulp build
+
+next extract reset section (~ first 900 rows) in scoped_semantic_ltr.css
+to a dedicated file sematic-reset.css
