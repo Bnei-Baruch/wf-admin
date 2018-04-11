@@ -98,11 +98,12 @@ export default class TrimmerApp extends Component {
 
     postTrimMeta = () => {
         let wfid = this.state.trim_meta.trim_id;
+        this.setState({ioValid: false});
         putData('http://wfdb.bbdomain.org:8080/trimmer/'+this.state.trim_meta.trim_id, this.state.trim_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
             let lelomikud = this.state.lelomikud ? 1 : 0;
             // FIXME: When API change this must be error recovering
-            fetch("http://wfdb.bbdomain.org:8080/hooks/trim?id="+wfid+"&spc="+lelomikud);
+            fetch("http://wfserver.bbdomain.org:8080/hooks/trim?id="+wfid+"&spc="+lelomikud);
         });
     };
 

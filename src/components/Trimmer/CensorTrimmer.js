@@ -5,7 +5,7 @@ import {getData, getUnits, IVAL} from '../shared/tools';
 import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
-class IngestTrimmer extends Component {
+class CensorTrimmer extends Component {
 
     state = {
         disabled: true,
@@ -35,9 +35,9 @@ class IngestTrimmer extends Component {
             let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
             this.setState({main, backup});
         });
-        //getData('trimmer/find?key=date&value='+date, (data) => {
-        //    this.setState({trimmed: data});
-        //});
+        getData('trimmer/find?key=date&value='+date, (data) => {
+            this.setState({trimmed: data});
+        });
     };
 
     changeDate = (data) => {
@@ -77,7 +77,7 @@ class IngestTrimmer extends Component {
         const options = [
             { key: 1, text: 'Main', value: 'main' },
             { key: 2, text: 'Backup', value: 'backup' },
-            //{ key: 3, text: 'Trimmed', value: 'trimmed' },
+            { key: 3, text: 'Trimmed', value: 'trimmed' },
         ];
 
         let trim_data = this.state[this.state.trim_src].map((data, i) => {
@@ -151,4 +151,4 @@ class IngestTrimmer extends Component {
     }
 }
 
-export default IngestTrimmer;
+export default CensorTrimmer;

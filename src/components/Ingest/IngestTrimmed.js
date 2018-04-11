@@ -74,11 +74,11 @@ class IngestTrimmed extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false});
+        this.setState({...file_data, open: false, disabled: true});
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
         });
     };
 
@@ -124,7 +124,7 @@ class IngestTrimmed extends Component {
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
+            fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
         });
     };
 
@@ -172,7 +172,7 @@ class IngestTrimmed extends Component {
                     </Menu.Item>
                     <Menu.Menu position='left'>
                         <Menu.Item>
-                            <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
+                            <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClose={this.onCancel} onClick={this.openCit} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content>
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
