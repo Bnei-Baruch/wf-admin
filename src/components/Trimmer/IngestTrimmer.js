@@ -130,6 +130,7 @@ class IngestTrimmer extends Component {
                     </Menu.Item>
                 </Menu>
                 <Modal
+                    className="trimmer_modal"
                        closeOnDimmerClick={true}
                        closeIcon={true}
                        defaultOpen={false}

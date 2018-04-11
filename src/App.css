@@ -70,6 +70,13 @@ body {
 .table_main {
     min-width: 1120px!important;
     max-width: 1120px!important;
+    margin-bottom: 0em!important;
+    margin-top: 0em!important;
+}
+
+.trimmer_modal {
+    min-width: 1120px!important;
+    max-width: 1120px!important;
 }
 
 .btn_speed {
