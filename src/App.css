@@ -19,6 +19,14 @@ body {
     /*transition: all ease .5s;*/
 /*}*/
 
+.inout_btn:hover {
+    background-color: #21BA45!important;
+}
+
+.trimmer_control .ui.button:hover {
+    background-color: #2185D0!important;
+}
+
 .trim_src_dropdown {
     min-width: 7em!important;
 }

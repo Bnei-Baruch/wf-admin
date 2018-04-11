@@ -56,12 +56,12 @@ export default class InoutControls extends Component {
             return (
                 <Fragment>
                     <Button as='div' labelPosition='right'>
-                        <Button icon onClick={() => this.setIn(i)} color='grey' />
+                        <Button icon onClick={() => this.setIn(i)} color='grey' className="inout_btn" />
                         <Label as='a' basic pointing='left' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(inp ,i)}>{inp !== null ? toHms(inp) : "<- Set in"}</Label>
                     </Button>
-                    <Button as='div' labelPosition='left'>
+                    <Button as='div' labelPosition='left' className="inout_btn">
                         <Label as='a' basic pointing='right' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(outp, i)}>{outp !== null ? toHms(outp) : "Set out ->"}</Label>
-                        <Button icon onClick={() => this.setOut(i)} color='grey' />
+                        <Button icon onClick={() => this.setOut(i)} color='grey' className="inout_btn" />
                     </Button>
                 </Fragment>
             );
@@ -70,15 +70,15 @@ export default class InoutControls extends Component {
         return (
             <Fragment >
                 {inout}
-                <Button as='div' labelPosition='right'>
-                    <Button icon onClick={() => this.setIn(null)} color='grey' />
+                <Button as='div' labelPosition='right' className="inout_btn">
+                    <Button icon onClick={() => this.setIn(null)} color='grey' className="inout_btn" />
                     <Label as='a' basic pointing='left' >{
                         this.state.inpoints[this.state.outpoints.length] !== undefined ?
                             toHms(this.state.inpoints[this.state.outpoints.length]) : "<- Set in"}</Label>
                 </Button>
-                <Button as='div' labelPosition='left'>
+                <Button as='div' labelPosition='left' className="inout_btn">
                     <Label as='a' basic pointing='right' >{"Set out ->"}</Label>
-                    <Button icon onClick={() => this.setOut(null)} color='grey' />
+                    <Button icon onClick={() => this.setOut(null)} color='grey' className="inout_btn" />
                 </Button>
             </Fragment>
         );
