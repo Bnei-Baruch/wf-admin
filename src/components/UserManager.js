@@ -3,7 +3,7 @@ import {KJUR} from 'jsrsasign';
 
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 export const BASE_URL = 'http://localhost:3000/';
-//export const BASE_URL = 'http://wfserver.bbdomain.org/';
+//export const BASE_URL = 'http://wfsrv.bbdomain.org/';
 
 oidclog.logger = console;
 oidclog.level  = 3;

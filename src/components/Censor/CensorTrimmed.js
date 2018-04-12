@@ -172,11 +172,12 @@ class CensorTrimmed extends Component {
                     </Menu.Item>
                     <Menu.Menu position='left'>
                         <Menu.Item>
-                            <Modal trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
-                                </Modal.Content>
-                            </Modal>
+                            {/*<Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>} */}
+                                   {/*open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>*/}
+                                {/*<Modal.Content>*/}
+                                    {/*<CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>*/}
+                                {/*</Modal.Content>*/}
+                            {/*</Modal>*/}
                         </Menu.Item>
                     </Menu.Menu>
                     <Menu.Menu position='right'>
