@@ -142,7 +142,7 @@ class IngestTrimmed extends Component {
                 return;
             let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            //let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
             let active = this.state.active === data.trim_id ? 'active' : '';
@@ -156,7 +156,7 @@ class IngestTrimmed extends Component {
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{renamed}</Table.Cell>
-                    <Table.Cell>{buffer}</Table.Cell>
+                    {/*<Table.Cell>{buffer}</Table.Cell>*/}
                     <Table.Cell negative={!data.wfstatus.wfsend}>{wfsend}</Table.Cell>
                 </Table.Row>
             )
@@ -192,9 +192,9 @@ class IngestTrimmed extends Component {
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>RNM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>SND</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Rename</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>BUF</Table.HeaderCell>*/}
+                            <Table.HeaderCell width={1}>Send</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
