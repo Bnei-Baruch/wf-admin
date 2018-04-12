@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, IVAL} from '../shared/tools';
-import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
+import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
 class IngestTrimmer extends Component {
@@ -11,8 +11,9 @@ class IngestTrimmer extends Component {
         disabled: true,
         main: [],
         backup: [],
-        trimmed: [],
+        captured: [],
         file_data: {},
+        ival: null,
         open: false,
         trim_src: "main",
         date: moment().format('YYYY-MM-DD'),
@@ -22,22 +23,29 @@ class IngestTrimmer extends Component {
     };
 
     componentDidMount() {
-        this.getCaptured(moment().format('YYYY-MM-DD'));
+        //this.getCaptured(moment().format('YYYY-MM-DD'));
+        let ival = setInterval(() =>
+            getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
+                if (JSON.stringify(this.state.captured) !== JSON.stringify(data)) {
+                    this.setState({captured: data});
+                    this.getCaptured(this.state.date);
+                }
+            }), IVAL
+        );
+        this.setState({ival});
     };
 
     componentWillUnmount() {
         console.log("-- Ingest unmount");
+        clearInterval(this.state.ival);
     }
 
     getCaptured = (date) => {
         getData('ingest/find?key=date&value='+date, (data) => {
-            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
-            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
+            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);
+            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/) && b.wfstatus.capwf);
             this.setState({main, backup});
         });
-        //getData('trimmer/find?key=date&value='+date, (data) => {
-        //    this.setState({trimmed: data});
-        //});
     };
 
     changeDate = (data) => {
@@ -53,7 +61,7 @@ class IngestTrimmer extends Component {
     selectFile = (e, data) => {
         let file_data = data.value;
         console.log(":: Select file: ",file_data);
-        let url = 'http://10.66.1.122';
+        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
