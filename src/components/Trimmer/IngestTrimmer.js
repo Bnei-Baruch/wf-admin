@@ -144,6 +144,7 @@ class IngestTrimmer extends Component {
                         file_data={this.state.file_data}
                         source_meta={this.state.trim_src}
                         mode="ingest"
+                        closeModal={this.onClose}
                     />
                 </Modal>
             </Segment>

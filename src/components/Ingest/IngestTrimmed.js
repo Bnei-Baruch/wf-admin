@@ -47,7 +47,8 @@ class IngestTrimmed extends Component {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 console.log("The file already got unit!");
-            this.setState({ units: units, disabled: (units.total > 0)});
+            //this.setState({ units: units, disabled: (units.total > 0)});
+            this.setState({ units: units, disabled: data.wfstatus.wfsend});
         });
     };
 
@@ -174,7 +175,7 @@ class IngestTrimmed extends Component {
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>}
                                    onClose={this.onCancel} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
+                                <Modal.Content scrolling >
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
                             </Modal>

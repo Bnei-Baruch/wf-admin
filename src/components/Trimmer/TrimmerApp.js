@@ -13,6 +13,7 @@ export default class TrimmerApp extends Component {
         player: null,
         trim_meta: {},
         ioValid: false,
+        loading: false,
     };
 
     componentDidMount() {
@@ -87,7 +88,7 @@ export default class TrimmerApp extends Component {
     };
 
     getInouts = (inpoints, outpoints) => {
-        this.setState({ioValid: true})
+        this.setState({ioValid: true});
         for(let i=0; i<inpoints.length; i++) {
             if(inpoints[i] > outpoints[i]) {
                 this.setState({ioValid: false});
@@ -98,7 +99,11 @@ export default class TrimmerApp extends Component {
 
     postTrimMeta = () => {
         let wfid = this.state.trim_meta.trim_id;
-        this.setState({ioValid: false});
+        this.setState({ioValid: false, loading: true});
+        setTimeout(() => {
+            this.setState({ loading: false });
+            this.props.closeModal();
+        }, 5000);
         putData('http://wfdb.bbdomain.org:8080/trimmer/'+this.state.trim_meta.trim_id, this.state.trim_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
             let lelomikud = this.state.lelomikud ? 1 : 0;
@@ -134,7 +139,7 @@ export default class TrimmerApp extends Component {
                         <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
                     </Table.Cell>
                     <Table.Cell textAlign='center'>
-                        <Button size='big' color='red' disabled={!this.state.ioValid} onClick={this.postTrimMeta}>Trim</Button>
+                        <Button size='big' color='red' disabled={!this.state.ioValid} onClick={this.postTrimMeta} loading={this.state.loading} >Trim</Button>
                     </Table.Cell>
                 </Table.Row>
             </Table>
