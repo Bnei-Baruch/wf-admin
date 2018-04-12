@@ -8,6 +8,7 @@
     "mediaelement": "^4.2.9",
     "mediaelement-plugins": "^2.5.0",
     "moment": "^2.22.0",
+    "oidc-client": "^1.4.1",
     "react": "^16.3.1",
     "react-datepicker": "^1.4.1",
     "react-day-picker": "^7.1.4",
