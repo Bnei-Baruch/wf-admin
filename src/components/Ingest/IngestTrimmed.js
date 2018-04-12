@@ -138,7 +138,7 @@ class IngestTrimmed extends Component {
             let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
             let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
             //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            if(this.props.removed && data.wfstatus.removed)
+            if(data.wfstatus.removed || data.wfstatus.buffer)
                 return;
             let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
@@ -175,7 +175,7 @@ class IngestTrimmed extends Component {
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>}
                                    onClose={this.onCancel} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content scrolling >
+                                <Modal.Content >
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
                             </Modal>

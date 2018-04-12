@@ -14,7 +14,7 @@ class CensorTrimmer extends Component {
         trimmed: [],
         file_data: {},
         open: false,
-        trim_src: "main",
+        trim_src: "trimmed",
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "",
@@ -30,11 +30,11 @@ class CensorTrimmer extends Component {
     }
 
     getCaptured = (date) => {
-        getData('ingest/find?key=date&value='+date, (data) => {
-            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
-            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
-            this.setState({main, backup});
-        });
+        // getData('ingest/find?key=date&value='+date, (data) => {
+        //     let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
+        //     let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
+        //     this.setState({main, backup});
+        // });
         getData('trimmer/find?key=date&value='+date, (data) => {
             this.setState({trimmed: data});
         });
@@ -75,9 +75,9 @@ class CensorTrimmer extends Component {
     render() {
 
         const options = [
-            { key: 1, text: 'Main', value: 'main' },
-            { key: 2, text: 'Backup', value: 'backup' },
-            { key: 3, text: 'Trimmed', value: 'trimmed' },
+            // { key: 1, text: 'Main', value: 'main' },
+            // { key: 2, text: 'Backup', value: 'backup' },
+            { key: 1, text: 'Trimmed', value: 'trimmed' },
         ];
 
         let trim_data = this.state[this.state.trim_src].map((data, i) => {
@@ -95,7 +95,7 @@ class CensorTrimmer extends Component {
                             className="trim_src_dropdown"
                             selection
                             options={options}
-                            defaultValue="main"
+                            defaultValue="trimmed"
                             onChange={this.setTrimSrc}
                              >
                         </Dropdown>
@@ -143,7 +143,7 @@ class CensorTrimmer extends Component {
                         source={this.state.source}
                         file_data={this.state.file_data}
                         source_meta={this.state.trim_src}
-                        mode="ingest"
+                        mode="censor"
                         closeModal={this.onClose}
                     />
                 </Modal>
