@@ -71,12 +71,12 @@ class App extends Component {
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: !this.state.wf_ingest },
               render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public },
-              render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: !this.state.wf_censor },
               render: () => <Tab.Pane attached={false} ><CensorApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: !this.state.wf_admin },
               render: () => <Tab.Pane attached={false} ><AdminApp user={this.state.user} /></Tab.Pane> },
+          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public },
+              render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
       ];
 
     return (

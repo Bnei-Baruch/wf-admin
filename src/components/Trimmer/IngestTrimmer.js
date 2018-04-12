@@ -87,7 +87,7 @@ class IngestTrimmer extends Component {
         });
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue'>
+            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
                 <Menu secondary >
                     <Menu.Item>
                         <Dropdown

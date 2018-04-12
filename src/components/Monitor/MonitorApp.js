@@ -22,7 +22,7 @@ class MonitorApp extends Component {
     render() {
         return (
             <Fragment>
-                <Grid columns={2} padded='horizontally'>
+                <Grid columns={2} padded='horizontally' className='monitor_app'>
                     <Grid.Column>
                         <Popup
                             trigger={<Button size='mini' circular icon='settings' className="settings_btn"></Button>}

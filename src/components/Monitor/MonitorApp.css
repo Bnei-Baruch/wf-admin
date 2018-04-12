@@ -1,45 +1,45 @@
-.ui.basic.table {
+.monitor_app .ui.basic.table {
     font-size: 12px;
 }
 
-.monitor_tr {
+.monitor_app .monitor_tr {
     background: #eaeaea;
     font-weight: bolder;
 }
 
-.settings_btn {
+.monitor_app .settings_btn {
     position: absolute;
     padding: .38571429em .47571429em .48571429em!important;
     font-size: .68571429rem!important;
     margin-top: 8px!important;
 }
 
-.ui.table td.positive, .ui.table tr.positive {
+.monitor_app .ui.table td.positive, .ui.table tr.positive {
     background: #e1e6d4!important;
     font-weight: bolder;
 }
 
-.ui.table tr td.disabled, .ui.table tr.disabled td, .ui.table tr.disabled:hover, .ui.table tr:hover td.disabled {
+.monitor_app .ui.table tr td.disabled, .ui.table tr.disabled td, .ui.table tr.disabled:hover, .ui.table tr:hover td.disabled {
     background: #e1e6d4!important;
 }
 
-.ui.table td.active, .ui.table tr.active {
+.monitor_app .ui.table td.active, .ui.table tr.active {
     background: #efeff5!important;
     color: #287ab7!important;
 }
 
-.ui[class*="very compact"].table td {
+.monitor_app .ui[class*="very compact"].table td {
     padding: .1em .3em;
 }
 
-.ui.table td.one.wide, .ui.table th.one.wide {
+.monitor_app .ui.table td.one.wide, .ui.table th.one.wide {
     width: 2.5%;
 }
 
-.table_header {
+.monitor_app .table_header {
     background: #dad4c1;
 }
 
-.ui.table thead th {
+.monitor_app .ui.table thead th {
     padding: .2em .3em;
 }
