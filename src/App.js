@@ -19,6 +19,10 @@ class App extends Component {
         disabled: true,
         loading: true,
         mode: null,
+        wf_ingest: false,
+        wf_censor: false,
+        wf_admin: false,
+        wf_public: false,
     };
 
     componentDidMount() {
@@ -40,10 +44,13 @@ class App extends Component {
     };
 
     checkPermission = (user) => {
-        let bbrole = user.roles.filter(role => role.match(/^(bb_user)$/)).length;
-        console.log(":: BB Role: ", bbrole);
-        if(bbrole >= 0) {
-            this.setState({user: user, disabled: false});
+        let wf_public = user.roles.filter(role => role.match(/^(bb_user)$/)).length;
+        let wf_ingest = user.roles.filter(role => role.match(/^(wf_ingest)$/)).length;
+        let wf_censor = user.roles.filter(role => role.match(/^(wf_censor)$/)).length;
+        let wf_admin = user.roles.filter(role => role.match(/^(wf_admin)$/)).length;
+        console.log(":: App - got user: ", user);
+        if(wf_public > 0) {
+            this.setState({user: user, wf_public: (wf_public > 0), wf_admin: (wf_admin > 0), wf_censor: (wf_censor > 0), wf_ingest: (wf_ingest > 0)});
         } else {
             alert("Access denied!");
             client.signoutRedirect();
@@ -62,10 +69,10 @@ class App extends Component {
 
       const panes = [
           { menuItem: { key: 'main', icon: 'home', content: 'Main', disabled: false }, render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
-          { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: this.state.disabled }, render: () => <Tab.Pane attached={false} ><IngestApp mode={this.state.mode} /></Tab.Pane> },
-          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: this.state.disabled }, render: () => <Tab.Pane attached={true} ><MonitorApp /></Tab.Pane> },
-          { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: this.state.disabled }, render: () => <Tab.Pane attached={false} ><CensorApp/></Tab.Pane> },
-          { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: this.state.disabled }, render: () => <Tab.Pane attached={false} ><AdminApp/></Tab.Pane> },
+          { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: !this.state.wf_ingest }, render: () => <Tab.Pane attached={false} ><IngestApp /></Tab.Pane> },
+          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public }, render: () => <Tab.Pane attached={true} ><MonitorApp /></Tab.Pane> },
+          { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: !this.state.wf_censor }, render: () => <Tab.Pane attached={false} ><CensorApp/></Tab.Pane> },
+          { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: !this.state.wf_admin }, render: () => <Tab.Pane attached={false} ><AdminApp/></Tab.Pane> },
       ];
 
     return (
