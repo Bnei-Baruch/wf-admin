@@ -2,8 +2,7 @@ import { Log as oidclog, UserManager,WebStorageStateStore } from 'oidc-client';
 import {KJUR} from 'jsrsasign';
 
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
-export const BASE_URL = 'http://localhost:3000/';
-//export const BASE_URL = 'http://wfsrv.bbdomain.org/';
+export const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_WF_URL : 'http://localhost:3000/';
 
 oidclog.logger = console;
 oidclog.level  = 3;
@@ -32,7 +31,7 @@ export const getUser = (cb) => client.getUser()
             let at = KJUR.jws.JWS.parse(user.access_token);
             let roles = at.payloadObj.realm_access.roles;
             console.log(":: User's Roles: ", roles);
-            user = {...user.profile, roles: roles}
+            user = {...user.profile, roles}
         }
         cb(user)
     })

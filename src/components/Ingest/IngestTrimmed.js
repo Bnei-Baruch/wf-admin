@@ -46,7 +46,7 @@ class IngestTrimmed extends Component {
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
-                alert("The file already got unit!");
+                console.log("The file already got unit!");
             this.setState({ units: units, disabled: (units.total > 0)});
         });
     };

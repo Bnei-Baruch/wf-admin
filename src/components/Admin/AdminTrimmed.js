@@ -46,7 +46,7 @@ class AdminTrimmed extends Component {
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
-                alert("The file already got unit!");
+                console.log("The file already got unit!");
             this.setState({ units: units, disabled: false});
         });
     };
@@ -124,7 +124,7 @@ class AdminTrimmed extends Component {
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
+            //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
         });
     };
 

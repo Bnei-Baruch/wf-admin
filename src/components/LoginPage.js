@@ -21,7 +21,6 @@ class LoginPage extends Component {
     render() {
 
         let login = (<Button size='massive' primary onClick={this.getUser} {...this.props} disabled={this.props.loading} >Login</Button>);
-        //let logout = (<Button size='mini' primary onClick={() => client.signoutRedirect()}>LogOut</Button>);
         let logout = (<Image src={logo} centered />);
         let profile = (
             <Dropdown inline text=''>
