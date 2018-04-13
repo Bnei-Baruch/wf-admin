@@ -1,7 +1,7 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Grid } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
@@ -24,7 +24,7 @@ class AdminTrimmed extends Component {
         let ival = setInterval(() => getData('trim', (data) => {
                 if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
                     this.setState({trimmed: data})
-            }), 1000 );
+            }), IVAL );
         this.setState({ival});
         getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
             this.setState({tags});
@@ -38,7 +38,7 @@ class AdminTrimmed extends Component {
 
     selectFile = (data) => {
         console.log(":: Trimmed - selected file: ",data);
-        let url = 'http://10.66.1.122';
+        let url = 'http://wfserver.bbdomain.org';
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
         this.setState({source, active: data.trim_id, file_data: data, disabled: true});

@@ -38,7 +38,7 @@ class IngestTrimmed extends Component {
 
     selectFile = (data) => {
         console.log(":: Trimmed - selected file: ",data);
-        let url = 'http://10.66.1.122';
+        let url = 'http://wfserver.bbdomain.org';
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
         this.setState({source, active: data.trim_id, file_data: data, disabled: true});

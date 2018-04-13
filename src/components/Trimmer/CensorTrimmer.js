@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getUnits, IVAL} from '../shared/tools';
-import { Menu, Grid, Segment, Modal, Dropdown, Icon, Table, Loader, Button, Header } from 'semantic-ui-react'
+import {getData, getUnits} from '../shared/tools';
+import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
 class CensorTrimmer extends Component {
