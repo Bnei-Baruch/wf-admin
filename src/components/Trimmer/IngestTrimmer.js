@@ -11,9 +11,7 @@ class IngestTrimmer extends Component {
         disabled: true,
         main: [],
         backup: [],
-        captured: [],
         file_data: {},
-        ival: null,
         open: false,
         trim_src: "main",
         date: moment().format('YYYY-MM-DD'),
@@ -23,21 +21,11 @@ class IngestTrimmer extends Component {
     };
 
     componentDidMount() {
-        //this.getCaptured(moment().format('YYYY-MM-DD'));
-        let ival = setInterval(() =>
-            getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-                if (JSON.stringify(this.state.captured) !== JSON.stringify(data)) {
-                    this.setState({captured: data});
-                    this.getCaptured(this.state.date);
-                }
-            }), IVAL
-        );
-        this.setState({ival});
+        console.log("-- Ingest trimmer mount");
     };
 
     componentWillUnmount() {
-        console.log("-- Ingest unmount");
-        clearInterval(this.state.ival);
+        console.log("-- Ingest trimmer unmount");
     }
 
     getCaptured = (date) => {
@@ -50,7 +38,6 @@ class IngestTrimmer extends Component {
 
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
-        this.getCaptured(date);
         this.setState({startDate: data, date: date, disabled: true});
     };
 
@@ -85,7 +72,6 @@ class IngestTrimmer extends Component {
         const options = [
             { key: 1, text: 'Main', value: 'main' },
             { key: 2, text: 'Backup', value: 'backup' },
-            //{ key: 3, text: 'Trimmed', value: 'trimmed' },
         ];
 
         let trim_data = this.state[this.state.trim_src].map((data, i) => {
@@ -112,16 +98,10 @@ class IngestTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
-                            //showYearDropdown
-                            //showMonthDropdown
-                            //scrollableYearDropdown
                             maxDate={moment()}
                             minDate={moment().add(-40, "days")}
-                            //openToDate={moment(this.state.start_date)}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
-                            //excludeDates={[moment(), moment().add(40, "days")]}
-                            //highlightDates={moment().add(-1, "months")}
                         />
                     </Menu.Item>
                     <Menu.Item>
@@ -131,6 +111,7 @@ class IngestTrimmer extends Component {
                             selection
                             options={trim_data}
                             onChange={this.selectFile}
+                            onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>
                     </Menu.Item>

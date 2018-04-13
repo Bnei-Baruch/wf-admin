@@ -18,7 +18,6 @@ class App extends Component {
         user: null,
         disabled: true,
         loading: true,
-        mode: null,
         wf_ingest: false,
         wf_censor: false,
         wf_admin: false,
@@ -57,14 +56,9 @@ class App extends Component {
         }
     };
 
-    setMode = (mode) => {
-        console.log(":: Setting Mode:", mode);
-        this.setState({mode});
-    };
-
   render() {
 
-      let login = (<LoginPage onInsert={this.setMode} user={this.state.user} loading={this.state.loading} />);
+      let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
 
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },

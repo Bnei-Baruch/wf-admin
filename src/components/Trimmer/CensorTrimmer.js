@@ -9,8 +9,6 @@ class CensorTrimmer extends Component {
 
     state = {
         disabled: true,
-        main: [],
-        backup: [],
         trimmed: [],
         file_data: {},
         open: false,
@@ -22,19 +20,14 @@ class CensorTrimmer extends Component {
     };
 
     componentDidMount() {
-        this.getCaptured(moment().format('YYYY-MM-DD'));
+        console.log("-- Censor trimmer mount");
     };
 
     componentWillUnmount() {
-        console.log("-- Ingest unmount");
+        console.log("-- Censor trimmer unmount");
     }
 
     getCaptured = (date) => {
-        // getData('ingest/find?key=date&value='+date, (data) => {
-        //     let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
-        //     let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
-        //     this.setState({main, backup});
-        // });
         getData('trimmer/find?key=date&value='+date, (data) => {
             this.setState({trimmed: data});
         });
@@ -42,7 +35,6 @@ class CensorTrimmer extends Component {
 
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
-        this.getCaptured(date);
         this.setState({startDate: data, date: date, disabled: true});
     };
 
@@ -53,7 +45,7 @@ class CensorTrimmer extends Component {
     selectFile = (e, data) => {
         let file_data = data.value;
         console.log(":: Select file: ",file_data);
-        let url = 'http://10.66.1.122';
+        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
@@ -75,8 +67,6 @@ class CensorTrimmer extends Component {
     render() {
 
         const options = [
-            // { key: 1, text: 'Main', value: 'main' },
-            // { key: 2, text: 'Backup', value: 'backup' },
             { key: 1, text: 'Trimmed', value: 'trimmed' },
         ];
 
@@ -104,16 +94,10 @@ class CensorTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
-                            //showYearDropdown
-                            //showMonthDropdown
-                            //scrollableYearDropdown
                             maxDate={moment()}
                             minDate={moment().add(-40, "days")}
-                            //openToDate={moment(this.state.start_date)}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
-                            //excludeDates={[moment(), moment().add(40, "days")]}
-                            //highlightDates={moment().add(-1, "months")}
                         />
                     </Menu.Item>
                     <Menu.Item>
@@ -123,6 +107,7 @@ class CensorTrimmer extends Component {
                             selection
                             options={trim_data}
                             onChange={this.selectFile}
+                            onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>
                     </Menu.Item>

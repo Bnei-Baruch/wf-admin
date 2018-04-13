@@ -1,7 +1,7 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Grid } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
@@ -24,7 +24,7 @@ class IngestTrimmed extends Component {
         let ival = setInterval(() => getData('trim', (data) => {
                 if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
                     this.setState({trimmed: data})
-            }), 1000 );
+            }), IVAL );
         this.setState({ival});
         getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
             this.setState({tags});
@@ -130,8 +130,6 @@ class IngestTrimmed extends Component {
     };
 
     render() {
-
-        const { activeItem } = this.state
 
         let trimmed = this.state.trimmed.map((data) => {
             let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;

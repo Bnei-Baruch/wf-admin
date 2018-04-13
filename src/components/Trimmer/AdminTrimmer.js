@@ -22,17 +22,17 @@ class AdminTrimmer extends Component {
     };
 
     componentDidMount() {
-        this.getCaptured(moment().format('YYYY-MM-DD'));
+        console.log("-- Admin trimmer mount");
     };
 
     componentWillUnmount() {
-        console.log("-- Ingest unmount");
+        console.log("-- Admin trimmer unmount");
     }
 
     getCaptured = (date) => {
         getData('ingest/find?key=date&value='+date, (data) => {
-            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/));
-            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/));
+            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);
+            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/) && b.wfstatus.capwf);
             this.setState({main, backup});
         });
         getData('trimmer/find?key=date&value='+date, (data) => {
@@ -42,7 +42,6 @@ class AdminTrimmer extends Component {
 
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
-        this.getCaptured(date);
         this.setState({startDate: data, date: date, disabled: true});
     };
 
@@ -53,7 +52,7 @@ class AdminTrimmer extends Component {
     selectFile = (e, data) => {
         let file_data = data.value;
         console.log(":: Select file: ",file_data);
-        let url = 'http://10.66.1.122';
+        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
@@ -104,16 +103,10 @@ class AdminTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
-                            //showYearDropdown
-                            //showMonthDropdown
-                            //scrollableYearDropdown
                             maxDate={moment()}
                             minDate={moment().add(-40, "days")}
-                            //openToDate={moment(this.state.start_date)}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
-                            //excludeDates={[moment(), moment().add(40, "days")]}
-                            //highlightDates={moment().add(-1, "months")}
                         />
                     </Menu.Item>
                     <Menu.Item>
@@ -123,6 +116,7 @@ class AdminTrimmer extends Component {
                             selection
                             options={trim_data}
                             onChange={this.selectFile}
+                            onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>
                     </Menu.Item>

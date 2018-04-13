@@ -13,11 +13,6 @@ class LoginPage extends Component {
         });
     };
 
-    handleInsert = (e, data) => {
-        console.log("-- Handle Insert --", data.value);
-        this.props.onInsert(data.value);
-    };
-
     render() {
 
         let login = (<Button size='massive' primary onClick={this.getUser} {...this.props} disabled={this.props.loading} >Login</Button>);
