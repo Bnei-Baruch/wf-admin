@@ -45,44 +45,14 @@ class CensorTrimmed extends Component {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 console.log("The file already got unit!");
-            this.setState({ units: units, disabled: false});
+            //this.setState({ units: units, disabled: false});
+            this.setState({ units: units, disabled: data.wfstatus.kmedia});
         });
     };
 
     getPlayer = (player) => {
         console.log(":: Trimmed - got player: ", player);
         //this.setState({player: player});
-    };
-
-    openCit = () => {
-        this.setState({open: true});
-    };
-
-    onComplete = (newline) => {
-        console.log(":: Cit callback: ", newline);
-        let file_data = this.state.file_data;
-        let newfile_name = newline.final_name;
-        let oldfile_name = file_data.file_name;
-        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
-        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}p.mp4`;
-        file_data.line = newline;
-        file_data.line.title = this.state.tags[newline.pattern] || "";
-        file_data.original.format.filename = opath;
-        file_data.proxy.format.filename = ppath;
-        file_data.file_name = newfile_name;
-        file_data.wfstatus.renamed = true;
-        console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false});
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
-        });
-    };
-
-    onCancel = (data) => {
-        console.log(":: Cit cancel: ", data);
-        this.setState({open: false});
     };
 
     sendFile = () => {
@@ -103,31 +73,23 @@ class CensorTrimmed extends Component {
 
     render() {
 
-        const { activeItem } = this.state
-
         let trimmed = this.state.trimmed.map((data) => {
             let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
             let time = toHms(data.proxy.format.duration).split('.')[0] || "";
-            // if(!data.wfstatus.censored || data.wfstatus.buffer)
-            //     return;
-            let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            if(!data.wfstatus.censored || data.wfstatus.buffer)
+                 return;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
             let active = this.state.active === data.trim_id ? 'active' : '';
             return (
                 <Table.Row
                     negative={rowcolor}
-                    positive={data.wfstatus.wfsend}
-                    warning={!data.wfstatus.trimmed}
+                    positive={data.wfstatus.checked}
+                    warning={!data.wfstatus.kmedia}
                     className={active} key={data.trim_id} onClick={() => this.selectFile(data)}
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    {/*<Table.Cell>{renamed}</Table.Cell>*/}
-                    {/*<Table.Cell>{buffer}</Table.Cell>*/}
-                    {/*<Table.Cell negative={!data.wfstatus.wfsend}>{wfsend}</Table.Cell>*/}
                 </Table.Row>
             )
         });
@@ -141,16 +103,6 @@ class CensorTrimmed extends Component {
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
                         </Modal>
                     </Menu.Item>
-                    <Menu.Menu position='left'>
-                        <Menu.Item>
-                            {/*<Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>} */}
-                                   {/*open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>*/}
-                                {/*<Modal.Content>*/}
-                                    {/*<CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>*/}
-                                {/*</Modal.Content>*/}
-                            {/*</Modal>*/}
-                        </Menu.Item>
-                    </Menu.Menu>
                     <Menu.Menu position='right'>
                         <Menu.Item>
                             <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
@@ -162,9 +114,6 @@ class CensorTrimmed extends Component {
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Duration</Table.HeaderCell>
-                            {/*<Table.HeaderCell width={1}>RNM</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>BUF</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>SND</Table.HeaderCell>*/}
                         </Table.Row>
                     </Table.Header>
 

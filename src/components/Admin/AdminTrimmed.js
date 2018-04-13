@@ -128,6 +128,13 @@ class AdminTrimmed extends Component {
         });
     };
 
+    setRemoved = () => {
+        let file_data = this.state.file_data;
+        console.log(":: Censor - set removed: ", file_data);
+        this.setState({ disabled: true });
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+    };
+
     render() {
 
         const { activeItem } = this.state
@@ -178,6 +185,9 @@ class AdminTrimmed extends Component {
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
                             </Modal>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button color='red' onClick={this.setRemoved} >Remove</Button>
                         </Menu.Item>
                     </Menu.Menu>
                     <Menu.Menu position='right'>
