@@ -49,7 +49,8 @@ class AdminTrimmed extends Component {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 console.log("The file already got unit!");
-            this.setState({ units: units, disabled: false});
+            //this.setState({ units: units, disabled: false});
+            this.setState({ units: units, disabled: !data.wfstatus.wfsend});
         });
     };
 
