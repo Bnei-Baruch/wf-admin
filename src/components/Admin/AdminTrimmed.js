@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Input, Select } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
@@ -13,8 +13,10 @@ class AdminTrimmed extends Component {
         open: false,
         trimmed: [],
         file_data: {},
+        input_id: "",
         ival: null,
         sending: false,
+        special: "backup",
         tags: {},
         units: [],
 
@@ -87,45 +89,27 @@ class AdminTrimmed extends Component {
         this.setState({open: false});
     };
 
+    setSpecial = (e, data) => {
+        console.log(":: Selected send options: ", data.value);
+        let special = data.value;
+        this.setState({special});
+    };
+
     sendFile = () => {
         let file_data = this.state.file_data;
-        console.log(":: Going to send File: ", file_data);
+        let special = this.state.special;
+        console.log(":: Going to send File: ", file_data + " : to: ", special);
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, disabled: true });
-        setTimeout(() => this.setState({ sending: false }), 5000);
-        let cont = file_data.line.content_type;
-        let colt = file_data.line.collection_type;
-        let artt = file_data.line.artifact_type;
-        let hag = file_data.line.holiday;
-        let lect = file_data.line.lecturer;
-        if (cont.match(/^(CONGRESS|VIRTUAL_LESSON)$/)) {
-            file_data.line.require_test = true;
-        }
-        file_data.wfstatus.buffer = file_data.line.require_test;
-
-        file_data.wfstatus.wfsend = true;
-        if(cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/) && colt !== "CONGRESS" && artt !== "KITEI_MAKOR") {
-            file_data.wfstatus.censored = hag;
-        }
-        if(cont === "MEAL" && colt !== "CONGRESS" && lect === "rav") {
-            file_data.wfstatus.censored = true;
-            file_data.wfstatus.buffer = false;
-        }
-        if(colt !== "CONGRESS" && cont === "FULL_LESSON") {
-            file_data.wfstatus.backup = true;
-        }
-        if(colt === "CONGRESS") {
-            file_data.wfstatus.buffer = true;
-        }
-        if(!file_data.wfstatus.censored && !file_data.wfstatus.buffer) {
-            if (cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/)) {
-                file_data.wfstatus.kmedia = true;
-            }
-        }
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
-        });
+        setTimeout(() => {
+            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
+            this.setState({ sending: false });
+        }, 1000);
+        // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        //     console.log(":: PUT Respond: ",cb);
+        //     // FIXME: When API change this must be error recovering
+        //     fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
+        // });
     };
 
     setRemoved = () => {
@@ -135,9 +119,24 @@ class AdminTrimmed extends Component {
         fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
+    recoverRemoved = () => {
+        let id = this.state.input_id;
+        console.log(":: Censor - going rocover id: ", id);
+        this.setState({ disabled: true });
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${id}/wfstatus/removed?value=false`, { method: 'POST',})
+    };
+
     render() {
 
-        const { activeItem } = this.state
+        const send_options = [
+            { key: 'backup', text: 'Backup', value: 'backup' },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
+            { key: 'buffer', text: 'Buffer', value: 'buffer' },
+            { key: 'airbox', text: 'AirBox', value: 'airbox' },
+            { key: 'censor', text: 'Censor', value: 'censor' },
+            { key: 'metus', text: 'Metus', value: 'metus' },
+            //{ key: 'fix', text: 'Fix', value: 'fix' },
+        ];
 
         let trimmed = this.state.trimmed.map((data) => {
             let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -147,7 +146,10 @@ class AdminTrimmed extends Component {
             if(this.props.removed && data.wfstatus.removed)
                 return;
             let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            let backup = data.wfstatus.backup ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            let kmedia = data.wfstatus.kmedia ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            let metus = data.wfstatus.metus ? <Icon name='checkmark'/> : <Icon name='close'/>;
+            let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
@@ -161,9 +163,9 @@ class AdminTrimmed extends Component {
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{renamed}</Table.Cell>
-                    <Table.Cell>{buffer}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.wfsend}>{wfsend}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.backup}>{backup}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.kmedia}>{kmedia}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.metus}>{metus}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -189,8 +191,15 @@ class AdminTrimmed extends Component {
                         <Menu.Item>
                             <Button color='red' onClick={this.setRemoved} >Remove</Button>
                         </Menu.Item>
+                        <Menu.Item>
+                            <Input placeholder='Put ID here...' onChange={e => this.setState({input_id: e.target.value})} />
+                            <Button color='teal' icon onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                        </Menu.Item>
                     </Menu.Menu>
                     <Menu.Menu position='right'>
+                        <Menu.Item>
+                            <Select options={send_options} defaultValue='backup' onChange={(e,data) => this.setSpecial(e,data)} />
+                        </Menu.Item>
                         <Menu.Item>
                             <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
                         </Menu.Item>
@@ -201,9 +210,9 @@ class AdminTrimmed extends Component {
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>RNM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>SND</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>BA</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>KM</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ME</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
