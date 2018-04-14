@@ -98,6 +98,7 @@ class IngestTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
+                            locale='he'
                             maxDate={moment()}
                             minDate={moment().add(-40, "days")}
                             selected={this.state.startDate}

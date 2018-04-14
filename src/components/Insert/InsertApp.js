@@ -264,7 +264,7 @@ class InsertApp extends Component {
         let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
 
         return (
-            <Container>
+            <Container className='insert_app' >
                 <Segment clearing>
                     {this.props.insert === "update" ? update_style : ""}
                     <Header floated='left' >
