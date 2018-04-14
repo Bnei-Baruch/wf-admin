@@ -2,6 +2,73 @@
 export const EMPTY_ARRAY  = Object.freeze([]);
 export const EMPTY_OBJECT = Object.freeze({});
 
+export const content_options = [
+    { value: 'LESSON_PART', text: ' ‏שיעור', icon: 'student' },
+    //{ value: 'FRIENDS_GATHERING', text: ' ‏חברים', icon: 'users' },
+    { value: 'VIRTUAL_LESSON', text: ' ‏וובינר', icon: 'conversation' },
+    { value: 'VIDEO_PROGRAM_CHAPTER', text: ' ‏תוכנית', icon: 'record' },
+    { value: 'CLIP', text: ' ‏קליפ', icon: 'film' },
+    { value: 'MEAL', text: ' ‏סעודה', icon: 'food' },
+    { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
+    { value: 'ARTICLE', text: 'מאמרים ', icon: 'newspaper' },
+    //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
+];
+
+export const article_options = [
+    { value: 'article', text: 'מאמרים ', icon: 'newspaper' },
+    { value: 'publication', text: 'פירסומים ', icon: 'announcement' },
+];
+
+export const upload_options = [
+    //{ value: 'article', text: 'מאמרים ', icon: 'newspaper' },
+    //{ value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: true },
+    { value: 'dibuv', text: 'דיבוב', icon: 'translate' },
+    { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
+    { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit' },
+    { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright' },
+    { value: 'tamlil', text: 'תמליל', icon: 'indent' },
+    { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline' },
+];
+
+export const mime_list = {
+    "application/msword": "doc",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "audio/mpeg": "mp3",
+    "audio/mp3": "mp3",
+    "video/mp4": "mp4",
+    "application/zip": "zip"
+};
+
+export const language_options = [
+    { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
+    { key: 'ru', value: 'rus', flag: 'ru', text: 'Russian' },
+    { key: 'en', value: 'eng', flag: 'us', text: 'English' },
+    { key: 'es', value: 'spa', flag: 'es', text: 'Spanish' },
+    { key: 'fr', value: 'fre', flag: 'fr', text: 'French' },
+    { key: 'it', value: 'ita', flag: 'it', text: 'Italian' },
+    { key: 'de', value: 'ger', flag: 'de', text: 'German' },
+    { key: 'tr', value: 'trk', flag: 'tr', text: 'Turkish' },
+    { key: 'pt', value: 'por', flag: 'pt', text: 'Portuguese' },
+    { key: 'bg', value: 'bul', flag: 'bg', text: 'Bulgarian' },
+    { key: 'ka', value: 'geo', flag: 'ge', text: 'Georgian' },
+    { key: 'ro', value: 'ron', flag: 'ro', text: 'Romanian' },
+    { key: 'hu', value: 'hun', flag: 'hu', text: 'Hungarian' },
+    { key: 'sv', value: 'swe', flag: 'se', text: 'Swedish' },
+    { key: 'lt', value: 'lit', flag: 'lt', text: 'Lithuanian' },
+    { key: 'hr', value: 'hrv', flag: 'hr', text: 'Croatian' },
+    { key: 'ja', value: 'jpn', flag: 'jp', text: 'Japanese' },
+    { key: 'sl', value: 'slv', flag: 'si', text: 'Slovenian' },
+    { key: 'pl', value: 'pol', flag: 'pl', text: 'Polish' },
+    { key: 'no', value: 'nor', flag: 'no', text: 'Norwegian' },
+    { key: 'lv', value: 'lav', flag: 'lv', text: 'Latvian' },
+    { key: 'ua', value: 'ukr', flag: 'ua', text: 'Ukrainian' },
+    { key: 'nl', value: 'dut', flag: 'nl', text: 'Dutch' },
+    { key: 'cn', value: 'chn', flag: 'cn', text: 'Chinese' },
+    { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
+];
+
 export const LANGUAGES = [
   { text: 'עברית', value: 'heb' },
   { text: 'אנגלית', value: 'eng' },
