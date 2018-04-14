@@ -10,10 +10,9 @@ import fr from 'moment/locale/fr';
 import it from 'moment/locale/it';
 import de from 'moment/locale/de';
 import en from 'moment/locale/en-gb';
-import 'react-datepicker/dist/react-datepicker.css';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchSources, fetchTags, fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../shared/tools';
+import { fetchSources, fetchTags, fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../../shared/tools';
 
 import {
     content_options,
@@ -265,7 +264,7 @@ class InsertApp extends Component {
         let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
 
         return (
-            <Container className="ui modal fullscreen visible transition">
+            <Container>
                 <Segment clearing>
                     {this.props.insert === "update" ? update_style : ""}
                     <Header floated='left' >

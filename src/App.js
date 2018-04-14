@@ -11,6 +11,7 @@ import MonitorApp from "./components/Monitor/MonitorApp";
 import IngestApp from "./components/Ingest/IngestApp";
 import CensorApp from "./components/Censor/CensorApp";
 import AdminApp from "./components/Admin/AdminApp";
+import ArichaApp from "./components/Aricha/ArichaApp";
 
 class App extends Component {
 
@@ -71,6 +72,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><AdminApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public },
               render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
+          { menuItem: { key: 'aricha', icon: 'paint brush', content: 'Aricha', disabled: false },
+              render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
       ];
 
     return (

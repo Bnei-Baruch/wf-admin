@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Popup, Icon } from 'semantic-ui-react'
-import { fetchUnits, fetchCollections, toHms, getLang } from '../shared/tools';
+import { fetchUnits, fetchCollections, toHms, getLang } from '../../shared/tools';
 import NameHelper from './NameHelper';
 
 class MdbData extends Component {
@@ -60,6 +60,7 @@ class MdbData extends Component {
                     <Table.Cell>
                         <Popup
                             trigger={this.props.upload_type.match(/^(aricha|article|publication)$/) ? "" : <Icon link name='help' />}
+                            mountNode={document.getElementById("ltr-modal-mount")}
                             flowing
                             position='bottom left'
                             hoverable >
