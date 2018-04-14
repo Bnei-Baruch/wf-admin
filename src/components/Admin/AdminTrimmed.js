@@ -81,7 +81,7 @@ class AdminTrimmed extends Component {
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
         });
     };
 
@@ -103,13 +103,13 @@ class AdminTrimmed extends Component {
         fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, disabled: true });
         setTimeout(() => {
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
+            fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
             this.setState({ sending: false });
         }, 1000);
         // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
         //     console.log(":: PUT Respond: ",cb);
         //     // FIXME: When API change this must be error recovering
-        //     fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
+        //     fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
         // });
     };
 

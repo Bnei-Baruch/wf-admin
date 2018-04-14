@@ -22,7 +22,9 @@ class App extends Component {
         wf_ingest: false,
         wf_censor: false,
         wf_admin: false,
+        wf_aricha: false,
         wf_public: false,
+
     };
 
     componentDidMount() {
@@ -48,9 +50,10 @@ class App extends Component {
         let wf_ingest = (user.roles.filter(role => role === 'wf_ingest').length) > 0;
         let wf_censor = (user.roles.filter(role => role === 'wf_censor').length) > 0;
         let wf_admin = (user.roles.filter(role => role === 'wf_admin').length) > 0;
+        let wf_aricha = (user.roles.filter(role => role === 'wf_aricha').length) > 0;
         console.log(":: App - got user: ", user);
         if(wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha});
         } else {
             alert("Access denied!");
             client.signoutRedirect();
@@ -72,7 +75,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><AdminApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public },
               render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'aricha', icon: 'paint brush', content: 'Aricha', disabled: false },
+          { menuItem: { key: 'aricha', icon: 'paint brush', content: 'Aricha', disabled: !this.state.wf_aricha },
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
       ];
 
