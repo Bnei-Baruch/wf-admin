@@ -75,7 +75,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><AdminApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: !this.state.wf_public },
               render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'aricha', icon: 'paint brush', content: 'Aricha', disabled: !this.state.wf_aricha },
+          { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: !this.state.wf_aricha },
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
       ];
 

@@ -12,26 +12,22 @@ class AchareyAricha extends Component {
         active: null,
         disabled: true,
         open: false,
-        trimmed: [],
+        aricha: [],
         file_data: {},
         input_id: "",
         ival: null,
         sending: false,
         special: "backup",
-        tags: {},
         units: [],
 
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
+        let ival = setInterval(() => getData('bdika', (data) => {
+                if (JSON.stringify(this.state.aricha) !== JSON.stringify(data))
+                    this.setState({aricha: data})
             }), IVAL );
         this.setState({ival});
-        getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
-            this.setState({tags});
-        });
     };
 
     componentWillUnmount() {
@@ -44,7 +40,7 @@ class AchareyAricha extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({source, active: data.trim_id, file_data: data, disabled: true});
+        this.setState({source, active: data.aricha_id, file_data: data, disabled: true});
         let sha1 = data.original.format.sha1;
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
@@ -69,8 +65,8 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
-        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
-        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}p.mp4`;
+        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}o.mp4`;
+        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
         file_data.line = newline;
         file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
@@ -79,11 +75,11 @@ class AchareyAricha extends Component {
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, open: false});
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
-        });
+        // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}`, file_data, (cb) => {
+        //     console.log(":: PUT Respond: ",cb);
+        //     // FIXME: When API change this must be error recovering
+        //     fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
+        // });
     };
 
     onCancel = (data) => {
@@ -101,24 +97,19 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         let special = this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, disabled: true });
         setTimeout(() => {
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
+            //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
             this.setState({ sending: false });
         }, 1000);
-        // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-        //     console.log(":: PUT Respond: ",cb);
-        //     // FIXME: When API change this must be error recovering
-        //     fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
-        // });
     };
 
     setRemoved = () => {
         let file_data = this.state.file_data;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     recoverRemoved = () => {
@@ -140,10 +131,10 @@ class AchareyAricha extends Component {
             //{ key: 'fix', text: 'Fix', value: 'fix' },
         ];
 
-        let trimmed = this.state.trimmed.map((data) => {
-            let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+        let aricha = this.state.aricha.map((data) => {
+            let name = (data.wfstatus.aricha) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
+            let time = moment.unix(data.aricha_id.substr(1)).format("HH:mm:ss") || "";
             //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             if(this.props.removed && data.wfstatus.removed)
                 return;
@@ -155,13 +146,13 @@ class AchareyAricha extends Component {
             let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
-            let active = this.state.active === data.trim_id ? 'active' : '';
+            let active = this.state.active === data.aricha_id ? 'active' : '';
             return (
                 <Table.Row
                     negative={rowcolor}
                     positive={data.wfstatus.wfsend}
-                    warning={!data.wfstatus.trimmed}
-                    className={active} key={data.trim_id} onClick={() => this.selectFile(data) }
+                    warning={!data.wfstatus.aricha}
+                    className={active} key={data.aricha_id} onClick={() => this.selectFile(data) }
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
@@ -184,7 +175,7 @@ class AchareyAricha extends Component {
                     <Menu.Menu position='left'>
                         <Menu.Item>
                             <Modal { ...this.props }
-                                   trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openInsert} >Insert</Button>}
+                                   trigger={<Button disabled={false} color='blue' onClick={this.openInsert} >Insert</Button>}
                                    closeOnDimmerClick={true}
                                    closeIcon={true}
                                    onClose={this.onCancel}
@@ -224,7 +215,7 @@ class AchareyAricha extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {trimmed}
+                        {aricha}
                     </Table.Body>
                 </Table>
             </Segment>
