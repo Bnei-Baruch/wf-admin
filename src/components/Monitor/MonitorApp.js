@@ -25,9 +25,10 @@ class MonitorApp extends Component {
                 <Grid columns={2} padded='horizontally' className='monitor_app'>
                     <Grid.Column>
                         <Popup
-                            trigger={<Button size='mini' circular icon='settings' className="settings_btn"></Button>}
+                            trigger={<Button size='mini' circular icon='settings' className="settings_btn" />}
                             flowing
                             hoverable
+                            mountNode={document.getElementById("ltr-modal-mount")}
                         >
                             <p><Checkbox label='Hide Removed' onClick={this.toggleRemoved} checked={this.state.removed} /></p>
                             <p><Checkbox label='Hide Lessons' onClick={this.toggleLesson} checked={this.state.lesson} /></p>
