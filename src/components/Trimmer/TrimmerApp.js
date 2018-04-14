@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Segment, Table, Message, Button, Checkbox } from 'semantic-ui-react'
+import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
@@ -115,7 +115,6 @@ export default class TrimmerApp extends Component {
     toggleLelomikud = () => this.setState({ lelomikud: !this.state.lelomikud });
 
     render() {
-
         return (
             <Table className="table_main">
                 <Table.Row>
@@ -133,7 +132,7 @@ export default class TrimmerApp extends Component {
                 </Table.Row>
                 <Table.Row>
                     <Table.Cell>
-                        <Message>{this.state.trim_meta.file_name}</Message>
+                        <Segment color='blue' textAlign='center' raised ><b>{this.state.trim_meta.file_name}</b></Segment>
                     </Table.Cell>
                     <Table.Cell>
                         <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />

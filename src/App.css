@@ -23,6 +23,10 @@ body {
     background-color: #21BA45!important;
 }
 
+.input_idrecover {
+    width: 95px!important;
+}
+
 .trimmer_control .ui.button:hover {
     background-color: #2185D0!important;
 }
