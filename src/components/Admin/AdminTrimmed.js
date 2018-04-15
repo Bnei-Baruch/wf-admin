@@ -107,8 +107,8 @@ class AdminTrimmed extends Component {
         this.setState({ ...file_data, sending: true, disabled: true });
         setTimeout(() => {
             fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
-            this.setState({ sending: false });
-        }, 1000);
+            this.setState({ sending: false, disabled: false });
+        }, 2000);
         // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
         //     console.log(":: PUT Respond: ",cb);
         //     // FIXME: When API change this must be error recovering
