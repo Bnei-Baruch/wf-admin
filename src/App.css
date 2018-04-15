@@ -27,9 +27,52 @@ body {
     width: 95px!important;
 }
 
-.trimmer_control .ui.button:hover {
+/* START TRIMMER CONTROL */
+
+.btn_speed {
+    width: 1px!important;
+    padding: .18571429em 0.9em 1.8571429em!important;
+}
+
+.trimmer_control {
+    padding: .5em .5em!important;
+}
+
+.time_control .ui.button {
+    color: black;
+    background: #d0dce8;
+    border-bottom-color: black!important;
+}
+
+.frame_control .ui.button {
+    color: black;
+    background: #ccded1;
+}
+
+.time_control .ui.buttons .or:before {
+    font-size: 13px!important;
+    color: black;
+}
+
+.speed_control .ui.buttons .or:before {
+    font-size: 13px!important;
+    color: black;
+}
+
+.frame_control .ui.buttons .or:before {
+    font-size: 13px!important;
+    color: black;
+}
+
+.time_control .ui.button:hover {
     background-color: #2185D0!important;
 }
+
+.frame_control .ui.button:hover {
+    background-color: #2185D0!important;
+}
+
+/* END TRIMMER CONTROL */
 
 .trim_src_dropdown {
     min-width: 7em!important;
@@ -93,15 +136,6 @@ body {
 .trimmer_modal {
     min-width: 1120px!important;
     max-width: 1120px!important;
-}
-
-.btn_speed {
-    width: 1px!important;
-    padding: .18571429em 0.9em 1.8571429em!important;
-}
-
-.trimmer_control {
-    padding: .5em .5em!important;
 }
 
 .datepickercs {

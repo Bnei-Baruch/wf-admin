@@ -8,10 +8,10 @@ export default class TrimmerControls extends Component {
         const player = this.props.player;
 
         return (
-            <Fragment >
-                <Segment raised textAlign='center' className="trimmer_control">
+            <Fragment className="trimmer_control">
+                <Segment raised textAlign='center'>
                     Speed
-                    <Button.Group size='mini' >
+                    <Button.Group size='mini' className="speed_control">
                         <Button className="btn_speed" onClick={() => player.node.playbackRate -= .25} />
                         <Button.Or text='<' />
                         <Button onClick={() => player.node.playbackRate = 1} >1</Button>
@@ -19,7 +19,7 @@ export default class TrimmerControls extends Component {
                         <Button className="btn_speed" onClick={() => player.node.playbackRate += .25} />
                     </Button.Group><br />
                 </Segment>
-                <Segment raised textAlign='center' className="trimmer_control">
+                <Segment raised textAlign='center' className="time_control">
                     Time
                     <Button.Group size='mini' >
                         <Button onClick={() => player.node.currentTime -= 300}>-</Button>
@@ -47,7 +47,7 @@ export default class TrimmerControls extends Component {
                         <Button onClick={() => player.node.currentTime += 1}>+</Button>
                     </Button.Group>
                 </Segment>
-                <Segment raised textAlign='center' className="trimmer_control">
+                <Segment raised textAlign='center' className="frame_control">
                     Frames
                     <Button.Group size='mini' >
                         <Button onClick={() => player.node.currentTime -= 1/25.0}>-</Button>
