@@ -104,6 +104,7 @@ class CensorTrimmer extends Component {
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
+                            scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
                             options={trim_data}
