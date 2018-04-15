@@ -32,7 +32,7 @@ export default class TrimmerControls extends Component {
                         <Button onClick={() => player.node.currentTime += 120}>+</Button>
                     </Button.Group>
                     <Button.Group size='mini'>
-                        <Button onClick={() => player.node.currentTime -= 1}>-</Button>
+                        <Button onClick={() => player.node.currentTime -= 60}>-</Button>
                         <Button.Or text='1m' />
                         <Button onClick={() => player.node.currentTime += 60}>+</Button>
                     </Button.Group>
