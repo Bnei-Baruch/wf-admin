@@ -77,6 +77,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: !this.state.wf_aricha },
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
+          { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: !this.state.wf_aricha },
+              render: () => <Tab.Pane attached={false} >Dgima</Tab.Pane> },
       ];
 
     return (
