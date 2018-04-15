@@ -160,6 +160,7 @@ class AdminTrimmed extends Component {
                     negative={rowcolor}
                     positive={data.wfstatus.wfsend}
                     warning={!data.wfstatus.trimmed}
+                    disabled={!data.wfstatus.trimmed}
                     className={active} key={data.trim_id} onClick={() => this.selectFile(data) }
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>

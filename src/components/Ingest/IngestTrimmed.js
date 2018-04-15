@@ -36,20 +36,14 @@ class IngestTrimmed extends Component {
         clearInterval(this.state.ival);
     };
 
-    selectFile = (data) => {
-        console.log(":: Trimmed - selected file: ",data);
+    selectFile = (file_data) => {
+        console.log(":: Trimmed - selected file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
-        let path = data.proxy.format.filename;
+        let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({source, active: data.trim_id, file_data: data, disabled: true});
-        let sha1 = data.parent.original_sha1;
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-            console.log(":: Trimmer - got units: ", units);
-            if(units.total > 0)
-                console.log("The file already got unit!");
-            //this.setState({ units: units, disabled: (units.total > 0)});
-            this.setState({ units: units, disabled: data.wfstatus.wfsend});
-        });
+        let active = file_data.trim_id;
+        let disabled = file_data.wfstatus.wfsend;
+        this.setState({source, active, file_data, disabled});
     };
 
     getPlayer = (player) => {
@@ -149,6 +143,7 @@ class IngestTrimmed extends Component {
                     negative={rowcolor}
                     positive={data.wfstatus.wfsend}
                     warning={!data.wfstatus.trimmed}
+                    disabled={!data.wfstatus.trimmed}
                     className={active} key={data.trim_id} onClick={() => this.selectFile(data)}
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
