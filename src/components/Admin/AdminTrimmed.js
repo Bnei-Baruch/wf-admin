@@ -44,8 +44,8 @@ class AdminTrimmed extends Component {
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
         this.setState({source, active: data.trim_id, file_data: data, disabled: true});
-        let sha1 = data.original.format.sha1;
-        getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
+        let sha1 = data.parent.original_sha1;
+        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 console.log("The file already got unit!");
