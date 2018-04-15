@@ -101,9 +101,10 @@ class AdminTrimmed extends Component {
     sendFile = () => {
         let file_data = this.state.file_data;
         let special = this.state.special;
+        file_data[special] = true;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
         fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',})
-        this.setState({ sending: true, disabled: true });
+        this.setState({ ...file_data, sending: true, disabled: true });
         setTimeout(() => {
             fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
             this.setState({ sending: false });

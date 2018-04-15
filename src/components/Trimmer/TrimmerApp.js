@@ -32,12 +32,12 @@ export default class TrimmerApp extends Component {
             let buffer = this.props.mode === "wfadmin";
             let secured = data.wfstatus.secured;
             let wfsend = data.wfstatus.wfsend;
-            let fix = data.wfstatus.wfsend;
+            let fixed = !data.wfstatus.wfsend;
             let trim_meta = {
                 "trim_id":wfid, "date":date, "file_name":filename,
                 "parent": { "id": data.trim_id, "capture_id": data.parent.capture_id, "original_sha1": originalsha1, "proxy_sha1": proxysha1, "file_name":filename, "source":this.props.source_meta },
                 "line":line, "inpoints": data.inpoints, "outpoints": data.outpoints,
-                "wfstatus": { "aricha":false, "buffer":buffer, "fix":fix, "trimmed":false, "renamed":false, "wfsend":wfsend, "removed":false, "kmedia":false, "backup":false, "metus":false, "censored":censored, "secured":secured }
+                "wfstatus": { "aricha":false, "buffer":buffer, "fixed":fixed, "trimmed":false, "renamed":false, "wfsend":wfsend, "removed":false, "kmedia":false, "backup":false, "metus":false, "censored":censored, "secured":secured }
                 };
             this.setState({trim_meta: trim_meta});
         } else {
@@ -50,8 +50,8 @@ export default class TrimmerApp extends Component {
             //let inouts = {"inpoints": []};
             //let outpoints = {"outpoints": []};
             let filename = data.stop_name;
-            let censored = this.props.mode === "censor";
-            //let buffer = this.props.mode === "wfadmin";
+            //let censored = this.props.mode === "censor";
+            let buffer = this.props.mode === "wfadmin";
             let secured = data.wfstatus.secured;
             let trim_meta = {
                 "trim_id": wfid, "date": date, "file_name": filename,
@@ -66,7 +66,7 @@ export default class TrimmerApp extends Component {
                 "line": line, "inpoints": [], "outpoints": [],
                 "wfstatus": {
                     "aricha": false,
-                    "buffer": false,
+                    "buffer": buffer,
                     "trimmed": false,
                     "renamed": false,
                     "wfsend": false,
@@ -74,7 +74,7 @@ export default class TrimmerApp extends Component {
                     "kmedia": false,
                     "backup": false,
                     "metus": false,
-                    "censored": censored,
+                    "censored": false,
                     "secured": secured
                 }
             };
