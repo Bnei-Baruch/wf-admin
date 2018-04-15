@@ -92,6 +92,10 @@ body {
     min-width: 7em!important;
 }
 
+.scoped-semantic-ltr .ui.selection.dropdown .menu {
+    max-height: 70rem;
+}
+
 .trim_files_dropdown {
     min-width: 39em!important;
 }
