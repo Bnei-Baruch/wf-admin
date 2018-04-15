@@ -27,6 +27,20 @@ body {
     width: 95px!important;
 }
 
+.admin_table {
+    cursor: pointer!important;
+}
+
+.admin_table .scoped-semantic-ltr .ui.table tr.warning, .scoped-semantic-ltr .ui.table td.warning {
+    background: #aed6b7 !important;
+    color: #20522c !important;
+}
+
+.admin_table .scoped-semantic-ltr .ui.selectable.table tr.warning:hover, .scoped-semantic-ltr .ui.table tr td.selectable.warning:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.warning {
+    background: #aed6b7 !important;
+    color: #20522c !important;
+}
+
 /* START TRIMMER CONTROL */
 
 .btn_speed {

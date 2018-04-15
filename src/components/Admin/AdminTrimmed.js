@@ -162,15 +162,14 @@ class AdminTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor}
                     positive={data.wfstatus.wfsend}
-                    warning={!data.wfstatus.trimmed}
                     disabled={!data.wfstatus.trimmed}
                     className={active} key={data.trim_id} onClick={() => this.selectFile(data) }
                 >
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.backup}>{backup}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.kmedia}>{kmedia}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.metus}>{metus}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.backup} warning={data.wfstatus.backup}>{backup}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.kmedia} warning={data.wfstatus.kmedia}>{kmedia}</Table.Cell>
+                    <Table.Cell negative={!data.wfstatus.metus} warning={data.wfstatus.metus}>{metus}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -210,7 +209,7 @@ class AdminTrimmed extends Component {
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
-                <Table selectable compact='very' basic structured className="ingest_table">
+                <Table selectable compact='very' basic structured className="admin_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>

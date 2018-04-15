@@ -29,7 +29,7 @@ class LoginPage extends Component {
         return (
             <Container textAlign='center' >
                 <Message size='massive'>
-                    <Message.Header {...this.props}>
+                    <Message.Header>
                         {this.props.user === null ? "Archive WorkFlow" : "Welcome, "+this.props.user.name}
                         {this.props.user === null ? "" : profile}
                     </Message.Header>
