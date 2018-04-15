@@ -16,6 +16,7 @@ class AdminTrimmed extends Component {
         input_id: "",
         ival: null,
         sending: false,
+        renaming: false,
         special: "backup",
         tags: {},
         units: [],
@@ -77,7 +78,8 @@ class AdminTrimmed extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false});
+        this.setState({...file_data, open: false, renaming: true});
+        setTimeout(() => this.setState({ renaming: false }), 2000);
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
@@ -177,13 +179,13 @@ class AdminTrimmed extends Component {
                 <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
                 <Menu size='mini' secondary >
                     <Menu.Item>
-                        <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
+                        <Modal trigger={<Button color='brown' disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
                         </Modal>
                     </Menu.Item>
                     <Menu.Menu position='left'>
                         <Menu.Item>
-                            <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} color='blue' onClick={this.openCit} >Rename</Button>}
+                            <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} loading={this.state.renaming} color='blue' onClick={this.openCit} >Rename</Button>}
                                    onClose={this.onCancel} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content>
                                     <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
