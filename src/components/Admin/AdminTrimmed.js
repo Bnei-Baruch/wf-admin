@@ -132,6 +132,9 @@ class AdminTrimmed extends Component {
         let fix_uid = data.value;
         file_data.line.fix_unit_uid = fix_uid;
         this.setState({...file_data, fix_uid, disabled: false});
+        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+            console.log(":: PUT Fix UID in WFDB: ",cb);
+        });
     };
 
     sendFile = () => {
@@ -146,7 +149,9 @@ class AdminTrimmed extends Component {
             // FIXME: When API change here must be callback with updated state
             file_data.wfstatus.fixed = true;
             file_data.wfstatus.wfsend = true;
-            this.setState({ ...file_data, sending: false, disabled: false, fixReq: false});
+            // Here must be normal solution
+            let special = this.state.special === "fix" ? "backup" : this.state.special;
+            this.setState({ ...file_data, sending: false, disabled: false, fixReq: false, special});
         }, 3000);
     };
 
