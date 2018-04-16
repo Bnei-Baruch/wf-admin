@@ -14,6 +14,7 @@ class AdminTrimmed extends Component {
         trimmed: [],
         file_data: {},
         fixReq: false,
+        fix_uid: "",
         input_id: "",
         ival: null,
         sending: false,
@@ -21,6 +22,7 @@ class AdminTrimmed extends Component {
         special: "backup",
         tags: {},
         units: [],
+        units_options: [],
 
     };
 
@@ -48,21 +50,27 @@ class AdminTrimmed extends Component {
         this.setState({source, active: file_data.trim_id, file_data: file_data, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+            let units_options = units.data.map((unit) => {
+                return ({ key: unit.uid, text: unit.i18n.he.name, value: unit.uid })
+            });
+            this.setState({units_options});
+            console.log(":: unit options: ", units_options);
             if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total === 1) {
                 // TODO: Here we need to force fixed send
                 // we need to know previus id and trigger to remove it
                 console.log(":: Fix needed - unit: ", units);
                 file_data.line.fix_unit_uid = units.data[0].uid;
-                this.setState({ ...file_data, units: units, fixReq: true });
+                this.setState({ ...file_data, units: units, fixReq: true, special: "fix" });
             } else if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total > 1) {
                 // TODO: Here we need to show options to user
                 console.log(":: Fix needed - user must choose from units: ", units);
+                this.setState({units: units, fixReq: true, disabled: true, special: "fix" });
             } else if(file_data.wfstatus.wfsend && file_data.wfstatus.fixed) {
                 // Maybe we need indicate somehow about fixed unit
                 console.log(":: Fix already done - ", units);
             } else if(file_data.wfstatus.wfsend && !file_data.wfstatus.fixed) {
                 console.log(":: File was normally sent - ", units);
-                this.setState({ units: units, disabled: !file_data.wfstatus.wfsend});
+                this.setState({ units: units, fixReq: false, disabled: !file_data.wfstatus.wfsend});
             } else {
                 console.log(":: What just happend? - ", units);
             }
@@ -98,7 +106,7 @@ class AdminTrimmed extends Component {
         file_data.wfstatus.wfsend = false;
         // <--
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false, renaming: true, fixReq: true});
+        this.setState({...file_data, open: false, renaming: true, fixReq: true, disabled: true});
         setTimeout(() => this.setState({ renaming: false }), 2000);
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -113,9 +121,17 @@ class AdminTrimmed extends Component {
     };
 
     setSpecial = (e, data) => {
-        console.log(":: Selected send options: ", data.value);
+        console.log(":: Selected send options: ", e, data);
         let special = data.value;
         this.setState({special});
+    };
+
+    selectFixUID = (e, data) => {
+        console.log(":: Selected fix_uid option: ", data.value);
+        let file_data = this.state.file_data;
+        let fix_uid = data.value;
+        file_data.line.fix_unit_uid = fix_uid;
+        this.setState({...file_data, fix_uid, disabled: false});
     };
 
     sendFile = () => {
@@ -123,17 +139,15 @@ class AdminTrimmed extends Component {
         let special = this.state.special;
         file_data.wfstatus[special] = true;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, { method: 'POST',});
         this.setState({ ...file_data, sending: true, disabled: true });
         setTimeout(() => {
             fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
-            this.setState({ sending: false, disabled: false });
-        }, 2000);
-        // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-        //     console.log(":: PUT Respond: ",cb);
-        //     // FIXME: When API change this must be error recovering
-        //     fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${special}`);
-        // });
+            // FIXME: When API change here must be callback with updated state
+            file_data.wfstatus.fixed = true;
+            file_data.wfstatus.wfsend = true;
+            this.setState({ ...file_data, sending: false, disabled: false, fixReq: false});
+        }, 3000);
     };
 
     setRemoved = () => {
@@ -197,6 +211,12 @@ class AdminTrimmed extends Component {
             )
         });
 
+        // let units_options = this.state.units.data.map((unit) => {
+        //     return (
+        //         { key: unit.uid, text: unit.i18n.he.name, value: unit.uid }
+        //     )
+        // });
+
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
@@ -225,10 +245,13 @@ class AdminTrimmed extends Component {
                     </Menu.Menu>
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <Select options={this.state.fixReq ? send_fix : send_options} defaultValue='backup' onChange={(e,data) => this.setSpecial(e,data)} />
+                            {this.state.fixReq ? "" : <Select options={send_options} placeholder='Send options' onChange={(e,data) => this.setSpecial(e,data)} />}
                         </Menu.Item>
                         <Menu.Item>
-                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
+                            {this.state.fixReq && this.state.units.total > 1 ? <Select placeholder='Choose UID' options={this.state.units_options} onChange={(e,data) => this.selectFixUID(e,data)} /> : ""}
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>{this.state.fixReq ? "Fix" : "Send"}</Button>
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
