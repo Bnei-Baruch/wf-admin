@@ -47,10 +47,21 @@ class AdminTrimmed extends Component {
         this.setState({source, active: data.trim_id, file_data: data, disabled: true});
         let sha1 = data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-            console.log(":: Trimmer - got units: ", units);
-            if(units.total > 0)
-                console.log("The file already got unit!");
-            //this.setState({ units: units, disabled: false});
+            if(!data.wfstatus.wfsend && !data.wfstatus.fixed && units.total === 1) {
+                // TODO: Here we need to force fixed send
+                // we need to know previus id and trigger to remove it
+                console.log(":: Fix needed - unit: ", units);
+            } else if(!data.wfstatus.wfsend && !data.wfstatus.fixed && units.total > 1) {
+                // TODO: Here we need to show options to user
+                console.log(":: Fix needed - user must choose from units: ", units);
+            } else if(data.wfstatus.wfsend && data.wfstatus.fixed) {
+                // Maybe we need indicate somehow about fixed unit
+                console.log(":: Fix already done - ", units);
+            } else if(data.wfstatus.wfsend && !data.wfstatus.fixed) {
+                console.log(":: File was normally sent - ", units);
+            } else {
+                console.log(":: What just happend? - ", units);
+            }
             this.setState({ units: units, disabled: !data.wfstatus.wfsend});
         });
     };
@@ -77,6 +88,12 @@ class AdminTrimmed extends Component {
         file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
+        // -->
+        // Following status indicate that file going to be fixed
+        // TODO: Next action must be fixed send
+        file_data.wfstatus.fixed = false;
+        file_data.wfstatus.wfsend = false;
+        // <--
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, open: false, renaming: true});
         setTimeout(() => this.setState({ renaming: false }), 2000);
