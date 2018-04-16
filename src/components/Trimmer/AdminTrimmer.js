@@ -87,7 +87,7 @@ class AdminTrimmer extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Menu secondary >
+                <Menu secondary>
                     <Menu.Item>
                         <Dropdown
                             compact
@@ -139,7 +139,7 @@ class AdminTrimmer extends Component {
                         source={this.state.source}
                         file_data={this.state.file_data}
                         source_meta={this.state.trim_src}
-                        mode="ingest"
+                        mode="wfadmin"
                         closeModal={this.onClose}
                     />
                 </Modal>
