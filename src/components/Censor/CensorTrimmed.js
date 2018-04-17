@@ -11,6 +11,7 @@ class CensorTrimmed extends Component {
         open: false,
         trimmed: [],
         file_data: {},
+        fixReq: false,
         ival: null,
         sending: false,
         tags: {},
@@ -34,19 +35,46 @@ class CensorTrimmed extends Component {
         clearInterval(this.state.ival);
     };
 
-    selectFile = (data) => {
-        console.log(":: Trimmed - selected file: ",data);
+    selectFile = (file_data) => {
+        console.log(":: Trimmed - selected file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
-        let path = data.proxy.format.filename;
+        let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({source, active: data.trim_id, file_data: data, disabled: true});
-        let sha1 = data.parent.original_sha1;
+        this.setState({source, active: file_data.trim_id, file_data, disabled: true});
+        let sha1 = file_data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-            console.log(":: Trimmer - got units: ", units);
-            if(units.total > 0)
-                console.log("The file already got unit!");
-            //this.setState({ units: units, disabled: false});
-            this.setState({ units: units, disabled: data.wfstatus.kmedia});
+            if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total === 1) {
+                console.log(":: Fix needed - unit: ", units);
+                file_data.line.fix_unit_uid = units.data[0].uid;
+                this.setState({ ...file_data, units: units, fixReq: true });
+                this.selectFixUID(units.data[0].uid);
+            } else if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total > 1) {
+                console.log(":: Fix needed - user must choose from units: ", units);
+                let units_options = units.data.map((unit) => {
+                    return ({ key: unit.uid, text: unit.i18n.he.name, value: unit.uid })
+                });
+                this.setState({units: units, fixReq: true, disabled: true, units_options });
+            } else if(file_data.wfstatus.wfsend && file_data.wfstatus.fixed) {
+                // Maybe we need indicate somehow about fixed unit
+                console.log(":: Fix already done - ", units);
+                this.setState({units: units, fixReq: false, disabled: false });
+            } else if(file_data.wfstatus.wfsend && !file_data.wfstatus.fixed) {
+                console.log(":: File was normally sent - ", units);
+                this.setState({ units: units, fixReq: false, disabled: !file_data.wfstatus.wfsend});
+            } else {
+                console.log(":: What just happend? - ", units);
+            }
+        });
+    };
+
+    selectFixUID = (uid) => {
+        console.log(":: Selected fix_uid option: ", uid);
+        let file_data = this.state.file_data;
+        let fix_uid = uid;
+        file_data.line.fix_unit_uid = fix_uid;
+        this.setState({...file_data, fix_uid, disabled: false});
+        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+            console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
 
@@ -59,15 +87,23 @@ class CensorTrimmed extends Component {
         let file_data = this.state.file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
-        setTimeout(() => this.setState({ sending: false }), 5000);
         file_data.wfstatus.checked = true;
         file_data.wfstatus.kmedia = true;
         file_data.wfstatus.buffer = true;
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            if(!file_data.wfstatus.secured)
+            if(this.state.fixReq) {
+                fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=fix`);
+            } else {
                 fetch(`http://ffconv1.bbdomain.org:8081/convert?id=${file_data.trim_id}&key=kmedia`);
+            }
+            // FIXME: When API change here must be callback with updated state
+            file_data.wfstatus.fixed = true;
+            file_data.wfstatus.wfsend = true;
+            // Here must be normal solution
+            setTimeout(() => this.setState({ ...file_data, sending: false, disabled: false, fixReq: false }), 3000);
+
         });
     };
 
@@ -76,7 +112,7 @@ class CensorTrimmed extends Component {
         let trimmed = this.state.trimmed.map((data) => {
             let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = toHms(data.proxy.format.duration).split('.')[0] || "";
+            let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
             if(!data.wfstatus.censored || data.wfstatus.buffer)
                  return;
             let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;

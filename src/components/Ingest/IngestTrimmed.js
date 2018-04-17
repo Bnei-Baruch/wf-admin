@@ -43,7 +43,7 @@ class IngestTrimmed extends Component {
         let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
         let active = file_data.trim_id;
-        let disabled = file_data.wfstatus.wfsend;
+        let disabled = file_data.wfstatus.wfsend || file_data.wfstatus.censored;
         this.setState({source, active, file_data, disabled});
     };
 
