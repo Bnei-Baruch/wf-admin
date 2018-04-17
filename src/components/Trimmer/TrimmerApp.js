@@ -132,60 +132,44 @@ export default class TrimmerApp extends Component {
     render() {
         return (
             <Table className='table_main'>
-                <Table.Row>
-                    <Table.Cell
-                        width={5}
-                        className='table_media'>
-                        <MediaPlayer
-                            player={this.getPlayer}
-                            source={this.props.source} />
-                    </Table.Cell>
-                    <Table.Cell
-                        width={1}
-                        className='table_ctls'>
-                        <TrimmerControls
-                            player={this.state.player} />
-                    </Table.Cell>
-                    <Table.Cell
-                        width={3}
-                        className='table_inouts'>
-                        <Segment
-                            raised
-                            textAlign='center'
-                            className='inout_content'>
-                            <InoutControls
-                                onSetPoints={this.getInouts}
-                                player={this.state.player}
-                                inpoints={this.state.trim_meta.inpoints}
-                                outpoints={this.state.trim_meta.outpoints} />
-                        </Segment>
-                    </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                    <Table.Cell>
-                        <Segment
-                            color='blue'
-                            textAlign='center'
-                            raised ><b>{this.state.trim_meta.file_name}</b>
-                        </Segment>
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Checkbox
-                            label='LeloMikud'
-                            onClick={this.toggleLelomikud}
-                            checked={this.state.lelomikud} />
-                    </Table.Cell>
-                    <Table.Cell
-                        textAlign='center'>
-                        <Button
-                            size='big'
-                            color='red'
-                            disabled={!this.state.ioValid}
-                            onClick={this.postTrimMeta}
-                            loading={this.state.loading} >Trim
-                        </Button>
-                    </Table.Cell>
-                </Table.Row>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.Cell width={5} className='table_media'>
+                            <MediaPlayer
+                                player={this.getPlayer}
+                                source={this.props.source} />
+                        </Table.Cell>
+                        <Table.Cell width={1} className='table_ctls'>
+                            <TrimmerControls
+                                player={this.state.player} />
+                        </Table.Cell>
+                        <Table.Cell width={3} className='table_inouts'>
+                            <Segment raised textAlign='center' className='inout_content'>
+                                <InoutControls
+                                    onSetPoints={this.getInouts}
+                                    player={this.state.player}
+                                    inpoints={this.state.trim_meta.inpoints}
+                                    outpoints={this.state.trim_meta.outpoints} />
+                            </Segment>
+                        </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>
+                            <Segment color='blue' textAlign='center' raised ><b>{this.state.trim_meta.file_name}</b>
+                            </Segment>
+                        </Table.Cell>
+                        <Table.Cell>
+                            <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
+                        </Table.Cell>
+                        <Table.Cell textAlign='center'>
+                            <Button size='big' color='red'
+                                    disabled={!this.state.ioValid}
+                                    loading={this.state.loading}
+                                    onClick={this.postTrimMeta}>Trim
+                            </Button>
+                        </Table.Cell>
+                    </Table.Row>
+                </Table.Body>
             </Table>
         );
     }

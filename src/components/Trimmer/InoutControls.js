@@ -10,20 +10,9 @@ export default class InoutControls extends Component {
         outpoints: [],
     };
 
-    componentDidMount() {
-        console.log("-- InoutControls Did Mount :");
-    };
-
-    componentDidUpdate(prevProps) {
-        console.log("-- InoutControls Did Update :");
-        //if(this.state.inpoints.length === 0)
-         //   this.setState({inpoints: this.props.inpoints, outpoints: this.props.outpoints});
-    }
-
     setIn = (i) => {
+        const {inpoints,outpoints} = this.state;
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));
-        let inpoints = this.state.inpoints;
-        let outpoints = this.state.outpoints;
         if(i === null) {
             inpoints[outpoints.length] = currentTime;
         } else {
@@ -34,9 +23,8 @@ export default class InoutControls extends Component {
     };
 
     setOut = (i) => {
+        const {inpoints,outpoints} = this.state;
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));
-        let inpoints = this.state.inpoints;
-        let outpoints = this.state.outpoints;
         if(i === null) {
             outpoints[inpoints.length - 1] = currentTime;
         } else {
@@ -46,22 +34,31 @@ export default class InoutControls extends Component {
         this.props.onSetPoints(inpoints, outpoints);
     };
 
-    jumpPoint = (point, i) => {
+    jumpPoint = (point) => {
         this.props.player.setCurrentTime(point);
     };
 
     render() {
-        let inout = this.state.outpoints.map((outp, i) => {
-            let inp = this.state.inpoints[i];
+        const {inpoints,outpoints} = this.state;
+        let inout = outpoints.map((outp, i) => {
+            let inp = inpoints[i];
             return (
-                <Fragment>
+                <Fragment key={i}>
                     <Button as='div' labelPosition='right'>
-                        <Button icon onClick={() => this.setIn(i)} color='grey' className="inout_btn" />
-                        <Label as='a' basic pointing='left' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(inp ,i)}>{inp !== null ? toHms(inp) : "<- Set in"}</Label>
+                        <Button icon color='grey' className="inout_btn"
+                                onClick={() => this.setIn(i)}/>
+                        <Label as='a' basic pointing='left' color={inp > outp ? 'red' : ''}
+                               onDoubleClick={() => this.jumpPoint(inp)}>
+                            {inp !== null ? toHms(inp) : "<- Set in"}
+                        </Label>
                     </Button>
                     <Button as='div' labelPosition='left' className="inout_btn">
-                        <Label as='a' basic pointing='right' color={inp > outp ? 'red' : ''} onDoubleClick={() => this.jumpPoint(outp, i)}>{outp !== null ? toHms(outp) : "Set out ->"}</Label>
-                        <Button icon onClick={() => this.setOut(i)} color='grey' className="inout_btn" />
+                        <Label as='a' basic pointing='right' color={inp > outp ? 'red' : ''}
+                               onDoubleClick={() => this.jumpPoint(outp)}>
+                            {outp !== null ? toHms(outp) : "Set out ->"}
+                        </Label>
+                        <Button icon color='grey' className="inout_btn"
+                                onClick={() => this.setOut(i)}/>
                     </Button>
                 </Fragment>
             );
@@ -71,14 +68,16 @@ export default class InoutControls extends Component {
             <Fragment >
                 {inout}
                 <Button as='div' labelPosition='right' className="inout_btn">
-                    <Button icon onClick={() => this.setIn(null)} color='grey' className="inout_btn" />
-                    <Label as='a' basic pointing='left' >{
-                        this.state.inpoints[this.state.outpoints.length] !== undefined ?
-                            toHms(this.state.inpoints[this.state.outpoints.length]) : "<- Set in"}</Label>
+                    <Button icon color='grey' className="inout_btn" onClick={() => this.setIn(null)} />
+                    <Label as='a' basic pointing='left'>
+                        {inpoints[outpoints.length] !== undefined ? toHms(inpoints[outpoints.length]) : "<- Set in"}
+                    </Label>
                 </Button>
                 <Button as='div' labelPosition='left' className="inout_btn">
-                    <Label as='a' basic pointing='right' >{"Set out ->"}</Label>
-                    <Button icon onClick={() => this.setOut(null)} color='grey' className="inout_btn" />
+                    <Label as='a' basic pointing='right' >
+                        {"Set out ->"}
+                    </Label>
+                    <Button icon color='grey' className="inout_btn" onClick={() => this.setOut(null)} />
                 </Button>
             </Fragment>
         );

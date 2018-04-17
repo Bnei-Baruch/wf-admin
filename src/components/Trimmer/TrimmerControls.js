@@ -8,7 +8,7 @@ export default class TrimmerControls extends Component {
         const player = this.props.player;
 
         return (
-            <Fragment className="trimmer_control">
+            <Fragment>
                 <Segment raised textAlign='center'>
                     Speed
                     <Button.Group size='mini' className="speed_control">
