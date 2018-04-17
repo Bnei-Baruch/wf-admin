@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {getData, getUnits, IVAL, putData, toHms} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 
 class CensorTrimmed extends Component {
@@ -134,6 +134,7 @@ class CensorTrimmed extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Message size='mini'>
                 <Menu size='mini' secondary >
                     <Menu.Item>
                         <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
@@ -146,6 +147,7 @@ class CensorTrimmed extends Component {
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
+                </Message>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>

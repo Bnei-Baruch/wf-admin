@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Input, Select } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Input, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 
@@ -215,6 +215,7 @@ class AdminTrimmed extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Message size='mini'>
                 <Menu size='mini' secondary>
                     <Menu.Item>
                         <Modal trigger={<Button color='brown' disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
@@ -248,6 +249,7 @@ class AdminTrimmed extends Component {
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
+                </Message>
                 <Table selectable compact='very' basic structured className="admin_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
