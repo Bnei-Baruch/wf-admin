@@ -1,31 +1,20 @@
 import React, { Component } from 'react';
 import 'mediaelement';
-//import 'mediaelement-plugins/dist/markers/markers.js';
-
-// Import stylesheet and shims
 import 'mediaelement/build/mediaelementplayer.min.css';
 
 export default class MediaElement extends Component {
 
-    state = {}
+    state = {};
 
     success = (media, node, instance) => {
-        // Your action when media was successfully loaded
-        //console.log(':: Success: ', media, node, instance);
         this.props.player(instance);
-    }
+    };
 
-    error(media) {
-        // Your action when media had an error loading
+    error = (media) => {
         console.log(':: Error: ', media);
-    }
-
-    // marker(media, time) {
-    //     console.log(':: Marker: ',time + ' - ', media);
-    // }
+    };
 
     render() {
-
         const
             props = this.props,
             sources = JSON.parse(props.sources),
@@ -48,18 +37,14 @@ export default class MediaElement extends Component {
             mediaBody = `${sourceTags.join("\n")}
 				${tracksTags.join("\n")}`,
             mediaHtml = props.mediaType === 'video' ?
-                `<video id="${props.id}" width="${props.width}" height="${props.height}"${(props.poster ? ` poster=${props.poster}` : '')}
-					${(props.controls ? ' controls' : '')}${(props.preload ? ` preload="${props.preload}"` : '')}>
-					${mediaBody}
-				</video>` :
-                `<audio id="${props.id}" width="${props.width}" controls>
-					${mediaBody}
-				</audio>`
+                `<video id="${props.id}" width="${props.width}" height="${props.height}" ${(props.poster ? ` poster=${props.poster}` : '')} 
+					${(props.controls ? ' controls' : '')} ${(props.preload ? `preload="${props.preload}"` : '')}>${mediaBody}</video>`
+                :
+                `<audio id="${props.id}" width="${props.width}" controls>${mediaBody}</audio>`
         ;
 
-        return (<div dangerouslySetInnerHTML={{__html: mediaHtml}}></div>);
-
-    }
+        return (<div dangerouslySetInnerHTML={{__html: mediaHtml}} />);
+    };
 
     componentDidMount() {
 
@@ -74,7 +59,6 @@ export default class MediaElement extends Component {
             pluginPath: './static/media/',
             success: (media, node, instance) => this.success(media, node, instance),
             error: (media, node) => this.error(media, node),
-            //markerCallback: (media, time) => this.marker(media, time),
         });
 
         this.setState({player: new MediaElementPlayer(this.props.id, options)});

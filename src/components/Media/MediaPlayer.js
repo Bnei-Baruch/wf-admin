@@ -3,13 +3,10 @@ import MediaElement from './MediaElement';
 
 export default class MediaPlayer extends Component {
 
-    // Other code
-
     render() {
         const
             sources = [
-                //{src: 'http://10.66.1.122/backup/trimmed/2018-04-05/mlt_o_norav_2018-04-05_lesson_achana_n2_p0_t1522922675p.mp4', type: 'video/mp4'},
-                {src: this.props.source ? this.props.source : 'http://10.66.1.122/backup/captured//main/2018-04-07/mlt_o_rav_2018-04-07_lesson_n6_p0_c1523061620265p.mp4', type: 'video/mp4'},
+                {src: this.props.source, type: 'video/mp4'},
             ],
 
             config = {
@@ -19,9 +16,6 @@ export default class MediaPlayer extends Component {
                 showTimecodeFrameCount: false,
                 useSmoothHover: false,
                 features : ['playpause','tracks','current','progress','duration','volume'],
-                // markers: [3, 1000, 3000],
-                // markerColor: '#ff122b',
-                // markerWidth: 3,
             },
 
             tracks = {}
