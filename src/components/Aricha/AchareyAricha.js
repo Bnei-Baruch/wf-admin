@@ -122,88 +122,91 @@ class AchareyAricha extends Component {
     render() {
 
         const send_options = [
-            { key: 'backup', text: 'Backup', value: 'backup' },
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
-            { key: 'buffer', text: 'Buffer', value: 'buffer' },
-            { key: 'airbox', text: 'AirBox', value: 'airbox' },
-            { key: 'censor', text: 'Censor', value: 'censor' },
+            { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
-            //{ key: 'fix', text: 'Fix', value: 'fix' },
+            { key: 'Backup', text: 'Backup', value: 'backup' },
         ];
 
+        let v = (<Icon name='checkmark'/>);
+        let x = (<Icon name='close'/>);
+        let l = (<Loader size='mini' active inline />);
+        let c = (<Icon name='copyright'/>);
+
         let aricha = this.state.aricha.map((data) => {
-            let name = (data.wfstatus.aricha) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = moment.unix(data.aricha_id.substr(1)).format("HH:mm:ss") || "";
-            //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            if(this.props.removed && data.wfstatus.removed)
-                return;
-            let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let backup = data.wfstatus.backup ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let kmedia = data.wfstatus.kmedia ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let metus = data.wfstatus.metus ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
-            let active = this.state.active === data.aricha_id ? 'active' : '';
+            const {aricha,backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
+            let id = data.aricha_id;
+            let name = aricha ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            if(removed) return;
+            let rowcolor = censored && !checked;
+            let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
                     negative={rowcolor}
-                    positive={data.wfstatus.wfsend}
-                    warning={!data.wfstatus.aricha}
-                    className={active} key={data.aricha_id} onClick={() => this.selectFile(data) }
+                    positive={wfsend}
+                    warning={!aricha}
+                    className={active} key={id} onClick={() => this.selectFile(data) }
                 >
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.backup}>{backup}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.kmedia}>{kmedia}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.metus}>{metus}</Table.Cell>
+                    <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
+                    <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
+                    <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
+                    <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Label color='grey' attached='top' size='large'>
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
+                </Label>
                 <Message>
-                <Menu size='mini' secondary >
-                    <Menu.Item>
-                        <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
-                            <MediaPlayer player={this.getPlayer} source={this.state.source} />
-                        </Modal>
-                    </Menu.Item>
-                    <Menu.Menu position='left'>
+                    <Menu size='mini' secondary >
                         <Menu.Item>
-                            <Modal { ...this.props }
-                                   trigger={<Button disabled={false} color='blue' onClick={this.openInsert} >Insert</Button>}
-                                   closeOnDimmerClick={true}
-                                   closeIcon={true}
-                                   onClose={this.onCancel}
-                                   open={this.state.open}
-                                   size="large"
-                                   mountNode={document.getElementById("ltr-modal-mount")}
-                            >
-                                <InsertApp { ...this.state } onComplete={this.onComplete} />
+                            <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>}
+                                   size='tiny'
+                                   mountNode={document.getElementById("ltr-modal-mount")}>
+                                <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
                         </Menu.Item>
-                        <Menu.Item>
-                            <Button color='red' onClick={this.setRemoved} >Remove</Button>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Input className='input_idrecover' placeholder='Put ID here...' onChange={e => this.setState({input_id: e.target.value})} />
-                            <Button color='teal' icon onClick={this.recoverRemoved} ><Icon name='history' /></Button>
-                        </Menu.Item>
-                    </Menu.Menu>
-                    <Menu.Menu position='right'>
-                        <Menu.Item>
-                            <Select options={send_options} defaultValue='backup' onChange={(e,data) => this.setSpecial(e,data)} />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
-                        </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
+                        <Menu.Menu position='left'>
+                            <Menu.Item>
+                                <Modal { ...this.props }
+                                       trigger={<Button disabled={false} color='blue'
+                                                        onClick={this.openInsert} >Insert</Button>}
+                                       closeOnDimmerClick={true}
+                                       closeIcon={true}
+                                       onClose={this.onCancel}
+                                       open={this.state.open}
+                                       size="large"
+                                       mountNode={document.getElementById("ltr-modal-mount")}
+                                >
+                                    <InsertApp { ...this.state } onComplete={this.onComplete} />
+                                </Modal>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button color='red' onClick={this.setRemoved} >Remove</Button>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Input className='input_idrecover' placeholder='Put ID here...'
+                                       onChange={e => this.setState({input_id: e.target.value})} />
+                                <Button color='teal' icon onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                        <Menu.Menu position='right'>
+                            <Menu.Item>
+                                <Select options={send_options} defaultValue='backup'
+                                        onChange={(e,data) => this.setSpecial(e,data)} />
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button positive disabled={this.state.disabled}
+                                        onClick={this.sendFile} loading={this.state.sending}>Send</Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
@@ -212,6 +215,7 @@ class AchareyAricha extends Component {
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BA</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KM</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
                             <Table.HeaderCell width={1}>ME</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
