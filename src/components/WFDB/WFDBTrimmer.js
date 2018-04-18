@@ -1,19 +1,31 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import { getData, IVAL } from '../shared/tools';
+import { getData } from '../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
 class Trimmer extends Component {
 
     state = {
+        startDate: moment(),
         trimmer: [],
     };
 
     componentDidMount() {
-            getData('trimmer/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-                if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
-                    this.setState({trimmer: data})
-            });
+        this.getTrimmerData(moment().format('YYYY-MM-DD'));
+    };
+
+    getTrimmerData = (date) => {
+        getData(`trimmer/find?key=date&value=${date}`, (trimmer) => {
+            console.log(trimmer);
+            this.setState({trimmer});
+        });
+    };
+
+    changeDate = (data) => {
+        let date = data.format('YYYY-MM-DD');
+        this.getTrimmerData(date);
+        this.setState({startDate: data});
     };
 
     render() {
@@ -44,9 +56,16 @@ class Trimmer extends Component {
 
         return (
 
-            <Container textAlign='center'>
-                <u>Trimmer</u>
-                <Table compact='very' basic size='small' structured>
+            <Container>
+                <DatePicker
+                    className="datepickercs"
+                    dateFormat="YYYY-MM-DD"
+                    locale='he'
+                    maxDate={moment()}
+                    selected={this.state.startDate}
+                    onChange={this.changeDate}
+                />
+                <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>
