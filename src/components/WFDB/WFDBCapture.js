@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import moment from 'moment';
 import { getData } from '../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
@@ -10,10 +9,19 @@ class WFDBCapture extends Component {
     };
 
     componentDidMount() {
-            getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-                if (JSON.stringify(this.state.capture) !== JSON.stringify(data))
-                    this.setState({capture: data})
-            });
+        this.getIngestData(this.props.date);
+    };
+
+    componentDidUpdate(prevProps) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
+            this.getIngestData(this.props.date);
+    };
+
+    getIngestData = (date) => {
+        getData(`ingest/find?key=date&value=${date}`, (capture) => {
+            console.log(capture);
+            this.setState({capture})
+        });
     };
 
     render() {
@@ -27,7 +35,7 @@ class WFDBCapture extends Component {
             let stop_name = (!capwf && name !== "recording...") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{name}</div> : name;
             let capture_src = data.capture_src;
             return (
-                <Table.Row positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
+                <Table.Row key={id} positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
                     <Table.Cell>{id}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{stop_name}</Table.Cell>

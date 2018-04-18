@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from 'react'
-import moment from 'moment';
-import { getData, IVAL } from '../shared/tools';
+import React, { Component } from 'react'
+import { getData } from '../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 
 class Kmedia extends Component {
@@ -11,12 +10,19 @@ class Kmedia extends Component {
     };
 
     componentDidMount() {
-            getData('kmedia/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-                if (JSON.stringify(this.state.kmedia) !== JSON.stringify(data)) {
-                    this.setState({kmedia: data});
-                    this.restructure(data);
-                }
-            });
+        this.getKmediaData(this.props.date);
+    };
+
+    componentDidUpdate(prevProps) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
+            this.getKmediaData(this.props.date);
+    };
+
+    getKmediaData = (date) => {
+        getData(`kmedia/find?key=date&value=${date}`, (kmedia) => {
+            this.setState({kmedia});
+            this.restructure(kmedia);
+        });
     };
 
     restructure = (data) => {
@@ -49,12 +55,12 @@ class Kmedia extends Component {
                     let languages = langs.map((lang) => {
                             let ex = data[id]["mp3"].hasOwnProperty(lang);
                             return (
-                                <Table.Cell disabled  positive={ex} >{lang}</Table.Cell>
+                                <Table.Cell key={lang} disabled  positive={ex} >{lang}</Table.Cell>
                             )
                         });
                     return (
                         <Fragment>
-                            <Table.Row className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
+                            <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
                             <Table.Row>{languages}</Table.Row>
                         </Fragment>
                     );
@@ -62,7 +68,6 @@ class Kmedia extends Component {
             });
 
         return (
-
             <Container textAlign='center'>
                 <u>Archive</u>
                 <Table compact='very' basic size='small'>

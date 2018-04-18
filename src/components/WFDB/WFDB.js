@@ -1,36 +1,56 @@
 import React, { Component } from 'react';
-import { Tab, Grid } from 'semantic-ui-react'
+import DatePicker from 'react-datepicker';
+import { Tab, Grid, Menu, Segment } from 'semantic-ui-react'
 import WFDBCapture from './WFDBCapture';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';
 import WFDBKmedia from './WFDBKmedia';
 import './WFDB.css';
+import moment from "moment/moment";
 class WFDB extends Component {
 
     state = {
-        user: null,
+        date: moment().format('YYYY-MM-DD'),
+        startDate: moment(),
         disabled: true,
     };
 
-  render() {
+    changeDate = (data) => {
+        let date = data.format('YYYY-MM-DD');
+        this.setState({startDate: data, date});
+    };
 
-      const panes = [
-          { menuItem: { key: 'Ingest', content: 'Ingest' },
-              render: () => <Tab.Pane attached={true} ><WFDBCapture /></Tab.Pane> },
-          { menuItem: { key: 'trimmer', content: 'Trimmer' },
-              render: () => <Tab.Pane attached={false} ><WFDBTrimmer /></Tab.Pane> },
-          { menuItem: { key: 'carbon', content: 'Carbon' },
-              render: () => <Tab.Pane attached={false} ><WFDBCarbon /></Tab.Pane> },
-          { menuItem: { key: 'Kmedia', content: 'Kmedia' },
-              render: () => <Tab.Pane attached={false} ><WFDBKmedia /></Tab.Pane> },
-      ];
+    render() {
 
-    return (
-        <Grid className='wfdb_app'>
-        <Tab menu={{ pointing: true }} panes={panes} />
-        </Grid>
-    );
-  }
+        const panes = [
+            { menuItem: { key: 'ingest', content: 'Ingest' },
+                render: () => <Tab.Pane attached={true} ><WFDBCapture date={this.state.date} /></Tab.Pane> },
+            { menuItem: { key: 'trimmer', content: 'Trimmer' },
+                render: () => <Tab.Pane attached={false} ><WFDBTrimmer date={this.state.date} /></Tab.Pane> },
+            { menuItem: { key: 'carbon', content: 'Carbon' },
+                render: () => <Tab.Pane attached={false} ><WFDBCarbon date={this.state.date} /></Tab.Pane> },
+            { menuItem: { key: 'kmedia', content: 'Kmedia' },
+                render: () => <Tab.Pane attached={false} ><WFDBKmedia date={this.state.date} /></Tab.Pane> },
+        ];
+
+        return (
+            <Segment textAlign='center' className="wfdb_app" color='blue' raised>
+            <Menu secondary>
+                <Menu.Item>
+                    <DatePicker
+                        className="datepickercs"
+                        dateFormat="YYYY-MM-DD"
+                        locale='he'
+                        maxDate={moment()}
+                        selected={this.state.startDate}
+                        onChange={this.changeDate}
+                    />
+                </Menu.Item>
+            </Menu>
+                <Tab menu={{ pointing: true }} panes={panes} />
+            </Segment>
+        );
+    }
 }
 
 export default WFDB;

@@ -155,7 +155,8 @@ export default class TrimmerApp extends Component {
                     </Table.Row>
                     <Table.Row>
                         <Table.Cell>
-                            <Segment color='blue' textAlign='center' raised ><b>{this.state.trim_meta.file_name}</b>
+                            <Segment color='blue' textAlign='center' raised >
+                                <b>{this.state.trim_meta.file_name}</b>
                             </Segment>
                         </Table.Cell>
                         <Table.Cell>

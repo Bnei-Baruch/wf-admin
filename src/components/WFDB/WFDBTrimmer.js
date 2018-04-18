@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { getData } from '../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
@@ -7,12 +6,16 @@ import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 class Trimmer extends Component {
 
     state = {
-        startDate: moment(),
         trimmer: [],
     };
 
     componentDidMount() {
-        this.getTrimmerData(moment().format('YYYY-MM-DD'));
+        this.getTrimmerData(this.props.date);
+    };
+
+    componentDidUpdate(prevProps) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
+            this.getTrimmerData(this.props.date);
     };
 
     getTrimmerData = (date) => {
@@ -20,12 +23,6 @@ class Trimmer extends Component {
             console.log(trimmer);
             this.setState({trimmer});
         });
-    };
-
-    changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
-        this.getTrimmerData(date);
-        this.setState({startDate: data});
     };
 
     render() {
@@ -39,7 +36,7 @@ class Trimmer extends Component {
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let rowcolor = censored && !checked;
             return (
-                <Table.Row negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
+                <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
                     <Table.Cell>{id}</Table.Cell>
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
@@ -57,14 +54,6 @@ class Trimmer extends Component {
         return (
 
             <Container>
-                <DatePicker
-                    className="datepickercs"
-                    dateFormat="YYYY-MM-DD"
-                    locale='he'
-                    maxDate={moment()}
-                    selected={this.state.startDate}
-                    onChange={this.changeDate}
-                />
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>

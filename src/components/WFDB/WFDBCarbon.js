@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import moment from 'moment';
-import { getConv, IVAL } from '../shared/tools';
+import { getConv } from '../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
 class Carbon extends Component {
@@ -10,10 +9,19 @@ class Carbon extends Component {
     };
 
     componentDidMount() {
-            getConv('state/carbon/'+moment().format('YYYY-MM-DD'), (data) => {
-                if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
-                    this.setState({carbon: data})
-            });
+        this.getCarbonData(this.props.date);
+    };
+
+    componentDidUpdate(prevProps) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
+            this.getCarbonData(this.props.date);
+    };
+
+    getCarbonData = (date) => {
+        getConv(`state/carbon/${date}`, (data) => {
+            if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
+                this.setState({carbon: data})
+        });
     };
 
     render() {
@@ -21,11 +29,11 @@ class Carbon extends Component {
             let data = this.state.carbon;
             let time = data[id].timestamp;
             let progress = data[id].progress;
-            let name = (data[id].progress !== "done") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{data[id].name}</div> : data[id].name;
-            let ncolor = data[id].progress !== "done" ? true : false;
-            let pcolor = data[id].progress === "done" ? true : false;
+            let name = (data[id].progress !== "done") ? <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data[id].name}</div> : data[id].name;
+            let ncolor = data[id].progress !== "done";
+            let pcolor = data[id].progress === "done";
             return (
-                <Table.Row warning={ncolor} positive={pcolor} className="monitor_tr">
+                <Table.Row key={id} warning={ncolor} positive={pcolor} className="monitor_tr">
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{progress}</Table.Cell>
