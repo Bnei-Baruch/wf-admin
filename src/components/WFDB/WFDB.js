@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { API_STATE } from '../shared/tools';
 import DatePicker from 'react-datepicker';
-import { Tab, Grid, Menu, Segment } from 'semantic-ui-react'
+import { Tab, Menu, Segment } from 'semantic-ui-react'
 import WFDBCapture from './WFDBCapture';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';
@@ -13,6 +14,12 @@ class WFDB extends Component {
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         disabled: true,
+    };
+
+    componentDidMount() {
+        fetch(`${API_STATE}`).then((response) => {
+            return response.json().then(data => console.log(data));
+        });
     };
 
     changeDate = (data) => {

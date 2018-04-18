@@ -1,5 +1,5 @@
 const API_BACKEND = 'http://wfrp.bbdomain.org:8080';
-const API_STATE = 'http://wfrp.bbdomain.org:8000';
+export const API_STATE = 'http://wfrp.bbdomain.org:8000';
 export const IVAL = 1000;
 
 export const toHms = (time) => {
