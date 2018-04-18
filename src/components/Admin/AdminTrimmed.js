@@ -68,6 +68,8 @@ class AdminTrimmed extends Component {
             } else if(file_data.wfstatus.wfsend && !file_data.wfstatus.fixed) {
                 console.log(":: File was normally sent - ", units);
                 this.setState({ units: units, fixReq: false, disabled: !file_data.wfstatus.wfsend});
+            } else if(!file_data.wfstatus.wfsend && units.total === 0) {
+                console.log(":: File is NOT send yet! - ", units);
             } else {
                 console.log(":: What just happend? - ", units);
             }
