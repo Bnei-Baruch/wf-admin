@@ -12,6 +12,7 @@ import IngestApp from "./components/Ingest/IngestApp";
 import CensorApp from "./components/Censor/CensorApp";
 import AdminApp from "./components/Admin/AdminApp";
 import ArichaApp from "./components/Aricha/ArichaApp";
+import MainPage from "./components/Insert/MainPage";
 import WFDB from "./components/WFDB/WFDB";
 
 class App extends Component {
@@ -80,6 +81,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: !this.state.wf_aricha },
               render: () => <Tab.Pane attached={false} >Dgima</Tab.Pane> },
+          { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: !this.state.wf_aricha },
+              render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'settings', content: 'Status', disabled: !this.state.wf_admin },
               render: () => <Tab.Pane attached={false} ><WFDB /></Tab.Pane> },
       ];
