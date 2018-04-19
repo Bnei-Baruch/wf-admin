@@ -10,16 +10,20 @@ class Trimmer extends Component {
     };
 
     componentDidMount() {
-        this.getTrimmerData(this.props.date);
+        this.getTrimmerData("date", this.props.date);
     };
 
     componentDidUpdate(prevProps) {
-        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
-            this.getTrimmerData(this.props.date);
+        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
+        let next = [this.props.date, this.props.skey, this.props.svalue];
+        if (JSON.stringify(prev) !== JSON.stringify(next))
+            this.getTrimmerData(this.props.skey, this.props.svalue);
     };
 
-    getTrimmerData = (date) => {
-        getData(`trimmer/find?key=date&value=${date}`, (trimmer) => {
+    getTrimmerData = (skey, svalue) => {
+        let search = this.props.skey === "date" ? this.props.date : svalue;
+        if(!search) return;
+        getData(`trimmer/find?key=${skey}&value=${search}`, (trimmer) => {
             console.log(trimmer);
             this.setState({trimmer});
         });

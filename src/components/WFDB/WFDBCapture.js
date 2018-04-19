@@ -9,16 +9,20 @@ class WFDBCapture extends Component {
     };
 
     componentDidMount() {
-        this.getIngestData(this.props.date);
+        this.getIngestData("date", this.props.date);
     };
 
     componentDidUpdate(prevProps) {
-        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
-            this.getIngestData(this.props.date);
+        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
+        let next = [this.props.date, this.props.skey, this.props.svalue];
+        if (JSON.stringify(prev) !== JSON.stringify(next))
+            this.getIngestData(this.props.skey, this.props.svalue);
     };
 
-    getIngestData = (date) => {
-        getData(`ingest/find?key=date&value=${date}`, (capture) => {
+    getIngestData = (skey, svalue) => {
+        let search = this.props.skey === "date" ? this.props.date : svalue;
+        if(!search) return;
+        getData(`ingest/find?key=${skey}&value=${search}`, (capture) => {
             console.log(capture);
             this.setState({capture})
         });
@@ -48,7 +52,6 @@ class WFDBCapture extends Component {
         return (
 
             <Container textAlign='center'>
-                <u>Capture</u>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>

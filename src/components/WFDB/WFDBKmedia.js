@@ -10,16 +10,20 @@ class Kmedia extends Component {
     };
 
     componentDidMount() {
-        this.getKmediaData(this.props.date);
+        this.getKmediaData("date", this.props.date);
     };
 
     componentDidUpdate(prevProps) {
-        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
-            this.getKmediaData(this.props.date);
+        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
+        let next = [this.props.date, this.props.skey, this.props.svalue];
+        if (JSON.stringify(prev) !== JSON.stringify(next))
+            this.getKmediaData(this.props.skey, this.props.svalue);
     };
 
-    getKmediaData = (date) => {
-        getData(`kmedia/find?key=date&value=${date}`, (kmedia) => {
+    getKmediaData = (skey, svalue) => {
+        let search = this.props.skey === "date" ? this.props.date : svalue;
+        if(!search) return;
+        getData(`kmedia/find?key=${skey}&value=${search}`, (kmedia) => {
             this.setState({kmedia});
             this.restructure(kmedia);
         });
@@ -69,7 +73,6 @@ class Kmedia extends Component {
 
         return (
             <Container textAlign='center'>
-                <u>Archive</u>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>

@@ -13,7 +13,9 @@ class Carbon extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
+        let prev = [prevProps.date];
+        let next = [this.props.date];
+        if (JSON.stringify(prev) !== JSON.stringify(next))
             this.getCarbonData(this.props.date);
     };
 
@@ -44,7 +46,6 @@ class Carbon extends Component {
         return (
 
             <Container textAlign='center'>
-                <u>Carbon</u>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
