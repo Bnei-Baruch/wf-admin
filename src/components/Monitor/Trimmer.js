@@ -32,7 +32,7 @@ class Trimmer extends Component {
             let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
             //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             if(this.props.removed && data.wfstatus.removed)
-                return;
+                return false;
             let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
             let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;

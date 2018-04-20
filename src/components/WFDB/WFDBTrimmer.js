@@ -34,7 +34,7 @@ class Trimmer extends Component {
         let x = (<Icon name='close'/>);
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
-            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed} = data.wfstatus;
+            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed} = data.wfstatus;
             let name = trimmed ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -49,6 +49,7 @@ class Trimmer extends Component {
                     <Table.Cell>{fixed ? v : x}</Table.Cell>
                     <Table.Cell>{buffer ? v : x}</Table.Cell>
                     <Table.Cell>{backup ? v : x}</Table.Cell>
+                    <Table.Cell>{metus ? v : x}</Table.Cell>
                     <Table.Cell>{kmedia ? v : x}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
@@ -69,6 +70,7 @@ class Trimmer extends Component {
                             <Table.HeaderCell width={1}>FIX</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BAK</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>MTS</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
                             <Table.HeaderCell width={1}>SND</Table.HeaderCell>
                         </Table.Row>

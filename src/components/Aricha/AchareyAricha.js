@@ -4,17 +4,19 @@ import {getData, getUnits, IVAL, putData} from '../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Input, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
-//import CIT from '../../CIT';
+import CIT from '../../CIT';
 
 class AchareyAricha extends Component {
 
     state = {
         active: null,
         disabled: true,
-        open: false,
+        cit_open: false,
+        insert_open: false,
         aricha: [],
         file_data: {},
         filedata: {},
+        metadata: {},
         input_id: "",
         ival: null,
         sending: false,
@@ -50,13 +52,12 @@ class AchareyAricha extends Component {
         let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
         let upload_type = "aricha";
         let language = data.line.language;
-        this.setState({source, active: data.aricha_id, file_data: data, disabled: true, filedata: {filename,content_type,start_date,upload_type,language }});
+        this.setState({source, active: data.aricha_id, file_data: data, disabled: !data.wfstatus.aricha, filedata: {filename,content_type,start_date,upload_type,language }});
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
                 console.log("The file already got unit!");
-            //this.setState({ units: units, disabled: false});
-            this.setState({ units: units, disabled: !data.wfstatus.aricha});
+            this.setState({ units});
         });
     };
 
@@ -66,7 +67,23 @@ class AchareyAricha extends Component {
     };
 
     openInsert = () => {
-        this.setState({open: true});
+        this.setState({insert_open: true});
+    };
+
+    onInsert = (data) => {
+        console.log(":: Got insert data: ", data);
+        this.setState({insert_open: false});
+        data.send_id ? this.setMeta(data) : this.newMeta(data);
+    };
+
+    setMeta = (data) => {
+        getData(`trimmer/${data.send_id}`, (trimmeta) => {
+            console.log(":: Got trim meta: ", trimmeta);
+        });
+    };
+
+    newMeta = (data) => {
+        console.log(":: Going to set new meta: ", data);
     };
 
     onComplete = (newline) => {
@@ -91,9 +108,12 @@ class AchareyAricha extends Component {
         // });
     };
 
-    onCancel = (data) => {
-        console.log(":: Cit cancel: ", data);
-        this.setState({open: false});
+    openCit = () => {
+        this.setState({cit_open: true});
+    };
+
+    onCancel = () => {
+        this.setState({cit_open: false, insert_open: false});
     };
 
     setSpecial = (e, data) => {
@@ -143,20 +163,18 @@ class AchareyAricha extends Component {
         let c = (<Icon name='copyright'/>);
 
         let aricha = this.state.aricha.map((data) => {
-            const {aricha,backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
+            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
             let id = data.aricha_id;
-            let name = aricha ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let ready = data.proxy;
+            let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(removed) return;
+            if(removed) return false;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor}
-                    positive={wfsend}
-                    warning={!aricha}
-                    className={active} key={id} onClick={() => this.selectFile(data) }
-                >
+                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
@@ -175,25 +193,45 @@ class AchareyAricha extends Component {
                 <Message>
                     <Menu size='mini' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>}
+                            <Modal trigger={<Button disabled={this.state.disabled} color='brown'><Icon name='play' /></Button>}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
                         </Menu.Item>
+                        <Menu.Item>
+                            <Modal closeOnDimmerClick={false}
+                                   trigger={<Button color='blue'
+                                                    disabled={this.state.disabled}
+                                                    loading={this.state.renaming}
+                                                    onClick={this.openCit} >Rename
+                                            </Button>}
+                                   onClose={this.onCancel}
+                                   open={this.state.cit_open}
+                                   closeIcon="close"
+                                   mountNode={document.getElementById("cit-modal-mount")}>
+                                <Modal.Content>
+                                    <CIT metadata={this.state.file_data.line}
+                                         onCancel={this.onCancel}
+                                         onComplete={(x) => this.onComplete(x)}/>
+                                </Modal.Content>
+                            </Modal>
+                        </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
                                 <Modal { ...this.props }
-                                       trigger={<Button disabled={false} color='blue'
-                                                        onClick={this.openInsert} >Insert</Button>}
+                                       trigger={<Button color='teal'
+                                                        disabled={this.state.disabled}
+                                                        onClick={this.openInsert} >Insert
+                                                </Button>}
                                        closeOnDimmerClick={true}
                                        closeIcon={true}
                                        onClose={this.onCancel}
-                                       open={this.state.open}
+                                       open={this.state.insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}
                                 >
-                                    <InsertApp { ...this.state } onComplete={this.onComplete} />
+                                    <InsertApp filedata={this.state.filedata} onInsert={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
@@ -202,7 +240,7 @@ class AchareyAricha extends Component {
                             <Menu.Item>
                                 <Input className='input_idrecover' placeholder='Put ID here...'
                                        onChange={e => this.setState({input_id: e.target.value})} />
-                                <Button color='teal' icon onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                                <Button icon size='mini' onClick={this.recoverRemoved} ><Icon name='history' /></Button>
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>

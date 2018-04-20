@@ -12,7 +12,7 @@ import de from 'moment/locale/de';
 import en from 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchSources, fetchTags, fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../../shared/tools';
+import { fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../../shared/tools';
 
 import {
     content_options,
@@ -45,12 +45,12 @@ class InsertApp extends Component {
     static propTypes = {
         filedata: PropTypes.object,
         metadata: PropTypes.object,
-        onComplete: PropTypes.func,
+        onInsert: PropTypes.func,
         onCancel: PropTypes.func,
     };
     static defaultProps = {
         filedata: {},
-        onComplete: noop,
+        onInsert: noop,
         onCancel: noop,
     };
     constructor(props) {
@@ -79,7 +79,7 @@ class InsertApp extends Component {
             input_uid: this.props.filedata.input_uid ? this.props.filedata.input_uid : null,
             isValidated: false,
             cTypeSelection: true,
-            uTypeSelection: this.props.filedata.upload_type === "aricha" ? false : true,
+            uTypeSelection: this.props.filedata.upload_type !== "aricha",
         };
         this.handleDateChange = this.handleDateChange.bind(this);
     }
@@ -99,8 +99,8 @@ class InsertApp extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         //console.log("--componentDidUpdate--", prevState);
-        let prev = [prevState.content_type, prevState.language, prevState.upload_type, prevState.start_date]
-        let next = [this.state.content_type, this.state.language, this.state.upload_type, this.state.start_date]
+        let prev = [prevState.content_type, prevState.language, prevState.upload_type, prevState.start_date];
+        let next = [this.state.content_type, this.state.language, this.state.upload_type, this.state.start_date];
         if (JSON.stringify(prev) !== JSON.stringify(next))
             this.setState({ isValidated: false });
     };
@@ -141,7 +141,7 @@ class InsertApp extends Component {
         console.log("--HandelOnComplete--");
         // Object we return from react
         console.log("::We returnt this metadata: ", this.state.metadata);
-        this.props.onComplete(this.state.metadata);
+        this.props.onInsert(this.state.metadata);
     };
 
     handleOnClose = () => {
@@ -170,16 +170,16 @@ class InsertApp extends Component {
                 // Filter trimmed without send
                 let unit_file = units.filter(capd => capd.properties.capture_date);
                 console.log(":: Try to get trim source: ", unit_file);
-                if(unit_file.length == 0 && this.state.upload_type !== "aricha" && data.length > 0) {
+                if(unit_file.length === 0 && this.state.upload_type !== "aricha" && data.length > 0) {
                     console.log("No trim source found, taking first file:",data[0]);
                     let unit_sendname = data[0].name.split(".")[0];
                     let unit_sendext = data[0].name.split(".")[1];
                     let unit_name = unit_sendname + "_" + data[0].uid + "." + unit_sendext;
                     this.setState({files: data, send_name: unit_name});
-                } else if(data.length == 0 && this.state.upload_type !== "aricha") {
-                    console.log(":: No files in this UNIT!")
+                } else if(data.length === 0 && this.state.upload_type !== "aricha") {
+                    console.log(":: No files in this UNIT!");
                     this.setState({files: null, send_name: null});
-                } else if(unit_file.length == 0 && this.state.upload_type === "aricha") {
+                } else if(unit_file.length === 0 && this.state.upload_type === "aricha") {
                     this.setState({files: data, send_name: this.props.filedata.filename});
                 } else {
                     this.setState({files: data, send_name: unit_file[0].name});
@@ -214,7 +214,7 @@ class InsertApp extends Component {
                             console.log(":: File with name: "+metadata.filename+" - already exist!");
                             alert("File with name: "+metadata.filename+" - already exist!");
                             this.setState({ isValidated: false });
-                        } else if(data.length == 0 && this.props.insert === "update") {
+                        } else if(data.length === 0 && this.props.insert === "update") {
                             console.log(":: File with name: "+metadata.filename+" - does NOT exist! In current mode the operation must be update only");
                             alert("File with name: "+metadata.filename+" - does NOT exist! In current mode the operation must be update only");
                             this.setState({ isValidated: false });

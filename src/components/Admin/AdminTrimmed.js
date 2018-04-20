@@ -242,7 +242,7 @@ class AdminTrimmed extends Component {
                             <Menu.Item>
                                 <Input className='input_idrecover' placeholder='Put ID here...'
                                        onChange={e => this.setState({input_id: e.target.value})} />
-                                <Button color='teal' icon
+                                <Button icon
                                         onClick={this.recoverRemoved} ><Icon name='history' /></Button>
                             </Menu.Item>
                         </Menu.Menu>
