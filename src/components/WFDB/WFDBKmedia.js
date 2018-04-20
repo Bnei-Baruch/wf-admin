@@ -36,11 +36,7 @@ class Kmedia extends Component {
         for (let k in kmedia) {
             let c = kmedia[k];
             let ext = c.extension;
-            // if(ext.match(/^(doc|docx)$/))
-            //     continue;
             let name = c.file_name;
-            // if(name.match(/(_declamation_|_clip_)/))
-            //     continue;
             let lng = c.language;
             let n = name.split("_").splice(2).join("_");
             json[n] = json[n] || {};
@@ -52,31 +48,32 @@ class Kmedia extends Component {
     };
 
     render() {
-        const langs = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
-            let kmedia_data = Object.keys(this.state.json).map((id) => {
-                let data = this.state.json;
-                if(data[id]["mp3"]) {
-                    let languages = langs.map((lang) => {
-                            let ex = data[id]["mp3"].hasOwnProperty(lang);
-                            return (
-                                <Table.Cell key={lang} disabled  positive={ex} >{lang}</Table.Cell>
-                            )
-                        });
+        const languages = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
+        let kmedia_data = Object.keys(this.state.json).map((id) => {
+            let data = this.state.json;
+            let exts = Object.keys(data[id]).map((ext) => {
+                let langs = languages.map((lang) => {
+                    let ex = data[id][ext].hasOwnProperty(lang);
                     return (
-                        <Fragment>
-                            <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
-                            <Table.Row>{languages}</Table.Row>
-                        </Fragment>
-                    );
-                }
+                        <Table.Cell key={lang} disabled  positive={ex} >{lang}</Table.Cell>
+                    )
+                });
+                return (<Table.Row><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
             });
+            return (
+                <Fragment>
+                    <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='24' >{id}</Table.Cell></Table.Row>
+                    {exts}
+                </Fragment>
+            );
+        });
 
         return (
             <Container textAlign='center'>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell colSpan='23'>File Name</Table.HeaderCell>
+                            <Table.HeaderCell colSpan='24'>File Name</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
