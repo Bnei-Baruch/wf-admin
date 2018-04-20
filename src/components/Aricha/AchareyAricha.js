@@ -14,6 +14,7 @@ class AchareyAricha extends Component {
         open: false,
         aricha: [],
         file_data: {},
+        filedata: {},
         input_id: "",
         ival: null,
         sending: false,
@@ -37,11 +38,19 @@ class AchareyAricha extends Component {
 
     selectFile = (data) => {
         console.log(":: Trimmed - selected file: ",data);
+        // Build url for preview
         let url = 'http://wfserver.bbdomain.org';
         let path = data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({source, active: data.aricha_id, file_data: data, disabled: true});
+        // Take sha for mdb fetch
         let sha1 = data.original.format.sha1;
+        // Build data for insert app
+        let filename = data.file_name;
+        let content_type = "CLIP";
+        let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+        let upload_type = "aricha";
+        let language = data.line.language;
+        this.setState({source, active: data.aricha_id, file_data: data, disabled: true, filedata: {filename,content_type,start_date,upload_type,language }});
         getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if(units.total > 0)
@@ -75,7 +84,7 @@ class AchareyAricha extends Component {
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, open: false});
-        // putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}`, file_data, (cb) => {
+        // putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
         //     console.log(":: PUT Respond: ",cb);
         //     // FIXME: When API change this must be error recovering
         //     fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
@@ -97,7 +106,7 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         let special = this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, disabled: true });
         setTimeout(() => {
             //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
@@ -109,14 +118,14 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     recoverRemoved = () => {
         let id = this.state.input_id;
         console.log(":: Censor - going rocover id: ", id);
         this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${id}/wfstatus/removed?value=false`, { method: 'POST',})
+        fetch(`http://wfdb.bbdomain.org:8080/aricha/${id}/wfstatus/removed?value=false`, { method: 'POST',})
     };
 
     render() {
