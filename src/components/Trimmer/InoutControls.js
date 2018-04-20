@@ -35,7 +35,8 @@ export default class InoutControls extends Component {
     };
 
     jumpPoint = (point) => {
-        this.props.player.setCurrentTime(point);
+        point ? this.props.player.setCurrentTime(point) :
+            this.props.player.setCurrentTime(this.state.inpoints[this.state.inpoints.length - 1]);
     };
 
     render() {
@@ -69,12 +70,12 @@ export default class InoutControls extends Component {
                 {inout}
                 <Button as='div' labelPosition='right' className="inout_btn">
                     <Button icon color='grey' className="inout_btn" onClick={() => this.setIn(null)} />
-                    <Label as='a' basic pointing='left'>
-                        {inpoints[outpoints.length] !== undefined ? toHms(inpoints[outpoints.length]) : "<- Set in"}
+                    <Label as='a' basic pointing='left' onDoubleClick={() => this.jumpPoint(null)}>
+                        {inpoints[outpoints.length] !== undefined ? toHms(inpoints[outpoints.length]) : "<- Set in" }
                     </Label>
                 </Button>
                 <Button as='div' labelPosition='left' className="inout_btn">
-                    <Label as='a' basic pointing='right' >
+                    <Label as='a' basic pointing='right'>
                         {"Set out ->"}
                     </Label>
                     <Button icon color='grey' className="inout_btn" onClick={() => this.setOut(null)} />
