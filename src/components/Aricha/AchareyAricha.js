@@ -170,7 +170,7 @@ class AchareyAricha extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label color='grey' attached='top' size='large'>
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Acharey Aricha Files:"}
                 </Label>
                 <Message>
                     <Menu size='mini' secondary >

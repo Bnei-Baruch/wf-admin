@@ -32,7 +32,7 @@ class WFDBCapture extends Component {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let capture_data = this.state.capture.map((data) => {
-            const {capwf,sirtutim,trimmed} = data.wfstatus;
+            const {capwf,trimmed} = data.wfstatus;
             let id = data.capture_id;
             let time = data.start_name.split("_")[1];
             let name = data.stop_name || "recording...";

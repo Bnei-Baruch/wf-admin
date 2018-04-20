@@ -19,14 +19,6 @@ class CensorTrimmer extends Component {
         units: [],
     };
 
-    componentDidMount() {
-        console.log("-- Censor trimmer mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- Censor trimmer unmount");
-    }
-
     getCaptured = (date) => {
         getData('trimmer/find?key=date&value='+date, (data) => {
             this.setState({trimmed: data});

@@ -21,14 +21,6 @@ class AdminTrimmer extends Component {
         units: [],
     };
 
-    componentDidMount() {
-        console.log("-- Admin trimmer mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- Admin trimmer unmount");
-    }
-
     getCaptured = (date) => {
         getData('ingest/find?key=date&value='+date, (data) => {
             let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);

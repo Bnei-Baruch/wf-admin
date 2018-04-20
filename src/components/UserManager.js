@@ -1,4 +1,4 @@
-import { Log as oidclog, UserManager,WebStorageStateStore } from 'oidc-client';
+import { Log as oidclog, UserManager } from 'oidc-client';
 import {KJUR} from 'jsrsasign';
 
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
@@ -15,10 +15,6 @@ const userManagerConfig = {
     scope: 'profile',
     post_logout_redirect_uri: `${BASE_URL}`,
     automaticSilentRenew: false,
-    //silent_redirect_uri: `${BASE_URL}/silent_renew.html`,
-
-    //userStore: new WebStorageStateStore({ store: localStorage }),
-
     filterProtocolClaims: true,
     loadUserInfo: true,
 };

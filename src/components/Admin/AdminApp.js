@@ -8,14 +8,6 @@ class AdminApp extends Component {
         ival: null,
     };
 
-    componentDidMount() {
-        console.log("-- AdminApp mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- AdminApp unmount");
-    };
-
     render() {
 
         return (

@@ -38,7 +38,6 @@ class AdminTrimmed extends Component {
     };
 
     componentWillUnmount() {
-        console.log("-- Trimmed unmount");
         clearInterval(this.state.ival);
     };
 
@@ -169,6 +168,11 @@ class AdminTrimmed extends Component {
 
     render() {
 
+        let v = (<Icon name='checkmark'/>);
+        let x = (<Icon name='close'/>);
+        let l = (<Loader size='mini' active inline />);
+        let c = (<Icon name='copyright'/>);
+
         const send_options = [
             { key: 'backup', text: 'Backup', value: 'backup' },
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
@@ -178,79 +182,89 @@ class AdminTrimmed extends Component {
             { key: 'metus', text: 'Metus', value: 'metus' },
         ];
 
-        const send_fix = [
-            { key: 'fix', text: 'Fix', value: 'fix' },
-        ];
-
         let trimmed = this.state.trimmed.map((data) => {
-            let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
-            //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            if(this.props.removed && data.wfstatus.removed)
-                return;
-            let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let backup = data.wfstatus.backup ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let kmedia = data.wfstatus.kmedia ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let metus = data.wfstatus.metus ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
-            let active = this.state.active === data.trim_id ? 'active' : '';
+            const {trimmed,backup,kmedia,metus,removed,wfsend,censored,checked} = data.wfstatus;
+            let id = data.trim_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            if(this.props.removed && removed)
+                return false;
+            let rowcolor = censored && !checked;
+            let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor}
-                    positive={data.wfstatus.wfsend}
-                    disabled={!data.wfstatus.trimmed}
-                    className={active} key={data.trim_id} onClick={() => this.selectFile(data) }
-                >
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    negative={rowcolor} positive={wfsend} disabled={!trimmed}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.backup} warning={data.wfstatus.backup}>{backup}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.kmedia} warning={data.wfstatus.kmedia}>{kmedia}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.metus} warning={data.wfstatus.metus}>{metus}</Table.Cell>
+                    <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
+                    <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>
+                    <Table.Cell negative={!metus} warning={metus}>{metus  ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Label color='grey' attached='top' size='large'>
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
+                </Label>
                 <Message size='mini'>
-                <Menu size='mini' secondary>
-                    <Menu.Item>
-                        <Modal trigger={<Button color='brown' disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
-                            <MediaPlayer player={this.getPlayer} source={this.state.source} />
-                        </Modal>
-                    </Menu.Item>
-                    <Menu.Menu position='left'>
+                    <Menu size='mini' secondary>
                         <Menu.Item>
-                            <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} loading={this.state.renaming} color='blue' onClick={this.openCit} >Rename</Button>}
-                                   onClose={this.onCancel} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
-                                </Modal.Content>
+                            <Modal trigger={<Button color='brown' disabled={this.state.disabled} >
+                                                <Icon name='play' />
+                                            </Button>} size='tiny'
+                                   mountNode={document.getElementById("ltr-modal-mount")}>
+                                <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
                         </Menu.Item>
-                        <Menu.Item>
-                            <Button color='red' onClick={this.setRemoved} >Remove</Button>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Input className='input_idrecover' placeholder='Put ID here...' onChange={e => this.setState({input_id: e.target.value})} />
-                            <Button color='teal' icon onClick={this.recoverRemoved} ><Icon name='history' /></Button>
-                        </Menu.Item>
-                    </Menu.Menu>
-                    <Menu.Menu position='right'>
-                        <Menu.Item>
-                            {this.state.fixReq ? "" : <Select options={send_options} defaultValue={this.state.special} placeholder='Send options' onChange={(e, {value}) => this.setSpecial(value)} />}
-                            {this.state.fixReq && this.state.units.total > 1 ? <Select placeholder='Choose UID' options={this.state.units_options} onChange={(e, {value}) => this.selectFixUID(value)} /> : ""}
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>{this.state.fixReq ? "Fix" : "Send"}</Button>
-                        </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
+                        <Menu.Menu position='left'>
+                            <Menu.Item>
+                                <Modal closeOnDimmerClick={false}
+                                       trigger={<Button disabled={this.state.disabled}
+                                                        loading={this.state.renaming}
+                                                        color='blue'
+                                                        onClick={this.openCit} >Rename
+                                                </Button>}
+                                       onClose={this.onCancel} open={this.state.open} closeIcon="close"
+                                       mountNode={document.getElementById("cit-modal-mount")}>
+                                    <Modal.Content>
+                                        <CIT metadata={this.state.file_data.line}
+                                             onCancel={this.onCancel}
+                                             onComplete={(x) => this.onComplete(x)}/>
+                                    </Modal.Content>
+                                </Modal>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button color='red' onClick={this.setRemoved} >Remove</Button>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Input className='input_idrecover' placeholder='Put ID here...'
+                                       onChange={e => this.setState({input_id: e.target.value})} />
+                                <Button color='teal' icon
+                                        onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                        <Menu.Menu position='right'>
+                            <Menu.Item>
+                                {this.state.fixReq ? "" :
+                                    <Select options={send_options}
+                                            defaultValue={this.state.special}
+                                            placeholder='Send options'
+                                            onChange={(e, {value}) => this.setSpecial(value)} />}
+                                {this.state.fixReq && this.state.units.total > 1 ?
+                                    <Select placeholder='Choose UID' options={this.state.units_options}
+                                            onChange={(e, {value}) => this.selectFixUID(value)} /> : ""}
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button positive disabled={this.state.disabled}
+                                        onClick={this.sendFile} loading={this.state.sending}>
+                                    {this.state.fixReq ? "Fix" : "Send"}
+                                </Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
                 </Message>
                 <Table selectable compact='very' basic structured className="admin_table">
                     <Table.Header>

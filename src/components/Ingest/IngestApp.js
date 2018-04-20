@@ -8,14 +8,6 @@ class IngestApp extends Component {
         ival: null,
     };
 
-    componentDidMount() {
-        console.log("-- IngestApp mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- IngestApp unmount");
-    };
-
     render() {
 
         return (

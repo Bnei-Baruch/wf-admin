@@ -33,7 +33,6 @@ class IngestTrimmed extends Component {
     };
 
     componentWillUnmount() {
-        console.log("-- Trimmed unmount");
         clearInterval(this.state.ival);
     };
 
@@ -127,59 +126,73 @@ class IngestTrimmed extends Component {
 
     render() {
 
+        let v = (<Icon name='checkmark'/>);
+        let x = (<Icon name='close'/>);
+        let l = (<Loader size='mini' active inline />);
+
         let trimmed = this.state.trimmed.map((data) => {
-            let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
-            //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            if(data.wfstatus.removed || data.wfstatus.buffer)
-                return;
-            let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            //let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
-            let active = this.state.active === data.trim_id ? 'active' : '';
+            const {trimmed,renamed,buffer,removed,wfsend,censored} = data.wfstatus;
+            let id = data.trim_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            if(removed || buffer || censored)
+                return false;
+            let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor}
-                    positive={data.wfstatus.wfsend}
-                    warning={!data.wfstatus.trimmed}
-                    disabled={!data.wfstatus.trimmed}
-                    className={active} key={data.trim_id} onClick={() => this.selectFile(data)}
-                >
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    positive={wfsend} warning={!trimmed} disabled={!trimmed}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{renamed}</Table.Cell>
-                    {/*<Table.Cell>{buffer}</Table.Cell>*/}
-                    <Table.Cell negative={!data.wfstatus.wfsend}>{wfsend}</Table.Cell>
+                    <Table.Cell>{renamed ? v : x}</Table.Cell>
+                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised >
-                <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Label color='grey' attached='top' size='large'>
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
+                </Label>
                 <Message size='mini'>
                 <Menu size='mini' secondary >
                     <Menu.Item>
-                        <Modal trigger={<Button color='brown' disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
+                        <Modal trigger={<Button
+                                            color='brown'
+                                            disabled={this.state.disabled} >
+                                            <Icon name='play' />
+                                        </Button>}
+                               size='tiny'
+                               mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
                         </Modal>
                     </Menu.Item>
                     <Menu.Menu position='left'>
                         <Menu.Item>
-                            <Modal closeOnDimmerClick={false} trigger={<Button disabled={this.state.disabled} loading={this.state.renaming} color='blue' onClick={this.openCit} >Rename</Button>}
-                                   onClose={this.onCancel} open={this.state.open} closeIcon="close" mountNode={document.getElementById("cit-modal-mount")}>
+                            <Modal closeOnDimmerClick={false}
+                                   trigger={<Button disabled={this.state.disabled}
+                                                    loading={this.state.renaming}
+                                                    color='blue'
+                                                    onClick={this.openCit} >Rename
+                                            </Button>}
+                                   onClose={this.onCancel}
+                                   open={this.state.open}
+                                   closeIcon="close"
+                                   mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content >
-                                    <CIT metadata={this.state.file_data.line} onCancel={this.onCancel} onComplete={(x) => this.onComplete(x)}/>
+                                    <CIT metadata={this.state.file_data.line}
+                                         onCancel={this.onCancel}
+                                         onComplete={(x) => this.onComplete(x)}/>
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>
                     </Menu.Menu>
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
+                            <Button positive disabled={this.state.disabled}
+                                    onClick={this.sendFile} loading={this.state.sending}>Send
+                            </Button>
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>

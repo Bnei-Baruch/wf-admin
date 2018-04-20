@@ -31,7 +31,6 @@ class CensorTrimmed extends Component {
     };
 
     componentWillUnmount() {
-        console.log("-- Trimmed unmount");
         clearInterval(this.state.ival);
     };
 
@@ -109,23 +108,23 @@ class CensorTrimmed extends Component {
 
     render() {
 
+        let l = (<Loader size='mini' active inline />);
+        let c = (<Icon name='copyright'/>);
+
         let trimmed = this.state.trimmed.map((data) => {
-            let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
+            const {trimmed,kmedia,buffer,censored,checked} = data.wfstatus;
+            let id = data.trim_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
-            if(!data.wfstatus.censored || data.wfstatus.buffer)
-                 return;
-            let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
-            let active = this.state.active === data.trim_id ? 'active' : '';
+            if(!censored || buffer)
+                 return false;
+            let rowcolor = censored && !checked;
+            let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor}
-                    positive={data.wfstatus.checked}
-                    warning={!data.wfstatus.kmedia}
-                    disabled={!data.wfstatus.trimmed}
-                    className={active} key={data.trim_id} onClick={() => this.selectFile(data)}
-                >
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                 </Table.Row>
             )
@@ -133,17 +132,24 @@ class CensorTrimmed extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                <Label color='grey' attached='top' size='large'> {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"} </Label>
+                <Label color='grey' attached='top' size='large'>
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
+                </Label>
                 <Message size='mini'>
                 <Menu size='mini' secondary >
                     <Menu.Item>
-                        <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>} size='tiny' mountNode={document.getElementById("ltr-modal-mount")}>
+                        <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>}
+                               size='tiny'
+                               mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
                         </Modal>
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <Button positive disabled={this.state.disabled} onClick={this.sendFile} loading={this.state.sending}>Send</Button>
+                            <Button positive disabled={this.state.disabled}
+                                    onClick={this.sendFile}
+                                    loading={this.state.sending}>Send
+                            </Button>
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>

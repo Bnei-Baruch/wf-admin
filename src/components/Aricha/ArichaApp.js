@@ -8,14 +8,6 @@ class AdminApp extends Component {
         ival: null,
     };
 
-    componentDidMount() {
-        console.log("-- ArichaApp mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- ArichaApp unmount");
-    };
-
     render() {
 
         return (

@@ -20,14 +20,6 @@ class IngestTrimmer extends Component {
         units: [],
     };
 
-    componentDidMount() {
-        console.log("-- Ingest trimmer mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- Ingest trimmer unmount");
-    }
-
     getCaptured = (date) => {
         getData('ingest/find?key=date&value='+date, (data) => {
             let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);

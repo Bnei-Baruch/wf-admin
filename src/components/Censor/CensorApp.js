@@ -8,14 +8,6 @@ class CensorApp extends Component {
         ival: null,
     };
 
-    componentDidMount() {
-        console.log("-- CensorApp mount");
-    };
-
-    componentWillUnmount() {
-        console.log("-- CensorApp unmount");
-    };
-
     render() {
 
         return (
