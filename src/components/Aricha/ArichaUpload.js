@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Progress,Container,Message } from 'semantic-ui-react';
+import { Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-class UploadFile extends Component {
 
-    state = { percent: 0 }
+class ArichaUpload extends Component {
+
+    state = { percent: 0 };
 
     progress = (step, file) => {
         let count = Math.round(step.percent);
@@ -13,16 +14,16 @@ class UploadFile extends Component {
 
     uploadDone = (file) => {
         console.log(':: upload done: ', file);
-        this.props.onFileData(file);
+        //this.props.onFileData(file);
         this.setState({percent: 0})
     };
 
     render() {
 
         const props = {
-            action: 'http://wfsrv.bbdomain.org:8010/insert/upload',
+            action: 'http://wfsrv.bbdomain.org:8010/aricha/upload',
             type: 'drag',
-            //accept: '.zip;.mp3',
+            accept: '.mp4',
             beforeUpload(file) {
                 console.log('beforeUpload', file.name);
             },
@@ -36,21 +37,21 @@ class UploadFile extends Component {
         };
 
         return (
-            <Container textAlign='center'>
+            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
                 <Message>
                     <Upload
                         {...this.props}
                         {...props}
-                        className={this.props.mode === "new" ? "insert" : "update"}
+                        className="aricha"
                         onSuccess={this.uploadDone}
                         onProgress={this.progress} >
                         Drop file here or click me
                     </Upload>
                     <Progress label='' percent={this.state.percent} indicating progress='percent' />
                 </Message>
-            </Container>
+            </Segment>
         );
     }
 }
 
-export default UploadFile;
+export default ArichaUpload;

@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import AchareyAricha from "./AchareyAricha";
+import ArichaUpload from "./ArichaUpload";
 
 class AdminApp extends Component {
 
@@ -19,7 +20,8 @@ class AdminApp extends Component {
 
         return (
             <Fragment>
-                <AchareyAricha/>
+                <ArichaUpload />
+                <AchareyAricha />
             </Fragment>
         );
     }

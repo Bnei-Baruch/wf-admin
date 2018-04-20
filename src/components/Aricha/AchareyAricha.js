@@ -47,7 +47,7 @@ class AchareyAricha extends Component {
             if(units.total > 0)
                 console.log("The file already got unit!");
             //this.setState({ units: units, disabled: false});
-            this.setState({ units: units, disabled: !data.wfstatus.wfsend});
+            this.setState({ units: units, disabled: !data.wfstatus.aricha});
         });
     };
 
