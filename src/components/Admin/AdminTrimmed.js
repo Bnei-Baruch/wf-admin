@@ -158,7 +158,7 @@ class AdminTrimmed extends Component {
 
     setRemoved = () => {
         let file_data = this.state.file_data;
-        console.log(":: Censor - set removed: ", file_data);
+        console.log(":: Admin - set removed: ", file_data);
         this.setState({ disabled: true });
         fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
@@ -240,7 +240,7 @@ class AdminTrimmed extends Component {
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' onClick={this.setRemoved} >Remove</Button>
+                                <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />
                             </Menu.Item>
                             <Menu.Item>
                                 <Input size='small' className='input_idrecover' placeholder='Put ID here...' action

@@ -87,8 +87,11 @@ class CensorTrimmed extends Component {
         let file_data = this.state.file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
+        // It's mean files is allowed for public
         file_data.wfstatus.checked = true;
+        // Wright now same button is send to KMedia
         file_data.wfstatus.kmedia = true;
+        // We leave this on admin, but hide on censor
         file_data.wfstatus.buffer = true;
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -105,6 +108,13 @@ class CensorTrimmed extends Component {
             setTimeout(() => this.setState({ ...file_data, sending: false, disabled: false, fixReq: false }), 3000);
 
         });
+    };
+
+    setRemoved = () => {
+        let file_data = this.state.file_data;
+        console.log(":: Censor - set removed: ", file_data);
+        this.setState({ disabled: true });
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {
@@ -144,6 +154,9 @@ class CensorTrimmed extends Component {
                                mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
                         </Modal>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
