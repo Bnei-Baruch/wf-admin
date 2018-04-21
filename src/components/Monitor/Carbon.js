@@ -26,15 +26,17 @@ class Carbon extends Component {
     };
 
     render() {
+        let l = (<Loader size='mini' active inline />);
+
         let carbon_data = Object.keys(this.state.carbon).map((id, i) => {
             let data = this.state.carbon;
             let time = data[id].timestamp;
             let progress = data[id].progress;
-            let name = (data[id].progress !== "done") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{data[id].name}</div> : data[id].name;
-            let ncolor = data[id].progress !== "done" ? true : false;
-            let pcolor = data[id].progress === "done" ? true : false;
+            let name = (data[id].progress !== "done") ? <div>{l}&nbsp;&nbsp;&nbsp;{data[id].name}</div> : data[id].name;
+            let ncolor = data[id].progress !== "done";
+            let pcolor = data[id].progress === "done";
             return (
-                <Table.Row warning={ncolor} positive={pcolor} className="monitor_tr">
+                <Table.Row key={i} warning={ncolor} positive={pcolor} className="monitor_tr">
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{progress}</Table.Cell>

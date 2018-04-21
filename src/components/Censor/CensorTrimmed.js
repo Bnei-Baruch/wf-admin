@@ -135,7 +135,7 @@ class CensorTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                 </Table.Row>
             )

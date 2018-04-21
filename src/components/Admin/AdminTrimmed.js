@@ -199,7 +199,7 @@ class AdminTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>
@@ -240,7 +240,7 @@ class AdminTrimmed extends Component {
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />
+                                <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
                             <Menu.Item>
                                 <Input size='small' className='input_idrecover' placeholder='Put ID here...' action

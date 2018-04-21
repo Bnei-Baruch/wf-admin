@@ -62,7 +62,7 @@ class Kmedia extends Component {
                         <Table.Cell key={lang} disabled  positive={ex} >{lang}</Table.Cell>
                     )
                 });
-                return (<Table.Row><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
+                return (<Table.Row key={ext}><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
             });
             return (
                 <Fragment>
@@ -78,11 +78,11 @@ class Kmedia extends Component {
                 let langs = languages.map((lang) => {
                     let ex = data[id]["mp3"].hasOwnProperty(lang);
                     return (
-                        <Table.Cell disabled  positive={ex} >{lang}</Table.Cell>
+                        <Table.Cell key={lang} disabled positive={ex} >{lang}</Table.Cell>
                     )
                 });
                 return (
-                    <Fragment>
+                    <Fragment key={id}>
                         <Table.Row className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
                         <Table.Row>{langs}</Table.Row>
                     </Fragment>

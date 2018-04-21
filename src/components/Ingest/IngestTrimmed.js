@@ -93,12 +93,11 @@ class IngestTrimmed extends Component {
         let artt = file_data.line.artifact_type;
         let hag = file_data.line.holiday;
         let lect = file_data.line.lecturer;
-        if (cont.match(/^(CONGRESS|VIRTUAL_LESSON)$/)) {
-            file_data.line.require_test = true;
-        }
+        // It's must be before ifs, because we maybe override it
         file_data.wfstatus.buffer = file_data.line.require_test;
-
-        file_data.wfstatus.wfsend = true;
+        if (cont.match(/^(CONGRESS|VIRTUAL_LESSON)$/)) {
+            file_data.wfstatus.buffer = true;
+        }
         if(cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/) && colt !== "CONGRESS" && artt !== "KITEI_MAKOR") {
             file_data.wfstatus.censored = hag;
         }
@@ -109,14 +108,12 @@ class IngestTrimmed extends Component {
         if(colt !== "CONGRESS" && cont === "FULL_LESSON") {
             file_data.wfstatus.backup = true;
         }
-        if(colt === "CONGRESS") {
-            file_data.wfstatus.buffer = true;
-        }
         if(!file_data.wfstatus.censored && !file_data.wfstatus.buffer) {
             if (cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/)) {
                 file_data.wfstatus.kmedia = true;
             }
         }
+        file_data.wfstatus.wfsend = true;
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering

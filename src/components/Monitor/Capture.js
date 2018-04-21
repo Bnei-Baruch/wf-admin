@@ -25,18 +25,22 @@ class Capture extends Component {
     };
 
     render() {
+        let v = (<Icon name='checkmark'/>);
+        let x = (<Icon name='close'/>);
+        let l = (<Loader size='mini' active inline />);
+
         let capture_data = this.state.capture.map((data) => {
+            const {trimmed,capwf} = data.wfstatus;
             let time = data.start_name.split("_")[1];
             let name = data.stop_name || "recording...";
-            let stop_name = (!data.wfstatus.capwf && name !== "recording...") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{name}</div> : name;
+            let stop_name = (!capwf && name !== "recording...") ? <div>{l}&nbsp;&nbsp;&nbsp;{name}</div> : name;
             let capture_src = data.capture_src;
-            let trim = data.wfstatus.trimmed ? <Icon name='checkmark'/> : <Icon name='close'/>;
             return (
-                <Table.Row positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
+                <Table.Row key={data.capture_id} positive={trimmed} warning={!capwf} className="monitor_tr">
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{stop_name}</Table.Cell>
                     <Table.Cell>{capture_src}</Table.Cell>
-                    <Table.Cell>{trim}</Table.Cell>
+                    <Table.Cell>{trimmed ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });

@@ -26,25 +26,26 @@ class Trimmer extends Component {
     };
 
     render() {
+        let v = (<Icon name='checkmark'/>);
+        let x = (<Icon name='close'/>);
+        let l = (<Loader size='mini' active inline />);
+        let c = (<Icon name='copyright'/>);
+
         let trimmer_data = this.state.trimmer.map((data) => {
-            let name = (data.wfstatus.trimmed) ? data.file_name : <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = (data.wfstatus.censored) ? <Icon name='copyright'/> : "";
-            let time = moment.unix(data.trim_id.substr(1)).format("HH:mm:ss") || "";
-            //let removed = data.wfstatus.removed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            if(this.props.removed && data.wfstatus.removed)
+            const {trimmed,renamed,removed,buffer,wfsend,censored,checked} = data.wfstatus;
+            let id = data.trim_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            if(this.props.removed && removed)
                 return false;
-            let renamed = data.wfstatus.renamed ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            //let checked = data.wfstatus.checked ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let buffer = data.wfstatus.buffer ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let wfsend = data.wfstatus.wfsend ? <Icon name='checkmark'/> : <Icon name='close'/>;
-            let rowcolor = data.wfstatus.censored && !data.wfstatus.checked;
+            let rowcolor = censored && !checked;
             return (
-                <Table.Row negative={rowcolor} positive={data.wfstatus.wfsend} warning={!data.wfstatus.trimmed} disabled={data.wfstatus.removed} className="monitor_tr">
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} disabled={removed} className="monitor_tr">
+                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{renamed}</Table.Cell>
-                    <Table.Cell>{buffer}</Table.Cell>
-                    <Table.Cell negative={!data.wfstatus.wfsend}>{wfsend}</Table.Cell>
+                    <Table.Cell>{renamed ? v : x}</Table.Cell>
+                    <Table.Cell>{buffer ? v : x}</Table.Cell>
+                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });

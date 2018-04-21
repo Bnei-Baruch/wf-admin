@@ -45,14 +45,16 @@ class Upload extends Component {
     };
 
     render() {
-        let upload_data = this.state.upload.map((data) => {
+        let l = (<Loader size='mini' active inline />);
+
+        let upload_data = this.state.upload.map((data, i) => {
             let task = data.Script.split('[')[1].split(']')[0];
             let dest = data.Arg2 || "upload";
             let state = data.State;
-            let name = (state === "running") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
-            let ncolor = (state === "running") ? true : false;
+            let name = state === "running" ? <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
+            let ncolor = state === "running";
             return (
-                <Table.Row warning={ncolor} className="monitor_tr">
+                <Table.Row key={i} warning={ncolor} className="monitor_tr">
                     <Table.Cell>{task}</Table.Cell>
                     <Table.Cell>{dest}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
