@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { API_STATE } from '../shared/tools';
 import DatePicker from 'react-datepicker';
-import { Tab, Grid, Segment, Input, Select, Button, Divider } from 'semantic-ui-react'
+import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBCapture from './WFDBCapture';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';
@@ -65,8 +65,11 @@ class WFDB extends Component {
 
         return (
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
-                <Grid>
-                    <Grid.Column width={2}>
+                <Menu secondary>
+                    <Menu.Item>
+                        <Button color='red' disabled>Secure</Button>
+                    </Menu.Item>
+                    <Menu.Item>
                     <DatePicker
                         className="datepickercs"
                         dateFormat="YYYY-MM-DD"
@@ -75,19 +78,19 @@ class WFDB extends Component {
                         selected={this.state.startDate}
                         onChange={this.changeDate}
                     />
-                    </Grid.Column>
-                    <Grid.Column width={2}>
+                    </Menu.Item>
+                    <Menu.Item>
                         <Select compact options={options} defaultValue='date'
                                 onChange={(e, {value}) => this.setStatusKey(value)} />
-                    </Grid.Column>
-                    <Grid.Column width={8}>
-                    <Input fluid type='text' placeholder='Search...' action
+                    </Menu.Item>
+                    <Menu.Item>
+                    <Input className='input_wfdb' type='text' placeholder='Search...' action
                            onChange={e => this.setStatusValue(e.target.value)}>
                         <input />
                         <Button type='submit' onClick={this.setSearchValue}>Search</Button>
                     </Input>
-                    </Grid.Column>
-                </Grid>
+                    </Menu.Item>
+                </Menu>
                 <Divider inverted />
                 <Tab menu={{ pointing: true }} panes={panes} />
             </Segment>

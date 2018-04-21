@@ -212,9 +212,8 @@ class AdminTrimmed extends Component {
                 <Message size='mini'>
                     <Menu size='mini' secondary>
                         <Menu.Item>
-                            <Modal trigger={<Button color='brown' disabled={this.state.disabled} >
-                                                <Icon name='play' />
-                                            </Button>} size='tiny'
+                            <Modal size='tiny'
+                                   trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
                                    mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>
@@ -240,10 +239,11 @@ class AdminTrimmed extends Component {
                                 <Button color='red' onClick={this.setRemoved} >Remove</Button>
                             </Menu.Item>
                             <Menu.Item>
-                                <Input className='input_idrecover' placeholder='Put ID here...'
-                                       onChange={e => this.setState({input_id: e.target.value})} />
-                                <Button icon
-                                        onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                                <Input size='small' className='input_idrecover' placeholder='Put ID here...' action
+                                       onChange={e => this.setState({input_id: e.target.value})}><input />
+                                    <Button size='mini' icon='history' onClick={this.recoverRemoved} />
+                                </Input>
+
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>

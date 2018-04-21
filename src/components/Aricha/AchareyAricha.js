@@ -238,9 +238,9 @@ class AchareyAricha extends Component {
                                 <Button color='red' onClick={this.setRemoved} >Remove</Button>
                             </Menu.Item>
                             <Menu.Item>
-                                <Input className='input_idrecover' placeholder='Put ID here...'
-                                       onChange={e => this.setState({input_id: e.target.value})} />
-                                <Button icon size='mini' onClick={this.recoverRemoved} ><Icon name='history' /></Button>
+                                {/*<Input className='input_idrecover' placeholder='Put ID here...'*/}
+                                       {/*onChange={e => this.setState({input_id: e.target.value})} />*/}
+                                {/*<Button icon size='mini' onClick={this.recoverRemoved} ><Icon name='history' /></Button>*/}
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>

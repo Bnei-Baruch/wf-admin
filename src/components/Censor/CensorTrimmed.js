@@ -138,7 +138,7 @@ class CensorTrimmed extends Component {
                 <Message size='mini'>
                 <Menu size='mini' secondary >
                     <Menu.Item>
-                        <Modal trigger={<Button disabled={this.state.disabled} ><Icon name='play' /></Button>}
+                        <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
                                size='tiny'
                                mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
