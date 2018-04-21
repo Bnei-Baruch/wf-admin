@@ -19,6 +19,7 @@ class AchareyAricha extends Component {
         metadata: {},
         input_id: "",
         ival: null,
+        renaming: false,
         sending: false,
         special: "backup",
         units: [],
@@ -100,12 +101,13 @@ class AchareyAricha extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false});
-        // putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
-        //     console.log(":: PUT Respond: ",cb);
-        //     // FIXME: When API change this must be error recovering
-        //     fetch(`http://wfdb.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
-        // });
+        this.setState({...file_data, open: false, disabled: true, renaming: true});
+        setTimeout(() => this.setState({ renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+        putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
+            console.log(":: PUT Respond: ",cb);
+            // FIXME: When API change this must be error recovering
+            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
+        });
     };
 
     openCit = () => {
