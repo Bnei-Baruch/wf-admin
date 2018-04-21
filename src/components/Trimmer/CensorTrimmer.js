@@ -30,10 +30,6 @@ class CensorTrimmer extends Component {
         this.setState({startDate: data, date: date, disabled: true});
     };
 
-    setTrimSrc = (e, data) => {
-        this.setState({trim_src: data.value, disabled: true});
-    };
-
     selectFile = (e, data) => {
         let file_data = data.value;
         console.log(":: Select file: ",file_data);
@@ -58,10 +54,6 @@ class CensorTrimmer extends Component {
 
     render() {
 
-        const options = [
-            { key: 1, text: 'Trimmed', value: 'trimmed' },
-        ];
-
         let trim_data = this.state[this.state.trim_src].map((data, i) => {
             let name = (this.state.trim_src === "trimmed") ? data.file_name : data.stop_name;
             let id = (this.state.trim_src === "trimmed") ? data.trim_id : data.capture_id;
@@ -71,17 +63,6 @@ class CensorTrimmer extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
                 <Menu secondary >
-                    <Menu.Item>
-                        <Dropdown
-                            compact
-                            className="trim_src_dropdown"
-                            selection
-                            options={options}
-                            defaultValue="trimmed"
-                            onChange={this.setTrimSrc}
-                             >
-                        </Dropdown>
-                    </Menu.Item>
                     <Menu.Item>
                         <DatePicker
                             className="datepickercs"
