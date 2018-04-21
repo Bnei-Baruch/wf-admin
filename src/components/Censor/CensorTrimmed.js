@@ -36,30 +36,31 @@ class CensorTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
+        const {wfsend,fixed} = file_data.wfstatus;
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
         this.setState({source, active: file_data.trim_id, file_data, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-            if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total === 1) {
+            if(!wfsend && !fixed && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);
                 file_data.line.fix_unit_uid = units.data[0].uid;
                 this.setState({ ...file_data, units: units, fixReq: true });
                 this.selectFixUID(units.data[0].uid);
-            } else if(!file_data.wfstatus.wfsend && !file_data.wfstatus.fixed && units.total > 1) {
+            } else if(!wfsend && !fixed && units.total > 1) {
                 console.log(":: Fix needed - user must choose from units: ", units);
                 let units_options = units.data.map((unit) => {
                     return ({ key: unit.uid, text: unit.i18n.he.name, value: unit.uid })
                 });
                 this.setState({units: units, fixReq: true, disabled: true, units_options });
-            } else if(file_data.wfstatus.wfsend && file_data.wfstatus.fixed) {
+            } else if(wfsend && fixed) {
                 // Maybe we need indicate somehow about fixed unit
                 console.log(":: Fix already done - ", units);
                 this.setState({units: units, fixReq: false, disabled: false });
-            } else if(file_data.wfstatus.wfsend && !file_data.wfstatus.fixed) {
+            } else if(wfsend && !fixed) {
                 console.log(":: File was normally sent - ", units);
-                this.setState({ units: units, fixReq: false, disabled: !file_data.wfstatus.wfsend});
+                this.setState({ units: units, fixReq: false, disabled: !wfsend});
             } else {
                 console.log(":: What just happend? - ", units);
             }
@@ -95,7 +96,7 @@ class CensorTrimmed extends Component {
             if(this.state.fixReq) {
                 fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=fix`);
             } else {
-                fetch(`http://ffconv1.bbdomain.org:8081/convert?id=${file_data.trim_id}&key=kmedia`);
+                fetch(`http://wfconv1.bbdomain.org:8081/convert?id=${file_data.trim_id}&key=kmedia`);
             }
             // FIXME: When API change here must be callback with updated state
             file_data.wfstatus.fixed = true;
