@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { getData } from '../shared/tools';
-import { Icon, Table, Container, Loader } from 'semantic-ui-react'
+import { Icon, Table, Container, Loader, Popup, Checkbox } from 'semantic-ui-react'
 
 class Trimmer extends Component {
 
     state = {
         trimmer: [],
+        wfstatus: {},
     };
 
     componentDidMount() {
@@ -29,9 +30,35 @@ class Trimmer extends Component {
         });
     };
 
+    getStatus = (data) => {
+        console.log(":: Got status: ",data);
+        this.setState({wfstatus: {...data.wfstatus}, id: data.trim_id})
+    };
+
+    toggle = (data) => {
+        console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
+        let wfstatus = this.state.wfstatus;
+        wfstatus[data] = !this.state.wfstatus[data];
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
+        this.setState({wfstatus: {...wfstatus}});
+    };
+
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
+        let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
+        let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
+            <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
+            <Checkbox label='Checked' onClick={() => this.toggle("checked")} checked={this.state.wfstatus.checked} /><br />
+            <Checkbox label='Censored' onClick={() => this.toggle("censored")} checked={this.state.wfstatus.censored} /><br />
+            <Checkbox label='Trimmed' onClick={() => this.toggle("trimmed")} checked={this.state.wfstatus.trimmed} /><br />
+            <Checkbox label='Metus' onClick={() => this.toggle("metus")} checked={this.state.wfstatus.metus} /><br />
+            <Checkbox label='Backup' onClick={() => this.toggle("backup")} checked={this.state.wfstatus.backup} /><br />
+            <Checkbox label='Buffer' onClick={() => this.toggle("buffer")} checked={this.state.wfstatus.buffer} /><br />
+            <Checkbox label='Fixed' onClick={() => this.toggle("fixed")} checked={this.state.wfstatus.fixed} /><br />
+            <Checkbox label='Renamed' onClick={() => this.toggle("renamed")} checked={this.state.wfstatus.renamed} /><br />
+            <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
+
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed} = data.wfstatus;
@@ -41,7 +68,14 @@ class Trimmer extends Component {
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
-                    <Table.Cell>{id}</Table.Cell>
+                    <Popup
+                        trigger={<Table.Cell>{id}</Table.Cell>}
+                        on='click'
+                        hideOnScroll
+                        onOpen={() => this.getStatus(data)}
+                        mountNode={document.getElementById("ltr-modal-mount")}>
+                        {this.props.wf_root ? root : admin}
+                    </Popup>
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{removed ? v : x}</Table.Cell>

@@ -16,9 +16,12 @@ class WFDB extends Component {
         skey: "date",
         svalue: "",
         startDate: moment(),
+        wf_root: false,
     };
 
     componentDidMount() {
+        let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length === 0;
+        this.setState({ wf_root });
         fetch(`${API_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
         });

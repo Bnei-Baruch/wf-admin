@@ -85,7 +85,7 @@ class App extends Component {
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_aricha },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'settings', content: 'Status', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><WFDB /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><WFDB user={this.state.user} /></Tab.Pane> },
       ];
 
     return (
