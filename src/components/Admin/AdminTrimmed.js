@@ -227,9 +227,8 @@ class AdminTrimmed extends Component {
                                 <Modal closeOnDimmerClick={false}
                                        trigger={<Button disabled={this.state.disabled}
                                                         loading={this.state.renaming}
-                                                        color='blue'
-                                                        onClick={this.openCit} >Rename
-                                                </Button>}
+                                                        color='blue' icon='tags'
+                                                        onClick={this.openCit} />}
                                        onClose={this.onCancel} open={this.state.open} closeIcon="close"
                                        mountNode={document.getElementById("cit-modal-mount")}>
                                     <Modal.Content>

@@ -195,7 +195,7 @@ class AchareyAricha extends Component {
                 <Message>
                     <Menu size='mini' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button disabled={this.state.disabled} color='brown'><Icon name='play' /></Button>}
+                            <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
@@ -203,11 +203,10 @@ class AchareyAricha extends Component {
                         </Menu.Item>
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false}
-                                   trigger={<Button color='blue'
+                                   trigger={<Button color='blue' icon='tags'
                                                     disabled={this.state.disabled}
                                                     loading={this.state.renaming}
-                                                    onClick={this.openCit} >Rename
-                                            </Button>}
+                                                    onClick={this.openCit} />}
                                    onClose={this.onCancel}
                                    open={this.state.cit_open}
                                    closeIcon="close"
@@ -222,10 +221,9 @@ class AchareyAricha extends Component {
                         <Menu.Menu position='left'>
                             <Menu.Item>
                                 <Modal { ...this.props }
-                                       trigger={<Button color='teal'
+                                       trigger={<Button color='teal' icon='archive'
                                                         disabled={this.state.disabled}
-                                                        onClick={this.openInsert} >Insert
-                                                </Button>}
+                                                        onClick={this.openInsert} />}
                                        closeOnDimmerClick={true}
                                        closeIcon={true}
                                        onClose={this.onCancel}
@@ -237,7 +235,7 @@ class AchareyAricha extends Component {
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' onClick={this.setRemoved} >Remove</Button>
+                                <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
                             <Menu.Item>
                                 {/*<Input className='input_idrecover' placeholder='Put ID here...'*/}
