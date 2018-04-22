@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { API_STATE } from '../shared/tools';
 import DatePicker from 'react-datepicker';
-import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
+import { Tab, Segment, Input, Select, Button, Divider, Menu, Icon } from 'semantic-ui-react'
 import WFDBCapture from './WFDBCapture';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';
@@ -21,6 +21,13 @@ class WFDB extends Component {
         fetch(`${API_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
         });
+    };
+
+    recoverRemoved = () => {
+        let id = this.state.input_id;
+        console.log(":: Censor - going rocover id: ", id);
+        this.setState({ disabled: true });
+        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${id}/wfstatus/removed?value=false`, { method: 'POST',})
     };
 
     changeDate = (data) => {
@@ -66,6 +73,12 @@ class WFDB extends Component {
         return (
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
                 <Menu secondary>
+                    <Menu.Item>
+                        <Input size='small' className='input_idrecover' placeholder='Put ID here...' action
+                               onChange={e => this.setState({input_id: e.target.value})}><input />
+                            <Button size='mini' icon='history' onClick={this.recoverRemoved} />
+                        </Input>
+                    </Menu.Item>
                     <Menu.Item>
                         <Button color='red' disabled>Secure</Button>
                     </Menu.Item>

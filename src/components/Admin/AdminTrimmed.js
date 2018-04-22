@@ -163,13 +163,6 @@ class AdminTrimmed extends Component {
         fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
-    recoverRemoved = () => {
-        let id = this.state.input_id;
-        console.log(":: Censor - going rocover id: ", id);
-        this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${id}/wfstatus/removed?value=false`, { method: 'POST',})
-    };
-
     render() {
 
         let v = (<Icon name='checkmark'/>);
@@ -199,7 +192,7 @@ class AdminTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed}
                     className={active} key={id} onClick={() => this.selectFile(data)} >
-                    <Table.Cell className="admin_cell">{censored && trimmed ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>
@@ -210,11 +203,11 @@ class AdminTrimmed extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                {/*<Label color='grey' attached='top' size='large'>*/}
-                    {/*{this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}*/}
-                {/*</Label>*/}
-                <Message size='mini'>
-                    <Menu size='mini' secondary>
+                <Label attached='top' className="trimmed_label">
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                </Label>
+                <Message size='large'>
+                    <Menu size='large' secondary>
                         <Menu.Item>
                             <Modal size='tiny'
                                    trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
@@ -241,18 +234,11 @@ class AdminTrimmed extends Component {
                             <Menu.Item>
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
-                            <Menu.Item>
-                                <Input size='small' className='input_idrecover' placeholder='Put ID here...' action
-                                       onChange={e => this.setState({input_id: e.target.value})}><input />
-                                    <Button size='mini' icon='history' onClick={this.recoverRemoved} />
-                                </Input>
-
-                            </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
                                 {this.state.fixReq ? "" :
-                                    <Select options={send_options}
+                                    <Select compact options={send_options}
                                             defaultValue={this.state.special}
                                             placeholder='Send options'
                                             onChange={(e, {value}) => this.setSpecial(value)} />}
@@ -262,9 +248,8 @@ class AdminTrimmed extends Component {
                             </Menu.Item>
                             <Menu.Item>
                                 <Button positive disabled={this.state.disabled}
-                                        onClick={this.sendFile} loading={this.state.sending}>
-                                    {this.state.fixReq ? "Fix" : "Send"}
-                                </Button>
+                                        onClick={this.sendFile} loading={this.state.sending}
+                                        icon={this.state.fixReq ? "configure" : "arrow right"}/>
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>

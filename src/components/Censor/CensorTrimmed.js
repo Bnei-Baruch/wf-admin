@@ -143,11 +143,11 @@ class CensorTrimmed extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                {/*<Label color='grey' attached='top' size='large'>*/}
-                    {/*{this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}*/}
-                {/*</Label>*/}
-                <Message size='mini'>
-                <Menu size='mini' secondary >
+                <Label attached='top' className="trimmed_label">
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                </Label>
+                <Message size='large'>
+                <Menu size='large' secondary >
                     <Menu.Item>
                         <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
                                size='tiny'

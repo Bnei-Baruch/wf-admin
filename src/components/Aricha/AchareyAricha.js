@@ -143,13 +143,6 @@ class AchareyAricha extends Component {
         fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
-    recoverRemoved = () => {
-        let id = this.state.input_id;
-        console.log(":: Censor - going rocover id: ", id);
-        this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/aricha/${id}/wfstatus/removed?value=false`, { method: 'POST',})
-    };
-
     render() {
 
         const send_options = [
@@ -172,7 +165,7 @@ class AchareyAricha extends Component {
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
-            let active = this.state.active === id ? 'active' : '';
+            let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready}
@@ -189,11 +182,11 @@ class AchareyAricha extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                <Label color='grey' attached='top' size='large'>
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Acharey Aricha Files:"}
+                <Label  attached='top' className="trimmed_label">
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
                 </Label>
                 <Message>
-                    <Menu size='mini' secondary >
+                    <Menu size='large' secondary >
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
                                    size='tiny'
@@ -237,20 +230,15 @@ class AchareyAricha extends Component {
                             <Menu.Item>
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
-                            <Menu.Item>
-                                {/*<Input className='input_idrecover' placeholder='Put ID here...'*/}
-                                       {/*onChange={e => this.setState({input_id: e.target.value})} />*/}
-                                {/*<Button icon size='mini' onClick={this.recoverRemoved} ><Icon name='history' /></Button>*/}
-                            </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                <Select options={send_options} defaultValue='backup'
+                                <Select compact options={send_options} defaultValue='backup'
                                         onChange={(e,data) => this.setSpecial(e,data)} />
                             </Menu.Item>
                             <Menu.Item>
-                                <Button positive disabled={this.state.disabled}
-                                        onClick={this.sendFile} loading={this.state.sending}>Send</Button>
+                                <Button positive icon="arrow right" disabled={this.state.disabled}
+                                        onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>

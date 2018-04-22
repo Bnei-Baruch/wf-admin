@@ -49,24 +49,20 @@ body {
 
 .scoped-semantic-ltr .ui.table tr.positive, .scoped-semantic-ltr .ui.table td.positive {
     background: #e1e6d4 !important;
-    font-weight: bolder;
+    font-weight: normal!important;
     /*color: #2C662D;*/
 }
 
 .scoped-semantic-ltr .ui.table tr.active, .scoped-semantic-ltr .ui.table td.active {
     background: #f7ffe6 !important;
     color: #275b28 !important;
+    font-weight: bold!important;
+    /*color: #287ab7!important;*/
 }
 
-/*.admin_raw {*/
-    /*background: #e1e6d4;*/
-    /*font-weight: bolder!important;*/
-/*}*/
-
-/*.admin_cell .ui.table td.positive, .ui.table tr.positive {*/
-    /*background: #e1e6d4!important;*/
-    /*font-weight: bolder;*/
-/*}*/
+.trimmed_label {
+    color: #2C662D!important;
+}
 
 .scrolling.dimmable.dimmed>.dimmer {
     overflow: auto;
@@ -77,7 +73,7 @@ body {
 }
 
 .input_idrecover {
-    width: 105px!important;
+    width: 115px!important;
 }
 
 .input_wfdb {
