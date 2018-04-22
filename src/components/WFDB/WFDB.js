@@ -12,6 +12,7 @@ class WFDB extends Component {
 
     state = {
         date: moment().format('YYYY-MM-DD'),
+        input_id: "",
         skey: "date",
         svalue: "",
         startDate: moment(),
@@ -74,12 +75,6 @@ class WFDB extends Component {
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
                 <Menu secondary>
                     <Menu.Item>
-                        <Input size='small' className='input_idrecover' placeholder='Put ID here...' action
-                               onChange={e => this.setState({input_id: e.target.value})}><input />
-                            <Button size='mini' icon='history' onClick={this.recoverRemoved} />
-                        </Input>
-                    </Menu.Item>
-                    <Menu.Item>
                         <Button color='red' disabled>Secure</Button>
                     </Menu.Item>
                     <Menu.Item>
@@ -102,6 +97,12 @@ class WFDB extends Component {
                         <input />
                         <Button type='submit' onClick={this.setSearchValue}>Search</Button>
                     </Input>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Input placeholder='Put ID here...' action
+                               onChange={e => this.setState({input_id: e.target.value})}><input />
+                            <Button size='mini' icon='history' onClick={this.recoverRemoved} />
+                        </Input>
                     </Menu.Item>
                 </Menu>
                 <Divider inverted />

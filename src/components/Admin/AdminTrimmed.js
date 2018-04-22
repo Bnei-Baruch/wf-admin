@@ -15,7 +15,6 @@ class AdminTrimmed extends Component {
         file_data: {},
         fixReq: false,
         fix_uid: "",
-        input_id: "",
         ival: null,
         sending: false,
         renaming: false,

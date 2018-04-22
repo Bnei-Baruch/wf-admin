@@ -44,7 +44,7 @@ class Kmedia extends Component {
             json[n][ext][lng] = json[n][ext][lng] || {};
             json[n][ext][lng].filename = name;
         }
-        this.setState({json: json})
+        this.setState({json})
     };
 
     render() {
@@ -58,10 +58,10 @@ class Kmedia extends Component {
                         <Table.Cell key={lang} disabled  positive={ex} >{lang}</Table.Cell>
                     )
                 });
-                return (<Table.Row><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
+                return (<Table.Row key={ext}><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
             });
             return (
-                <Fragment>
+                <Fragment key={id}>
                     <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='24' >{id}</Table.Cell></Table.Row>
                     {exts}
                 </Fragment>
