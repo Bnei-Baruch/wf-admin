@@ -43,7 +43,7 @@ class AchareyAricha extends Component {
         console.log(":: Trimmed - selected file: ",data);
         // Build url for preview
         let url = 'http://wfserver.bbdomain.org';
-        let path = data.proxy.format.filename;
+        let path = data.original.format.filename;
         let source = `${url}${path}`;
         // Take sha for mdb fetch
         let sha1 = data.original.format.sha1;

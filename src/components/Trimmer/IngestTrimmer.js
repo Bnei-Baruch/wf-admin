@@ -100,6 +100,7 @@ class IngestTrimmer extends Component {
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
+                            error={this.state.disabled}
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
