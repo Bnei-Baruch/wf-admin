@@ -13,8 +13,7 @@ class ArichaUpload extends Component {
     };
 
     uploadDone = (file) => {
-        console.log(':: upload done: ', file);
-        //this.props.onFileData(file);
+        this.props.onFileData(file);
         this.setState({percent: 0})
     };
 

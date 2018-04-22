@@ -13,6 +13,7 @@ class AchareyAricha extends Component {
         disabled: true,
         cit_open: false,
         insert_open: false,
+        insert_button: true,
         aricha: [],
         file_data: {},
         filedata: {},
@@ -20,6 +21,8 @@ class AchareyAricha extends Component {
         input_id: "",
         ival: null,
         renaming: false,
+        rename_button: true,
+        send_button: true,
         sending: false,
         special: "backup",
         units: [],
@@ -40,26 +43,50 @@ class AchareyAricha extends Component {
     };
 
     selectFile = (data) => {
-        console.log(":: Trimmed - selected file: ",data);
-        // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
-        let path = data.original.format.filename;
-        let source = `${url}${path}`;
-        // Take sha for mdb fetch
-        let sha1 = data.original.format.sha1;
-        // Build data for insert app
-        let filename = data.file_name;
-        let content_type = "CLIP";
-        let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-        let upload_type = "aricha";
-        let language = data.line.language;
-        this.setState({source, active: data.aricha_id, file_data: data, disabled: !data.wfstatus.aricha, filedata: {filename,content_type,start_date,upload_type,language }});
-        getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
-            console.log(":: Trimmer - got units: ", units);
-            if(units.total > 0)
-                console.log("The file already got unit!");
-            this.setState({ units});
-        });
+        console.log(":: ArichaApp - selected file: ", data);
+        if (data.line) {
+            // Build url for preview
+            let url = 'http://wfserver.bbdomain.org';
+            let path = data.original.format.filename;
+            let source = `${url}${path}`;
+            // Take sha for mdb fetch
+            let sha1 = data.original.format.sha1;
+            // Build data for insert app
+            let filename = data.file_name;
+            let content_type = "CLIP";
+            let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let upload_type = "aricha";
+            let language = data.line.language;
+            this.setState({
+                source,
+                active: data.aricha_id,
+                file_data: data,
+                insert_button: !data.wfstatus.renamed,
+                rename_button: data.wfstatus.wfsend,
+                send_button: !data.wfstatus.renamed,
+                filedata: {filename, content_type, start_date, upload_type, language}
+            });
+            getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/' + sha1, (units) => {
+                console.log(":: Trimmer - got units: ", units);
+                if (units.total > 0)
+                    console.log("The file already got unit!");
+                this.setState({units});
+            });
+        } else {
+            console.log(":: ArichaApp - file must be renamed");
+            // Build url for preview
+            let url = 'http://wfserver.bbdomain.org';
+            let path = data.original.format.filename;
+            let source = `${url}${path}`;
+            this.setState({
+                source,
+                active: data.aricha_id,
+                file_data: data,
+                insert_button: !data.wfstatus.renamed,
+                rename_button: data.wfstatus.wfsend,
+                send_button: !data.wfstatus.renamed,
+            });
+        }
     };
 
     getPlayer = (player) => {
@@ -93,15 +120,15 @@ class AchareyAricha extends Component {
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}o.mp4`;
-        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
+        //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
         file_data.line = newline;
-        file_data.line.title = this.state.tags[newline.pattern] || "";
+        //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
-        file_data.proxy.format.filename = ppath;
+        //file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false, disabled: true, renaming: true});
+        this.setState({...file_data, cit_open: false, disabled: true, renaming: true});
         setTimeout(() => this.setState({ renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
         putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -160,7 +187,7 @@ class AchareyAricha extends Component {
         let aricha = this.state.aricha.map((data) => {
             const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
             let id = data.aricha_id;
-            let ready = data.proxy;
+            let ready = data.original;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
@@ -188,7 +215,7 @@ class AchareyAricha extends Component {
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
+                            <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
@@ -197,8 +224,8 @@ class AchareyAricha extends Component {
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
-                                                    disabled={this.state.disabled}
                                                     loading={this.state.renaming}
+                                                    disabled={this.state.rename_button}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
                                    open={this.state.cit_open}
@@ -215,7 +242,7 @@ class AchareyAricha extends Component {
                             <Menu.Item>
                                 <Modal { ...this.props }
                                        trigger={<Button color='teal' icon='archive'
-                                                        disabled={this.state.disabled}
+                                                        disabled={this.state.insert_button}
                                                         onClick={this.openInsert} />}
                                        closeOnDimmerClick={true}
                                        closeIcon={true}
@@ -237,7 +264,7 @@ class AchareyAricha extends Component {
                                         onChange={(e,data) => this.setSpecial(e,data)} />
                             </Menu.Item>
                             <Menu.Item>
-                                <Button positive icon="arrow right" disabled={this.state.disabled}
+                                <Button positive icon="arrow right" disabled={this.state.send_button}
                                         onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
                         </Menu.Menu>
