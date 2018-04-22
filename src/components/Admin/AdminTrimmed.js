@@ -209,7 +209,7 @@ class AdminTrimmed extends Component {
                     <Menu size='large' secondary>
                         <Menu.Item>
                             <Modal size='tiny'
-                                   trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
+                                   trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
                                    mountNode={document.getElementById("ltr-modal-mount")}>
                                 <MediaPlayer player={this.getPlayer} source={this.state.source} />
                             </Modal>

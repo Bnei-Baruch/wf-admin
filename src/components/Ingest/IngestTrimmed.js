@@ -155,7 +155,7 @@ class IngestTrimmed extends Component {
                 <Message size='large'>
                 <Menu size='large' secondary >
                     <Menu.Item>
-                        <Modal trigger={<Button color='brown' icon='play' disabled={this.state.disabled} />}
+                        <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
                                size='tiny'
                                mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} />
