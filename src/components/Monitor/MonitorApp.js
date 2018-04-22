@@ -30,12 +30,11 @@ class MonitorApp extends Component {
                             trigger={<Button size='mini' circular icon='settings' className="settings_btn" />}
                             flowing
                             hoverable
-                            mountNode={document.getElementById("ltr-modal-mount")}
-                        >
-                            <p><Checkbox label='Hide Removed' onClick={this.toggleRemoved} checked={this.state.removed} /></p>
-                            <p><Checkbox label='Hide Lessons' onClick={this.toggleLesson} checked={this.state.lesson} /></p>
-                            <p><Checkbox label='Hide Programs' onClick={this.toggleProgram} checked={this.state.program} /></p>
-                            <p><Checkbox label='Kmedia Full' onClick={this.toggleKmedia} checked={this.state.kmedia_full} /></p>
+                            mountNode={document.getElementById("ltr-modal-mount")}>
+                            <Checkbox label='Hide Removed' onClick={this.toggleRemoved} checked={this.state.removed} /><br />
+                            <Checkbox label='Hide Lessons' onClick={this.toggleLesson} checked={this.state.lesson} /><br />
+                            <Checkbox label='Hide Programs' onClick={this.toggleProgram} checked={this.state.program} /><br />
+                            <Checkbox label='Kmedia Full' onClick={this.toggleKmedia} checked={this.state.kmedia_full} /><br />
                         </Popup>
                         <Capture />
                         <Trimmer {...this.state} />
