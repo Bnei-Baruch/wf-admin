@@ -47,6 +47,27 @@ body {
     background: #f9e7db;
 }
 
+.scoped-semantic-ltr .ui.table tr.positive, .scoped-semantic-ltr .ui.table td.positive {
+    background: #e1e6d4 !important;
+    font-weight: bolder;
+    /*color: #2C662D;*/
+}
+
+.scoped-semantic-ltr .ui.table tr.active, .scoped-semantic-ltr .ui.table td.active {
+    background: #f7ffe6 !important;
+    color: #275b28 !important;
+}
+
+/*.admin_raw {*/
+    /*background: #e1e6d4;*/
+    /*font-weight: bolder!important;*/
+/*}*/
+
+/*.admin_cell .ui.table td.positive, .ui.table tr.positive {*/
+    /*background: #e1e6d4!important;*/
+    /*font-weight: bolder;*/
+/*}*/
+
 .scrolling.dimmable.dimmed>.dimmer {
     overflow: auto;
 }

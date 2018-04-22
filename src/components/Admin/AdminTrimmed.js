@@ -194,12 +194,12 @@ class AdminTrimmed extends Component {
             if(this.props.removed && removed)
                 return false;
             let rowcolor = censored && !checked;
-            let active = this.state.active === id ? 'active' : '';
+            let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed}
-                    className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
+                    className={active} key={id} onClick={() => this.selectFile(data)} >
+                    <Table.Cell className="admin_cell">{censored && trimmed ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>
@@ -210,9 +210,9 @@ class AdminTrimmed extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
-                <Label color='grey' attached='top' size='large'>
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}
-                </Label>
+                {/*<Label color='grey' attached='top' size='large'>*/}
+                    {/*{this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed Files:"}*/}
+                {/*</Label>*/}
                 <Message size='mini'>
                     <Menu size='mini' secondary>
                         <Menu.Item>
