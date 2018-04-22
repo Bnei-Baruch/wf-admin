@@ -27,13 +27,6 @@ class WFDB extends Component {
         });
     };
 
-    recoverRemoved = () => {
-        let id = this.state.input_id;
-        console.log(":: Censor - going rocover id: ", id);
-        this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${id}/wfstatus/removed?value=false`, { method: 'POST',})
-    };
-
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
         this.setState({startDate: data, date, skey: "date"});
@@ -61,7 +54,7 @@ class WFDB extends Component {
             { key: 'name', text: 'Name', value: 'file_name' },
             { key: 'id', text: 'ID', value: 'id' },
             { key: 'sha', text: 'Sha1', value: 'sha1' },
-        ]
+        ];
 
         const panes = [
             { menuItem: { key: 'ingest', content: 'Ingest' },
@@ -78,7 +71,7 @@ class WFDB extends Component {
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
                 <Menu secondary>
                     <Menu.Item>
-                        <Button color='red' disabled>Secure</Button>
+                        {this.state.wf_root ? <Button positive>Secure Mode is OFF</Button> : ""}
                     </Menu.Item>
                     <Menu.Item>
                     <DatePicker
@@ -100,12 +93,6 @@ class WFDB extends Component {
                         <input />
                         <Button type='submit' onClick={this.setSearchValue}>Search</Button>
                     </Input>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input placeholder='Put ID here...' action
-                               onChange={e => this.setState({input_id: e.target.value})}><input />
-                            <Button size='mini' icon='history' onClick={this.recoverRemoved} />
-                        </Input>
                     </Menu.Item>
                 </Menu>
                 <Divider inverted />
