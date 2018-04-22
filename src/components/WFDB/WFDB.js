@@ -20,7 +20,7 @@ class WFDB extends Component {
     };
 
     componentDidMount() {
-        let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length === 0;
+        let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length > 0;
         this.setState({ wf_root });
         fetch(`${API_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
