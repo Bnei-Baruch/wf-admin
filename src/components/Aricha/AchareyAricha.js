@@ -14,6 +14,7 @@ class AchareyAricha extends Component {
         cit_open: false,
         insert_open: false,
         insert_button: true,
+        inserting: false,
         aricha: [],
         file_data: {},
         filedata: {},
@@ -101,17 +102,19 @@ class AchareyAricha extends Component {
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
         this.setState({insert_open: false});
-        data.send_id ? this.setMeta(data) : this.newMeta(data);
+        this.setMeta(data);
     };
 
-    setMeta = (data) => {
-        getData(`trimmer/${data.send_id}`, (trimmeta) => {
-            console.log(":: Got trim meta: ", trimmeta);
+    setMeta = (insert_data) => {
+        let file_data = this.state.file_data;
+        file_data.parent.id = insert_data.send_id;
+        file_data.wfstatus.wfsend = true;
+        this.setState({...file_data, inserting: true });
+        setTimeout(() => this.setState({ inserting: false, insert_button: true }), 2000);
+        // Now we put metadata to mdb on backend
+        putData(`http://wfserver.bbdomain.org:8010/workflow/insert`, file_data, (cb) => {
+            console.log(":: ArichaApp - workflow respond: ",cb);
         });
-    };
-
-    newMeta = (data) => {
-        console.log(":: Going to set new meta: ", data);
     };
 
     onComplete = (newline) => {
@@ -242,6 +245,7 @@ class AchareyAricha extends Component {
                             <Menu.Item>
                                 <Modal { ...this.props }
                                        trigger={<Button color='teal' icon='archive'
+                                                        loading={this.state.inserting}
                                                         disabled={this.state.insert_button}
                                                         onClick={this.openInsert} />}
                                        closeOnDimmerClick={true}
