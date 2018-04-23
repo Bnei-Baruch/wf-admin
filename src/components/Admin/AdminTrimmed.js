@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData} from '../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Input, Select, Message } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
 

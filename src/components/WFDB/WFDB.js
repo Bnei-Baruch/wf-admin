@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {API_STATE, putData} from '../shared/tools';
 import DatePicker from 'react-datepicker';
-import { Tab, Segment, Input, Select, Button, Divider, Menu, Icon } from 'semantic-ui-react'
+import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBIngest from './WFDBIngest';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';

@@ -63,7 +63,7 @@ class Trimmer extends Component {
             let id = data.trim_id;
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed} = data.wfstatus;
             let name = trimmed ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = censored ? <Icon name='copyright'/> : "";
+            let censor = censored ? <Icon color='blue' name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let rowcolor = censored && !checked;
             return (
@@ -78,13 +78,13 @@ class Trimmer extends Component {
                     </Popup>
                     <Table.Cell>{censor}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{removed ? v : x}</Table.Cell>
-                    <Table.Cell>{renamed ? v : x}</Table.Cell>
-                    <Table.Cell>{fixed ? v : x}</Table.Cell>
-                    <Table.Cell>{buffer ? v : x}</Table.Cell>
-                    <Table.Cell>{backup ? v : x}</Table.Cell>
-                    <Table.Cell>{metus ? v : x}</Table.Cell>
-                    <Table.Cell>{kmedia ? v : x}</Table.Cell>
+                    <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
+                    <Table.Cell warning={renamed}>{renamed ? v : x}</Table.Cell>
+                    <Table.Cell warning={fixed}>{fixed ? v : x}</Table.Cell>
+                    <Table.Cell warning={buffer}>{buffer ? v : x}</Table.Cell>
+                    <Table.Cell warning={backup}>{backup ? v : x}</Table.Cell>
+                    <Table.Cell warning={metus}>{metus ? v : x}</Table.Cell>
+                    <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )

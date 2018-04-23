@@ -29,7 +29,7 @@ class Trimmer extends Component {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
-        let c = (<Icon name='copyright'/>);
+        let c = (<Icon color='blue' name='copyright'/>);
 
         let trimmer_data = this.state.trimmer.map((data) => {
             const {trimmed,renamed,removed,buffer,wfsend,censored,checked} = data.wfstatus;
