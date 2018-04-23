@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { getData } from '../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
-class WFDBCapture extends Component {
+class WFDBIngest extends Component {
 
     state = {
-        capture: [],
+        ingest: [],
     };
 
     componentDidMount() {
@@ -22,16 +22,16 @@ class WFDBCapture extends Component {
     getIngestData = (skey, svalue) => {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
-        getData(`capture/find?key=${skey}&value=${search}`, (capture) => {
-            console.log(capture);
-            this.setState({capture})
+        getData(`ingest/find?key=${skey}&value=${search}`, (ingest) => {
+            console.log(ingest);
+            this.setState({ingest})
         });
     };
 
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
-        let capture_data = this.state.capture.map((data) => {
+        let ingest_data = this.state.ingest.map((data) => {
             const {capwf,trimmed} = data.wfstatus;
             let id = data.capture_id;
             let time = data.start_name.split("_")[1];
@@ -64,7 +64,7 @@ class WFDBCapture extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {capture_data}
+                        {ingest_data}
                     </Table.Body>
                 </Table>
             </Container>
@@ -72,4 +72,4 @@ class WFDBCapture extends Component {
     }
 }
 
-export default WFDBCapture;
+export default WFDBIngest;

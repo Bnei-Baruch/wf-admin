@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import {API_STATE, putData} from '../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu, Icon } from 'semantic-ui-react'
-import WFDBCapture from './WFDBCapture';
+import WFDBIngest from './WFDBIngest';
 import WFDBTrimmer from './WFDBTrimmer';
 import WFDBCarbon from './WFDBCarbon';
 import WFDBKmedia from './WFDBKmedia';
+import WFDBArchive from './WFDBArchive';
+import WFDBAricha from './WFDBAricha';
+import WFDBCapture from './WFDBCapture';
+import WFDBDgima from './WFDBDgima';
+import WFDBLabels from './WFDBLabels';
 import './WFDB.css';
 import moment from "moment/moment";
 class WFDB extends Component {
@@ -70,13 +75,24 @@ class WFDB extends Component {
 
         const panes = [
             { menuItem: { key: 'ingest', content: 'Ingest' },
-                render: () => <Tab.Pane attached={true} ><WFDBCapture {...this.state} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={true} ><WFDBIngest {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'trimmer', content: 'Trimmer' },
                 render: () => <Tab.Pane attached={false} ><WFDBTrimmer {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'carbon', content: 'Carbon' },
                 render: () => <Tab.Pane attached={false} ><WFDBCarbon {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'kmedia', content: 'Kmedia' },
                 render: () => <Tab.Pane attached={false} ><WFDBKmedia {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'archive', content: 'Archive' },
+                render: () => <Tab.Pane attached={false} ><WFDBArchive {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'aricha', content: 'Aricha' },
+                render: () => <Tab.Pane attached={false} ><WFDBAricha {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'capture', content: 'Capture' },
+                render: () => <Tab.Pane attached={true} ><WFDBCapture {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'dgima', content: 'Dgima' },
+                render: () => <Tab.Pane attached={true} ><WFDBDgima {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'labels', content: 'Lables' },
+                render: () => <Tab.Pane attached={true} ><WFDBLabels {...this.state} /></Tab.Pane> },
+
         ];
 
         let on = (<Button negative onClick={this.setLock}>Lock is ON</Button>);

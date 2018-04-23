@@ -2,10 +2,10 @@ import React, { Component, Fragment } from 'react'
 import { getData } from '../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 
-class WFDBCarbon extends Component {
+class WFDBArchive extends Component {
 
     state = {
-        carbon: [],
+        archive: [],
         json: {},
     };
 
@@ -23,18 +23,18 @@ class WFDBCarbon extends Component {
     getKmediaData = (skey, svalue) => {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
-        getData(`carbon/find?key=${skey}&value=${search}`, (carbon) => {
-            this.setState({carbon});
-            this.restructure(carbon);
+        getData(`archive/find?key=${skey}&value=${search}`, (archive) => {
+            this.setState({archive});
+            this.restructure(archive);
         });
     };
 
     restructure = (data) => {
-        let carbon = data;
+        let archive = data;
         let json = {};
 
-        for (let k in carbon) {
-            let c = carbon[k];
+        for (let k in archive) {
+            let c = archive[k];
             let ext = c.extension;
             let name = c.file_name;
             let lng = c.language;
@@ -49,7 +49,7 @@ class WFDBCarbon extends Component {
 
     render() {
         const languages = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
-        let carbon_data = Object.keys(this.state.json).map((id) => {
+        let archive_data = Object.keys(this.state.json).map((id) => {
             let data = this.state.json;
             let exts = Object.keys(data[id]).map((ext) => {
                 let langs = languages.map((lang) => {
@@ -78,7 +78,7 @@ class WFDBCarbon extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {carbon_data}
+                        {archive_data}
                     </Table.Body>
                 </Table>
             </Container>
@@ -86,4 +86,4 @@ class WFDBCarbon extends Component {
     }
 }
 
-export default WFDBCarbon;
+export default WFDBArchive;

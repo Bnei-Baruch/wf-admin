@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { getData } from '../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 
-class Kmedia extends Component {
+class WFDBKmedia extends Component {
 
     state = {
         kmedia: [],
@@ -86,4 +86,4 @@ class Kmedia extends Component {
     }
 }
 
-export default Kmedia;
+export default WFDBKmedia;
