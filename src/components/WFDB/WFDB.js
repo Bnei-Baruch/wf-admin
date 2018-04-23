@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { API_STATE } from '../shared/tools';
+import {API_STATE, putData} from '../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu, Icon } from 'semantic-ui-react'
 import WFDBCapture from './WFDBCapture';
@@ -17,6 +17,7 @@ class WFDB extends Component {
         svalue: "",
         startDate: moment(),
         wf_root: false,
+        lock: false,
     };
 
     componentDidMount() {
@@ -24,6 +25,17 @@ class WFDB extends Component {
         this.setState({ wf_root });
         fetch(`${API_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
+        });
+        putData(`http://wfserver.bbdomain.org:8010/workflow/lock`, {req: "get"}, (cb) => {
+            console.log(":: WFDB - workflow lock respond: ",cb);
+            this.setState({ lock: cb.jsonst.val });
+        });
+    };
+
+    setLock = () => {
+        putData(`http://wfserver.bbdomain.org:8010/workflow/lock`, {req: "set",val: !this.state.lock}, (cb) => {
+            console.log(":: WFDB - workflow set lock: ",cb);
+            this.setState({ lock: cb.jsonst.val });
         });
     };
 
@@ -67,11 +79,15 @@ class WFDB extends Component {
                 render: () => <Tab.Pane attached={false} ><WFDBKmedia {...this.state} /></Tab.Pane> },
         ];
 
+        let on = (<Button negative onClick={this.setLock}>Lock is ON</Button>);
+        let off = (<Button positive onClick={this.setLock}>Lock is OFF</Button>);
+
         return (
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
                 <Menu secondary>
                     <Menu.Item>
-                        {this.state.wf_root ? <Button positive>Secure Mode is OFF</Button> : ""}
+                        {this.state.wf_root && this.state.lock ? on : ""}
+                        {this.state.wf_root && !this.state.lock ? off : ""}
                     </Menu.Item>
                     <Menu.Item>
                     <DatePicker
