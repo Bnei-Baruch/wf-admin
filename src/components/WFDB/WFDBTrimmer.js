@@ -93,7 +93,7 @@ class Trimmer extends Component {
         return (
 
             <Container>
-                <Table selectable compact='very' basic size='small' structured>
+                <Table selectable compact='very' fixed basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>

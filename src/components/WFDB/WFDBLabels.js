@@ -53,7 +53,7 @@ class WFDBLabels extends Component {
         return (
 
             <Fragment>
-                <Table compact='very' selectable basic fixed size='small'>
+                <Table compact='very' selectable fixed basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={1}>ID</Table.HeaderCell>

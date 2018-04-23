@@ -52,7 +52,7 @@ class WFDBIngest extends Component {
         return (
 
             <Container textAlign='center'>
-                <Table compact='very' basic size='small'>
+                <Table compact='very' selectable fixed basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>

@@ -70,7 +70,7 @@ class WFDBCarbon extends Component {
 
         return (
             <Container textAlign='center'>
-                <Table compact='very' basic size='small'>
+                <Table compact='very' selectable fixed basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell colSpan='24'>File Name</Table.HeaderCell>
