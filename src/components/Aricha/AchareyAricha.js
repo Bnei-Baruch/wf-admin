@@ -10,7 +10,6 @@ class AchareyAricha extends Component {
 
     state = {
         active: null,
-        disabled: true,
         cit_open: false,
         insert_open: false,
         insert_button: true,
@@ -107,12 +106,30 @@ class AchareyAricha extends Component {
 
     setMeta = (insert_data) => {
         let file_data = this.state.file_data;
-        file_data.parent.id = insert_data.send_id;
+        file_data.parent = {id: insert_data.send_id, name: insert_data.line.send_name};
+        file_data.line.uid = insert_data.line.uid;
+        file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
-        this.setState({...file_data, inserting: true });
-        setTimeout(() => this.setState({ inserting: false, insert_button: true }), 2000);
+        this.setState({...file_data, inserting: true, insert_button: true });
+        setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false}), 2000);
+        putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
+            console.log(":: PUT Respond: ",cb);
+        });
+        //Make insert meta
+        insert_data.insert_id = "i"+moment().format('X');
+        insert_data.line = file_data.line;
+        insert_data.date = moment().format("YYYY-MM-DD");
+        insert_data.file_name = file_data.file_name;
+        insert_data.extension = "mp4";
+        insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+        insert_data.insert_type = "1";
+        insert_data.language = file_data.line.language;
+        insert_data.send_id = file_data.aricha_id;
+        insert_data.upload_type = "aricha";
+        insert_data.sha1 = file_data.original.format.sha1;
+        insert_data.size = parseInt(file_data.original.format.size, 10);
         // Now we put metadata to mdb on backend
-        putData(`http://wfserver.bbdomain.org:8010/workflow/insert`, file_data, (cb) => {
+        putData(`http://wfserver.bbdomain.org:8010/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
         });
     };
@@ -122,17 +139,22 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
-        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}o.mp4`;
+        let opath = `/backup/aricha/${newfile_name}_${file_data.aricha_id}o.mp4`;
         //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
         file_data.line = newline;
+        file_data.line.upload_filename = oldfile_name;
         //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
         //file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
+        // Build url for preview
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.original.format.filename;
+        let source = `${url}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, cit_open: false, disabled: true, renaming: true});
-        setTimeout(() => this.setState({ renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+        this.setState({...file_data, source, upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
+        setTimeout(() => this.setState({ renaming: false, insert_button: false}), 2000);
         putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
@@ -159,17 +181,17 @@ class AchareyAricha extends Component {
         let special = this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
         fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
-        this.setState({ sending: true, disabled: true });
+        this.setState({ sending: true, send_button: true });
         setTimeout(() => {
             //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
-            this.setState({ sending: false });
+            this.setState({ sending: false, send_button: false });
         }, 1000);
     };
 
     setRemoved = () => {
         let file_data = this.state.file_data;
         console.log(":: Censor - set removed: ", file_data);
-        this.setState({ disabled: true });
+        this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
