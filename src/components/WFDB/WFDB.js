@@ -23,6 +23,7 @@ class WFDB extends Component {
         startDate: moment(),
         wf_root: false,
         lock: false,
+        tab: "ingest",
     };
 
     componentDidMount() {
@@ -64,13 +65,30 @@ class WFDB extends Component {
         this.setState({svalue: this.state.value});
     };
 
+    selectTab = (e, data) => {
+        let tab = data.panes[data.activeIndex].menuItem.key;
+        console.log(" :: Tab selected: ",tab);
+        this.setState({tab});
+    };
+
     render() {
 
-        const options = [
+        const wfdb_options = [
             { key: 'date', text: 'Date', value: 'date' },
             { key: 'name', text: 'Name', value: 'file_name' },
             { key: 'id', text: 'ID', value: 'id' },
             { key: 'sha', text: 'Sha1', value: 'sha1' },
+        ];
+
+        const labels_options = [
+            { key: 'date', text: 'Date', value: 'date' },
+            { key: 'id', text: 'ID', value: 'id' },
+            { key: 'comments', text: 'Name', value: 'comments' },
+            { key: 'content_type', text: 'Type', value: 'content_type' },
+            { key: 'subject', text: 'No', value: 'subject' },
+            { key: 'language', text: 'Lang', value: 'language' },
+            { key: 'lecturer', text: 'Lect', value: 'lecturer' },
+            { key: 'location', text: 'Place', value: 'location' },
         ];
 
         const panes = [
@@ -116,7 +134,8 @@ class WFDB extends Component {
                     />
                     </Menu.Item>
                     <Menu.Item>
-                        <Select compact options={options} defaultValue='date'
+                        <Select compact defaultValue='date'
+                                options={this.state.tab === "labels" ? labels_options : wfdb_options}
                                 onChange={(e, {value}) => this.setStatusKey(value)} />
                     </Menu.Item>
                     <Menu.Item>
@@ -128,7 +147,7 @@ class WFDB extends Component {
                     </Menu.Item>
                 </Menu>
                 <Divider inverted />
-                <Tab menu={{ pointing: true }} panes={panes} />
+                <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
             </Segment>
         );
     }
