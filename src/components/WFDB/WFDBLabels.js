@@ -13,18 +13,19 @@ class WFDBLabels extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        let prev = [ prevProps.svalue];
-        let next = [ this.props.svalue];
+        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
+        let next = [this.props.date, this.props.skey, this.props.svalue];
         if (JSON.stringify(prev) !== JSON.stringify(next))
             this.getIngestData(this.props.skey, this.props.svalue);
     };
 
     getIngestData = (skey, svalue) => {
-        if(!svalue) return;
+        let search = this.props.skey === "date" && !svalue ? this.props.date : svalue;
+        if(!search) return;
         if(skey === "id") {
             getData(`label/${svalue}`, (capture) => { this.setState({capture: [capture]}) });
         } else {
-            getData(`labels/find?key=${skey}&value=${svalue}`, (capture) => { this.setState({capture}) });
+            getData(`labels/find?key=${skey}&value=${search}`, (capture) => { this.setState({capture}) });
         }
     };
 

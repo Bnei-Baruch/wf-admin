@@ -46,7 +46,7 @@ class WFDB extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
+        let date = data.format(this.state.tab === "labels" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
         this.setState({startDate: data, date, skey: "date"});
     };
 
@@ -126,8 +126,11 @@ class WFDB extends Component {
                     <Menu.Item>
                     <DatePicker
                         className="datepickercs"
-                        dateFormat="YYYY-MM-DD"
+                        dateFormat={this.state.tab === "labels" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
                         locale='he'
+                        showYearDropdown
+                        showMonthDropdown
+                        scrollableYearDropdown
                         maxDate={moment()}
                         selected={this.state.startDate}
                         onChange={this.changeDate}

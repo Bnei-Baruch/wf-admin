@@ -22,7 +22,7 @@ class Trimmer extends Component {
     };
 
     getTrimmerData = (skey, svalue) => {
-        let search = this.props.skey === "date" ? this.props.date : svalue;
+        let search = this.props.skey === "date" && !svalue ? this.props.date : svalue;
         if(!search) return;
         getData(`trimmer/find?key=${skey}&value=${search}`, (trimmer) => {
             console.log(trimmer);
