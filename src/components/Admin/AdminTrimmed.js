@@ -92,6 +92,7 @@ class AdminTrimmed extends Component {
         let oldfile_name = file_data.file_name;
         let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
         let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}p.mp4`;
+        file_data.parent.file_name = oldfile_name;
         file_data.line = {...newline};
         file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
