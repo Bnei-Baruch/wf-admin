@@ -107,8 +107,12 @@ class AdminTrimmed extends Component {
         file_data.wfstatus.fixed = false;
         file_data.wfstatus.wfsend = false;
         // <--
+        // Build url for preview
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.proxy.format.filename;
+        let source = `${url}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, open: false, renaming: true, fixReq: true, disabled: true });
+        this.setState({...file_data, source, open: false, renaming: true, fixReq: true, disabled: true });
         setTimeout(() => this.setState({ renaming: false, disabled: false }), 2000);
         putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
