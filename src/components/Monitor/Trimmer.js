@@ -30,9 +30,10 @@ class Trimmer extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon color='blue' name='copyright'/>);
+        let f = (<Icon color='blue' name='configure'/>);
 
         let trimmer_data = this.state.trimmer.map((data) => {
-            const {trimmed,renamed,removed,buffer,wfsend,censored,checked} = data.wfstatus;
+            const {trimmed,renamed,removed,buffer,wfsend,censored,checked,fixed} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -41,7 +42,7 @@ class Trimmer extends Component {
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} disabled={removed} className="monitor_tr">
-                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored && trimmed ? c : ""}{fixed ? f : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>
                     <Table.Cell>{buffer ? v : x}</Table.Cell>

@@ -46,6 +46,10 @@ class Trimmer extends Component {
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
+        let c = (<Icon color='blue' name='copyright'/>);
+        let f = (<Icon color='blue' name='configure'/>);
+        let l = (<Loader size='mini' active inline />);
+
         let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
         let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
             <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
@@ -62,8 +66,7 @@ class Trimmer extends Component {
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed} = data.wfstatus;
-            let name = trimmed ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let censor = censored ? <Icon color='blue' name='copyright'/> : "";
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let rowcolor = censored && !checked;
             return (
@@ -76,7 +79,7 @@ class Trimmer extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
                     <Table.Cell warning={renamed}>{renamed ? v : x}</Table.Cell>
