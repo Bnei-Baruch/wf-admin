@@ -4,7 +4,7 @@ import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
-import {putData} from "../../shared/tools";
+import {putData, WFDB_BACKEND, WFSRV_OLD_BACKEND} from "../../shared/tools";
 
 export default class TrimmerApp extends Component {
 
@@ -119,11 +119,11 @@ export default class TrimmerApp extends Component {
             this.setState({ loading: false });
             this.props.closeModal();
         }, 5000);
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${this.state.trim_meta.trim_id}`, this.state.trim_meta, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${this.state.trim_meta.trim_id}`, this.state.trim_meta, (cb) => {
             console.log(":: Post trim meta: ",cb);
             let lelomikud = this.state.lelomikud ? 1 : 0;
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/trim?id=${wfid}&spc=${lelomikud}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/trim?id=${wfid}&spc=${lelomikud}`);
         });
     };
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
+import {WFSRV_BACKEND} from "../../shared/tools";
 
 class ArichaUpload extends Component {
 
@@ -20,7 +21,7 @@ class ArichaUpload extends Component {
     render() {
 
         const props = {
-            action: 'http://wfsrv.bbdomain.org:8010/aricha/upload',
+            action: `${WFSRV_BACKEND}/aricha/upload`,
             type: 'drag',
             accept: '.mp4',
             beforeUpload(file) {

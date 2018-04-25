@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Container,Message } from 'semantic-ui-react';
 import Upload from 'rc-upload';
+import {WFSRV_BACKEND} from "../../shared/tools";
 class UploadFile extends Component {
 
     state = { percent: 0 }
@@ -20,7 +21,7 @@ class UploadFile extends Component {
     render() {
 
         const props = {
-            action: 'http://wfsrv.bbdomain.org:8010/insert/upload',
+            action: `${WFSRV_BACKEND}/insert/upload`,
             type: 'drag',
             //accept: '.zip;.mp3',
             beforeUpload(file) {

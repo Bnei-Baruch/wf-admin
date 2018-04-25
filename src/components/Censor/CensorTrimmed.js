@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getData, getUnits, IVAL, putData, toHms} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, toHms, WFDB_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 
@@ -73,7 +73,7 @@ class CensorTrimmed extends Component {
         let fix_uid = uid;
         file_data.line.fix_unit_uid = fix_uid;
         this.setState({...file_data, fix_uid, disabled: false});
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
@@ -93,11 +93,11 @@ class CensorTrimmed extends Component {
         file_data.wfstatus.kmedia = true;
         // We leave this on admin, but hide on censor
         file_data.wfstatus.buffer = true;
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
             if(this.state.fixReq) {
-                fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=fix`);
+                fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}&special=fix`);
             } else {
                 fetch(`http://wfconv1.bbdomain.org:8081/convert?id=${file_data.trim_id}&key=kmedia`);
             }
@@ -114,7 +114,7 @@ class CensorTrimmed extends Component {
         let file_data = this.state.file_data;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {

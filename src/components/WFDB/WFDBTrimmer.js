@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { getData } from '../../shared/tools';
+import { getData, WFDB_BACKEND } from '../../shared/tools';
 import { Icon, Table, Container, Loader, Popup, Checkbox } from 'semantic-ui-react'
 
 class Trimmer extends Component {
@@ -39,7 +39,7 @@ class Trimmer extends Component {
         console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
         let wfstatus = this.state.wfstatus;
         wfstatus[data] = !this.state.wfstatus[data];
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
+        fetch(`${WFDB_BACKEND}/trimmer/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
         this.setState({wfstatus: {...wfstatus}});
     };
 

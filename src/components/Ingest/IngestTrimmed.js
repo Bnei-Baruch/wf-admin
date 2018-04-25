@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
@@ -76,10 +76,10 @@ class IngestTrimmed extends Component {
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, source, open: false, disabled: true, renaming: true});
         setTimeout(() => this.setState({ renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
         });
     };
 
@@ -119,10 +119,10 @@ class IngestTrimmed extends Component {
             }
         }
         file_data.wfstatus.wfsend = true;
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}`);
         });
     };
 

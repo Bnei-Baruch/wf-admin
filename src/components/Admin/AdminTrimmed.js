@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_OLD_BACKEND } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import CIT from '../../CIT';
@@ -114,10 +114,10 @@ class AdminTrimmed extends Component {
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, source, open: false, renaming: true, fixReq: true, disabled: true });
         setTimeout(() => this.setState({ renaming: false, disabled: false }), 2000);
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
         });
     };
 
@@ -137,7 +137,7 @@ class AdminTrimmed extends Component {
         let fix_uid = uid;
         file_data.line.fix_unit_uid = fix_uid;
         this.setState({...file_data, fix_uid, disabled: false});
-        putData(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
@@ -148,12 +148,12 @@ class AdminTrimmed extends Component {
             let special = this.state.special;
             file_data.wfstatus[special] = true;
             console.log(":: Going to send File: ", file_data + " : to: ", special);
-            fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, {method: 'POST',});
+            fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, {method: 'POST',});
         }
         this.setState({ ...file_data, sending: true, disabled: true });
         setTimeout(() => {
             let dst_send = this.state.fixReq ? "fix" : this.state.special;
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/send?id=${file_data.trim_id}&special=${dst_send}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}&special=${dst_send}`);
             // FIXME: When API change here must be callback with updated state
             file_data.wfstatus.fixed = true;
             file_data.wfstatus.wfsend = true;
@@ -166,7 +166,7 @@ class AdminTrimmed extends Component {
         let file_data = this.state.file_data;
         console.log(":: Admin - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`http://wfdb.bbdomain.org:8080/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {
