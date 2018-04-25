@@ -20,58 +20,38 @@ export const getLang = (lang) => {
 };
 
 export const getName = (metadata) => {
-    switch (metadata.upload_type) {
-        case "akladot":
-            var lecturer = metadata.line.lecturer;
-            var type = "akladot";
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-            break;
-        case "tamlil":
-            var lecturer = metadata.line.lecturer;
-            var type = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-            break;
-        case "kitei-makor":
-            var lecturer = metadata.line.lecturer;
-            var type = "kitei-makor";
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-            break;
-        case "sirtutim":
-            var lecturer = metadata.line.lecturer;
-            var type = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-            break;
-        case "aricha":
-            break;
-        case "dibuv":
-            var lecturer = metadata.line.lecturer;
-            var type = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-            break;
-        case "publication":
-            var lecturer = "rav";
-            var type = "publication";
-            var desc = metadata.publisher + "_" + metadata.line.uid;
-            break;
-        case "article":
-            var lecturer = "rav";
-            var type = "art";
-            var desc = metadata.line.uid;
-            break;
-        default:
-            var lecturer = metadata.line.lecturer;
-            var type = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
-            var desc = metadata.line.send_name.split("_").slice(5, -1).join("_");
-    };
 
-    let lang = metadata.language;
-    let ot = lang === metadata.line.original_language ? "o" : "t";
-    let date = metadata.line.capture_date || metadata.line.film_date;
+    let name = [];
 
-    let filename = [lang,ot,lecturer,date,type,desc].join("_");
-    let ext = mime_list[metadata.line.mime_type];
-    return filename + '.' + ext;
-}
+    // Language
+    name[0] = metadata.language;
+    // Original
+    name[1] = name[0] === metadata.line.original_language ? "o" : "t";
+    // Lecturer
+    name[2] = metadata.line.lecturer;
+    // Date
+    name[3] = metadata.line.capture_date || metadata.line.film_date;
+    // Type
+    name[4] = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
+    // Description
+    name[5] = metadata.line.send_name.split("_").slice(5, -1).join("_");
+
+    if(metadata.upload_type === "akladot") {
+        name[4] = "akladot";
+    } else if(metadata.upload_type === "kitei-makor") {
+        name[4] = "kitei-makor";
+    } else if(metadata.upload_type === "article") {
+        name[2] = "rav";
+        name[4] = "art";
+        name[5] = metadata.line.upload_filename.split(".")[0].split("_").pop().replace(/([^-a-zA-Z0-9]+)/g, '').toLowerCase();
+    } else if(metadata.upload_type === "publication") {
+        name[2] = "rav";
+        name[4] = "publication";
+        name[5] = metadata.publisher + "_" + metadata.line.uid;
+    }
+
+    return name.join("_") + '.' + mime_list[metadata.line.mime_type];
+};
 
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     .then((response) => {

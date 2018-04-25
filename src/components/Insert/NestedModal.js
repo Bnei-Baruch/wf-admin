@@ -63,6 +63,7 @@ class NestedModal extends Component {
                 open={open}
                 onOpen={this.open}
                 onClose={this.close}
+                mountNode={document.getElementById("ltr-modal-mount")}
             >
                 <Modal.Header>Publishers</Modal.Header>
                 <Modal.Content className="tabContent">
