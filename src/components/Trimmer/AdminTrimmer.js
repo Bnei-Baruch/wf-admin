@@ -22,12 +22,12 @@ class AdminTrimmer extends Component {
     };
 
     getCaptured = (date) => {
-        getData('ingest/find?key=date&value='+date, (data) => {
+        getData(`ingest/find?key=date&value=${date}`, (data) => {
             let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);
             let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/) && b.wfstatus.capwf);
             this.setState({main, backup});
         });
-        getData('trimmer/find?key=date&value='+date, (data) => {
+        getData(`trimmer/find?key=date&value=${date}`, (data) => {
             this.setState({trimmed: data});
         });
     };
@@ -49,7 +49,7 @@ class AdminTrimmer extends Component {
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
         this.setState({source, file_data, disabled: false});
-        getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/'+sha1, (units) => {
+        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
         });
@@ -65,15 +65,18 @@ class AdminTrimmer extends Component {
 
     render() {
 
+        const trim_src = this.state.trim_src;
+        const trim_files = this.state[trim_src];
+
         const options = [
             { key: 1, text: 'Main', value: 'main' },
             { key: 2, text: 'Backup', value: 'backup' },
             { key: 3, text: 'Trimmed', value: 'trimmed' },
         ];
 
-        let trim_data = this.state[this.state.trim_src].map((data, i) => {
-            let name = (this.state.trim_src === "trimmed") ? data.file_name : data.stop_name;
-            let id = (this.state.trim_src === "trimmed") ? data.trim_id : data.capture_id;
+        let trim_data = trim_files.map((data) => {
+            let name = trim_src === "trimmed" ? data.file_name : data.stop_name;
+            let id = trim_src === "trimmed" ? data.trim_id : data.capture_id;
             return ({ key: id, text: name, value: data })
         });
 

@@ -9,23 +9,20 @@ export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
 export const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
 export const IVAL = 1000;
 
-export const toHms = (time) => {
-    let totalSec = time ;
+export const toHms = (totalSec) => {
     let hours = parseInt( totalSec / 3600 ) % 24;
     let minutes = parseInt( totalSec / 60 ) % 60;
     let seconds = (totalSec % 60).toFixed(2);
     if (seconds < 0) seconds = 0;
-
-    let result = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
-    return result;
+    return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
 };
 
-export const toSeconds = (time) => {
-    var hms = time ;
-    var a = hms.split(':');
-    var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
-    return seconds;
-};
+// export const toSeconds = (time) => {
+//     var hms = time ;
+//     var a = hms.split(':');
+//     var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+//     return seconds;
+// };
 
 export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     .then((response) => {
@@ -122,9 +119,9 @@ export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-export const fetchSources = cb => Fetcher('sources/', cb);
-
-export const fetchTags = cb => Fetcher('tags/', cb);
+// export const fetchSources = cb => Fetcher('sources/', cb);
+//
+// export const fetchTags = cb => Fetcher('tags/', cb);
 
 export const fetchPublishers = cb => Fetcher('publishers/', cb);
 
@@ -179,6 +176,6 @@ export const fetchCollections = (data,col) => {
             }
         )
     })
-}
+};
 
 
