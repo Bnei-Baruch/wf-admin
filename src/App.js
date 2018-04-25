@@ -25,6 +25,7 @@ class App extends Component {
         wf_censor: true,
         wf_admin: true,
         wf_aricha: true,
+        wf_dgima: true,
         wf_public: true,
 
     };
@@ -53,9 +54,10 @@ class App extends Component {
         let wf_censor = user.roles.filter(role => role === 'wf_censor').length === 0;
         let wf_admin = user.roles.filter(role => role === 'wf_admin').length === 0;
         let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
+        let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
         console.log(":: App - got user: ", user);
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima});
         } else {
             alert("Access denied!");
             client.signoutRedirect();
@@ -64,7 +66,7 @@ class App extends Component {
 
   render() {
 
-      const {wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha} = this.state;
+      const {wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima} = this.state;
       let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
 
       const panes = [
@@ -80,7 +82,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_aricha },
+          { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
               render: () => <Tab.Pane attached={false} >Dgima</Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_aricha },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
