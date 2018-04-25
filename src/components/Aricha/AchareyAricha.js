@@ -142,7 +142,7 @@ class AchareyAricha extends Component {
         let opath = `/backup/aricha/${newfile_name}_${file_data.aricha_id}o.mp4`;
         //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
         file_data.line = {...newline};
-        file_data.parent.file_name = oldfile_name;
+        file_data.parent = {...{file_name: oldfile_name}};
         //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
         //file_data.proxy.format.filename = ppath;
@@ -183,7 +183,7 @@ class AchareyAricha extends Component {
         fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, send_button: true });
         setTimeout(() => {
-            //fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
+            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
             this.setState({ sending: false, send_button: false });
         }, 1000);
     };
@@ -210,6 +210,9 @@ class AchareyAricha extends Component {
         let c = (<Icon name='copyright'/>);
 
         let aricha = this.state.aricha.map((data) => {
+            if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
+                return false;
+            }
             const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
             let id = data.aricha_id;
             let ready = data.original;

@@ -3,7 +3,7 @@ import AchareyAricha from "./AchareyAricha";
 import ArichaUpload from "./ArichaUpload";
 import {putData} from "../shared/tools";
 
-class AdminApp extends Component {
+class ArichaApp extends Component {
 
     state = {
         ival: null,
@@ -21,10 +21,10 @@ class AdminApp extends Component {
         return (
             <Fragment>
                 <ArichaUpload onFileData={this.arichaWorkflow}/>
-                <AchareyAricha />
+                <AchareyAricha user={this.props.user} />
             </Fragment>
         );
     }
 }
 
-export default AdminApp;
+export default ArichaApp;
