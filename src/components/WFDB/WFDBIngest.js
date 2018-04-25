@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getData } from '../shared/tools';
+import { getData } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
 class WFDBIngest extends Component {

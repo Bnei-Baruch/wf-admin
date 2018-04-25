@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {WFRP_STATE, putData} from '../shared/tools';
+import {WFRP_STATE, putData} from '../../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBIngest from './WFDBIngest';

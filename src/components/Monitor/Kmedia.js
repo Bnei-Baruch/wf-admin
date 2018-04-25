@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import moment from 'moment';
-import { getData, IVAL } from '../shared/tools';
+import { getData, IVAL } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 
 class Kmedia extends Component {

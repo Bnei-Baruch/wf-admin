@@ -4,7 +4,7 @@ import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
-import {putData} from "../shared/tools";
+import {putData} from "../../shared/tools";
 
 export default class TrimmerApp extends Component {
 

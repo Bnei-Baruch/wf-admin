@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getUpload, IVAL } from '../shared/tools';
+import { getUpload, IVAL } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
 class Upload extends Component {

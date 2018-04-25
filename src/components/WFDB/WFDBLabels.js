@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import { getData } from '../shared/tools';
+import { getData } from '../../shared/tools';
 import { Table } from 'semantic-ui-react'
 
 class WFDBLabels extends Component {

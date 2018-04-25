@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import AchareyAricha from "./AchareyAricha";
 import ArichaUpload from "./ArichaUpload";
-import {putData} from "../shared/tools";
+import {putData} from "../../shared/tools";
 
 class ArichaApp extends Component {
 

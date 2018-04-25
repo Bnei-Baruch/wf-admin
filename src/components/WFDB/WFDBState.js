@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getConv } from '../shared/tools';
+import { getConv } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
 class WFDBState extends Component {

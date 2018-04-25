@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { getData } from '../shared/tools';
+import { getData } from '../../shared/tools';
 import { Icon, Table, Container, Popup, Checkbox } from 'semantic-ui-react'
 
 class WFDBDgima extends Component {
