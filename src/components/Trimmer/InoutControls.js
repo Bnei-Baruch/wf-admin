@@ -19,6 +19,7 @@ export default class InoutControls extends Component {
             inpoints[i] = currentTime;
             this.props.onSetPoints(inpoints, outpoints);
         }
+        console.log(":: Set IN: ",currentTime);
         this.setState({inpoints});
     };
 
@@ -30,6 +31,7 @@ export default class InoutControls extends Component {
         } else {
             outpoints[i] = currentTime;
         }
+        console.log(":: Set OUT: ",currentTime);
         this.setState({outpoints});
         this.props.onSetPoints(inpoints, outpoints);
     };

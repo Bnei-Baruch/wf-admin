@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {API_STATE, putData} from '../shared/tools';
+import {WFRP_STATE, putData} from '../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBIngest from './WFDBIngest';
@@ -29,7 +29,7 @@ class WFDB extends Component {
     componentDidMount() {
         let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length > 0;
         this.setState({ wf_root });
-        fetch(`${API_STATE}`).then((response) => {
+        fetch(`${WFRP_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
         });
         putData(`http://wfserver.bbdomain.org:8010/workflow/lock`, {req: "get"}, (cb) => {

@@ -1,8 +1,8 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES} from './consts';
 
-const API_BACKEND = 'https://upload.kli.one/rest';
-// const API_BACKEND = 'http://app.mdb.bbdomain.org/rest/content_units';
-// http://app.mdb.bbdomain.org/rest/content_units/33573/persons/ uid: "abcdefgh" ; rav
+const MDB_BACKEND = 'https://insert.kbb1.com/rest';
+const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
+const WF_BACKEND = 'http://wfsrv.bbdomain.org:8010';
 
 export const toHms = (time) => {
     let totalSec = time ;
@@ -73,7 +73,7 @@ export const getName = (metadata) => {
     return filename + '.' + ext;
 }
 
-export const Fetcher = (path, cb) => fetch(`${API_BACKEND}/${path}`)
+export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -88,7 +88,7 @@ export const fetchTags = cb => Fetcher('tags/', cb);
 
 export const fetchPublishers = cb => Fetcher('publishers/', cb);
 
-export const fetchUnits = (path, cb) => fetch(`${API_BACKEND}/content_units/${path}`)
+export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`)
     .then((response) => {
         if (response.ok) {
             console.log("--FetchDataWithCB--");
@@ -97,7 +97,7 @@ export const fetchUnits = (path, cb) => fetch(`${API_BACKEND}/content_units/${pa
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-export const fetchPersons = (id, cb) => fetch(`${API_BACKEND}/content_units/${id}/persons/`)
+export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id}/persons/`)
     .then((response) => {
         if (response.ok) {
             console.log("--FetchPersonsName--");
@@ -106,7 +106,7 @@ export const fetchPersons = (id, cb) => fetch(`${API_BACKEND}/content_units/${id
     })
     .catch(ex => console.log(`get ${id}`, ex));
 
-export const insertName = (filename, cb) => fetch(`https://upload.kli.one/insert/find?key=insert_name&value=${filename}`)
+export const insertName = (filename, cb) => fetch(`${WFDB_BACKEND}/insert/find?key=insert_name&value=${filename}`)
     .then((response) => {
         if (response.ok) {
             console.log("--FetchInsertName--");
@@ -115,7 +115,7 @@ export const insertName = (filename, cb) => fetch(`https://upload.kli.one/insert
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
-export const insertSha = (sha, cb) => fetch(`https://upload.kli.one/rest/files/?sha1=${sha}`)
+export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
     .then((response) => {
         if (response.ok) {
             console.log("--FetchInsertSha--");
