@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData} from '../shared/tools';
+import {getData, getUnits, IVAL, putData, WFSRV_OLD_BACKEND, WFDB_BACKEND, WFSRV_BACKEND} from '../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -66,7 +66,7 @@ class AchareyAricha extends Component {
                 send_button: !data.wfstatus.renamed,
                 filedata: {filename, content_type, start_date, upload_type, language}
             });
-            getUnits('http://app.mdb.bbdomain.org/operations/descendant_units/' + sha1, (units) => {
+            getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
                     console.log("The file already got unit!");
@@ -112,7 +112,7 @@ class AchareyAricha extends Component {
         file_data.wfstatus.wfsend = true;
         this.setState({...file_data, inserting: true, insert_button: true });
         setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false}), 2000);
-        putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
         //Make insert meta
@@ -129,7 +129,7 @@ class AchareyAricha extends Component {
         insert_data.sha1 = file_data.original.format.sha1;
         insert_data.size = parseInt(file_data.original.format.size, 10);
         // Now we put metadata to mdb on backend
-        putData(`http://wfserver.bbdomain.org:8010/workflow/insert`, insert_data, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
         });
     };
@@ -155,10 +155,10 @@ class AchareyAricha extends Component {
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({...file_data, source, upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
         setTimeout(() => this.setState({ renaming: false, insert_button: false}), 2000);
-        putData(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
-            fetch(`http://wfserver.bbdomain.org:8080/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
         });
     };
 
@@ -180,10 +180,10 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         let special = this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, send_button: true });
         setTimeout(() => {
-            fetch(`http://wfdb.bbdomain.org:8080/hooks/send?id=${file_data.aricha_id}&special=${special}`);
+            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.aricha_id}&special=${special}`);
             this.setState({ sending: false, send_button: false });
         }, 1000);
     };
@@ -192,7 +192,7 @@ class AchareyAricha extends Component {
         let file_data = this.state.file_data;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`http://wfdb.bbdomain.org:8080/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {

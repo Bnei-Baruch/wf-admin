@@ -1,10 +1,10 @@
-const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
+export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
 export const WFRP_STATE = 'http://wfrp.bbdomain.org:8000';
-const MDB_BACKEND = 'https://insert.kbb1.com/rest';
-const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
-const WFDB_STATE = 'http://wfrp.bbdomain.org:8000';
-const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
-const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
+export const MDB_BACKEND = 'https://insert.kbb1.com/rest';
+export const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
+export const WFDB_STATE = 'http://wfrp.bbdomain.org:8000';
+export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
+export const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
 export const IVAL = 1000;
 
 export const toHms = (time) => {
