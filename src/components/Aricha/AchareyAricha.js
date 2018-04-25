@@ -17,6 +17,7 @@ class AchareyAricha extends Component {
         aricha: [],
         file_data: {},
         filedata: {},
+        kmedia_option: false,
         metadata: {},
         input_id: "",
         ival: null,
@@ -64,6 +65,7 @@ class AchareyAricha extends Component {
                 insert_button: !data.wfstatus.renamed,
                 rename_button: data.wfstatus.wfsend,
                 send_button: !data.wfstatus.renamed,
+                kmedia_option: data.wfstatus.wfsend,
                 filedata: {filename, content_type, start_date, upload_type, language}
             });
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
@@ -85,6 +87,7 @@ class AchareyAricha extends Component {
                 insert_button: !data.wfstatus.renamed,
                 rename_button: data.wfstatus.wfsend,
                 send_button: !data.wfstatus.renamed,
+                kmedia_option: data.wfstatus.wfsend,
             });
         }
     };
@@ -198,7 +201,7 @@ class AchareyAricha extends Component {
     render() {
 
         const send_options = [
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !this.state.kmedia_option },
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
