@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { Grid, Popup, Button, Checkbox } from 'semantic-ui-react'
-import Capture from './Capture';
-import Trimmer from './Trimmer';
-import Carbon from './Carbon';
-import Kmedia from './Kmedia';
-import Upload from './Upload';
+import MonitorCapture from './MonitorCapture';
+import MonitorTrimmer from './MonitorTrimmer';
+import MonitorCarbon from './MonitorCarbon';
+import MonitorKmedia from './MonitorKmedia';
+import MonitorUpload from './MonitorUpload';
 import './MonitorApp.css';
 
 class MonitorApp extends Component {
@@ -36,13 +36,13 @@ class MonitorApp extends Component {
                             <Checkbox label='Hide Programs' onClick={this.toggleProgram} checked={this.state.program} /><br />
                             <Checkbox label='Kmedia Full' onClick={this.toggleKmedia} checked={this.state.kmedia_full} /><br />
                         </Popup>
-                        <Capture />
-                        <Trimmer {...this.state} />
-                        <Upload />
+                        <MonitorCapture />
+                        <MonitorTrimmer {...this.state} />
+                        <MonitorUpload />
                     </Grid.Column>
                     <Grid.Column>
-                        <Carbon />
-                        <Kmedia {...this.state} />
+                        <MonitorCarbon />
+                        <MonitorKmedia {...this.state} />
                     </Grid.Column>
                 </Grid>
 

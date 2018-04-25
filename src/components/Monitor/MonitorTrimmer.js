@@ -3,7 +3,7 @@ import moment from 'moment';
 import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
-class Trimmer extends Component {
+class MonitorTrimmer extends Component {
 
     state = {
         trimmer: [],
@@ -75,4 +75,4 @@ class Trimmer extends Component {
     }
 }
 
-export default Trimmer;
+export default MonitorTrimmer;

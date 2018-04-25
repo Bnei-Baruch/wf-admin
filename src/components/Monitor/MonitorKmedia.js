@@ -3,7 +3,7 @@ import moment from 'moment';
 import { getData, IVAL } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 
-class Kmedia extends Component {
+class MonitorKmedia extends Component {
 
     state = {
         kmedia: [],
@@ -110,4 +110,4 @@ class Kmedia extends Component {
     }
 }
 
-export default Kmedia;
+export default MonitorKmedia;

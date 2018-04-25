@@ -3,7 +3,7 @@ import moment from 'moment';
 import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
-class Capture extends Component {
+class MonitorCapture extends Component {
 
     state = {
         capture: [],
@@ -68,4 +68,4 @@ class Capture extends Component {
     }
 }
 
-export default Capture;
+export default MonitorCapture;

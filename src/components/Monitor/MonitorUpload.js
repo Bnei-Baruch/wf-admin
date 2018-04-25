@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { getUpload, IVAL } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
-class Upload extends Component {
+class MonitorUpload extends Component {
 
     state = {
         upload: [],
@@ -86,4 +86,4 @@ class Upload extends Component {
     }
 }
 
-export default Upload;
+export default MonitorUpload;

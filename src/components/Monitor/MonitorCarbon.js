@@ -3,7 +3,7 @@ import moment from 'moment';
 import { getConv, IVAL } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
-class Carbon extends Component {
+class MonitorCarbon extends Component {
 
     state = {
         carbon: {},
@@ -66,4 +66,4 @@ class Carbon extends Component {
     }
 }
 
-export default Carbon;
+export default MonitorCarbon;
