@@ -103,7 +103,7 @@ class AchareyAricha extends Component {
 
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
-        this.setState({insert_open: false, kmedia_option: true});
+        this.setState({insert_open: false});
         this.setMeta(data);
     };
 
@@ -114,7 +114,8 @@ class AchareyAricha extends Component {
         file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
         this.setState({...file_data, inserting: true, insert_button: true });
-        setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false}), 2000);
+        // FIXME: This must be done after success backend callback
+        setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
         putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
