@@ -53,7 +53,7 @@ class MonitorKmedia extends Component {
     render() {
         const languages = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
 
-        let full_kmedia_data = Object.keys(this.state.json).map((id) => {
+        let full_kmedia_data = Object.keys(this.state.json).map((id, i) => {
             let data = this.state.json;
             let exts = Object.keys(data[id]).map((ext) => {
                 let langs = languages.map((lang) => {
@@ -65,29 +65,29 @@ class MonitorKmedia extends Component {
                 return (<Table.Row key={ext}><Table.Cell active>{ext}</Table.Cell>{langs}</Table.Row>);
             });
             return (
-                <Fragment key={id}>
+                <Fragment key={i}>
                     <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='24' >{id}</Table.Cell></Table.Row>
                     {exts}
                 </Fragment>
             );
         });
 
-        let short_kmedia_data = Object.keys(this.state.json).map((id) => {
+        let short_kmedia_data = Object.keys(this.state.json).map((id, i) => {
             let data = this.state.json;
             if(data[id]["mp3"]) {
                 let langs = languages.map((lang) => {
-                    let ex = data[id]["mp3"].hasOwnProperty(lang);
+                    let ex = data[id]["mp3"].includes(lang);
                     return (
                         <Table.Cell key={lang} disabled positive={ex} >{lang}</Table.Cell>
                     )
                 });
                 return (
-                    <Fragment key={id}>
+                    <Fragment key={i}>
                         <Table.Row className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
                         <Table.Row>{langs}</Table.Row>
                     </Fragment>
                 );
-            }
+            } return true;
         });
 
         return (

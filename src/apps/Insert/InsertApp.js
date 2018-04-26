@@ -3,40 +3,17 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import noop from 'lodash/noop';
 import moment from 'moment';
-import he from 'moment/locale/he';
-import ru from 'moment/locale/ru';
-import es from 'moment/locale/es';
-import fr from 'moment/locale/fr';
-import it from 'moment/locale/it';
-import de from 'moment/locale/de';
-import en from 'moment/locale/en-gb';
+import 'moment/locale/he';
+import 'moment/locale/ru';
+// import es from 'moment/locale/es';
+// import fr from 'moment/locale/fr';
+// import it from 'moment/locale/it';
+// import de from 'moment/locale/de';
+// import en from 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
 import { fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../../shared/tools';
-
-import {
-    content_options,
-    language_options,
-    upload_options,
-    article_options,
-    MDB_LANGUAGES,
-    CT_LESSON_PART,
-    CT_LECTURE,
-    CT_CHILDREN_LESSON_PART,
-    CT_WOMEN_LESSON_PART,
-    CT_VIRTUAL_LESSON,
-    CT_FRIENDS_GATHERING,
-    CT_MEAL,
-    CT_VIDEO_PROGRAM_CHAPTER,
-    CT_FULL_LESSON,
-    CT_TEXT,
-    CT_UNKNOWN,
-    CT_EVENT_PART,
-    CT_CLIP,
-    CT_TRAINING,
-    CT_KITEI_MAKOR,
-    CONTENT_TYPE_BY_ID
-} from '../../shared/consts';
+import { content_options, language_options, upload_options, article_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID } from '../../shared/consts';
 
 import MdbData from './MdbData';
 import NestedModal from './NestedModal';
@@ -74,7 +51,7 @@ class InsertApp extends Component {
             end_date: this.props.filedata.start_date ? this.props.filedata.start_date : moment().format('YYYY-MM-DD'),
             content_type: this.props.filedata.content_type ? this.props.filedata.content_type : null,
             language: this.props.filedata.language ? this.props.filedata.language : null,
-            locale: "he",
+            locale: 'he',
             upload_type: this.props.filedata.upload_type ? this.props.filedata.upload_type : "",
             input_uid: this.props.filedata.input_uid ? this.props.filedata.input_uid : null,
             isValidated: false,
@@ -87,11 +64,12 @@ class InsertApp extends Component {
     componentDidMount() {
         // Set sunday first weekday in russian
         moment.updateLocale('ru', { week: {dow: 0,},});
-        moment.updateLocale('es', { week: {dow: 0,},});
-        moment.updateLocale('it', { week: {dow: 0,},});
-        moment.updateLocale('de', { week: {dow: 0,},});
-        moment.updateLocale('fr', { week: {dow: 0,},});
-        moment.updateLocale('en', { week: {dow: 0,},});
+        // moment.updateLocale('es', { week: {dow: 0,},});
+        // moment.updateLocale('it', { week: {dow: 0,},});
+        // moment.updateLocale('de', { week: {dow: 0,},});
+        // moment.updateLocale('fr', { week: {dow: 0,},});
+        // moment.updateLocale('en', { week: {dow: 0,},});
+        // moment.updateLocale(he, { week: {dow: 0,},});
         //fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
         //fetchTags(tags => this.setState({ store: { ...this.state.store, tags } }));
         fetchPublishers(publishers => this.setState({ store: { ...this.state.store, publishers: publishers.data } }));
