@@ -53,14 +53,14 @@ class WFDBAricha extends Component {
             <Checkbox label='Censored' onClick={() => this.toggle("censored")} checked={this.state.wfstatus.censored} /><br />
             <Checkbox label='Metus' onClick={() => this.toggle("metus")} checked={this.state.wfstatus.metus} /><br />
             <Checkbox label='Backup' onClick={() => this.toggle("backup")} checked={this.state.wfstatus.backup} /><br />
-            <Checkbox label='Buffer' onClick={() => this.toggle("buffer")} checked={this.state.wfstatus.buffer} /><br />
+            <Checkbox label='Youtube' onClick={() => this.toggle("youtube")} checked={this.state.wfstatus.youtube} /><br />
             <Checkbox label='Fixed' onClick={() => this.toggle("fixed")} checked={this.state.wfstatus.fixed} /><br />
             <Checkbox label='Renamed' onClick={() => this.toggle("renamed")} checked={this.state.wfstatus.renamed} /><br />
             <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
 
         let aricha_data = this.state.aricha.map((data) => {
             let id = data.aricha_id;
-            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed} = data.wfstatus;
+            const {aricha,backup,youtube,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed} = data.wfstatus;
             let name = aricha ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -80,7 +80,7 @@ class WFDBAricha extends Component {
                     <Table.Cell>{removed ? v : x}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>
                     <Table.Cell>{fixed ? v : x}</Table.Cell>
-                    <Table.Cell>{buffer ? v : x}</Table.Cell>
+                    <Table.Cell>{youtube ? v : x}</Table.Cell>
                     <Table.Cell>{backup ? v : x}</Table.Cell>
                     <Table.Cell>{metus ? v : x}</Table.Cell>
                     <Table.Cell>{kmedia ? v : x}</Table.Cell>
@@ -101,7 +101,7 @@ class WFDBAricha extends Component {
                             <Table.HeaderCell width={1}>RMV</Table.HeaderCell>
                             <Table.HeaderCell width={1}>RNM</Table.HeaderCell>
                             <Table.HeaderCell width={1}>FIX</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>YTB</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BAK</Table.HeaderCell>
                             <Table.HeaderCell width={1}>MTS</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
