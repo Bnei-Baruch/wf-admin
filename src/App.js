@@ -7,13 +7,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import LoginPage from './components/LoginPage';
 import {client, getUser} from "./components/UserManager";
-import MonitorApp from "./components/Monitor/MonitorApp";
-import IngestApp from "./components/Ingest/IngestApp";
-import CensorApp from "./components/Censor/CensorApp";
-import AdminApp from "./components/Admin/AdminApp";
-import ArichaApp from "./components/Aricha/ArichaApp";
-import MainPage from "./components/Insert/MainPage";
-import WFDB from "./components/WFDB/WFDB";
+import MonitorApp from "./apps/Monitor/MonitorApp";
+import IngestApp from "./apps/Ingest/IngestApp";
+import CensorApp from "./apps/Censor/CensorApp";
+import AdminApp from "./apps/Admin/AdminApp";
+import ArichaApp from "./apps/Aricha/ArichaApp";
+import MainPage from "./apps/Insert/MainPage";
+import WFDB from "./apps/WFDB/WFDB";
 
 class App extends Component {
 

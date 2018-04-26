@@ -9,7 +9,7 @@ import {
   EVENT_CONTENT_TYPES,
   EVENT_PART_TYPES,
   LESSON_PARTS_OPTIONS
-} from '../shared/consts';
+} from '../../../shared/consts';
 import { isActive } from '../shared/utils';
 import BaseForm from './BaseForm';
 

@@ -2,8 +2,8 @@ import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_OLD_BACKEND } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
-import MediaPlayer from "../Media/MediaPlayer";
-import CIT from '../../CIT';
+import MediaPlayer from "../../components/Media/MediaPlayer";
+import CIT from '../CIT/CIT';
 
 class AdminTrimmed extends Component {
 

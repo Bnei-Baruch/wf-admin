@@ -1,5 +1,5 @@
 import { extractI18n } from './utils';
-import { CONTENT_TYPE_BY_ID, CT_VIDEO_PROGRAM, EVENT_CONTENT_TYPES, LECTURE_CONTENT_TYPES } from './consts';
+import { CONTENT_TYPE_BY_ID, CT_VIDEO_PROGRAM, EVENT_CONTENT_TYPES, LECTURE_CONTENT_TYPES } from '../../../shared/consts';
 
 const API_BACKEND = process.env.NODE_ENV !== 'production' ?
   process.env.REACT_APP_MDB_URL :

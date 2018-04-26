@@ -13,7 +13,7 @@ import {
   CT_VIRTUAL_LESSON,
   CT_WOMEN_LESSON,
   EVENT_CONTENT_TYPES
-} from './shared/consts';
+} from '../../shared/consts';
 import { Metadata } from './shared/shapes';
 import { fetchCollections, fetchSources, fetchTags } from './shared/store';
 import ContentTypeForm from './forms/ContentTypeForm';

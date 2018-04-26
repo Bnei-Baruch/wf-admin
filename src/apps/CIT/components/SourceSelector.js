@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Table } from 'semantic-ui-react';
 
-import { EMPTY_ARRAY } from '../shared/consts';
+import { EMPTY_ARRAY } from '../../../shared/consts';
 import { SourcesTree } from '../shared/shapes';
 import SourcesSearch from './SourcesSearch';
 import TreeItemSelector from './TreeItemSelector';

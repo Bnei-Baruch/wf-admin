@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
-import { ARTIFACT_TYPES, CONTENT_TYPES_MAPPINGS } from '../shared/consts';
+import { ARTIFACT_TYPES, CONTENT_TYPES_MAPPINGS } from '../../../shared/consts';
 import { sourcesTagsPattern } from '../shared/utils';
 import BaseForm from './BaseForm';
 

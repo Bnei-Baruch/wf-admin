@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {getData, getUnits, IVAL, putData, toHms, WFDB_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
-import MediaPlayer from "../Media/MediaPlayer";
+import MediaPlayer from "../../components/Media/MediaPlayer";
 
 class CensorTrimmed extends Component {
 

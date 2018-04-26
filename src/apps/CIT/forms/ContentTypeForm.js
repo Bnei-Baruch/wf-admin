@@ -14,7 +14,7 @@ import {
   CT_VIDEO_PROGRAM_CHAPTER,
   CT_VIRTUAL_LESSON,
   CT_WOMEN_LESSON
-} from '../shared/consts';
+} from '../../../shared/consts';
 
 const ContentTypeForm = props => (
   <Grid columns="equal">

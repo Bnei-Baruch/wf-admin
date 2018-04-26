@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
-import MediaPlayer from "../Media/MediaPlayer";
+import MediaPlayer from "../../components/Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
 import {putData, WFDB_BACKEND, WFSRV_OLD_BACKEND} from "../../shared/tools";

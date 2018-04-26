@@ -17,7 +17,7 @@ import {
   LECTURERS,
   LESSON_PARTS_OPTIONS,
   MDB_LANGUAGES
-} from '../shared/consts';
+} from '../../../shared/consts';
 import { findPath, today } from '../shared/utils';
 import { Metadata, SourcesTree, TagsTree } from '../shared/shapes';
 import SourceSelector from '../components/SourceSelector';
