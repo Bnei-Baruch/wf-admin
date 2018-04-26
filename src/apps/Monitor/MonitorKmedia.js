@@ -76,7 +76,7 @@ class MonitorKmedia extends Component {
             let data = this.state.json;
             if(data[id]["mp3"]) {
                 let langs = languages.map((lang) => {
-                    let ex = data[id]["mp3"].includes(lang);
+                    let ex = data[id]["mp3"].hasOwnProperty(lang);
                     return (
                         <Table.Cell key={lang} disabled positive={ex} >{lang}</Table.Cell>
                     )
