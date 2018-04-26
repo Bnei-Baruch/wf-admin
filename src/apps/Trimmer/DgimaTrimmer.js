@@ -9,12 +9,12 @@ class DgimaTrimmer extends Component {
 
     state = {
         disabled: true,
-        sdirec1: [],
-        sdirec2: [],
+        cassette: [],
+        congress: [],
         dgima: [],
         file_data: {},
         open: false,
-        trim_src: "sdirec1",
+        trim_src: "cassette",
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "",
@@ -23,9 +23,9 @@ class DgimaTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`capture/find?key=date&value=${date}`, (data) => {
-            let sdirec1 = data.filter(m => m.capture_src.match(/^(sdirec1)$/) && m.wfstatus.capwf);
-            let sdirec2 = data.filter(b => b.capture_src.match(/^(sdirec2)$/) && b.wfstatus.capwf);
-            this.setState({sdirec1, sdirec2});
+            let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf);
+            let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf);
+            this.setState({cassette, congress});
         });
         getData(`dgima/find?key=date&value=${date}`, (data) => {
             this.setState({dgima: data});
@@ -69,8 +69,8 @@ class DgimaTrimmer extends Component {
         const trim_files = this.state[trim_src];
 
         const options = [
-            { key: 1, text: 'SDIRec1', value: 'sdirec1' },
-            { key: 2, text: 'SDIRec2', value: 'sdirec2' },
+            { key: 1, text: 'Cassete', value: 'cassette' },
+            { key: 2, text: 'Congress', value: 'congress' },
             { key: 3, text: 'Dgima', value: 'dgima' },
         ];
 
@@ -89,7 +89,7 @@ class DgimaTrimmer extends Component {
                             className="trim_src_dropdown"
                             selection
                             options={options}
-                            defaultValue="sdirec1"
+                            defaultValue="cassette"
                             onChange={this.setTrimSrc}
                              >
                         </Dropdown>
@@ -100,7 +100,6 @@ class DgimaTrimmer extends Component {
                             dateFormat="YYYY-MM-DD"
                             locale='he'
                             maxDate={moment()}
-                            minDate={moment().add(-40, "days")}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
                         />
