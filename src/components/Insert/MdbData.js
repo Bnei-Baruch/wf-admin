@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Popup, Icon } from 'semantic-ui-react'
-import { fetchUnits, fetchCollections, toHms, getLang } from '../../shared/tools';
+import {fetchUnits, fetchCollections, toHms, getLang, getData, IVAL} from '../../shared/tools';
 import NameHelper from './NameHelper';
 
 class MdbData extends Component {
@@ -11,6 +11,28 @@ class MdbData extends Component {
             units: [],
             active: null,
         };
+    };
+
+    componentDidMount() {
+        console.log("--DidUMount----");
+        const {content_type,start_date,end_date,input_uid,language,upload_type} = this.props;
+            if(content_type === "LESSON_PART") {
+                var path = `?&page_size=1000&content_type=FULL_LESSON&content_type=WOMEN_LESSON&content_type=${content_type}&start_date=${start_date}&end_date=${end_date}`
+            } else if (content_type === "OTHER") {
+                var path = `?&page_size=1000&content_type=FRIENDS_GATHERING&content_type=EVENT_PART&content_type=LECTURE&start_date=${start_date}&end_date=${end_date}`
+            } else {
+                var path = `?&page_size=1000&content_type=${content_type}&start_date=${start_date}&end_date=${end_date}`
+            }
+            if(content_type === "LESSON_PART" && !input_uid) {
+                //fetchUnits(path, (data) => fetchCollections(data, (units) => this.setState({units: units.data})))
+                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
+            } else if(input_uid) {
+                console.log("Got new input UID");
+                let unit_uid = this.state.units.filter((unit) => unit.uid === input_uid);
+                this.setState({units: unit_uid, active: null });
+            } else {
+                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
+            }
     };
 
     componentDidUpdate(prevProps) {

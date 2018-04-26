@@ -103,7 +103,7 @@ class AchareyAricha extends Component {
 
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
-        this.setState({insert_open: false});
+        this.setState({insert_open: false, kmedia_option: true});
         this.setMeta(data);
     };
 
