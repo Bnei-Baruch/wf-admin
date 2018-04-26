@@ -25,7 +25,7 @@ class WFDBDgima extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`dgima/find?key=${skey}&value=${search}`, (dgima) => {
-            console.log(dgima);
+            console.log(":: Dgima DB Data: ",dgima);
             this.setState({dgima});
         });
     };

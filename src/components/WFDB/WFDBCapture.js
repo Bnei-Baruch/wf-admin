@@ -23,7 +23,7 @@ class WFDBCapture extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`capture/find?key=${skey}&value=${search}`, (capture) => {
-            console.log(capture);
+            console.log(":: Capture DB Data: ",capture);
             this.setState({capture})
         });
     };

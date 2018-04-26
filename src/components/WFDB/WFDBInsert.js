@@ -24,6 +24,7 @@ class WFDBInsert extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`insert/find?key=${skey}&value=${search}`, (insert) => {
+            console.log(":: Insert DB Data: ",insert);
             this.setState({insert});
             this.restructure(insert);
         });

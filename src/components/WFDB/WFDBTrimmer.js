@@ -25,7 +25,7 @@ class Trimmer extends Component {
         let search = this.props.skey === "date" && !svalue ? this.props.date : svalue;
         if(!search) return;
         getData(`trimmer/find?key=${skey}&value=${search}`, (trimmer) => {
-            console.log(trimmer);
+            console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
     };

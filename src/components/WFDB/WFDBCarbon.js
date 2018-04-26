@@ -24,6 +24,7 @@ class WFDBCarbon extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`carbon/find?key=${skey}&value=${search}`, (carbon) => {
+            console.log(":: Carbon DB Data: ",carbon);
             this.setState({carbon});
             this.restructure(carbon);
         });

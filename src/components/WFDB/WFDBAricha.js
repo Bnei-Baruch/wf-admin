@@ -25,7 +25,7 @@ class WFDBAricha extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`aricha/find?key=${skey}&value=${search}`, (aricha) => {
-            console.log(aricha);
+            console.log(":: Aricha DB Data: ",aricha);
             this.setState({aricha});
         });
     };

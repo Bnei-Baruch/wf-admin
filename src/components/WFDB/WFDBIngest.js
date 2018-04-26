@@ -23,7 +23,7 @@ class WFDBIngest extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`ingest/find?key=${skey}&value=${search}`, (ingest) => {
-            console.log(ingest);
+            console.log(":: Ingest DB Data: ",ingest);
             this.setState({ingest})
         });
     };

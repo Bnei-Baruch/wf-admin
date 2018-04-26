@@ -24,6 +24,7 @@ class WFDBArchive extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`archive/find?key=${skey}&value=${search}`, (archive) => {
+            console.log(":: Archive DB Data: ",archive);
             this.setState({archive});
             this.restructure(archive);
         });

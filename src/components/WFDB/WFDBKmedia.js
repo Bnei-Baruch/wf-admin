@@ -24,6 +24,7 @@ class WFDBKmedia extends Component {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`kmedia/find?key=${skey}&value=${search}`, (kmedia) => {
+            console.log(":: Kmedia DB Data: ",kmedia);
             this.setState({kmedia});
             this.restructure(kmedia);
         });
