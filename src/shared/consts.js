@@ -9,7 +9,7 @@ export const content_options = [
     { value: 'VIDEO_PROGRAM_CHAPTER', text: ' ‏תוכנית', icon: 'record' },
     { value: 'CLIP', text: ' ‏קליפ', icon: 'film' },
     { value: 'MEAL', text: ' ‏סעודה', icon: 'food' },
-    { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
+    { value: 'LECTURE', text: ' ‏אחר', icon: 'unordered list' },
     { value: 'ARTICLE', text: 'מאמרים ', icon: 'newspaper' },
     //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
 ];

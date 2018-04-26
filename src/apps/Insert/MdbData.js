@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Popup, Icon } from 'semantic-ui-react'
-import {fetchUnits, fetchCollections, toHms, getLang, getData, IVAL} from '../../shared/tools';
+import { fetchUnits, toHms, getLang } from '../../shared/tools';
 import NameHelper from './NameHelper';
 
 class MdbData extends Component {
@@ -15,48 +15,26 @@ class MdbData extends Component {
 
     componentDidMount() {
         console.log("--DidUMount----");
-        const {content_type,start_date,end_date,input_uid,language,upload_type} = this.props;
-            if(content_type === "LESSON_PART") {
-                var path = `?&page_size=1000&content_type=FULL_LESSON&content_type=WOMEN_LESSON&content_type=${content_type}&start_date=${start_date}&end_date=${end_date}`
-            } else if (content_type === "OTHER") {
-                var path = `?&page_size=1000&content_type=FRIENDS_GATHERING&content_type=EVENT_PART&content_type=LECTURE&start_date=${start_date}&end_date=${end_date}`
-            } else {
-                var path = `?&page_size=1000&content_type=${content_type}&start_date=${start_date}&end_date=${end_date}`
-            }
-            if(content_type === "LESSON_PART" && !input_uid) {
-                //fetchUnits(path, (data) => fetchCollections(data, (units) => this.setState({units: units.data})))
-                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
-            } else if(input_uid) {
-                console.log("Got new input UID");
-                let unit_uid = this.state.units.filter((unit) => unit.uid === input_uid);
-                this.setState({units: unit_uid, active: null });
-            } else {
-                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
-            }
+        const {content_type,start_date,end_date} = this.props;
+        let path = ['page_size=1000', `start_date=${start_date}`, `end_date=${end_date}`, `content_type=${content_type}`];
+            if(content_type === "LESSON_PART") path.push('content_type=FULL_LESSON', 'content_type=WOMEN_LESSON');
+            if (content_type === "LECTURE") path.push('content_type=FRIENDS_GATHERING', 'content_type=EVENT_PART');
+            fetchUnits('?'+path.join('&'), (data) => this.setState({units: data.data, active: null}));
     };
 
     componentDidUpdate(prevProps) {
         console.log("--DidUpdate----");
+        const {content_type, start_date, end_date, input_uid, language, upload_type} = this.props;
+        let next = [content_type, start_date, input_uid, language, upload_type];
         let prev = [prevProps.content_type, prevProps.start_date, prevProps.input_uid, prevProps.language, prevProps.upload_type];
-        let next = [this.props.content_type, this.props.start_date, this.props.input_uid, this.props.language, this.props.upload_type];
+        let path = ['page_size=1000', `start_date=${start_date}`, `end_date=${end_date}`, `content_type=${content_type}`];
         if (JSON.stringify(prev) !== JSON.stringify(next)) {
-            if(this.props.content_type === "LESSON_PART") {
-                var path = `?&page_size=1000&content_type=FULL_LESSON&content_type=WOMEN_LESSON&content_type=${this.props.content_type}&start_date=${this.props.start_date}&end_date=${this.props.end_date}`
-            } else if (this.props.content_type === "OTHER") {
-                var path = `?&page_size=1000&content_type=FRIENDS_GATHERING&content_type=EVENT_PART&content_type=LECTURE&start_date=${this.props.start_date}&end_date=${this.props.end_date}`
-            } else {
-                var path = `?&page_size=1000&content_type=${this.props.content_type}&start_date=${this.props.start_date}&end_date=${this.props.end_date}`
-            }
-            if(this.props.content_type === "LESSON_PART" && !this.props.input_uid) {
-                //fetchUnits(path, (data) => fetchCollections(data, (units) => this.setState({units: units.data})))
-                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
-            } else if(this.props.input_uid) {
-                console.log("Got new input UID");
-                let unit_uid = this.state.units.filter((unit) => unit.uid == this.props.input_uid);
-                this.setState({units: unit_uid, active: null });
-            } else {
-                fetchUnits(path, (data) => this.setState({units: data.data, active: null}))
-            }
+            if(content_type === "LESSON_PART") path.push('content_type=FULL_LESSON', 'content_type=WOMEN_LESSON');
+            if (content_type === "LECTURE") path.push('content_type=FRIENDS_GATHERING', 'content_type=EVENT_PART');
+            fetchUnits('?'+path.join('&'), (data) => {
+                if(input_uid) data.data = data.data.filter((unit) => unit.uid === input_uid);
+                this.setState({units: data.data, active: null})
+            });
         }
     };
 
@@ -67,30 +45,35 @@ class MdbData extends Component {
 
     render() {
         console.log("--MdbData Render--");
-        let lang = getLang(this.props.language);
-        let uidList = this.state.units.map((unit) => {
+
+        const {language,upload_type,metadata} = this.props;
+        const {units,active} = this.state;
+        let lang = getLang(language);
+
+        let uidList = units.map((unit) => {
+            const {number,part,capture_date,film_date,duration} = unit.properties;
             let name = lang && unit.i18n[lang] ? unit.i18n[lang].name : unit.i18n.he ? unit.i18n.he.name : "Name not found";
-            let active = this.state.active === unit.uid ? 'active' : '';
-            let num = unit.properties.number || "-";
-            let part = unit.properties.part === -1 ? "full" : unit.properties.part;
-            let numprt = num !== "-" ? '( n: ' + num + ' p: ' + part + ' )' : "";
-            let date = unit.properties.capture_date || unit.properties.film_date;
-            let duration = this.props.upload_type.match(/^(article|publication)$/) ? "" : toHms(unit.properties.duration);
+            let a = active === unit.uid ? 'active' : '';
+            let n = number || "-";
+            let p = part === -1 ? "full" : part;
+            let np = n !== "-" ? '( n: ' + n + ' p: ' + p + ' )' : "";
+            let date = capture_date || film_date;
+            let d = upload_type.match(/^(article|publication)$/) ? "" : toHms(duration);
             let rtlclass = lang === "he" || !lang ? "rtl-dir" : "";
             return (
-                <Table.Row className={active} key={unit.id} onClick={() => this.handleClick(unit)}>
+                <Table.Row className={a} key={unit.id} onClick={() => this.handleClick(unit)}>
                     <Table.Cell>
                         <Popup
-                            trigger={this.props.upload_type.match(/^(aricha|article|publication)$/) ? "" : <Icon link name='help' />}
+                            trigger={upload_type.match(/^(aricha|article|publication)$/) ? "" : <Icon link name='help' />}
                             mountNode={document.getElementById("ltr-modal-mount")}
                             flowing
                             position='bottom left'
                             hoverable >
-                            <NameHelper id={unit.id} {...this.props.metadata} />
+                            <NameHelper id={unit.id} {...metadata} />
                         </Popup>
                     </Table.Cell>
-                    <Table.Cell>{duration}</Table.Cell>
-                    <Table.Cell textAlign='left' >{numprt}</Table.Cell>
+                    <Table.Cell>{d}</Table.Cell>
+                    <Table.Cell textAlign='left' >{np}</Table.Cell>
                     <Table.Cell textAlign='right' className={rtlclass}>{name}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
                 </Table.Row>
