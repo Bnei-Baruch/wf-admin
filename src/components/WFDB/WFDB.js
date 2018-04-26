@@ -13,6 +13,7 @@ import WFDBDgima from './WFDBDgima';
 import WFDBLabels from './WFDBLabels';
 import './WFDB.css';
 import moment from "moment/moment";
+import WFDBInsert from "./WFDBInsert";
 class WFDB extends Component {
 
     state = {
@@ -108,6 +109,8 @@ class WFDB extends Component {
                 render: () => <Tab.Pane attached={true} ><WFDBCapture {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'dgima', content: 'Dgima' },
                 render: () => <Tab.Pane attached={true} ><WFDBDgima {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'insert', content: 'Insert' },
+                render: () => <Tab.Pane attached={false} ><WFDBInsert {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'labels', content: 'Lables' },
                 render: () => <Tab.Pane attached={true} ><WFDBLabels {...this.state} /></Tab.Pane> },
 
