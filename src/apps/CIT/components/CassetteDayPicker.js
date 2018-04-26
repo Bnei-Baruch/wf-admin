@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPickerInput, { defaultParse as parseDate } from 'react-day-picker/DayPickerInput';
 import { Checkbox, Form } from 'semantic-ui-react';
-
+import 'react-day-picker/lib/style.css';
 import { DATE_FORMAT } from '../../../shared/consts';
 import { formatDate, today } from '../shared/utils';
 
