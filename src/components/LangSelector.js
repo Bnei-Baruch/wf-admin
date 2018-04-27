@@ -10,6 +10,7 @@ class LangSelector extends Component {
     };
 
     componentDidMount() {
+        this.props.onRef(this);
         let languages = {};
         let lang_flags = {};
         let lang_prop = this.props.languages;
@@ -17,33 +18,40 @@ class LangSelector extends Component {
             let flags = language_options.filter(flag => flag.value === lang);
             lang_prop ?  languages[lang] = lang_prop[lang] : languages[lang] = false;
             lang_flags[lang] = flags[0].flag;
-            return true
+            return true;
         });
         this.setState({languages, lang_flags});
     };
 
-    langToggle = (id) => {
-        console.log(":: Lang: ", id);
-        let lang = this.state.languages;
-        lang[id] = !lang[id];
-        this.setState({languages:{...lang}});
+    componentWillUnmount() {
+        this.props.onRef(undefined);
+    };
+
+    getLangs() {
+        this.props.onGetLangs(this.state.languages);
+    };
+
+    setLang = (lang) => {
+        const {languages} = this.state;
+        languages[lang] = !languages[lang];
+        this.setState({languages});
     };
 
     render() {
 
-        let lang_data = Object.keys(this.state.languages).map((id, i) => {
+        let lang_data = Object.keys(this.state.languages).map((lang, i) => {
             return (
                 <Table.Cell key={i} selectable textAlign='center' className='lang_cell'
-                            active={this.state.languages[id]}
-                            onClick={() => this.langToggle(id)}>{id}
+                            active={this.state.languages[lang]}
+                            onClick={() => this.setLang(lang)}>{lang}
                 </Table.Cell>
             );
         });
 
-        let lang_flags = Object.keys(this.state.languages).map((id, i) => {
+        let lang_flags = Object.keys(this.state.languages).map((lang, i) => {
             return (
                 <Table.HeaderCell key={i} className='lang_cell'>
-                    <Flag name={this.state.lang_flags[id]} />
+                    <Flag name={this.state.lang_flags[lang]} />
                 </Table.HeaderCell>
             );
         });

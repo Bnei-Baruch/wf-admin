@@ -9,13 +9,18 @@ class IngestApp extends Component {
         ival: null,
     };
 
+    setLangs = (langs) => {
+        console.log(":: Got langs: ",langs);
+    };
+
     render() {
 
         return (
             <Fragment>
                 <IngestTrimmer />
                 <IngestTrimmed />
-                <LangSelector />
+                <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLangs={this.setLangs} />
+                <button onClick={() => this.LangSelector.getLangs()}>Get Langs</button>
             </Fragment>
         );
     }
