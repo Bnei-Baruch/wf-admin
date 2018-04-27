@@ -1,20 +1,26 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { getData } from '../shared/tools';
-import { Table, Container, Segment } from 'semantic-ui-react'
+import { language_options } from '../shared/consts';
+import { Table, Segment, Flag } from 'semantic-ui-react'
 
 class LangSelector extends Component {
 
     state = {
+        langs_flags: {},
         languages: {},
     };
 
     componentDidMount() {
         const lang_data = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
         let languages = {};
+        let langs_flags = {};
         lang_data.map((lang) => {
+            let flags = language_options.filter(flag => flag.value === lang);
             languages[lang] = false;
+            langs_flags[lang] = flags[0].flag;
+            return true
         });
-        this.setState({languages});
+        this.setState({languages, langs_flags});
         //this.getKmediaData("date", this.props.date);
     };
 
@@ -35,27 +41,37 @@ class LangSelector extends Component {
         });
     };
 
+    langToggle = (id) => {
+        console.log(":: Lang: ", id);
+        let lang = this.state.languages;
+        lang[id] = !lang[id];
+        this.setState({languages:{...lang}});
+    };
+
     render() {
 
         let langs_data = Object.keys(this.state.languages).map((id, i) => {
             return (
-                <Table.Cell selectable textAlign='center'>{id}</Table.Cell>
+                <Table.Cell key={i} selectable textAlign='center' className='lang_cell'
+                            active={this.state.languages[id]}
+                            onClick={() => this.langToggle(id)}>{id}</Table.Cell>
+            );
+        });
+
+        let langs_flags = Object.keys(this.state.languages).map((id, i) => {
+            return (
+                <Table.HeaderCell key={i}><Flag name={this.state.langs_flags[id]} /></Table.HeaderCell>
             );
         });
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Table fixed>
+                <Table fixed className='lang_com'>
                     <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell colSpan='23' />
-                        </Table.Row>
+                        <Table.Row>{langs_flags}</Table.Row>
                     </Table.Header>
-
                     <Table.Body>
-                        <Table.Row negative={false} positive={false} disabled={false} className="monitor_tr">
-                        {langs_data}
-                        </Table.Row>
+                        <Table.Row positive={true} className="lang_tr">{langs_data}</Table.Row>
                     </Table.Body>
                 </Table>
             </Segment>

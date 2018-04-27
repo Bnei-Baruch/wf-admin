@@ -268,3 +268,64 @@ body {
 .react-datepicker__day--sat {
     color: #ac0013;
 }
+
+.lang_com .monitor_tr {
+    background: #eaeaea;
+    font-weight: bolder;
+}
+
+.lang_com .settings_btn {
+    position: absolute;
+    padding: .38571429em .47571429em .48571429em!important;
+    font-size: .68571429rem!important;
+    margin-top: 8px!important;
+}
+
+.lang_com .ui.table td.positive, .ui.table tr.positive {
+    /*background: #e1e6d4!important;*/
+    /*font-weight: bolder;*/
+}
+
+.lang_com .ui.table td:hover {
+    background: #e1e6d4!important;
+}
+
+.lang_com .scoped-semantic-ltr .ui.table tr.active, .scoped-semantic-ltr .ui.table td.active {
+    background: #e1e6d4!important;
+    color: #c30000!important;
+}
+
+.lnag_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
+    background: #e1e6d4!important;
+    color: #287ab7!important;
+}
+
+.lang_com .ui[class*="very compact"].table td {
+    padding: .1em .3em;
+}
+
+.lang_com .ui.table td.one.wide, .ui.table th.one.wide {
+    width: 2.5%;
+}
+
+.lang_com .table_header {
+    background: #dad4c1;
+}
+
+.lang_com .ui.table thead th {
+    padding: .2em .3em;
+}
+
+.lang_cell {
+    color: rgba(40, 40, 40, 0.3)!important;
+}
+
+.lang_tr {
+    font-size: 18px;
+    height: 40px;
+    cursor: pointer!important;
+}
+
+.lang_header {
+    background: #dad4c1;
+}
