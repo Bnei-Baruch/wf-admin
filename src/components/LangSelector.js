@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { getData } from '../shared/tools';
-import { Table, Container } from 'semantic-ui-react'
+import { Table, Container, Segment } from 'semantic-ui-react'
 
 class LangSelector extends Component {
 
@@ -19,10 +19,10 @@ class LangSelector extends Component {
     };
 
     componentDidUpdate(prevProps) {
-        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
-        let next = [this.props.date, this.props.skey, this.props.svalue];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getKmediaData(this.props.skey, this.props.svalue);
+        // let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
+        // let next = [this.props.date, this.props.skey, this.props.svalue];
+        // if (JSON.stringify(prev) !== JSON.stringify(next))
+        //     this.getKmediaData(this.props.skey, this.props.svalue);
     };
 
     getKmediaData = (skey, svalue) => {
@@ -39,26 +39,26 @@ class LangSelector extends Component {
 
         let langs_data = Object.keys(this.state.languages).map((id, i) => {
             return (
-                <Table.Cell colSpan='23' >{id}</Table.Cell>
+                <Table.Cell selectable textAlign='center'>{id}</Table.Cell>
             );
         });
 
         return (
-            <Container textAlign='center'>
-                <Table compact='very' selectable fixed basic size='small'>
+            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
+                <Table fixed>
                     <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell colSpan='24'>File Name</Table.HeaderCell>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='23' />
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row className="monitor_tr" >
+                        <Table.Row negative={false} positive={false} disabled={false} className="monitor_tr">
                         {langs_data}
                         </Table.Row>
                     </Table.Body>
                 </Table>
-            </Container>
+            </Segment>
         );
     }
 }
