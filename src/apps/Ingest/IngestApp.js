@@ -17,10 +17,9 @@ class IngestApp extends Component {
 
         return (
             <Fragment>
+                <LangSelector onGetLangs={this.setLangs} />
                 <IngestTrimmer />
                 <IngestTrimmed />
-                <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLangs={this.setLangs} />
-                <button onClick={() => this.LangSelector.getLangs()}>Get Langs</button>
             </Fragment>
         );
     }
