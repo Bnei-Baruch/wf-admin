@@ -281,11 +281,6 @@ body {
     margin-top: 8px!important;
 }
 
-.lang_com .ui.table td.positive, .ui.table tr.positive {
-    /*background: #e1e6d4!important;*/
-    /*font-weight: bolder;*/
-}
-
 .lang_com .ui.table td:hover {
     background: #e1e6d4!important;
 }
@@ -295,7 +290,7 @@ body {
     color: #c30000!important;
 }
 
-.lnag_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
+.lang_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
     background: #e1e6d4!important;
     color: #287ab7!important;
 }
@@ -316,8 +311,13 @@ body {
     padding: .2em .3em;
 }
 
+.lang_com .scoped-semantic-ltr .ui.fixed.table th, .scoped-semantic-ltr .ui.fixed.table td {
+    overflow: visible!important;
+}
+
 .lang_cell {
     color: rgba(40, 40, 40, 0.3)!important;
+    overflow: visible!important;
 }
 
 .lang_tr {

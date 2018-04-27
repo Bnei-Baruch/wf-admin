@@ -41,6 +41,8 @@ export const mime_list = {
     "application/zip": "zip"
 };
 
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
+
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
     { key: 'ru', value: 'rus', flag: 'ru', text: 'Russian' },

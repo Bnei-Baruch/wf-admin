@@ -13,9 +13,9 @@ class IngestApp extends Component {
 
         return (
             <Fragment>
-                <LangSelector />
                 <IngestTrimmer />
                 <IngestTrimmed />
+                <LangSelector />
             </Fragment>
         );
     }

@@ -155,7 +155,7 @@ class IngestTrimmed extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised >
                 <Label  attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed"}
                 </Label>
                 <Message size='large'>
                 <Menu size='large' secondary >

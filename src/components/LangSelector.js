@@ -1,44 +1,25 @@
 import React, { Component } from 'react'
-import { getData } from '../shared/tools';
-import { language_options } from '../shared/consts';
-import { Table, Segment, Flag } from 'semantic-ui-react'
+import { langs_bb, language_options } from '../shared/consts';
+import { Table, Segment, Label, Flag } from 'semantic-ui-react'
 
 class LangSelector extends Component {
 
     state = {
-        langs_flags: {},
+        lang_flags: {},
         languages: {},
     };
 
     componentDidMount() {
-        const lang_data = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
         let languages = {};
-        let langs_flags = {};
-        lang_data.map((lang) => {
+        let lang_flags = {};
+        let lang_prop = this.props.languages;
+        langs_bb.map((lang) => {
             let flags = language_options.filter(flag => flag.value === lang);
-            languages[lang] = false;
-            langs_flags[lang] = flags[0].flag;
+            lang_prop ?  languages[lang] = lang_prop[lang] : languages[lang] = false;
+            lang_flags[lang] = flags[0].flag;
             return true
         });
-        this.setState({languages, langs_flags});
-        //this.getKmediaData("date", this.props.date);
-    };
-
-    componentDidUpdate(prevProps) {
-        // let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
-        // let next = [this.props.date, this.props.skey, this.props.svalue];
-        // if (JSON.stringify(prev) !== JSON.stringify(next))
-        //     this.getKmediaData(this.props.skey, this.props.svalue);
-    };
-
-    getKmediaData = (skey, svalue) => {
-        let search = this.props.skey === "date" ? this.props.date : svalue;
-        if(!search) return;
-        getData(`kmedia/find?key=${skey}&value=${search}`, (kmedia) => {
-            console.log(":: Kmedia DB Data: ",kmedia);
-            this.setState({kmedia});
-            this.restructure(kmedia);
-        });
+        this.setState({languages, lang_flags});
     };
 
     langToggle = (id) => {
@@ -50,28 +31,32 @@ class LangSelector extends Component {
 
     render() {
 
-        let langs_data = Object.keys(this.state.languages).map((id, i) => {
+        let lang_data = Object.keys(this.state.languages).map((id, i) => {
             return (
                 <Table.Cell key={i} selectable textAlign='center' className='lang_cell'
                             active={this.state.languages[id]}
-                            onClick={() => this.langToggle(id)}>{id}</Table.Cell>
+                            onClick={() => this.langToggle(id)}>{id}
+                </Table.Cell>
             );
         });
 
-        let langs_flags = Object.keys(this.state.languages).map((id, i) => {
+        let lang_flags = Object.keys(this.state.languages).map((id, i) => {
             return (
-                <Table.HeaderCell key={i}><Flag name={this.state.langs_flags[id]} /></Table.HeaderCell>
+                <Table.HeaderCell key={i} className='lang_cell'>
+                    <Flag name={this.state.lang_flags[id]} />
+                </Table.HeaderCell>
             );
         });
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Table fixed className='lang_com'>
+            <Segment textAlign='center' className="ingest_segment" color='red' raised>
+                <Label  attached='top' className="trimmed_label">Languages</Label>
+                <Table className='lang_com' fixed>
                     <Table.Header>
-                        <Table.Row>{langs_flags}</Table.Row>
+                        <Table.Row positive={true} className="lang_tr">{lang_flags}</Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        <Table.Row positive={true} className="lang_tr">{langs_data}</Table.Row>
+                        <Table.Row positive={true} className="lang_tr">{lang_data}</Table.Row>
                     </Table.Body>
                 </Table>
             </Segment>
