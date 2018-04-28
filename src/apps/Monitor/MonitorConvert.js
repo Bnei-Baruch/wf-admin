@@ -2,21 +2,21 @@ import React, { Component } from 'react'
 import { getStatus, IVAL } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
-class MonitorUpload extends Component {
+class MonitorConvert extends Component {
 
     state = {
-        upload: [],
+        convert: [],
         ival: null,
     };
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getStatus("upload", (data) => {
-                let upload = JSON.parse(data.stdout);
+            getStatus("carbon", (data) => {
+                let convert = JSON.parse(data.stdout);
                 data.splice(0,1);
-                if (JSON.stringify(this.state.upload) !== JSON.stringify(data)) {
+                if (JSON.stringify(this.state.convert) !== JSON.stringify(data)) {
                     var wfts = [];
-                    upload.forEach(function (item) {
+                    convert.forEach(function (item) {
                         var itemts = item.split(/\s+/);
                         if (itemts[1] !== undefined && itemts[1].match(/^(running|queued)$/)) {
                              var jsonts = {
@@ -33,7 +33,7 @@ class MonitorUpload extends Component {
                             wfts.push(jsonts);
                         }
                     });
-                    this.setState({upload: wfts})
+                    this.setState({convert: wfts})
                 }
             }), IVAL
         );
@@ -48,9 +48,9 @@ class MonitorUpload extends Component {
     render() {
         let l = (<Loader size='mini' active inline />);
 
-        let upload_data = this.state.upload.map((data, i) => {
+        let convert_data = this.state.convert.map((data, i) => {
             let task = data.Script.split('[')[1].split(']')[0];
-            let dest = data.Arg2 || "upload";
+            let dest = data.Arg2 || "convert";
             let state = data.State;
             let name = state === "running" ? <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
             let ncolor = state === "running";
@@ -67,7 +67,7 @@ class MonitorUpload extends Component {
         return (
 
             <Container textAlign='center'>
-                <u>Upload</u>
+                <u>Carbon</u>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
@@ -79,7 +79,7 @@ class MonitorUpload extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {upload_data}
+                        {convert_data}
                     </Table.Body>
                 </Table>
             </Container>
@@ -87,4 +87,4 @@ class MonitorUpload extends Component {
     }
 }
 
-export default MonitorUpload;
+export default MonitorConvert;

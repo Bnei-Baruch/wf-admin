@@ -7,6 +7,7 @@ export const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
 export const WFDB_STATE = 'http://wfrp.bbdomain.org:8000';
 export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
 export const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
+export const CARBON1_BACKEND = 'http://wfconv1.bbdomain.org:8081';
 export const IVAL = 1000;
 
 export const toHms = (totalSec) => {
@@ -63,13 +64,16 @@ export const getConv = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-export const getUpload = (cb) => fetch(`${WFSRV_OLD_BACKEND}/hooks/wfget?get=tspool`)
-    .then((response) => {
-        if (response.ok) {
-            return response.json().then(data => cb(data));
-        }
-    })
-    .catch(ex => console.log(`getUpload`, ex));
+export const getStatus = (ep, cb) => {
+    let url = ep === "carbon" ? CARBON1_BACKEND : WFSRV_BACKEND;
+    fetch(`${url}/${ep}/status`)
+        .then((response) => {
+            if (response.ok) {
+                return response.json().then(data => cb(data));
+            }
+        })
+        .catch(ex => console.log(`getUpload`, ex));
+}
 
 
 export const getLang = (lang) => {

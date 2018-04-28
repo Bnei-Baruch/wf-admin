@@ -2,10 +2,11 @@ import React, { Component, Fragment } from 'react';
 import { Grid, Popup, Button, Checkbox } from 'semantic-ui-react'
 import MonitorCapture from './MonitorCapture';
 import MonitorTrimmer from './MonitorTrimmer';
-import MonitorCarbon from './MonitorCarbon';
+//import MonitorCarbon from './MonitorCarbon';
 import MonitorKmedia from './MonitorKmedia';
 import MonitorUpload from './MonitorUpload';
 import './MonitorApp.css';
+import MonitorConvert from "./MonitorConvert";
 
 class MonitorApp extends Component {
 
@@ -38,11 +39,11 @@ class MonitorApp extends Component {
                         </Popup>
                         <MonitorCapture />
                         <MonitorTrimmer {...this.state} />
-                        <MonitorUpload />
                     </Grid.Column>
                     <Grid.Column>
-                        <MonitorCarbon />
                         <MonitorKmedia {...this.state} />
+                        <MonitorConvert />
+                        <MonitorUpload />
                     </Grid.Column>
                 </Grid>
 
