@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Tab } from 'semantic-ui-react'
+import React, { Component, Fragment } from 'react';
+import { Tab, Label } from 'semantic-ui-react'
 import './stylesheets/sematic-reset.css';
 import './stylesheets/scoped_semantic_ltr.css';
 import './stylesheets/scoped_semantic_rtl.css';
@@ -20,6 +20,7 @@ import CarbonApp from "./apps/Carbon/CarbonApp";
 class App extends Component {
 
     state = {
+        count: 0,
         user: null,
         disabled: true,
         loading: true,
@@ -66,16 +67,21 @@ class App extends Component {
         }
     };
 
+    setCount = (count) => {
+        this.setState({count});
+    };
+
   render() {
 
-      const {wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima} = this.state;
       let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
+      let l = (<Label key='Carbon' circular size='mini' color='red'>{count}</Label>);
 
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
-          { menuItem: { key: 'carbon', icon: 'settings', content: 'Carbon', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><CarbonApp user={this.state.user} /></Tab.Pane> },
+          { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_admin },
+              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
