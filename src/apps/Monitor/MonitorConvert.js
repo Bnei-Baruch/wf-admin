@@ -51,7 +51,7 @@ class MonitorConvert extends Component {
         let convert_data = this.state.convert.map((data, i) => {
             let state = data.State;
             let task = data.Script.split('[')[1].split(']')[0];
-            let name = <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg2}</div>;
+            let name = <div>{state === "running" ? l : ""}&nbsp;&nbsp;&nbsp;{data.Arg2}</div>;
             let dest = state === "running" ? data.Arg1 : "convert";
             let ncolor = state === "running";
             return (
