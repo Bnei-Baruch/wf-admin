@@ -13,7 +13,7 @@ class MonitorUpload extends Component {
         let ival = setInterval(() =>
             getStatus("upload", (data) => {
                 let upload = JSON.parse(data.stdout);
-                data.splice(0,1);
+                upload.splice(0,1);
                 if (JSON.stringify(this.state.upload) !== JSON.stringify(data)) {
                     var wfts = [];
                     upload.forEach(function (item) {

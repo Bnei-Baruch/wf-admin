@@ -13,7 +13,7 @@ class MonitorConvert extends Component {
         let ival = setInterval(() =>
             getStatus("carbon", (data) => {
                 let convert = JSON.parse(data.stdout);
-                data.splice(0,1);
+                convert.splice(0,1);
                 if (JSON.stringify(this.state.convert) !== JSON.stringify(data)) {
                     var wfts = [];
                     convert.forEach(function (item) {
