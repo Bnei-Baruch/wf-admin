@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
-import LangSelector from "../../components/LangSelector";
+//import LangSelector from "../../components/LangSelector";
 
 class IngestApp extends Component {
 
@@ -17,7 +17,7 @@ class IngestApp extends Component {
 
         return (
             <Fragment>
-                <LangSelector onGetLangs={this.setLangs} />
+                {/*<LangSelector onGetLangs={this.setLangs} />*/}
                 <IngestTrimmer />
                 <IngestTrimmed />
             </Fragment>

@@ -15,6 +15,7 @@ import ArichaApp from "./apps/Aricha/ArichaApp";
 import DgimaApp from "./apps/Dgima/DgimaApp";
 import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
+import CarbonApp from "./apps/Carbon/CarbonApp";
 
 class App extends Component {
 
@@ -73,6 +74,8 @@ class App extends Component {
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
+          { menuItem: { key: 'carbon', icon: 'settings', content: 'Carbon', disabled: wf_admin },
+              render: () => <Tab.Pane attached={false} ><CarbonApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
@@ -87,7 +90,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><DgimaApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_aricha },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'wfdb', icon: 'settings', content: 'Status', disabled: wf_admin },
+          { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },
               render: () => <Tab.Pane attached={false} ><WFDB user={this.state.user} /></Tab.Pane> },
       ];
 
