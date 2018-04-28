@@ -22,7 +22,7 @@ class CarbonApp extends Component {
         return (
             <Fragment>
                 <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLangs={this.setLangs} />
-                <LangCheck carbon={this.state.carbon} onConvState={this.convState} />
+                <LangCheck carbon={this.state.carbon} onLangState={this.convState} />
             </Fragment>
         );
     }

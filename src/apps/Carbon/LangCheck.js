@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
+//import DatePicker from 'react-datepicker';
+//import moment from 'moment';
 import {getConv} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
 
@@ -8,36 +8,27 @@ class LangCheck extends Component {
 
     state = {
         disabled: true,
-        carbon: {},
+        langcheck: {},
         file_data: {},
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
         source: "",
-        units: [],
     };
 
-    getConvState = (date) => {
-        getConv(`state/carbon/${date}`, (data) => {
-            if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
-                this.setState({carbon: data});
+    getLangState = () => {
+        getConv(`state/langcheck`, (langcheck) => {
+            this.setState({langcheck});
         });
-    };
-
-    changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
-        this.setState({startDate: data, date, disabled: true});
     };
 
     selectState = (state) => {
         console.log(state);
-        this.props.onConvState(state);
+        this.props.onLangState(state);
     };
 
     render() {
 
-        let carbon_option = Object.keys(this.state.carbon).map((id, i) => {
-            let state = this.state.carbon[id];
-            let name = state.name;
+        let langcheck_option = Object.keys(this.state.langcheck).map((id, i) => {
+            let state = this.state.langcheck[id];
+            let name = state.file_name;
             return ({ key: id, text: name, value: state })
         });
 
@@ -46,26 +37,15 @@ class LangCheck extends Component {
                 <Label  attached='top' className="trimmed_label">Lang Check</Label>
                 <Menu secondary >
                     <Menu.Item>
-                        <DatePicker
-                            className="datepickercs"
-                            dateFormat="YYYY-MM-DD"
-                            locale='he'
-                            maxDate={moment()}
-                            minDate={moment().add(-10, "days")}
-                            selected={this.state.startDate}
-                            onChange={this.changeDate}
-                        />
-                    </Menu.Item>
-                    <Menu.Item>
                         <Dropdown
-                            className="trim_files_dropdown"
+                            className="langcheck_dropdown"
                             error={this.state.disabled}
                             scrolling={false}
-                            placeholder="Select File To Trim:"
+                            placeholder="Select File To Check:"
                             selection
-                            options={carbon_option}
+                            options={langcheck_option}
                             onChange={(e,{value}) => this.selectState(value)}
-                            onClick={() => this.getConvState(this.state.date)}
+                            onClick={() => this.getLangState(this.state.date)}
                              >
                         </Dropdown>
                     </Menu.Item>

@@ -154,6 +154,10 @@ body {
     min-width: 39em!important;
 }
 
+.langcheck_dropdown {
+    min-width: 29em!important;
+}
+
 .inout_content{
     overflow-y:scroll;
     top:0px; left:0px;

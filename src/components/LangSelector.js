@@ -29,7 +29,7 @@ class LangSelector extends Component {
 
     updateLangs(state) {
         let langs = state.languages;
-        let name = state.name;
+        let name = state.file_name;
         console.log(":: Trigerred func", langs);
         let languages = {};
         langs_bb.map((lang) => languages[lang] = langs[lang]);
