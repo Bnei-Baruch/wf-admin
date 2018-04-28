@@ -1,12 +1,16 @@
 import React, {Component, Fragment} from 'react'
-//import IngestTrimmed from "./IngestTrimmed";
-//import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import LangSelector from "../../components/LangSelector";
+import LangCheck from "./LangCheck";
 
 class CarbonApp extends Component {
 
     state = {
-        ival: null,
+        conv_state: {},
+    };
+
+    convState = (state) => {
+        this.setState({conv_state: state});
+        this.LangSelector.updateLangs(state);
     };
 
     setLangs = (langs) => {
@@ -17,7 +21,8 @@ class CarbonApp extends Component {
 
         return (
             <Fragment>
-                <LangSelector onGetLangs={this.setLangs} />
+                <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLangs={this.setLangs} />
+                <LangCheck carbon={this.state.carbon} onConvState={this.convState} />
             </Fragment>
         );
     }

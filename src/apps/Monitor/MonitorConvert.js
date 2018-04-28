@@ -49,10 +49,10 @@ class MonitorConvert extends Component {
         let l = (<Loader size='mini' active inline />);
 
         let convert_data = this.state.convert.map((data, i) => {
-            let task = data.Script.split('[')[1].split(']')[0];
-            let dest = data.Arg2 || "convert";
             let state = data.State;
-            let name = state === "running" ? <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
+            let task = data.Script.split('[')[1].split(']')[0];
+            let name = <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg2}</div>;
+            let dest = state === "running" ? data.Arg1 : "convert";
             let ncolor = state === "running";
             return (
                 <Table.Row key={i} warning={ncolor} className="monitor_tr">

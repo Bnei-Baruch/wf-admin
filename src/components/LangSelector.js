@@ -10,6 +10,7 @@ class LangSelector extends Component {
     };
 
     componentDidMount() {
+        this.props.onRef(this);
         let languages = {};
         let lang_flags = {};
         let lang_prop = this.props.languages;
@@ -20,6 +21,19 @@ class LangSelector extends Component {
             return true;
         });
         this.setState({languages, lang_flags});
+    };
+
+    componentWillUnmount() {
+        this.props.onRef(undefined);
+    }
+
+    updateLangs(state) {
+        let langs = state.languages;
+        let name = state.name;
+        console.log(":: Trigerred func", langs);
+        let languages = {};
+        langs_bb.map((lang) => languages[lang] = langs[lang]);
+        this.setState({languages, name});
     };
 
     getLangs = () => {
@@ -76,7 +90,7 @@ class LangSelector extends Component {
                                 <Button fluid size='mini' onClick={this.resetLangs}>Clear</Button>
                             </Table.HeaderCell>
                             <Table.HeaderCell colSpan='17' textAlign='center'>
-                                {this.props.file_name ? this.props.file_name : ""}
+                                {this.state.name ? <u>{this.state.name}</u> : ""}
                             </Table.HeaderCell>
                             <Table.HeaderCell colSpan='3'>
                                 <Button positive fluid size='mini' onClick={this.getLangs}>Save</Button>

@@ -315,9 +315,10 @@ body {
     overflow: visible!important;
 }
 
-.lang_cell {
+.lang_com .lang_cell {
     color: rgba(40, 40, 40, 0.3)!important;
     overflow: visible!important;
+    text-align: center;
 }
 
 .lang_tr {
