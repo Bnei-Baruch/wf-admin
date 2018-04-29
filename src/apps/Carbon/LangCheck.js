@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 //import moment from 'moment';
 import {getConv} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
+import LangSelector from "../../components/LangSelector";
 
 class LangCheck extends Component {
 
@@ -21,7 +22,11 @@ class LangCheck extends Component {
 
     selectState = (state) => {
         console.log(state);
-        this.props.onLangState(state);
+        this.LangSelector.updateLangs(state);
+    };
+
+    setLang = (lang) => {
+        console.log(":: Got lang: ",lang);
     };
 
     render() {
@@ -35,6 +40,7 @@ class LangCheck extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
                 <Label  attached='top' className="trimmed_label">Lang Check</Label>
+                <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLang={this.setLang} />
                 <Menu secondary >
                     <Menu.Item>
                         <Dropdown
@@ -45,7 +51,7 @@ class LangCheck extends Component {
                             selection
                             options={langcheck_option}
                             onChange={(e,{value}) => this.selectState(value)}
-                            onClick={() => this.getLangState(this.state.date)}
+                            onClick={() => this.getLangState()}
                              >
                         </Dropdown>
                     </Menu.Item>
