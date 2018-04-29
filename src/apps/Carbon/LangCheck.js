@@ -33,10 +33,11 @@ class LangCheck extends Component {
 
     setLang = (lang, state) => {
         console.log(":: Got lang: ",lang, state);
-        const {languages} = this.state;
+        const {langcheck,languages} = this.state;
         languages[lang] = state;
         this.setState({languages});
-        if(state) this.setSource(lang);
+        if(state && Object.keys(langcheck).length > 0)
+            this.setSource(lang);
     };
 
     setSource = (lang) => {
