@@ -68,6 +68,7 @@ class LangCheck extends Component {
 
         let langcheck_option = Object.keys(this.state.langcheck).map((id, i) => {
             let state = this.state.langcheck[id];
+            if(!state.finished) return false;
             let name = state.file_name;
             return ({ key: id, text: name, value: state })
         });
