@@ -49,6 +49,7 @@ body {
 
 .ingest_segment .mejs__container {
     height: 40px!important;
+    width: 970px!important;
 }
 
 .scoped-semantic-ltr .ui.table tr.positive, .scoped-semantic-ltr .ui.table td.positive {
@@ -159,7 +160,7 @@ body {
 }
 
 .langcheck_dropdown {
-    min-width: 29em!important;
+    min-width: 60em!important;
 }
 
 .inout_content{

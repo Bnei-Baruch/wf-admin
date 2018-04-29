@@ -11,13 +11,15 @@ class LangCheck extends Component {
         langcheck: {},
         languages: {},
         file_name: "",
+        newlangs: true,
         player: null,
+        sending: false,
         source: "",
     };
 
     getLangState = () => {
         getConv(`state/langcheck`, (langcheck) => {
-            this.setState({langcheck});
+            this.setState({langcheck, newlangs: false});
         });
     };
 
@@ -42,7 +44,7 @@ class LangCheck extends Component {
         let url = 'http://wfserver.bbdomain.org/backup/tmp/kmedia/2018-04-29';
         let source = `${url}/${name}`;
         //this.setState({source});
-        this.state.player.domNode.setSrc(source);
+        this.state.player.setSrc(source);
         console.log(":: Set source: ",lang, name);
     };
 
@@ -51,22 +53,24 @@ class LangCheck extends Component {
         this.setState({player});
     };
 
+    sendLangs = () => {
+        console.log(":: LangChek - sending languages");
+        this.setState({ sending: true, disabled: true, newlangs: true});
+        setTimeout(() => this.setState({sending: false }), 3000);
+    };
+
     render() {
 
-        let langcheck_option = Object.keys(this.state.langcheck).map((id, i) => {
+        let langcheck_option = this.state.newlangs ? [] : Object.keys(this.state.langcheck).map((id, i) => {
             let state = this.state.langcheck[id];
             let name = state.file_name;
             return ({ key: id, text: name, value: state })
         });
 
-        let filecheck_option = Object.keys(this.state.languages).map((lang, i) => {
-            let name = this.state.file_name;
-            return ({ key: lang, text: lang+name, value: lang })
-        });
-
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Label  attached='top' className="trimmed_label">{this.state.file_name ? this.state.file_name : "Lang Check"}</Label>
+                <Label  attached='top' className="trimmed_label">Langcheck</Label>
+                <MediaPlayer player={this.getPlayer} type='audio/mp3' />
                 <LangSelector onRef={ref => (this.LangSelector = ref)} onGetLang={this.setLang} />
                 <Menu secondary >
                     <Menu.Item>
@@ -83,20 +87,12 @@ class LangCheck extends Component {
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
-                        <Dropdown
-                            className="langcheck_dropdown"
-                            error={this.state.disabled}
-                            scrolling={false}
-                            placeholder="Select Lang To Check:"
-                            selection
-                            options={langcheck_option}
-                            onChange={(e,{value}) => this.selectState(value)}
-                            onClick={() => this.getLangState()}
-                        >
-                        </Dropdown>
+                        <Button positive disabled={this.state.disabled}
+                                onClick={this.sendLangs}
+                                loading={this.state.sending}>Send
+                        </Button>
                     </Menu.Item>
                 </Menu>
-                <MediaPlayer player={this.getPlayer} source={this.state.source} type='audio/mp3' />
             </Segment>
         );
     }

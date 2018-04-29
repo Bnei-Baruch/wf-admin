@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import LangCheck from "./LangCheck";
+import MonitorCarbon from "./MonitorCarbon";
 
 class CarbonApp extends Component {
 
@@ -12,6 +13,7 @@ class CarbonApp extends Component {
         return (
             <Fragment>
                 <LangCheck  />
+                <MonitorCarbon/>
             </Fragment>
         );
     }

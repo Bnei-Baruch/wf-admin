@@ -118,6 +118,7 @@ class AdminTrimmed extends Component {
             console.log(":: PUT Respond: ",cb);
             // FIXME: When API change this must be error recovering
             fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
+            this.selectFile(file_data);
         });
     };
 
