@@ -10,6 +10,7 @@ class LangCheck extends Component {
     state = {
         disabled: true,
         langcheck: {},
+        languages: {},
         file_data: {},
         source: "",
     };
@@ -22,11 +23,14 @@ class LangCheck extends Component {
 
     selectState = (state) => {
         console.log(state);
+        this.setState({languages: state.languages});
         this.LangSelector.updateLangs(state);
     };
 
     setLang = (lang) => {
         console.log(":: Got lang: ",lang);
+        const { languages } = this.state;
+        this.setState({languages: {...languages,...lang}});
     };
 
     render() {
