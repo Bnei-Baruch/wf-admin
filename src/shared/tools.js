@@ -8,6 +8,7 @@ export const WFDB_STATE = 'http://wfrp.bbdomain.org:8000';
 export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
 export const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
 export const CARBON1_BACKEND = 'http://wfconv1.bbdomain.org:8081';
+export const WFWEB_SERVER = 'http://wfserver.bbdomain.org';
 export const IVAL = 1000;
 
 export const toHms = (totalSec) => {

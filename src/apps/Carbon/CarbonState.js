@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import moment from 'moment';
 import { getConv, IVAL } from '../../shared/tools';
 import { Table, Loader, Segment, Label } from 'semantic-ui-react'
+import './CarbonState.css';
 
-class MonitorCarbon extends Component {
+class CarbonState extends Component {
 
     state = {
         carbon: {},
@@ -36,7 +37,7 @@ class MonitorCarbon extends Component {
             let ncolor = data[id].progress !== "done";
             let pcolor = data[id].progress === "done";
             return (
-                <Table.Row key={i} warning={ncolor} positive={pcolor} className="monitor_tr">
+                <Table.Row key={i} warning={ncolor} positive={pcolor}>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{progress}</Table.Cell>
@@ -46,7 +47,7 @@ class MonitorCarbon extends Component {
 
         return (
 
-            <Segment textAlign='center' className="ingest_segment" color='brown' raised>
+            <Segment textAlign='center' className="carbon_state" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">Carbon</Label>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
@@ -66,4 +67,4 @@ class MonitorCarbon extends Component {
     }
 }
 
-export default MonitorCarbon;
+export default CarbonState;
