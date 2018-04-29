@@ -137,7 +137,7 @@ export default class TrimmerApp extends Component {
                         <Table.Cell width={5} className='table_media'>
                             <MediaPlayer
                                 player={this.getPlayer}
-                                source={this.props.source} />
+                                source={this.props.source} type='video/mp4' />
                         </Table.Cell>
                         <Table.Cell width={1} className='table_ctls'>
                             <TrimmerControls

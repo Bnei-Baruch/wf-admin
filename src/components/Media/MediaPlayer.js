@@ -6,7 +6,7 @@ export default class MediaPlayer extends Component {
     render() {
         const
             sources = [
-                {src: this.props.source, type: 'video/mp4'},
+                {src: this.props.source, type: this.props.type},
             ],
 
             config = {
@@ -24,7 +24,7 @@ export default class MediaPlayer extends Component {
         return (
             <MediaElement {...this.props}
                 id="player1"
-                mediaType="video"
+                mediaType={this.props.type === 'video/mp4' ? 'video' : 'audio'}
                 preload="true"
                 controls
                 width="640"

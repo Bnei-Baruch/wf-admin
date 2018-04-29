@@ -40,7 +40,7 @@ class LangSelector extends Component {
         const {languages} = this.state;
         languages[lang] = !languages[lang];
         this.setState({languages});
-        this.props.onGetLang({[lang]:languages[lang]});
+        this.props.onGetLang(lang, languages[lang]);
     };
 
     resetLangs = () => {

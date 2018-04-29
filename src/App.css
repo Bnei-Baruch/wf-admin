@@ -47,6 +47,10 @@ body {
     background: #f9e7db;
 }
 
+.ingest_segment .mejs__container {
+    height: 40px!important;
+}
+
 .scoped-semantic-ltr .ui.table tr.positive, .scoped-semantic-ltr .ui.table td.positive {
     background: #e1e6d4 !important;
     font-weight: normal!important;

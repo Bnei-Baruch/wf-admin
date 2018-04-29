@@ -250,7 +250,7 @@ class AchareyAricha extends Component {
                             <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={this.state.source} />
+                                <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
                             </Modal>
                         </Menu.Item>
                         <Menu.Item>
