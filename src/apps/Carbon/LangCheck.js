@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getConv} from '../../shared/tools';
+import {getConv, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
 import LangSelector from "../../components/LangSelector";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -10,6 +10,7 @@ class LangCheck extends Component {
         disabled: true,
         langcheck: {},
         languages: {},
+        lang_data: "",
         file_name: "",
         newlangs: true,
         player: null,
@@ -26,7 +27,7 @@ class LangCheck extends Component {
     selectState = (state) => {
         console.log(state);
         const {languages, file_name} = state;
-        this.setState({languages, file_name, disabled: false});
+        this.setState({languages, file_name, disabled: false, lang_data: state});
         this.LangSelector.updateLangs(state);
     };
 
@@ -43,8 +44,8 @@ class LangCheck extends Component {
         let name = lang + '_t' + file_name.substring(5) + '.mp3';
         let url = 'http://wfserver.bbdomain.org/backup/tmp/kmedia/2018-04-29';
         let source = `${url}/${name}`;
-        //this.setState({source});
         this.state.player.setSrc(source);
+        this.state.player.play();
         console.log(":: Set source: ",lang, name);
     };
 
@@ -54,14 +55,18 @@ class LangCheck extends Component {
     };
 
     sendLangs = () => {
-        console.log(":: LangChek - sending languages");
+        const {lang_data} = this.state;
+        console.log(":: LangChek - sending languages data: ", lang_data);
         this.setState({ sending: true, disabled: true, newlangs: true});
-        setTimeout(() => this.setState({sending: false }), 3000);
+        setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
+        putData(`${WFSRV_BACKEND}/workflow/languages`, lang_data, (cb) => {
+            console.log(":: LangCheck - workflow respond: ",cb);
+        });
     };
 
     render() {
 
-        let langcheck_option = this.state.newlangs ? [] : Object.keys(this.state.langcheck).map((id, i) => {
+        let langcheck_option = Object.keys(this.state.langcheck).map((id, i) => {
             let state = this.state.langcheck[id];
             let name = state.file_name;
             return ({ key: id, text: name, value: state })
@@ -77,9 +82,11 @@ class LangCheck extends Component {
                         <Dropdown
                             className="langcheck_dropdown"
                             error={this.state.disabled}
+                            disabled={this.state.sending}
                             scrolling={false}
                             placeholder="Select File To Check:"
                             selection
+                            value={this.state.lang_data}
                             options={langcheck_option}
                             onChange={(e,{value}) => this.selectState(value)}
                             onClick={() => this.getLangState()}

@@ -16,6 +16,7 @@ import DgimaApp from "./apps/Dgima/DgimaApp";
 import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
+import {getConv} from "./shared/tools";
 
 class App extends Component {
 
@@ -34,6 +35,11 @@ class App extends Component {
     };
 
     componentDidMount() {
+        setInterval(() => getConv('state/langcheck', (data) => {
+            let count = Object.keys(data).length;
+                if (this.state.count !== count)
+                    this.setState({count})
+            }), 10000 );
         // FIXME: hack solution
         setTimeout(() => this.setState({ loading: false }), 1000);
         getUser(cb => {
@@ -75,7 +81,7 @@ class App extends Component {
 
       const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima} = this.state;
       let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
-      let l = (<Label key='Carbon' circular size='mini' color='red'>{count}</Label>);
+      let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
 
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },

@@ -161,6 +161,7 @@ body {
 
 .langcheck_dropdown {
     min-width: 60em!important;
+    border: 1px solid rgb(150, 200, 218) !important;
 }
 
 .inout_content{
