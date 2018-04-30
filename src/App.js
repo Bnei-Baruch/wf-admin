@@ -87,7 +87,7 @@ class App extends Component {
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
           { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={this.state.user} admin={this.state.wf_admin}/></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },

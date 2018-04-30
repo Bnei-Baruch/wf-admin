@@ -12,8 +12,8 @@ class CarbonApp extends Component {
 
         return (
             <Fragment>
-                <LangCheck  />
-                <CarbonState/>
+                <LangCheck />
+                <CarbonState user={this.props.user} admin={this.props.admin} />
             </Fragment>
         );
     }

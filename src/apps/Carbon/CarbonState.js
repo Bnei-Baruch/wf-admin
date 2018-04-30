@@ -3,6 +3,7 @@ import moment from 'moment';
 import { getConv, IVAL } from '../../shared/tools';
 import { Table, Loader, Segment, Label } from 'semantic-ui-react'
 import './CarbonState.css';
+import LangRestore from "./LangRestore";
 
 class CarbonState extends Component {
 
@@ -49,6 +50,7 @@ class CarbonState extends Component {
 
             <Segment textAlign='center' className="carbon_state" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">Carbon</Label>
+                {this.props.admin ? "" : <LangRestore />}
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
