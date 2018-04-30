@@ -35,11 +35,6 @@ class App extends Component {
     };
 
     componentDidMount() {
-        setInterval(() => getConv('state/langcheck', (data) => {
-            let count = Object.keys(data).length;
-                if (this.state.count !== count)
-                    this.setState({count})
-            }), 10000 );
         // FIXME: hack solution
         setTimeout(() => this.setState({ loading: false }), 1000);
         getUser(cb => {
@@ -67,6 +62,11 @@ class App extends Component {
         console.log(":: App - got user: ", user);
         if(!wf_public) {
             this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima});
+            setInterval(() => getConv('state/langcheck', (data) => {
+                let count = Object.keys(data).length;
+                if (this.state.count !== count)
+                    this.setState({count})
+            }), 10000 );
         } else {
             alert("Access denied!");
             client.signoutRedirect();
@@ -86,7 +86,7 @@ class App extends Component {
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
-          { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_admin },
+          { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} /></Tab.Pane> },
