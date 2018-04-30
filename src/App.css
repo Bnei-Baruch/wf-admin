@@ -4,6 +4,14 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.scoped-semantic-ltr .ui.selection.dropdown.error {
+    border-color: #e00b0b;
+}
+
+.scoped-semantic-ltr .ui.selection.dropdown {
+    border: 1px solid rgb(150, 200, 218);
+}
+
 .ui.progress {
     top: 10px;
 }
@@ -148,7 +156,6 @@ body {
 
 .trim_src_dropdown {
     min-width: 7em!important;
-    border: 1px solid rgb(150, 200, 218) !important;
 }
 
 .scoped-semantic-ltr .ui.selection.dropdown .menu {
@@ -161,7 +168,6 @@ body {
 
 .langcheck_dropdown {
     min-width: 60em!important;
-    border: 1px solid rgb(150, 200, 218) !important;
 }
 
 .inout_content{
@@ -297,12 +303,16 @@ body {
 
 .lang_com .scoped-semantic-ltr .ui.table tr.active, .scoped-semantic-ltr .ui.table td.active {
     background: #e1e6d4!important;
-    color: #c30000!important;
+    color: #de0101!important;
+}
+
+.lang_com .scoped-semantic-ltr .ui.selectable.table tbody tr:hover, .scoped-semantic-ltr .ui.table tbody tr td.selectable:hover {
+    background: #e1e6d4!important;
 }
 
 .lang_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
     background: #e1e6d4!important;
-    color: #287ab7!important;
+    color: #f98b8b!important;
 }
 
 .lang_com .ui[class*="very compact"].table td {
