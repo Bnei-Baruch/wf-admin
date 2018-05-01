@@ -41,9 +41,10 @@ class LangCheck extends Component {
     };
 
     setSource = (lang) => {
-        const {file_name} = this.state;
-        let name = lang + '_t' + file_name.substring(5) + '.mp3';
-        let url = `${WFWEB_SERVER}/backup/upload`;
+        const {file_name,language} = this.state;
+        let ot = language === lang ? "o" : "t";
+        let name = lang + '_' + ot + file_name.substring(5) + '.mp3';
+        let url = `${WFWEB_SERVER}/backup/tmp/carbon`;
         let source = `${url}/${name}`;
         this.state.player.setSrc(source);
         this.state.player.play();
