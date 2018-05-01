@@ -10,7 +10,7 @@ class LangRestore extends Component {
         disabled: true,
         sending: false,
         carbon: {},
-        lang_data: {},
+        lang_data: "",
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
     };

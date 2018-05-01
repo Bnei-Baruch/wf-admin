@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getUnits} from '../../shared/tools';
+import {getData, getUnits, WFWEB_SERVER} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button, Label } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -11,7 +11,7 @@ class IngestTrimmer extends Component {
         disabled: true,
         main: [],
         backup: [],
-        file_data: {},
+        file_data: "",
         open: false,
         trim_src: "main",
         date: moment().format('YYYY-MM-DD'),
@@ -30,20 +30,18 @@ class IngestTrimmer extends Component {
 
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
-        this.setState({startDate: data, date, disabled: true});
+        this.setState({startDate: data, date, disabled: true, file_data: ""});
     };
 
-    setTrimSrc = (e, data) => {
-        this.setState({trim_src: data.value, disabled: true});
+    setTrimSrc = (trim_src) => {
+        this.setState({trim_src, disabled: true, file_data: ""});
     };
 
-    selectFile = (e, data) => {
-        let file_data = data.value;
+    selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         this.setState({source, file_data, disabled: false});
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
@@ -56,7 +54,7 @@ class IngestTrimmer extends Component {
     };
 
     onClose = () => {
-        this.setState({open: false});
+        this.setState({open: false, disabled: true, file_data: ""});
     };
 
     render() {
@@ -86,7 +84,7 @@ class IngestTrimmer extends Component {
                             selection
                             options={options}
                             defaultValue="main"
-                            onChange={this.setTrimSrc}
+                            onChange={(e,{value}) => this.setTrimSrc(value)}
                              >
                         </Dropdown>
                     </Menu.Item>
@@ -108,8 +106,9 @@ class IngestTrimmer extends Component {
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
+                            value={this.state.file_data}
                             options={trim_data}
-                            onChange={this.selectFile}
+                            onChange={(e,{value}) => this.selectFile(value)}
                             onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>
