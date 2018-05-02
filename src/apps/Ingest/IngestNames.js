@@ -60,6 +60,7 @@ class IngestNames extends Component {
         console.log(":: Remove Line: ",line_id);
         removeData(`${WFDB_STATE}/names/lines/${line_id}`, (cb) => {
             console.log(":: Remove Line: ",cb);
+            this.setState({file_name: ""});
             this.getLines();
         });
     };
@@ -97,12 +98,12 @@ class IngestNames extends Component {
                     </Modal>
                 </Menu.Item>
                 <Menu.Item>
-                    <Dropdown item icon='tags' onClick={this.getLines}>
+                    <Dropdown item text='Lines'>
                         <Dropdown.Menu>
                             {options}
                         </Dropdown.Menu>
                     </Dropdown>
-                    <Input className="lines_dropdown" focus placeholder='Lines...'
+                    <Input className="lines_dropdown" focus
                            disabled={this.state.file_name === ""}
                            onChange={e => this.setFileName(e.target.value)}
                            value={this.state.file_name} />
