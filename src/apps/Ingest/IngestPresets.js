@@ -3,13 +3,12 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getConv, putData, removeData, WFDB_STATE} from '../../shared/tools';
 import { Icon, Button, Table, Segment, Label } from 'semantic-ui-react'
-//import '../Carbon/CarbonState.css';
 import IngestNames from "./IngestNames";
 
 class IngestPresets extends Component {
 
     state = {
-        preset: {},
+        preset: {id:"",name:""},
         presets: {},
         disabled: true,
         date: moment().format('YYYY-MM-DD'),
@@ -17,8 +16,8 @@ class IngestPresets extends Component {
     };
 
     componentDidMount() {
-        this.getPresets()
-    }
+        this.getPresets();
+    };
 
     getPresets = () => {
         getConv(`names/presets`, (presets) => {
@@ -35,9 +34,8 @@ class IngestPresets extends Component {
         console.log(":: Add preset: ",new_preset,presets);
         putData(`${WFDB_STATE}/names/presets/${date}`, new_preset, (cb) => {
             console.log(":: Add preset: ",cb);
-            this.getPresets()
+            this.getPresets();
         });
-        // TODO: Put presets to db
     };
 
     changeDate = (data) => {
@@ -54,7 +52,7 @@ class IngestPresets extends Component {
         console.log(":: Remove Date: ",date);
         removeData(`${WFDB_STATE}/names/presets/${date}`, (cb) => {
             console.log(":: Remove Date: ",cb);
-            this.getPresets()
+            this.getPresets();
         });
     };
 
@@ -65,20 +63,20 @@ class IngestPresets extends Component {
         console.log(":: After Remove: ",presets);
         putData(`${WFDB_STATE}/names/presets/${date}`, presets, (cb) => {
             console.log(":: Names remove preset: ",cb);
-            this.getPresets()
+            this.setState({preset: {id:"",name:""}});
+            this.getPresets();
         });
     };
 
     render() {
 
         const {presets} = this.state;
-        let x = (<Icon color='brown' name='close' onClick={this.removeItem}/>);
 
         let presets_data = Object.keys(presets).map((date) => {
             if(date !== "recent") {
                 let data = presets[date];
                 let ar = data.map((preset,i) => {
-                    const {id,name} = preset;
+                    const {name} = preset;
                     return (
                         <Table.Row key={i} positive>
                             <Table.Cell>{name}</Table.Cell>
@@ -100,8 +98,8 @@ class IngestPresets extends Component {
                     </Table.Row>
                 {ar}
                     </Fragment>
-                )
-            }
+                );
+            } return true;
         });
 
         return (
@@ -123,7 +121,7 @@ class IngestPresets extends Component {
                             /></Table.HeaderCell>
                             <Table.HeaderCell width={4}>
                                 <Button primary
-                                        disabled={this.state.disabled}
+                                        disabled={this.state.preset.name === ""}
                                         onClick={this.addPreset}>Add
                                 </Button>
                             </Table.HeaderCell>

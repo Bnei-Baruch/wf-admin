@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
-//import DatePicker from 'react-datepicker';
-//import moment from 'moment';
-import {getConv, putData, WFDB_STATE, randomString} from '../../shared/tools';
+import {getConv, putData, WFDB_STATE, randomString, removeData} from '../../shared/tools';
 import { Input, Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
 import CIT from '../CIT/CIT';
 
@@ -14,14 +12,15 @@ class IngestNames extends Component {
         lines: {},
         line: {},
         line_id: null,
+        metadata: {capture_date:"yyyy-mm-dd"},
         newline: {},
         open: false,
         presets: {},
     };
 
     componentDidMount() {
-        this.getLines()
-    }
+        this.getLines();
+    };
 
     getLines = () => {
         getConv(`names/lines`, (lines) => {
@@ -50,11 +49,19 @@ class IngestNames extends Component {
         let new_id = randomString(8);
         console.log(":: New Line: ", newline);
         this.setState({open: false, newline });
+        putData(`${WFDB_STATE}/names/lines/${new_id}`, newline, (cb) => {
+            console.log(":: Added newline: ",cb);
+            this.getLines();
+        });
     };
 
-    removeLine = (line) => {
-        console.log(":: Remove Line: ",line);
-        //this.setState({disabled: false, lang_data: state});
+    removeLine = () => {
+        const {line_id} = this.state;
+        console.log(":: Remove Line: ",line_id);
+        removeData(`${WFDB_STATE}/names/lines/${line_id}`, (cb) => {
+            console.log(":: Remove Line: ",cb);
+            this.getLines();
+        });
     };
 
     setFileName = (file_name) => {
@@ -83,7 +90,7 @@ class IngestNames extends Component {
                            onClose={this.onCancel} open={this.state.open} closeIcon="close"
                            mountNode={document.getElementById("cit-modal-mount")}>
                         <Modal.Content>
-                            <CIT metadata={{}}
+                            <CIT metadata={{capture_date:"yyyy-mm-dd"}}
                                  onCancel={this.onCancel}
                                  onComplete={(x) => this.newLine(x)}/>
                         </Modal.Content>
@@ -96,12 +103,13 @@ class IngestNames extends Component {
                         </Dropdown.Menu>
                     </Dropdown>
                     <Input className="lines_dropdown" focus placeholder='Lines...'
+                           disabled={this.state.file_name === ""}
                            onChange={e => this.setFileName(e.target.value)}
                            value={this.state.file_name} />
                 </Menu.Item>
                 <Menu.Item>
                     <Button negative
-                            disabled={this.state.disabled}
+                            disabled={this.state.file_name === ""}
                             loading={this.state.sending}
                             onClick={this.removeLine}>Remove
                     </Button>
