@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
+//import DatePicker from 'react-datepicker';
+//import moment from 'moment';
 import {getConv, putData, WFDB_STATE} from '../../shared/tools';
-import { Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
+import { Input, Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
 import CIT from '../CIT/CIT';
 
 class IngestNames extends Component {
@@ -10,13 +10,12 @@ class IngestNames extends Component {
     state = {
         disabled: true,
         sending: false,
+        file_name: "",
         lines: {},
         line: {},
         newline: {},
         open: false,
         presets: {},
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
     };
 
     componentDidMount() {
@@ -30,14 +29,9 @@ class IngestNames extends Component {
         });
     };
 
-    changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
-        this.setState({startDate: data, date, disabled: true});
-    };
-
     selectLine = (line) => {
         console.log(":: Select Line: ",line);
-        this.setState({disabled: false, line});
+        this.setState({disabled: false, line, file_name: line.final_name});
     };
 
     openCit = () => {
@@ -59,41 +53,24 @@ class IngestNames extends Component {
         //this.setState({disabled: false, lang_data: state});
     };
 
+    setFileName = (file_name) => {
+        console.log(":: File Name: ", file_name);
+        this.setState({file_name});
+    };
+
     render() {
 
         const {lines} = this.state;
 
-        let lines_options = Object.keys(lines).map((id, i) => {
+        let options = Object.keys(lines).map((id, i) => {
             let line = lines[id];
-            return ({ key: id, text: line.final_name, value: line })
+            if(id === "l7DZ2lxv" || id === "C1JEylF7" || id === "8H3iIRzV" || id === "7G4zzMuC")
+                return false;
+            return (<Dropdown.Item onClick={() => this.selectLine(line)}>{line.final_name}</Dropdown.Item>)
         });
 
         return (
             <Menu secondary >
-                <Menu.Item>
-                    <DatePicker
-                        className="datepickercs"
-                        dateFormat="YYYY-MM-DD"
-                        locale='he'
-                        maxDate={moment().add(10, "days")}
-                        minDate={moment()}
-                        selected={this.state.startDate}
-                        onChange={this.changeDate}
-                    />
-                </Menu.Item>
-                <Menu.Item>
-                    <Dropdown
-                        className="trim_files_dropdown"
-                        scrolling={false}
-                        placeholder="Select Langs to restore:"
-                        selection
-                        value={this.state.lang_data}
-                        options={lines_options}
-                        onChange={(e,{value}) => this.selectLine(value)}
-                        onClick={this.getLines}
-                    >
-                    </Dropdown>
-                </Menu.Item>
                 <Menu.Item>
                     <Modal closeOnDimmerClick={false}
                            trigger={<Button positive onClick={this.openCit}>New</Button>}
@@ -105,6 +82,16 @@ class IngestNames extends Component {
                                  onComplete={(x) => this.newLine(x)}/>
                         </Modal.Content>
                     </Modal>
+                </Menu.Item>
+                <Menu.Item>
+                    <Dropdown item icon='tags' onClick={this.getLines} >
+                        <Dropdown.Menu>
+                            {options}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <Input className="lines_dropdown" focus placeholder='Lines...'
+                           onChange={e => this.setFileName(e.target.value)}
+                           value={this.state.file_name} />
                 </Menu.Item>
                 <Menu.Item>
                     <Button negative

@@ -1,7 +1,8 @@
 import React, {Component, Fragment} from 'react'
-//import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import { getConv } from '../../shared/tools';
-import { Table, Segment, Label } from 'semantic-ui-react'
+import { Button, Table, Segment, Label } from 'semantic-ui-react'
 import '../Carbon/CarbonState.css';
 import IngestNames from "./IngestNames";
 
@@ -9,6 +10,8 @@ class IngestPresets extends Component {
 
     state = {
         presets: {},
+        date: moment().format('YYYY-MM-DD'),
+        startDate: moment(),
     };
 
     componentDidMount() {
@@ -20,6 +23,11 @@ class IngestPresets extends Component {
             console.log(":: Got Presets: ",presets);
             this.setState({presets});
         });
+    };
+
+    changeDate = (data) => {
+        let date = data.format('YYYY-MM-DD');
+        this.setState({startDate: data, date, disabled: true});
     };
 
     render() {
@@ -39,9 +47,9 @@ class IngestPresets extends Component {
                     )
                 });
                 return (
-                    <Fragment>
+                    <Fragment key={i}>
                     <Table.Row key={i} warning>
-                        <Table.Cell textAlign='center'>{date}</Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>x</Table.Cell>
                     </Table.Row>
                 {ar}
@@ -58,11 +66,20 @@ class IngestPresets extends Component {
                 <Table selectable compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>R</Table.HeaderCell>
+                            <Table.HeaderCell textAlign='center'><DatePicker
+                                className="datepickercs"
+                                dateFormat="YYYY-MM-DD"
+                                locale='he'
+                                maxDate={moment().add(10, "days")}
+                                minDate={moment()}
+                                selected={this.state.startDate}
+                                onChange={this.changeDate}
+                            /></Table.HeaderCell>
+                            <Table.HeaderCell width={1}>
+                                <Button primary disabled={this.state.disabled} >Add</Button>
+                            </Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {presets_data}
                     </Table.Body>

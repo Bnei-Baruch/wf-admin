@@ -166,6 +166,10 @@ body {
     min-width: 39em!important;
 }
 
+.lines_dropdown {
+    min-width: 39em!important;
+}
+
 .langcheck_dropdown {
     min-width: 60em!important;
 }
