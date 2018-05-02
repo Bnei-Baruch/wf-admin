@@ -19,6 +19,16 @@ export const toHms = (totalSec) => {
     return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
 };
 
+export const randomString = (len, charSet) => {
+    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomString = '';
+    for (let i = 0; i < len; i++) {
+        let randomPoz = Math.floor(Math.random() * charSet.length);
+        randomString += charSet.substring(randomPoz,randomPoz+1);
+    }
+    return randomString;
+};
+
 // export const toSeconds = (time) => {
 //     var hms = time ;
 //     var a = hms.split(':');
@@ -52,7 +62,18 @@ export const putData = (path, data, cb) => fetch(`${path}`, {
             return response.json().then(respond => cb(respond));
         }
     })
-    .catch(ex => console.log("Post Trim Meta:", ex));
+    .catch(ex => console.log("Put Data error:", ex));
+
+export const removeData = (path, cb) => fetch(`${path}`, {
+    method: 'DELETE',
+    headers: {'Content-Type': 'application/json'},
+})
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(respond => cb(respond));
+        }
+    })
+    .catch(ex => console.log("Remove Data error:", ex));
 
 export const getConv = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
     .then((response) => {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 //import DatePicker from 'react-datepicker';
 //import moment from 'moment';
-import {getConv, putData, WFDB_STATE} from '../../shared/tools';
+import {getConv, putData, WFDB_STATE, randomString} from '../../shared/tools';
 import { Input, Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
 import CIT from '../CIT/CIT';
 
@@ -47,6 +47,7 @@ class IngestNames extends Component {
     };
 
     newLine = (newline) => {
+        let new_id = randomString(8);
         console.log(":: New Line: ", newline);
         this.setState({open: false, newline });
     };

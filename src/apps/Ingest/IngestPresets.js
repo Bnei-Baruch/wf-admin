@@ -1,9 +1,9 @@
 import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import { getConv } from '../../shared/tools';
+import {getConv, putData, removeData, WFDB_STATE} from '../../shared/tools';
 import { Icon, Button, Table, Segment, Label } from 'semantic-ui-react'
-import '../Carbon/CarbonState.css';
+//import '../Carbon/CarbonState.css';
 import IngestNames from "./IngestNames";
 
 class IngestPresets extends Component {
@@ -33,6 +33,10 @@ class IngestPresets extends Component {
         let new_preset = presets[date];
         new_preset.push(preset);
         console.log(":: Add preset: ",new_preset,presets);
+        putData(`${WFDB_STATE}/names/presets/${date}`, new_preset, (cb) => {
+            console.log(":: Add preset: ",cb);
+            this.getPresets()
+        });
         // TODO: Put presets to db
     };
 
@@ -48,7 +52,10 @@ class IngestPresets extends Component {
 
     removeDate = (date) => {
         console.log(":: Remove Date: ",date);
-        //this.setState({disabled: false, lang_data: state});
+        removeData(`${WFDB_STATE}/names/presets/${date}`, (cb) => {
+            console.log(":: Remove Date: ",cb);
+            this.getPresets()
+        });
     };
 
     removeName = (date,name,i) => {
@@ -56,7 +63,10 @@ class IngestPresets extends Component {
         let presets = this.state.presets[date];
         presets.splice(i, 1);
         console.log(":: After Remove: ",presets);
-        //this.setState({disabled: false, lang_data: state});
+        putData(`${WFDB_STATE}/names/presets/${date}`, presets, (cb) => {
+            console.log(":: Names remove preset: ",cb);
+            this.getPresets()
+        });
     };
 
     render() {
