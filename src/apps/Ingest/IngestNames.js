@@ -13,6 +13,7 @@ class IngestNames extends Component {
         file_name: "",
         lines: {},
         line: {},
+        line_id: null,
         newline: {},
         open: false,
         presets: {},
@@ -29,9 +30,11 @@ class IngestNames extends Component {
         });
     };
 
-    selectLine = (line) => {
+    selectLine = (id,line) => {
         console.log(":: Select Line: ",line);
-        this.setState({disabled: false, line, file_name: line.final_name});
+        this.setState({disabled: false, line, line_id: id, file_name: line.final_name});
+        let preset = {id,name:line.final_name};
+        this.props.onLine(preset);
     };
 
     openCit = () => {
@@ -56,6 +59,8 @@ class IngestNames extends Component {
     setFileName = (file_name) => {
         console.log(":: File Name: ", file_name);
         this.setState({file_name});
+        let preset = {id: this.state.line_id, name: file_name};
+        this.props.onLine(preset);
     };
 
     render() {
@@ -66,7 +71,7 @@ class IngestNames extends Component {
             let line = lines[id];
             if(id === "l7DZ2lxv" || id === "C1JEylF7" || id === "8H3iIRzV" || id === "7G4zzMuC")
                 return false;
-            return (<Dropdown.Item onClick={() => this.selectLine(line)}>{line.final_name}</Dropdown.Item>)
+            return (<Dropdown.Item key={i} onClick={() => this.selectLine(id,line)}>{line.final_name}</Dropdown.Item>)
         });
 
         return (
@@ -84,7 +89,7 @@ class IngestNames extends Component {
                     </Modal>
                 </Menu.Item>
                 <Menu.Item>
-                    <Dropdown item icon='tags' onClick={this.getLines} >
+                    <Dropdown item icon='tags' onClick={this.getLines}>
                         <Dropdown.Menu>
                             {options}
                         </Dropdown.Menu>

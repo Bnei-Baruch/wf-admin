@@ -186,6 +186,11 @@ body {
     font-weight: lighter;
 }
 
+.close_icon {
+    cursor: pointer!important;
+    font-weight: lighter;
+}
+
 .ui.fullscreen.modal {
     width: 100% !important;
 }
