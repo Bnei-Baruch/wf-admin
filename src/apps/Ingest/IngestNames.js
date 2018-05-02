@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getConv, putData, WFDB_STATE} from '../../shared/tools';
-import { Menu, Dropdown, Button } from 'semantic-ui-react'
+import { Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
+import CIT from '../CIT/CIT';
 
 class IngestNames extends Component {
 
@@ -10,6 +11,8 @@ class IngestNames extends Component {
         disabled: true,
         sending: false,
         lines: {},
+        line: {},
+        open: false,
         presets: {},
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
@@ -33,7 +36,20 @@ class IngestNames extends Component {
 
     selectLine = (line) => {
         console.log(":: Select Line: ",line);
-        //this.setState({disabled: false, lang_data: state});
+        this.setState({disabled: false, line});
+    };
+
+    openCit = () => {
+        this.setState({open: true});
+    };
+
+    onCancel = (data) => {
+        console.log(":: Cit cancel: ", data);
+        this.setState({open: false});
+    };
+
+    onComplete = (newline) => {
+        console.log(":: Cit callback: ", newline);
     };
 
     newLine = (line) => {
@@ -82,11 +98,16 @@ class IngestNames extends Component {
                     </Dropdown>
                 </Menu.Item>
                 <Menu.Item>
-                    <Button positive
-                            disabled={this.state.disabled}
-                            loading={this.state.sending}
-                            onClick={this.newLine}>New
-                    </Button>
+                    <Modal closeOnDimmerClick={false}
+                           trigger={<Button positive onClick={this.openCit}>New</Button>}
+                           onClose={this.onCancel} open={this.state.open} closeIcon="close"
+                           mountNode={document.getElementById("cit-modal-mount")}>
+                        <Modal.Content>
+                            <CIT metadata={{}}
+                                 onCancel={this.onCancel}
+                                 onComplete={(x) => this.onComplete(x)}/>
+                        </Modal.Content>
+                    </Modal>
                 </Menu.Item>
                 <Menu.Item>
                     <Button negative

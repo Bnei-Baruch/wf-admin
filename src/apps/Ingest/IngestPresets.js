@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
-import moment from 'moment';
-import { getConv, IVAL } from '../../shared/tools';
+//import moment from 'moment';
+import { getConv } from '../../shared/tools';
 import { Table, Segment, Label } from 'semantic-ui-react'
 import '../Carbon/CarbonState.css';
 import IngestNames from "./IngestNames";
@@ -25,6 +25,7 @@ class IngestPresets extends Component {
     render() {
 
         const {presets} = this.state;
+
         let presets_data = Object.keys(presets).map((date, i) => {
             if(date !== "recent") {
                 let data = presets[date];
@@ -40,7 +41,7 @@ class IngestPresets extends Component {
                 return (
                     <Fragment>
                     <Table.Row key={i} warning>
-                        <Table.Cell>{date}</Table.Cell>
+                        <Table.Cell textAlign='center'>{date}</Table.Cell>
                         <Table.Cell>x</Table.Cell>
                     </Table.Row>
                 {ar}
@@ -51,10 +52,10 @@ class IngestPresets extends Component {
 
         return (
 
-            <Segment textAlign='center' className="carbon_state" color='brown' raised>
-                <Label  attached='top' className="trimmed_label">Presets</Label>
+            <Segment textAlign='center' className="carbon_state" color='teal' raised>
+                <Label  attached='top' className="trimmed_label" >Presets</Label>
                 <IngestNames {...this.state} />
-                <Table compact='very' basic size='small'>
+                <Table selectable compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>Name</Table.HeaderCell>
