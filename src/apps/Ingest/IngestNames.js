@@ -12,6 +12,7 @@ class IngestNames extends Component {
         sending: false,
         lines: {},
         line: {},
+        newline: {},
         open: false,
         presets: {},
         date: moment().format('YYYY-MM-DD'),
@@ -48,13 +49,9 @@ class IngestNames extends Component {
         this.setState({open: false});
     };
 
-    onComplete = (newline) => {
-        console.log(":: Cit callback: ", newline);
-    };
-
-    newLine = (line) => {
-        console.log(":: New Line: ",line);
-        //this.setState({disabled: false, lang_data: state});
+    newLine = (newline) => {
+        console.log(":: New Line: ", newline);
+        this.setState({open: false, newline });
     };
 
     removeLine = (line) => {
@@ -105,7 +102,7 @@ class IngestNames extends Component {
                         <Modal.Content>
                             <CIT metadata={{}}
                                  onCancel={this.onCancel}
-                                 onComplete={(x) => this.onComplete(x)}/>
+                                 onComplete={(x) => this.newLine(x)}/>
                         </Modal.Content>
                     </Modal>
                 </Menu.Item>
