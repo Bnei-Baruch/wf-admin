@@ -55,7 +55,7 @@ class IngestTrimmed extends Component {
         this.setState({open: true});
     };
 
-    onComplete = (newline) => {
+    renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
         let file_data = this.state.file_data;
         let newfile_name = newline.final_name;
@@ -82,7 +82,6 @@ class IngestTrimmed extends Component {
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }
-
         });
     };
 
@@ -184,7 +183,7 @@ class IngestTrimmed extends Component {
                                 <Modal.Content >
                                     <CIT metadata={this.state.file_data.line}
                                          onCancel={this.onCancel}
-                                         onComplete={(x) => this.onComplete(x)}/>
+                                         onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>

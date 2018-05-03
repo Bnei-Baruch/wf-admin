@@ -43,53 +43,39 @@ class AchareyAricha extends Component {
         clearInterval(this.state.ival);
     };
 
-    selectFile = (data) => {
-        console.log(":: ArichaApp - selected file: ", data);
-        if (data.line) {
-            // Build url for preview
-            let url = 'http://wfserver.bbdomain.org';
-            let path = data.original.format.filename;
-            let source = `${url}${path}`;
+    selectFile = (file_data) => {
+        console.log(":: ArichaApp - selected file: ", file_data);
+        const {renamed,wfsend} = file_data.wfstatus;
+        // If we got line, we can build meta for insert
+        if (file_data.line) {
             // Take sha for mdb fetch
-            let sha1 = data.original.format.sha1;
+            let sha1 = file_data.original.format.sha1;
             // Build data for insert app
-            let filename = data.file_name;
+            let filename = file_data.file_name;
             let content_type = "CLIP";
-            let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let start_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
             let upload_type = "aricha";
-            let language = data.line.language;
-            this.setState({
-                source,
-                active: data.aricha_id,
-                file_data: data,
-                insert_button: !data.wfstatus.renamed,
-                rename_button: data.wfstatus.wfsend,
-                send_button: !data.wfstatus.renamed,
-                kmedia_option: data.wfstatus.wfsend,
-                filedata: {filename, content_type, start_date, upload_type, language}
-            });
+            let language = file_data.line.language;
+            this.setState({filedata: {filename, content_type, start_date, upload_type, language}});
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
                     console.log("The file already got unit!");
                 this.setState({units});
             });
-        } else {
-            console.log(":: ArichaApp - file must be renamed");
-            // Build url for preview
-            let url = 'http://wfserver.bbdomain.org';
-            let path = data.original.format.filename;
-            let source = `${url}${path}`;
-            this.setState({
-                source,
-                active: data.aricha_id,
-                file_data: data,
-                insert_button: !data.wfstatus.renamed,
-                rename_button: data.wfstatus.wfsend,
-                send_button: !data.wfstatus.renamed,
-                kmedia_option: data.wfstatus.wfsend,
-            });
         }
+        // Build url for preview
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.original.format.filename;
+        let source = `${url}${path}`;
+        this.setState({
+            ...file_data, source,
+            active: file_data.aricha_id,
+            insert_button: !renamed,
+            rename_button: wfsend,
+            send_button: !renamed,
+            kmedia_option: wfsend,
+        });
     };
 
     getPlayer = (player) => {
@@ -138,7 +124,7 @@ class AchareyAricha extends Component {
         });
     };
 
-    onComplete = (newline) => {
+    renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
         let file_data = this.state.file_data;
         let newfile_name = newline.final_name;
@@ -152,17 +138,16 @@ class AchareyAricha extends Component {
         //file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
-        // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
-        let path = file_data.original.format.filename;
-        let source = `${url}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, source, upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
-        setTimeout(() => this.setState({ renaming: false, insert_button: false}), 2000);
-        putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.aricha_id}`);
+        this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
+        putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
+            console.log(":: Ingest - rename respond: ",cb);
+            if(cb.status === "ok") {
+                setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
+                this.selectFile(file_data);
+            } else {
+                setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+            }
         });
     };
 
@@ -266,7 +251,7 @@ class AchareyAricha extends Component {
                                 <Modal.Content>
                                     <CIT metadata={this.state.file_data.line}
                                          onCancel={this.onCancel}
-                                         onComplete={(x) => this.onComplete(x)}/>
+                                         onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>

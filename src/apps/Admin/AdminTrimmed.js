@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_OLD_BACKEND } from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -46,7 +46,7 @@ class AdminTrimmed extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({source, active: file_data.trim_id, file_data: file_data, disabled: true});
+        this.setState({...file_data, source, active: file_data.trim_id, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             //FIXME: Does we need disable any action if censored=true?
@@ -85,7 +85,7 @@ class AdminTrimmed extends Component {
         this.setState({open: true});
     };
 
-    onComplete = (newline) => {
+    renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
         let file_data = this.state.file_data;
         let newfile_name = newline.final_name;
@@ -107,18 +107,16 @@ class AdminTrimmed extends Component {
         file_data.wfstatus.fixed = false;
         file_data.wfstatus.wfsend = false;
         // <--
-        // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
-        let path = file_data.proxy.format.filename;
-        let source = `${url}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, source, open: false, renaming: true, fixReq: true, disabled: true });
-        setTimeout(() => this.setState({ renaming: false, disabled: false }), 2000);
-        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.trim_id}`);
-            this.selectFile(file_data);
+        this.setState({open: false, renaming: true, fixReq: true, disabled: true });
+        putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
+            console.log(":: Ingest - rename respond: ",cb);
+            if(cb.status === "ok") {
+                setTimeout(() => this.setState({renaming: false, disabled: false }), 2000);
+                this.selectFile(file_data);
+            } else {
+                setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+            }
         });
     };
 
@@ -235,7 +233,7 @@ class AdminTrimmed extends Component {
                                     <Modal.Content>
                                         <CIT metadata={this.state.file_data.line}
                                              onCancel={this.onCancel}
-                                             onComplete={(x) => this.onComplete(x)}/>
+                                             onComplete={(x) => this.renameFile(x)}/>
                                     </Modal.Content>
                                 </Modal>
                             </Menu.Item>
