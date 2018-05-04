@@ -57,7 +57,7 @@ class IngestTrimmed extends Component {
 
     renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFSRV_OLD_BACKEND, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -108,7 +108,7 @@ class DgimaTrimmed extends Component {
     };
 
     setMeta = (insert_data) => {
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         file_data.parent = {id: insert_data.send_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
@@ -138,9 +138,9 @@ class DgimaTrimmed extends Component {
         });
     };
 
-    onComplete = (newline) => {
+    renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/dgima/${newfile_name}_${file_data.dgima_id}o.mp4`;
@@ -157,12 +157,14 @@ class DgimaTrimmed extends Component {
         let path = file_data.original.format.filename;
         let source = `${url}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({...file_data, source, upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
-        setTimeout(() => this.setState({ renaming: false, insert_button: false}), 2000);
-        putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/rename?oldname=${oldfile_name}&newname=${newfile_name}&id=${file_data.dgima_id}`);
+        this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
+        putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
+            console.log(":: Dgima - rename respond: ",cb);
+            if(cb.status === "ok") {
+                setTimeout(() => this.setState({ file_data, source, renaming: false, insert_button: false}), 2000);
+            } else {
+                setTimeout(() => this.setState({renaming: false}), 2000);
+            }
         });
     };
 
@@ -184,10 +186,10 @@ class DgimaTrimmed extends Component {
         let file_data = this.state.file_data;
         let special = this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/${special}?value=true`, { method: 'POST',})
+        //fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, send_button: true });
         setTimeout(() => {
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.dgima_id}&special=${special}`);
+            //fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.dgima_id}&special=${special}`);
             this.setState({ sending: false, send_button: false });
         }, 1000);
     };
@@ -263,7 +265,7 @@ class DgimaTrimmed extends Component {
                                 <Modal.Content>
                                     <CIT metadata={this.state.file_data.line}
                                          onCancel={this.onCancel}
-                                         onComplete={(x) => this.onComplete(x)}/>
+                                         onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>
