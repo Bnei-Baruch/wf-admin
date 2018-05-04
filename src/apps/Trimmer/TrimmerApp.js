@@ -4,7 +4,7 @@ import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
-import {putData, WFDB_BACKEND, WFSRV_OLD_BACKEND} from "../../shared/tools";
+import {putData, WFSRV_BACKEND} from "../../shared/tools";
 
 export default class TrimmerApp extends Component {
 
@@ -113,17 +113,15 @@ export default class TrimmerApp extends Component {
     };
 
     postTrimMeta = () => {
-        let wfid = this.state.trim_meta.trim_id;
+        let {trim_meta} = this.state;
         this.setState({ioValid: false, loading: true});
-        setTimeout(() => {
-            this.setState({ loading: false });
-            this.props.closeModal();
-        }, 5000);
-        putData(`${WFDB_BACKEND}/trimmer/${this.state.trim_meta.trim_id}`, this.state.trim_meta, (cb) => {
-            console.log(":: Post trim meta: ",cb);
-            let lelomikud = this.state.lelomikud ? 1 : 0;
-            // FIXME: When API change this must be error recovering
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/trim?id=${wfid}&spc=${lelomikud}`);
+        setTimeout(() => { this.props.closeModal() }, 2000);
+        if(this.state.lelomikud) trim_meta.line.artifact_type = "LELO_MIKUD";
+        putData(`${WFSRV_BACKEND}/workflow/trim`, trim_meta, (cb) => {
+            console.log(":: Trimmer - trim respond: ",cb);
+            if(cb.status !== "ok") {
+                alert("Trimmer: Something goes wrong!");
+            }
         });
     };
 
