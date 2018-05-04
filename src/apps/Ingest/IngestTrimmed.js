@@ -91,40 +91,17 @@ class IngestTrimmed extends Component {
     };
 
     sendFile = () => {
-        let file_data = this.state.file_data;
+        const {file_data} = this.state;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
-        setTimeout(() => this.setState({ sending: false }), 5000);
-        let cont = file_data.line.content_type;
-        let colt = file_data.line.collection_type;
-        let artt = file_data.line.artifact_type;
-        let hag = file_data.line.holiday;
-        let lect = file_data.line.lecturer;
-        // It's must be before ifs, because we maybe override it
-        file_data.wfstatus.buffer = file_data.line.require_test;
-        if (cont.match(/^(CONGRESS|VIRTUAL_LESSON)$/)) {
-            file_data.wfstatus.buffer = true;
-        }
-        if(cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/) && colt !== "CONGRESS" && artt !== "KITEI_MAKOR") {
-            file_data.wfstatus.censored = hag;
-        }
-        if(cont === "MEAL" && colt !== "CONGRESS" && lect === "rav") {
-            file_data.wfstatus.censored = true;
-            file_data.wfstatus.buffer = false;
-        }
-        if(colt !== "CONGRESS" && cont === "FULL_LESSON") {
-            file_data.wfstatus.backup = true;
-        }
-        if(!file_data.wfstatus.censored && !file_data.wfstatus.buffer) {
-            if (cont.match(/^(LESSON_PART|FRIENDS_GATHERING)$/)) {
-                file_data.wfstatus.kmedia = true;
+        putData(`${WFSRV_BACKEND}/workflow/send_ingest`, file_data, (cb) => {
+            console.log(":: Ingest - send respond: ",cb);
+            setTimeout(() => this.setState({ sending: false }), 2000);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status !== "ok") {
+                alert("Something goes wrong!");
             }
-        }
-        file_data.wfstatus.wfsend = true;
-        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}`);
         });
     };
 
