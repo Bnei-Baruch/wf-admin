@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -41,6 +41,7 @@ class AdminTrimmed extends Component {
     };
 
     selectFile = (file_data) => {
+        // When polling will be disabled here must be fetch new data
         console.log(":: Trimmed - selected file: ",file_data);
         const {wfsend,fixed,buffer} = file_data.wfstatus;
         let url = 'http://wfserver.bbdomain.org';
@@ -53,21 +54,21 @@ class AdminTrimmed extends Component {
             if(!wfsend && !fixed && buffer && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);
                 file_data.line.fix_unit_uid = units.data[0].uid;
-                this.setState({ ...file_data, units: units, fixReq: true });
+                this.setState({ file_data, units, fixReq: true });
                 this.selectFixUID(units.data[0].uid);
             } else if(!wfsend && !fixed && buffer && units.total > 1) {
                 console.log(":: Fix needed - user must choose from units: ", units);
                 let units_options = units.data.map((unit) => {
                     return ({ key: unit.uid, text: unit.i18n.he.name, value: unit.uid })
                 });
-                this.setState({units: units, fixReq: true, disabled: true, units_options });
+                this.setState({units, fixReq: true, disabled: true, units_options });
             } else if(wfsend && fixed) {
                 // Maybe we need indicate somehow about fixed unit
                 console.log(":: Fix already done - ", units);
-                this.setState({units: units, fixReq: false, disabled: false });
+                this.setState({units, fixReq: false, disabled: false });
             } else if(wfsend && !fixed) {
                 console.log(":: File was normally sent - ", units);
-                this.setState({ units: units, fixReq: false, disabled: !wfsend});
+                this.setState({ units, fixReq: false, disabled: !wfsend});
             } else if(!wfsend && !buffer) {
                 console.log(":: File is NOT send yet! - ", units);
             } else {
@@ -77,7 +78,7 @@ class AdminTrimmed extends Component {
     };
 
     getPlayer = (player) => {
-        console.log(":: Trimmed - got player: ", player);
+        console.log(":: Admin - got player: ", player);
         //this.setState({player: player});
     };
 
@@ -87,7 +88,7 @@ class AdminTrimmed extends Component {
 
     renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
@@ -132,37 +133,35 @@ class AdminTrimmed extends Component {
 
     selectFixUID = (uid) => {
         console.log(":: Selected fix_uid option: ", uid);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let fix_uid = uid;
         file_data.line.fix_unit_uid = fix_uid;
-        this.setState({...file_data, fix_uid, disabled: false});
+        this.setState({file_data, fix_uid, disabled: false});
         putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
 
     sendFile = () => {
-        let file_data = this.state.file_data;
-        if(!this.state.fixReq) {
-            let special = this.state.special;
-            file_data.wfstatus[special] = true;
-            console.log(":: Going to send File: ", file_data + " : to: ", special);
-            fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/${special}?value=true`, {method: 'POST',});
-        }
-        this.setState({ ...file_data, sending: true, disabled: true });
-        setTimeout(() => {
-            let dst_send = this.state.fixReq ? "fix" : this.state.special;
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}&special=${dst_send}`);
-            // FIXME: When API change here must be callback with updated state
-            file_data.wfstatus.fixed = true;
-            file_data.wfstatus.wfsend = true;
-            // Here must be normal solution
-            this.setState({ ...file_data, sending: false, disabled: false, fixReq: false });
-        }, 3000);
+        let {file_data} = this.state;
+        file_data.special = this.state.fixReq ? "fix" : this.state.special;
+        this.setState({ sending: true, disabled: true });
+        putData(`${WFSRV_BACKEND}/workflow/send_admin`, file_data, (cb) => {
+            console.log(":: Admin - send respond: ",cb);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status === "ok") {
+                setTimeout(() => this.setState({sending: false, disabled: false, fixReq: false}), 2000);
+            } else {
+                setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
+                alert("Something goes wrong!");
+            }
+        });
+
     };
 
     setRemoved = () => {
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         console.log(":: Admin - set removed: ", file_data);
         this.setState({ disabled: true });
         fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})

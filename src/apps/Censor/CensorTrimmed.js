@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getData, getUnits, IVAL, putData, toHms, WFDB_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, toHms, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
@@ -69,49 +69,40 @@ class CensorTrimmed extends Component {
 
     selectFixUID = (uid) => {
         console.log(":: Selected fix_uid option: ", uid);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let fix_uid = uid;
         file_data.line.fix_unit_uid = fix_uid;
-        this.setState({...file_data, fix_uid, disabled: false});
+        this.setState({file_data, fix_uid, disabled: false});
         putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
             console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
 
     getPlayer = (player) => {
-        console.log(":: Trimmed - got player: ", player);
+        console.log(":: Censor - got player: ", player);
         //this.setState({player: player});
     };
 
     sendFile = () => {
-        let file_data = this.state.file_data;
-        console.log(":: Going to send File: ", file_data);
+        let {file_data} = this.state;
+        file_data.special = this.state.fixReq ? "fix" : "kmedia";
         this.setState({ sending: true, disabled: true });
-        // It's mean files is allowed for public
-        file_data.wfstatus.checked = true;
-        // Wright now same button is send to KMedia
-        file_data.wfstatus.kmedia = true;
-        // We leave this on admin, but hide on censor
-        file_data.wfstatus.buffer = true;
-        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            // FIXME: When API change this must be error recovering
-            if(this.state.fixReq) {
-                fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.trim_id}&special=fix`);
+        putData(`${WFSRV_BACKEND}/workflow/send_censor`, file_data, (cb) => {
+            console.log(":: Censor - send respond: ",cb);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status === "ok") {
+                setTimeout(() => this.setState({sending: false, disabled: false, fixReq: false}), 2000);
             } else {
-                fetch(`http://wfconv1.bbdomain.org:8081/convert?id=${file_data.trim_id}&key=kmedia`);
+                setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
+                alert("Something goes wrong!");
             }
-            // FIXME: When API change here must be callback with updated state
-            file_data.wfstatus.fixed = true;
-            file_data.wfstatus.wfsend = true;
-            // Here must be normal solution
-            setTimeout(() => this.setState({ file_data, sending: false, disabled: false, fixReq: false }), 3000);
-
         });
+
     };
 
     setRemoved = () => {
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
         fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
