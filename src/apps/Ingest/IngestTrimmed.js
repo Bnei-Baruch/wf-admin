@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, WFSRV_OLD_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -78,7 +78,7 @@ class IngestTrimmed extends Component {
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
             console.log(":: Ingest - rename respond: ",cb);
             if(cb.status === "ok") {
-                setTimeout(() => this.setState({...file_data, source, renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+                setTimeout(() => this.setState({file_data, source, renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }

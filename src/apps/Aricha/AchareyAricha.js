@@ -69,7 +69,7 @@ class AchareyAricha extends Component {
         let path = file_data.original.format.filename;
         let source = `${url}${path}`;
         this.setState({
-            ...file_data, source,
+            file_data, source,
             active: file_data.aricha_id,
             insert_button: !renamed,
             rename_button: wfsend,

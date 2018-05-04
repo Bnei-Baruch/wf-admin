@@ -46,7 +46,7 @@ class AdminTrimmed extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
-        this.setState({...file_data, source, active: file_data.trim_id, disabled: true});
+        this.setState({file_data, source, active: file_data.trim_id, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             //FIXME: Does we need disable any action if censored=true?

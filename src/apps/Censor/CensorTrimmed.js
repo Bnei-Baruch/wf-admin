@@ -105,7 +105,7 @@ class CensorTrimmed extends Component {
             file_data.wfstatus.fixed = true;
             file_data.wfstatus.wfsend = true;
             // Here must be normal solution
-            setTimeout(() => this.setState({ ...file_data, sending: false, disabled: false, fixReq: false }), 3000);
+            setTimeout(() => this.setState({ file_data, sending: false, disabled: false, fixReq: false }), 3000);
 
         });
     };
