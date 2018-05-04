@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFSRV_OLD_BACKEND, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -94,7 +94,7 @@ class AchareyAricha extends Component {
     };
 
     setMeta = (insert_data) => {
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         file_data.parent = {id: insert_data.send_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
@@ -126,7 +126,7 @@ class AchareyAricha extends Component {
 
     renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/aricha/${newfile_name}_${file_data.aricha_id}o.mp4`;
@@ -166,15 +166,21 @@ class AchareyAricha extends Component {
     };
 
     sendFile = () => {
-        let file_data = this.state.file_data;
-        let special = this.state.special;
+        let {file_data,special} = this.state;
+        file_data.special = special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, send_button: true });
-        setTimeout(() => {
-            fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.aricha_id}&special=${special}`);
-            this.setState({ sending: false, send_button: false });
-        }, 1000);
+        putData(`${WFSRV_BACKEND}/workflow/send_aricha`, file_data, (cb) => {
+            console.log(":: Aricha - send respond: ",cb);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status === "ok") {
+                setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
+            } else {
+                alert("Something goes wrong!");
+            }
+        });
+
     };
 
     setRemoved = () => {
