@@ -19,6 +19,7 @@ class WFDB extends Component {
     state = {
         date: moment().format('YYYY-MM-DD'),
         input_id: "",
+        sjson: "wfdb",
         skey: "date",
         svalue: "",
         startDate: moment(),
@@ -51,6 +52,11 @@ class WFDB extends Component {
         this.setState({startDate: data, date, skey: "date"});
     };
 
+    setJsonKey = (sjson) => {
+        console.log(":: Selected json options: ", sjson);
+        this.setState({sjson});
+    };
+
     setStatusKey = (skey) => {
         console.log(":: Selected key options: ", skey);
         this.setState({skey});
@@ -74,10 +80,17 @@ class WFDB extends Component {
 
     render() {
 
+        const json_options = [
+            { key: 'wfdb', text: 'WFDB', value: 'wfdb' },
+            { key: 'line', text: 'Line', value: 'line' },
+            { key: 'parent', text: 'Parent', value: 'parent' },
+            { key: 'status', text: 'Status', value: 'wfstatus' },
+        ];
+
         const wfdb_options = [
             { key: 'date', text: 'Date', value: 'date' },
             { key: 'name', text: 'Name', value: 'file_name' },
-            { key: 'id', text: 'ID', value: 'id' },
+            { key: 'uid', text: 'UID', value: 'uid' },
             { key: 'sha', text: 'Sha1', value: 'sha1' },
         ];
 
@@ -138,6 +151,11 @@ class WFDB extends Component {
                         selected={this.state.startDate}
                         onChange={this.changeDate}
                     />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Select compact defaultValue='wfdb'
+                                options={this.state.tab === "labels" ? "" : json_options}
+                                onChange={(e, {value}) => this.setJsonKey(value)} />
                     </Menu.Item>
                     <Menu.Item>
                         <Select compact defaultValue='date'

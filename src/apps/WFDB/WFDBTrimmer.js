@@ -11,20 +11,21 @@ class Trimmer extends Component {
     };
 
     componentDidMount() {
-        this.getTrimmerData("date", this.props.date);
+        this.getTrimmerData("wfdb", "date", this.props.date);
     };
 
     componentDidUpdate(prevProps) {
         let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
         let next = [this.props.date, this.props.skey, this.props.svalue];
         if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getTrimmerData(this.props.skey, this.props.svalue);
+            this.getTrimmerData(this.props.sjson, this.props.skey, this.props.svalue);
     };
 
-    getTrimmerData = (skey, svalue) => {
+    getTrimmerData = (sjson, skey, svalue) => {
         let search = this.props.skey === "date" && !svalue ? this.props.date : svalue;
+        let endpoint = sjson === "wfdb" ? "find" : sjson;
         if(!search) return;
-        getData(`trimmer/find?key=${skey}&value=${search}`, (trimmer) => {
+        getData(`trimmer/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
