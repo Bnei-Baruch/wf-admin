@@ -34,7 +34,8 @@ class IngestPresets extends Component {
         console.log(":: Add preset: ",new_preset,presets);
         putData(`${WFDB_STATE}/names/presets/${date}`, new_preset, (cb) => {
             console.log(":: Add preset: ",cb);
-            this.getPresets();
+            presets[date] = new_preset;
+            this.setState({presets});
         });
     };
 
@@ -49,22 +50,25 @@ class IngestPresets extends Component {
     };
 
     removeDate = (date) => {
+        let {presets} = this.state;
         console.log(":: Remove Date: ",date);
         removeData(`${WFDB_STATE}/names/presets/${date}`, (cb) => {
             console.log(":: Remove Date: ",cb);
-            this.getPresets();
+            delete presets[date];
+            this.setState({presets});
         });
     };
 
     removeName = (date,name,i) => {
+        let {presets} = this.state;
         console.log(":: Remove Name: ",date,name,i);
-        let presets = this.state.presets[date];
-        presets.splice(i, 1);
-        console.log(":: After Remove: ",presets);
-        putData(`${WFDB_STATE}/names/presets/${date}`, presets, (cb) => {
+        let preset = presets[date];
+        preset.splice(i, 1);
+        console.log(":: After Remove: ",preset);
+        putData(`${WFDB_STATE}/names/presets/${date}`, preset, (cb) => {
             console.log(":: Names remove preset: ",cb);
-            this.setState({preset: {id:"",name:""}});
-            this.getPresets();
+            presets[date] = preset;
+            this.setState({preset: {id:"", name:""}, presets});
         });
     };
 

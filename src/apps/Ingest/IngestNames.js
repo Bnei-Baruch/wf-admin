@@ -46,22 +46,24 @@ class IngestNames extends Component {
     };
 
     newLine = (newline) => {
+        let {lines} = this.state;
         let new_id = randomString(8);
         console.log(":: New Line: ", newline);
         this.setState({open: false, newline });
         putData(`${WFDB_STATE}/names/lines/${new_id}`, newline, (cb) => {
             console.log(":: Added newline: ",cb);
-            this.getLines();
+            lines[new_id] = newline;
+            this.setState({lines});
         });
     };
 
     removeLine = () => {
-        const {line_id} = this.state;
+        let {line_id,lines} = this.state;
         console.log(":: Remove Line: ",line_id);
         removeData(`${WFDB_STATE}/names/lines/${line_id}`, (cb) => {
             console.log(":: Remove Line: ",cb);
-            this.setState({file_name: ""});
-            this.getLines();
+            delete lines[line_id];
+            this.setState({lines, file_name: ""});
         });
     };
 
