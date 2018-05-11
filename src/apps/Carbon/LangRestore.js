@@ -42,9 +42,9 @@ class LangRestore extends Component {
         let id = langcheck.id;
         console.log(":: Restore Langs: ",langcheck);
         this.setState({ sending: true, disabled: true });
-        setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
         putData(`${WFDB_STATE}/state/langcheck/${id}`, langcheck, (cb) => {
             console.log(":: LangCheck resore respond: ",cb);
+            setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
         });
     };
 

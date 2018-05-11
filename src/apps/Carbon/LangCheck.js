@@ -60,9 +60,9 @@ class LangCheck extends Component {
         const {lang_data} = this.state;
         console.log(":: LangChek - sending languages data: ", lang_data);
         this.setState({ sending: true, disabled: true, newlangs: true});
-        setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
         putData(`${WFSRV_BACKEND}/workflow/languages`, lang_data, (cb) => {
             console.log(":: LangCheck - workflow respond: ",cb);
+            setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
         });
     };
 
