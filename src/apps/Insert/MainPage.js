@@ -3,8 +3,8 @@ import { Modal } from 'semantic-ui-react';
 import moment from 'moment';
 import UploadFile from './UploadFile';
 import LoginPage from './LoginPage';
-import ModalApp from './InsertApp';
-import {insertSha} from '../../shared/tools';
+import InsertApp from './InsertApp';
+import {insertSha,putData} from '../../shared/tools';
 import './InsertApp.css';
 
 class App extends Component {
@@ -29,46 +29,50 @@ class App extends Component {
                 console.log(":: File with SHA1: " + filedata.sha1 + " - already exist!");
                 alert("File already exist in MDB!");
             } else {
-                console.log(":: Setting Filedata:", filedata);
-                // Extract and validate UID from filename
-                let uid = filedata.filename.split(".")[0].split("_").pop();
-                if(uid.length === 8 && (/[_]/).test(filedata.filename))
-                    filedata["input_uid"] = uid;
-                // Extract and validate date from filename
-                if((/\d{4}-\d{2}-\d{2}/).test(filedata.filename)) {
-                    let string_date = filedata.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
-                    let test_date = moment(string_date);
-                    if(test_date.isValid())
-                        filedata["start_date"] = string_date;
-                }
-                this.setState({filedata: filedata, open: true});
+                this.setMetaData(filedata);
             }
         });
     };
 
-    onComplete = (metadata) => {
-        console.log(":: Complete Metadata:", metadata);
-        this.setState({open: false});
-        fetch('https://upload.kli.one/archive/'+metadata.sha1, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body:  JSON.stringify(metadata)
-        })
-            .then(function(response){
-                return response.json();
-            })
-            .then(function(data){
-                console.log(" :: Post to workflow: ",data)
-            }).catch(ex => console.log("Post to workflow:", ex));
+    setMetaData = (filedata) => {
+        console.log(":: Setting metadata from:", filedata);
+        const {sha1,size,filename,type,url} = filedata;
+        let line = {content_type: null, upload_filename: filename, mime_type: type,
+            url: `http://wfsrv.bbdomain.org/u/${url}`};
+        let metadata = {sha1, size, line, content_type: null, language: null,
+            send_uid: "", upload_type: "", insert_type: this.state.insert};
+
+        // Extract and validate UID from filename
+        let uid = filename.split(".")[0].split("_").pop();
+        if(uid.length === 8 && (/[_]/).test(filename))
+            metadata.send_uid = uid;
+
+        // Extract and validate date from filename
+        if((/\d{4}-\d{2}-\d{2}/).test(filedata.filename)) {
+            let string_date = filedata.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let test_date = moment(string_date);
+            let date = test_date.isValid() ? string_date : moment().format('YYYY-MM-DD');
+            metadata.date = date;
+        }
+        this.setState({filedata, metadata, open: true});
     };
 
-    onCancel = (data) => {
+    onComplete = (metadata) => {
+        console.log(":: Put Metadata:", metadata);
+        this.setState({open: false});
+        putData(`insert`, metadata, (cb) => {
+            console.log(":: WFSRV respond: ",cb);
+        });
+    };
+
+    onCancel = () => {
         this.setState({open: false});
     };
 
     render() {
-        let login = (<LoginPage onInsert={this.setMode} user={this.state.user} loading={this.state.loading} />);
-        let upload = (<UploadFile onFileData={this.setFileData} mode={this.state.insert} />);
+        const {filedata,metadata,user,loading,insert,open} = this.state;
+        let login = (<LoginPage onInsert={this.setMode} user={user} loading={loading} />);
+        let upload = (<UploadFile onFileData={this.setFileData} mode={insert} />);
 
         return (
             <Fragment>
@@ -77,11 +81,13 @@ class App extends Component {
                        closeOnDimmerClick={false}
                        closeIcon={true}
                        onClose={this.onCancel}
-                       open={this.state.open}
+                       open={open}
                        size="large"
-                       mountNode={document.getElementById("ltr-modal-mount")}
-                >
-                    <ModalApp { ...this.state } onComplete={this.onComplete} />
+                       mountNode={document.getElementById("ltr-modal-mount")}>
+                    <InsertApp
+                        filedata={filedata}
+                        metadata={metadata}
+                        onComplete={this.onComplete} />
                 </Modal>
             </Fragment>
         );

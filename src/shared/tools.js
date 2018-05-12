@@ -44,6 +44,24 @@ export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
+export const getWFData = (id, cb) =>  {
+    fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`)
+        .then((response) => {
+            if (response.ok) {
+                //console.log("--FetchWorkflowData--");
+                return response.json().then(data => cb(data));
+            }
+        })
+        .catch(ex => console.log(`get ${id}`, ex));
+};
+
+const getEndpoint = (id) => {
+    if(id.match(/^t[\d]{10}$/)) return "trimmer";
+    if(id.match(/^a[\d]{10}$/)) return "aricha";
+    if(id.match(/^d[\d]{10}$/)) return "dgima";
+    if(id.match(/^i[\d]{10}$/)) return "insert";
+};
+
 export const getUnits = (path, cb) => fetch(`${path}`)
     .then((response) => {
         if (response.ok) {

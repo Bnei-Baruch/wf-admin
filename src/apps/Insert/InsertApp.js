@@ -1,232 +1,194 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
-import PropTypes from 'prop-types';
-import noop from 'lodash/noop';
 import moment from 'moment';
 import 'moment/locale/he';
 import 'moment/locale/ru';
-// import es from 'moment/locale/es';
-// import fr from 'moment/locale/fr';
-// import it from 'moment/locale/it';
-// import de from 'moment/locale/de';
-// import en from 'moment/locale/en-gb';
+import 'moment/locale/es';
+import 'moment/locale/fr';
+import 'moment/locale/it';
+import 'moment/locale/de';
+import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchPublishers, fetchUnits, fetchPersons, insertName, getName, getLang } from '../../shared/tools';
-import { content_options, language_options, upload_options, article_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID } from '../../shared/consts';
+import { fetchPublishers, fetchPersons, insertName, getName, getLang, getWFData } from '../../shared/tools';
+import {content_options, language_options, upload_options, article_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
 import MdbData from './MdbData';
 import NestedModal from './NestedModal';
 
 class InsertApp extends Component {
-    static propTypes = {
-        filedata: PropTypes.object,
-        metadata: PropTypes.object,
-        onInsert: PropTypes.func,
-        onCancel: PropTypes.func,
+
+    state = {
+        metadata: {...this.props.metadata},
+        unit: {},
+        files: [],
+        store: { sources: [], tags: [], publishers: []},
+        startDate: moment(),
+        locale: "he",
+        isValidated: false,
     };
-    static defaultProps = {
-        filedata: {},
-        onInsert: noop,
-        onCancel: noop,
-    };
-    constructor(props) {
-        super(props);
-        this.state = {
-            filedata: { ...props.filedata },
-            metadata: {
-                sha1: props.filedata.sha1,
-                size: props.filedata.size,
-                line: {
-                    upload_filename: props.filedata.filename,
-                    mime_type: props.filedata.type,
-                    url: props.filedata.url
-                }
-            },
-            unit: {},
-            files: [],
-            store: { sources: [], tags: [], publishers: []},
-            startDate: this.props.filedata.start_date ? moment(this.props.filedata.start_date) : moment(),
-            start_date: this.props.filedata.start_date ? this.props.filedata.start_date : moment().format('YYYY-MM-DD'),
-            end_date: this.props.filedata.start_date ? this.props.filedata.start_date : moment().format('YYYY-MM-DD'),
-            content_type: this.props.filedata.content_type ? this.props.filedata.content_type : null,
-            language: this.props.filedata.language ? this.props.filedata.language : null,
-            locale: 'he',
-            upload_type: this.props.filedata.upload_type ? this.props.filedata.upload_type : "",
-            input_uid: this.props.filedata.input_uid ? this.props.filedata.input_uid : null,
-            isValidated: false,
-            cTypeSelection: true,
-            uTypeSelection: this.props.filedata.upload_type !== "aricha",
-        };
-        this.handleDateChange = this.handleDateChange.bind(this);
-    }
+
 
     componentDidMount() {
+        const {date} = this.state.metadata;
+        this.setState({startDate: moment(date)});
         // Set sunday first weekday in russian
         moment.updateLocale('ru', { week: {dow: 0,},});
-        // moment.updateLocale('es', { week: {dow: 0,},});
-        // moment.updateLocale('it', { week: {dow: 0,},});
-        // moment.updateLocale('de', { week: {dow: 0,},});
-        // moment.updateLocale('fr', { week: {dow: 0,},});
-        // moment.updateLocale('en', { week: {dow: 0,},});
-        // moment.updateLocale(he, { week: {dow: 0,},});
-        //fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
-        //fetchTags(tags => this.setState({ store: { ...this.state.store, tags } }));
+        moment.updateLocale('es', { week: {dow: 0,},});
+        moment.updateLocale('it', { week: {dow: 0,},});
+        moment.updateLocale('de', { week: {dow: 0,},});
+        moment.updateLocale('fr', { week: {dow: 0,},});
+        moment.updateLocale('en', { week: {dow: 0,},});
         fetchPublishers(publishers => this.setState({ store: { ...this.state.store, publishers: publishers.data } }));
     };
 
     componentDidUpdate(prevProps, prevState) {
-        //console.log("--componentDidUpdate--", prevState);
-        let prev = [prevState.content_type, prevState.language, prevState.upload_type, prevState.start_date];
-        let next = [this.state.content_type, this.state.language, this.state.upload_type, this.state.start_date];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
+        if (JSON.stringify(prevState.metadata) !== JSON.stringify(this.state.metadata))
             this.setState({ isValidated: false });
     };
 
-    handleContentFilter = (e, data) => {
-        console.log("-Content type: "+ data.value);
-        if(data.value === "ARTICLE") {
-            this.setState({content_type: data.value, input_uid: "", upload_type: "", cTypeSelection: false})
-        } else {
-            this.setState({content_type: data.value, input_uid: ""})
-        }
+    selectContentType = (content_type) => {
+        let {metadata} = this.state;
+        this.setState({metadata: {...metadata, content_type}});
     };
 
-    handleLanguageFilter = (e, data) => {
-        console.log("-Language: "+ data.value);
-        this.setState({language: data.value, locale: getLang(data.value)});
+    selectLanguage = (language) => {
+        let {metadata} = this.state;
+        this.setState({metadata: {...metadata, language}, locale: getLang(language)});
     };
 
-    handleUploadFilter = (e, data) => {
-        console.log("-Upload type: "+ data.value);
-        if(data.value === "aricha") {
-            this.setState({upload_type: data.value, uTypeSelection: false});
-        } else {
-            this.setState({upload_type: data.value});
-        }
+    selectUpload = (upload_type) => {
+        let {metadata} = this.state;
+        this.setState({metadata: {...metadata,upload_type}});
     };
 
-    handleDateChange(date) {
-        let startdate = (date) ? date.format('YYYY-MM-DD') : this.props.filedata.filename.split(".")[0].split("_")[3];
-        let enddate = (date) ? date.format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
-        this.setState({
-            startDate: date,
-            start_date: startdate, end_date: enddate
-        });
-    }
-
-    handleOnComplete = () => {
-        console.log("--HandelOnComplete--");
-        // Object we return from react
-        console.log("::We returnt this metadata: ", this.state.metadata);
-        this.props.onInsert(this.state.metadata);
+    selectDate = (date) => {
+        let {metadata} = this.state;
+        this.setState({metadata: {...metadata, date: date.format('YYYY-MM-DD')}, startDate: date});
     };
 
-    handleOnClose = () => {
-        console.log("--HandelOnCancel--");
+    onClose = () => {
+        console.log("--onCancel--");
         this.props.onCancel();
     };
 
-    handleUidInput = (e, data) => {
-        console.log(":: Input changed: ", data.value);
-        this.setState({input_uid: data.value, isValidated: false});
+    inputUid = (input_uid) => {
+        console.log(":: Input changed: ", input_uid);
+        this.setState({input_uid, isValidated: false});
     };
 
-    handlePubSelect = (data) => {
-        console.log("--HandlePubSelect--");
-        console.log(":: Publisher selected: ", data);
-        this.setState({metadata: { ...this.state.metadata, publisher: data.pattern, publisher_uid: data.uid }});
+    setPublisher = (publisher) => {
+        const {uid,pattern} = publisher;
+        let {metadata} = this.state;
+        metadata.line.publisher_uid = uid;
+        metadata.line.publisher = pattern;
+        console.log(":: Set Publisher: ", publisher);
+        this.setState({metadata: {...metadata}});
     };
 
-    handleUidSelect = (data) => {
-        console.log("--HandleUidSelect--");
-        console.log(":::: Unit Selected :::: ", data);
-        let path = data.id + '/files/';
-        fetchUnits(path, (data) => {
-                console.log(":: Got FILES: ", data);
-                let units = data.filter((file) => (file.name.split(".")[0].split("_").pop().match(/^t[\d]{10}o$/)));
-                // Filter trimmed without send
-                let unit_file = units.filter(capd => capd.properties.capture_date);
-                console.log(":: Try to get trim source: ", unit_file);
-                if(unit_file.length === 0 && this.state.upload_type !== "aricha" && data.length > 0) {
-                    console.log("No trim source found, taking first file:",data[0]);
-                    let unit_sendname = data[0].name.split(".")[0];
-                    let unit_sendext = data[0].name.split(".")[1];
-                    let unit_name = unit_sendname + "_" + data[0].uid + "." + unit_sendext;
-                    this.setState({files: data, send_name: unit_name});
-                } else if(data.length === 0 && this.state.upload_type !== "aricha") {
-                    console.log(":: No files in this UNIT!");
-                    this.setState({files: null, send_name: null});
-                } else if(unit_file.length === 0 && this.state.upload_type === "aricha") {
-                    this.setState({files: data, send_name: this.props.filedata.filename});
-                } else {
-                    this.setState({files: data, send_name: unit_file[0].name});
-                }
-                let metadata = this.state.metadata;
-                metadata.upload_type = this.state.upload_type;
-                metadata.language = this.state.language;
-                metadata.insert_type = this.props.insert === "new" ? "1" : "2";
-                metadata.send_id = this.state.send_name ? this.state.send_name.split(".")[0].split("_").pop().slice(0,-1) : null;
-                metadata.line.uid = this.state.unit.uid;
-                metadata.line.send_name = this.state.send_name ? this.state.send_name : null;
-                metadata.line.content_type = CONTENT_TYPE_BY_ID[this.state.unit.type_id];
-                metadata.line.capture_date = this.state.unit.properties.capture_date;
-                metadata.line.film_date = this.state.unit.properties.film_date;
-                metadata.line.original_language = MDB_LANGUAGES[this.state.unit.properties.original_language];
-                fetchPersons(this.state.unit.id, (data) => {
-                    console.log(":: Got Persons: ",data);
-                    if(data.length > 0 && data[0].person.uid === "abcdefgh") {
-                        metadata.line.lecturer = "rav";
-                        this.setState({lecturer: "rav"});
-                    } else {
-                        metadata.line.lecturer = "norav";
-                        this.setState({lecturer: "norav"});
-                    }
-                    // Calculate new name here
-                    metadata.filename = getName(metadata);
-                    console.log(":: Metadata: ",metadata);
-                    // Check if name already exist
-                    insertName(metadata.filename, (data) => {
-                        console.log(":: Got WFObject",data);
-                        if(data.length > 0 && this.props.insert === "new") {
-                            console.log(":: File with name: "+metadata.filename+" - already exist!");
-                            alert("File with name: "+metadata.filename+" - already exist!");
-                            this.setState({ isValidated: false });
-                        } else if(data.length === 0 && this.props.insert === "update") {
-                            console.log(":: File with name: "+metadata.filename+" - does NOT exist! In current mode the operation must be update only");
-                            alert("File with name: "+metadata.filename+" - does NOT exist! In current mode the operation must be update only");
-                            this.setState({ isValidated: false });
-                        } else {
-                            this.state.content_type && this.state.language && this.state.upload_type ? this.setState({ isValidated: true }) : this.setState({ isValidated: false });
-                            this.setState({metadata: { ...this.state.metadata }});
-                        }
-                    });
-                });
-            });
-        this.setState({ unit: data });
+    onGetUID = (unit) => {
+        console.log(":: Selected unit: ", unit);
+        this.setState({unit});
+        let {metadata} = this.state;
+
+        // Check if all Required meta is selected
+        const {content_type, language, upload_type} = metadata;
+        if (!content_type || !language || !upload_type) {
+            console.log(":: Required meta not selected! ::");
+            this.setState({ isValidated: false });
+            return
+        } else {
+            this.setState({ isValidated: true });
+        }
+
+        // Meta from unit properties going to line
+        const {properties, uid, type_id, id} = unit;
+        metadata.line.uid = uid;
+        metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
+        metadata.line.capture_date = properties.capture_date;
+        metadata.line.film_date = properties.film_date;
+        metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
+        metadata.send_id = properties.workflow_id || null;
+        const wfid = metadata.send_id;
+        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+    };
+
+    newUnitWF = (metadata, wfid) => {
+        console.log(":::: New Workflow UNIT :::: ");
+        console.log(":: Workflow ID: ", wfid);
+        getWFData(wfid, (wfdata) => {
+            console.log(":: Got Workflow Data: ", wfdata);
+            metadata.line.send_name = wfdata.file_name;
+            metadata.line.lecturer = wfdata.line.lecturer;
+            metadata.insert_name = getName(metadata);
+            console.log(":: Metadata insert_name: \n%c"+metadata.insert_name,"color:Green");
+            this.setMeta(metadata);
+        });
+    };
+
+    oldUnitWF = (metadata, id) => {
+        console.log(":::: Old Workflow UNIT :::: ");
+        metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
+        fetchPersons(id, (data) => {
+            console.log(":: Got Persons: ",data);
+            metadata.line.lecturer = (data.length > 0 && data[0].person.uid === "abcdefgh") ? "rav" : "norav";
+            metadata.insert_name = getName(metadata);
+            console.log(":: Metadata insert_name: ", metadata.insert_name);
+            this.setMeta(metadata);
+        });
+    };
+
+    setMeta = (metadata) => {
+        console.log(":: setMeta - metadata: ", metadata);
+        const {insert_type,insert_name} = metadata;
+        // Check if name already exist
+        insertName(insert_name, (data) => {
+            console.log(":: insertName - got: ",data);
+            if(data.length > 0 && insert_type === "1") {
+                console.log(":: File with name: "+insert_name+" - already exist!");
+                alert("File with name: "+insert_name+" - already exist!");
+                this.setState({ isValidated: false });
+            } else if(data.length === 0 && insert_type === "2") {
+                console.log(":: File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
+                alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
+                this.setState({ isValidated: false });
+            } else {
+                this.setState({metadata: { ...metadata }});
+            }
+        });
+    };
+
+    onComplete = () => {
+        let {metadata} = this.state;
+        [metadata.file_name,metadata.extension] = metadata.insert_name.split('.');
+        delete metadata.send_uid;
+        delete metadata.content_type;
+        console.log(" ::: onComplete metadata ::: ", metadata);
+        this.props.onComplete(metadata);
     };
 
     render() {
-        //const { store } = this.state;
 
-        let start_date = (
+        const {filename} = this.props.filedata;
+        const {metadata, isValidated, locale, startDate} = this.state;
+        const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
+
+        let date_picker = (
             <DatePicker
                 className="datepickercs"
-                locale={this.state.locale}
+                locale={locale}
                 dateFormat="YYYY-MM-DD"
                 showYearDropdown
                 showMonthDropdown
                 scrollableYearDropdown
                 maxDate={moment()}
-                openToDate={moment(this.state.start_date)}
-                selected={this.state.startDate}
-                onChange={this.handleDateChange}
-                //excludeDates={[moment(), moment().add(1, "months")]}
-                //highlightDates={moment().add(-1, "months")}
+                openToDate={moment(date)}
+                selected={startDate}
+                onChange={this.selectDate}
             />
         );
 
-        let input_uid = (
+        let uid_input = (
             <Input
                 error={false}
                 className="input_uid"
@@ -234,86 +196,83 @@ class InsertApp extends Component {
                 icon='barcode'
                 placeholder="UID"
                 iconPosition='left'
-                value={this.state.input_uid}
-                onChange={this.handleUidInput}
+                value={send_uid}
+                onChange={(e,{value}) => this.inputUid(value)}
             />
         );
 
         let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
 
         return (
-            <Container className='insert_app' >
+            <Container className="insert_app">
                 <Segment clearing>
-                    {this.props.insert === "update" ? update_style : ""}
+                    {insert_type === "2" ? update_style : ""}
                     <Header floated='left' >
                         <Dropdown
-                            error={!this.state.content_type}
-                            disabled={!this.state.cTypeSelection}
-                            defaultValue={this.state.content_type}
+                            error={!content_type}
+                            disabled={content_type === "ARTICLE"}
                             className="large"
                             placeholder="Content:"
                             selection
                             options={content_options}
-                            content_type={this.state.content_type}
-                            onChange={this.handleContentFilter}
-                            value={this.state.value} >
+                            content_type={content_type}
+                            onChange={(e,{value}) => this.selectContentType(value)}
+                            value={content_type} >
                         </Dropdown>
                         <Dropdown
-                            error={!this.state.language}
-                            defaultValue={this.state.language}
+                            error={!language}
                             className="large"
                             placeholder="Language:"
                             selection
                             options={language_options}
-                            language={this.state.language}
-                            onChange={this.handleLanguageFilter}
-                            value={this.state.value} >
+                            language={language}
+                            onChange={(e,{value}) => this.selectLanguage(value)}
+                            value={language} >
                         </Dropdown>
                     </Header>
                     <Header floated='right'>
-                        {!this.state.upload_type.match(/^(aricha|article|publication)$/) ? input_uid : ""}
+                        {uid_input}
                     </Header>
-                        {this.state.upload_type.match(/^(aricha|article|publication)$/) ? start_date : start_date}
+                    {date_picker}
                 </Segment>
                 <Segment clearing secondary color='blue'>
-                <Modal.Content className="tabContent">
-                    <MdbData {...this.state} onUidSelect={this.handleUidSelect} />
-                </Modal.Content>
+                    <Modal.Content className="tabContent">
+                        <MdbData metadata={metadata} onUidSelect={this.onGetUID} />
+                    </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
-                <Modal.Actions>
-                    <Input
-                        disabled
-                        className="filename"
-                        icon='file'
-                        iconPosition='left'
-                        focus={true}
-                        value={ this.state.filedata.filename }
-                    />
-                    <Dropdown
-                        upward
-                        error={!this.state.upload_type}
-                        disabled={!this.state.uTypeSelection}
-                        defaultValue={this.state.upload_type}
-                        placeholder="Upload Type:"
-                        selection
-                        options={this.state.content_type === "ARTICLE" ? article_options : upload_options}
-                        upload_type={this.state.upload_type}
-                        onChange={this.handleUploadFilter}
-                        value={this.state.value} >
-                    </Dropdown>
-                    <NestedModal
-                        upload_type={this.state.upload_type}
-                        store={this.state.store}
-                        onUidSelect={this.handleUidSelect}
-                        onPubSelect={this.handlePubSelect}
-                    />
-                    <Button
-                        color='green'
-                        disabled={!this.state.isValidated}
-                        onClick={this.handleOnComplete} >Select
-                    </Button>
-                </Modal.Actions>
+                    <Modal.Actions>
+                        <Input
+                            disabled
+                            className="filename"
+                            icon='file'
+                            iconPosition='left'
+                            focus={true}
+                            value={filename}
+                        />
+                        <Dropdown
+                            upward
+                            error={!upload_type}
+                            disabled={upload_type === "aricha"}
+                            placeholder="Upload Type:"
+                            selection
+                            options={content_type === "ARTICLE" ? article_options : upload_options}
+                            upload_type={upload_type}
+                            onChange={(e,{value}) => this.selectUpload(value)}
+                            value={upload_type}
+                        />
+                        <NestedModal
+                            upload_type={upload_type}
+                            publishers={this.state.store.publishers}
+                            onUidSelect={this.onGetUID}
+                            onPubSelect={this.setPublisher}
+                        />
+                        <Button
+                            color='green'
+                            disabled={!isValidated}
+                            onClick={this.onComplete} >Select
+                        </Button>
+                    </Modal.Actions>
                 </Segment>
             </Container>
         );

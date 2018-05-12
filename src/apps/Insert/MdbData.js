@@ -5,32 +5,19 @@ import NameHelper from './NameHelper';
 
 class MdbData extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            units: [],
-            active: null,
-        };
-    };
-
-    componentDidMount() {
-        console.log("--DidUMount----");
-        const {content_type,start_date,end_date} = this.props;
-        let path = ['page_size=1000', `start_date=${start_date}`, `end_date=${end_date}`, `content_type=${content_type}`];
-            if(content_type === "LESSON_PART") path.push('content_type=FULL_LESSON', 'content_type=WOMEN_LESSON');
-            if (content_type === "LECTURE") path.push('content_type=FRIENDS_GATHERING', 'content_type=EVENT_PART');
-            fetchUnits('?'+path.join('&'), (data) => this.setState({units: data.data, active: null}));
+    state = {
+        units: [],
+        active: null,
     };
 
     componentDidUpdate(prevProps) {
-        console.log("--DidUpdate----");
-        const {content_type, start_date, end_date, input_uid, language, upload_type} = this.props;
-        let next = [content_type, start_date, input_uid, language, upload_type];
-        let prev = [prevProps.content_type, prevProps.start_date, prevProps.input_uid, prevProps.language, prevProps.upload_type];
-        let path = ['page_size=1000', `start_date=${start_date}`, `end_date=${end_date}`, `content_type=${content_type}`];
-        if (JSON.stringify(prev) !== JSON.stringify(next)) {
+        //console.log("PrevProps: ", prevProps);
+        const {content_type, date, input_uid} = this.props.metadata;
+        let path = ['page_size=1000', `start_date=${date}`, `end_date=${date}`, `content_type=${content_type}`];
+        if (JSON.stringify(prevProps.metadata) !== JSON.stringify(this.props.metadata)) {
             if(content_type === "LESSON_PART") path.push('content_type=FULL_LESSON', 'content_type=WOMEN_LESSON');
             if (content_type === "LECTURE") path.push('content_type=FRIENDS_GATHERING', 'content_type=EVENT_PART');
+            //console.log("Going to fetch MDB");
             fetchUnits('?'+path.join('&'), (data) => {
                 if(input_uid) data.data = data.data.filter((unit) => unit.uid === input_uid);
                 this.setState({units: data.data, active: null})
@@ -44,9 +31,7 @@ class MdbData extends Component {
     };
 
     render() {
-        console.log("--MdbData Render--");
-
-        const {language,upload_type,metadata} = this.props;
+        const {language,upload_type} = this.props.metadata;
         const {units,active} = this.state;
         let lang = getLang(language);
 
@@ -69,7 +54,7 @@ class MdbData extends Component {
                             flowing
                             position='bottom left'
                             hoverable >
-                            <NameHelper id={unit.id} {...metadata} />
+                            <NameHelper id={unit.id} {...this.props.metadata} />
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>{d}</Table.Cell>
