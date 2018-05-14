@@ -23,11 +23,15 @@ class App extends Component {
     };
 
     setFileData = (filedata) => {
+        const {insert} = this.state;
         insertSha(filedata.sha1, (data) => {
             console.log(":: Got SHA1 check", data);
-            if (data.total > 0) {
+            if (data.total > 0 && insert === "1") {
                 console.log(":: File with SHA1: " + filedata.sha1 + " - already exist!");
                 alert("File already exist in MDB!");
+            } else if (data.total > 0 && insert === "2") {
+                this.setState({insert: "3"});
+                this.setMetaData(filedata);
             } else {
                 this.setMetaData(filedata);
             }

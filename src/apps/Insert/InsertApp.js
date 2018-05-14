@@ -209,11 +209,13 @@ class InsertApp extends Component {
         );
 
         let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
+        let rename_style = (<style>{'.ui.segment { background-color: #e6aaaa; }'}</style>);
 
         return (
             <Container className="insert_app">
                 <Segment clearing>
                     {insert_type === "2" ? update_style : ""}
+                    {insert_type === "3" ? rename_style : ""}
                     <Header floated='left' >
                         <Dropdown
                             error={!content_type}
