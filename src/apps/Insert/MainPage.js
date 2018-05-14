@@ -4,7 +4,7 @@ import moment from 'moment';
 import UploadFile from './UploadFile';
 import LoginPage from './LoginPage';
 import InsertApp from './InsertApp';
-import {insertSha,putData} from '../../shared/tools';
+import {insertName,insertSha,putData} from '../../shared/tools';
 import './InsertApp.css';
 
 class App extends Component {
@@ -58,7 +58,19 @@ class App extends Component {
             let date = test_date.isValid() ? string_date : moment().format('YYYY-MM-DD');
             metadata.date = date;
         }
-        this.setState({filedata, metadata, open: true});
+
+        // If mode rename get insert workflow data
+        if(this.state.insert === "3") {
+            insertName(sha1, "sha1", (data) => {
+                console.log(":: insert data - got: ",data);
+                metadata.upload_type = data[0].upload_type;
+                metadata.send_uid = data[0].line.uid;
+                metadata.language = data[0].language;
+                this.setState({filedata, metadata, open: true});
+            });
+        } else {
+            this.setState({filedata, metadata, open: true});
+        }
     };
 
     onComplete = (metadata) => {
