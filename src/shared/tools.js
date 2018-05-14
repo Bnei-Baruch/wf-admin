@@ -1,4 +1,4 @@
-import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES} from './consts';
+import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
 
 export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
 export const WFRP_STATE = 'http://wfrp.bbdomain.org:8000';
@@ -120,38 +120,44 @@ export const getLang = (lang) => {
     return Object.keys(MDB_LANGUAGES).find(key => MDB_LANGUAGES[key] === lang);
 };
 
+export const getDCT = (val) => {
+    return Object.entries(DCT_OPTS).find(i => i[1].filter(p => p === val)[0])[0];
+};
+
 export const getName = (metadata) => {
 
     let name = [];
+    const {line,language,upload_type} = metadata;
 
     // Language
-    name[0] = metadata.language;
+    name[0] = language;
     // Original
-    name[1] = name[0] === metadata.line.original_language ? "o" : "t";
+    name[1] = name[0] === line.original_language ? "o" : "t";
     // Lecturer
-    name[2] = metadata.line.lecturer;
+    name[2] = line.lecturer;
     // Date
-    name[3] = metadata.line.capture_date || metadata.line.film_date;
+    name[3] = line.capture_date || line.film_date;
     // Type
-    name[4] = CONTENT_TYPES_MAPPINGS[metadata.line.content_type].pattern;
+    name[4] = CONTENT_TYPES_MAPPINGS[line.content_type].pattern;
     // Description
-    name[5] = metadata.line.send_name.split("_").slice(5, -1).join("_");
+    name[5] = line.send_name.split("_").slice(5).join("_");
 
-    if(metadata.upload_type === "akladot") {
+    if(upload_type === "akladot") {
         name[4] = "akladot";
-    } else if(metadata.upload_type === "kitei-makor") {
+    } else if(upload_type === "kitei-makor") {
         name[4] = "kitei-makor";
-    } else if(metadata.upload_type === "article") {
+    } else if(upload_type === "article") {
         name[2] = "rav";
         name[4] = "art";
-        name[5] = metadata.line.upload_filename.split(".")[0].split("_").pop().replace(/([^-a-zA-Z0-9]+)/g, '').toLowerCase();
-    } else if(metadata.upload_type === "publication") {
+        name[5] = line.upload_filename.split(".")[0].split("_").pop().replace(/([^-a-zA-Z0-9]+)/g, '').toLowerCase();
+    } else if(upload_type === "publication") {
         name[2] = "rav";
-        name[4] = "publication";
-        name[5] = metadata.publisher + "_" + metadata.line.uid;
+        name[4] = "pub";
+        name[5] = line.publisher + "_"
+            + line.upload_filename.split(".")[0].split("_").pop().replace(/([^-a-zA-Z0-9]+)/g, '').toLowerCase();
     }
 
-    return name.join("_") + '.' + mime_list[metadata.line.mime_type];
+    return name.join("_") + '.' + mime_list[line.mime_type];
 };
 
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)

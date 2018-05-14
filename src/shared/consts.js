@@ -3,16 +3,26 @@ export const EMPTY_ARRAY  = Object.freeze([]);
 export const EMPTY_OBJECT = Object.freeze({});
 
 export const content_options = [
-    { value: 'LESSON_PART', text: ' ‏שיעור', icon: 'student' },
+    { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
     //{ value: 'FRIENDS_GATHERING', text: ' ‏חברים', icon: 'users' },
-    { value: 'VIRTUAL_LESSON', text: ' ‏וובינר', icon: 'conversation' },
-    { value: 'VIDEO_PROGRAM_CHAPTER', text: ' ‏תוכנית', icon: 'record' },
-    { value: 'CLIP', text: ' ‏קליפ', icon: 'film' },
-    { value: 'MEAL', text: ' ‏סעודה', icon: 'food' },
-    { value: 'LECTURE', text: ' ‏אחר', icon: 'unordered list' },
-    { value: 'ARTICLE', text: 'מאמרים ', icon: 'newspaper' },
+    { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
+    { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
+    { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },
+    { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
+    { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
+    { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
     //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
 ];
+
+export const DCT_OPTS = {
+    LESSONS: ['LESSON_PART','FULL_LESSON','WOMEN_LESSON'],
+    PROGRAMS: ['VIDEO_PROGRAM_CHAPTER'],
+    WEBINARS: ['VIRTUAL_LESSON'],
+    CLIPS: ['CLIP'],
+    MEALS: ['MEAL'],
+    OTHER: ['LECTURE','FRIENDS_GATHERING','EVENT_PART'],
+    ARTICLES: ['ARTICLE'],
+};
 
 export const article_options = [
     { value: 'article', text: 'מאמרים ', icon: 'newspaper' },

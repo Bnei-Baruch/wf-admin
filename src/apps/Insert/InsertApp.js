@@ -10,7 +10,7 @@ import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchPublishers, fetchPersons, insertName, getName, getLang, getWFData } from '../../shared/tools';
+import { fetchPublishers, fetchPersons, insertName, getName, getLang, getWFData, fetchUnits, getDCT } from '../../shared/tools';
 import {content_options, language_options, upload_options, article_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
 import MdbData from './MdbData';
@@ -20,18 +20,17 @@ class InsertApp extends Component {
 
     state = {
         metadata: {...this.props.metadata},
-        unit: {},
+        unit: null,
         files: [],
         store: { sources: [], tags: [], publishers: []},
-        startDate: moment(),
         locale: "he",
         isValidated: false,
     };
 
 
     componentDidMount() {
-        const {date} = this.state.metadata;
-        this.setState({startDate: moment(date)});
+        const {send_uid} = this.state.metadata;
+        this.inputUid(send_uid);
         // Set sunday first weekday in russian
         moment.updateLocale('ru', { week: {dow: 0,},});
         moment.updateLocale('es', { week: {dow: 0,},});
@@ -64,17 +63,25 @@ class InsertApp extends Component {
 
     selectDate = (date) => {
         let {metadata} = this.state;
-        this.setState({metadata: {...metadata, date: date.format('YYYY-MM-DD')}, startDate: date});
+        this.setState({metadata: {...metadata, date: date.format('YYYY-MM-DD')}});
     };
 
     onClose = () => {
-        console.log("--onCancel--");
         this.props.onCancel();
     };
 
-    inputUid = (input_uid) => {
-        console.log(":: Input changed: ", input_uid);
-        this.setState({input_uid, isValidated: false});
+    inputUid = (send_uid) => {
+        let {metadata} = this.state;
+        this.setState({metadata: {...metadata, send_uid}, isValidated: false});
+        if(send_uid.length === 8) {
+            fetchUnits(`?query=${send_uid}`, (data) => {
+                let unit = data.data[0];
+                console.log(":: Got UNIT: ", data);
+                metadata.content_type = getDCT(CONTENT_TYPE_BY_ID[unit.type_id]);
+                metadata.date = unit.properties.capture_date;
+                this.setState({metadata: {...metadata, send_uid}, isValidated: false, unit});
+            })
+        }
     };
 
     setPublisher = (publisher) => {
@@ -170,7 +177,7 @@ class InsertApp extends Component {
     render() {
 
         const {filename} = this.props.filedata;
-        const {metadata, isValidated, locale, startDate} = this.state;
+        const {metadata, isValidated, locale, unit} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         let date_picker = (
@@ -183,7 +190,7 @@ class InsertApp extends Component {
                 scrollableYearDropdown
                 maxDate={moment()}
                 openToDate={moment(date)}
-                selected={startDate}
+                selected={moment(date)}
                 onChange={this.selectDate}
             />
         );
@@ -237,7 +244,7 @@ class InsertApp extends Component {
                 </Segment>
                 <Segment clearing secondary color='blue'>
                     <Modal.Content className="tabContent">
-                        <MdbData metadata={metadata} onUidSelect={this.onGetUID} />
+                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
                     </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
