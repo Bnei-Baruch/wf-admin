@@ -34,10 +34,6 @@ class App extends Component {
                 console.log(":: File with SHA1: " + filedata.sha1 + " - already exist - Set rename mode");
                 this.setState({insert: "3"});
                 this.setMetaData(filedata);
-            } else if (data.total === 0 && insert === "2") {
-                alert("File does NOT exist in MDB! You have to use insert mode for this file");
-                this.setState({insert: null});
-                return false;
             } else {
                 this.setMetaData(filedata);
             }
