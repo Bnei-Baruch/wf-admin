@@ -9,7 +9,7 @@ import CIT from '../CIT/CIT';
 class DgimaTrimmed extends Component {
 
     state = {
-        active: null,
+        actived: null,
         cit_open: false,
         insert_open: false,
         insert_button: true,
@@ -54,19 +54,24 @@ class DgimaTrimmed extends Component {
             let sha1 = data.original.format.sha1;
             // Build data for insert app
             let filename = data.file_name;
-            let content_type = "CLIP";
-            let start_date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let size = parseInt(data.original.format.size, 10);
+            let content_type = "";
+            let date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
             let upload_type = "aricha";
             let language = data.line.language;
+
+            let line = {content_type: null, upload_filename: filename, mime_type: "video/mp4", url: null}
+
             this.setState({
                 source,
-                active: data.dgima_id,
+                actived: data.dgima_id,
                 file_data: data,
+                metadata: {date, sha1, size, line, content_type, language, send_uid: "", upload_type, insert_type: "1"},
                 insert_button: !data.wfstatus.renamed,
                 rename_button: data.wfstatus.wfsend,
                 send_button: !data.wfstatus.renamed,
                 kmedia_option: data.wfstatus.wfsend,
-                filedata: {filename, content_type, start_date, upload_type, language}
+                filedata: {sha1, size, filename, type: "video/mp4", url}
             });
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
@@ -82,7 +87,7 @@ class DgimaTrimmed extends Component {
             let source = `${url}${path}`;
             this.setState({
                 source,
-                active: data.dgima_id,
+                actived: data.dgima_id,
                 file_data: data,
                 insert_button: !data.wfstatus.renamed,
                 rename_button: data.wfstatus.wfsend,
@@ -195,16 +200,17 @@ class DgimaTrimmed extends Component {
     };
 
     setRemoved = () => {
-        let file_data = this.state.file_data;
+        const {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {
+        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata} = this.state;
 
         const send_options = [
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !this.state.kmedia_option },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
@@ -215,7 +221,7 @@ class DgimaTrimmed extends Component {
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
 
-        let dgima = this.state.dgima.map((data) => {
+        let dgima_data = dgima.map((data) => {
             const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
             let id = data.dgima_id;
             let ready = data.original;
@@ -223,7 +229,7 @@ class DgimaTrimmed extends Component {
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
-            let active = this.state.active === id ? 'active' : 'admin_raw';
+            let active = actived === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready}
@@ -241,29 +247,29 @@ class DgimaTrimmed extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                    {file_data.file_name ? file_data.file_name : ""}
                 </Label>
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
+                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
+                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
                             </Modal>
                         </Menu.Item>
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
-                                                    loading={this.state.renaming}
-                                                    disabled={this.state.rename_button}
+                                                    loading={renaming}
+                                                    disabled={rename_button}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
-                                   open={this.state.cit_open}
+                                   open={cit_open}
                                    closeIcon="close"
                                    mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content>
-                                    <CIT metadata={this.state.file_data.line}
+                                    <CIT metadata={file_data.line}
                                          onCancel={this.onCancel}
                                          onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
@@ -283,7 +289,7 @@ class DgimaTrimmed extends Component {
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}
                                 >
-                                    <InsertApp filedata={this.state.filedata} onInsert={this.onInsert} />
+                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
@@ -315,7 +321,7 @@ class DgimaTrimmed extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {dgima}
+                        {dgima_data}
                     </Table.Body>
                 </Table>
             </Segment>
