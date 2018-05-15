@@ -30,6 +30,7 @@ class App extends Component {
                 console.log(":: File with SHA1: " + filedata.sha1 + " - already exist!");
                 alert("File already exist in MDB!");
             } else if (data.total > 0 && insert === "2") {
+                console.log(":: File with SHA1: " + filedata.sha1 + " - already exist! - Set rename mode ::");
                 this.setState({insert: "3"});
                 this.setMetaData(filedata);
             } else {
@@ -63,9 +64,10 @@ class App extends Component {
         if(this.state.insert === "3") {
             insertName(sha1, "sha1", (data) => {
                 console.log(":: insert data - got: ",data);
-                metadata.upload_type = data[0].upload_type;
                 metadata.send_uid = data[0].line.uid;
-                metadata.language = data[0].language;
+                metadata.line.uid = data[0].line.uid;
+                let {upload_type,language,insert_id} = data[0];
+                metadata = { ...metadata,upload_type,language,insert_id};
                 this.setState({filedata, metadata, open: true});
             });
         } else {

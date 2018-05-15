@@ -11,7 +11,7 @@ class LoginPage extends Component {
             <Button.Group size='massive' >
                 <Button positive value='1' onClick={(e,{value}) => onInsert(value)}>&nbsp;&nbsp;Insert&nbsp;</Button>
                 <Button.Or />
-                <Button value='update' onClick={(e,{value}) => onInsert(value)} color='orange'>Update</Button>
+                <Button value='2' onClick={(e,{value}) => onInsert(value)} color='orange'>Update</Button>
             </Button.Group>
         );
 

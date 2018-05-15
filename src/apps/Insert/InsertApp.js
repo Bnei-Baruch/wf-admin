@@ -97,6 +97,15 @@ class InsertApp extends Component {
         console.log(":: Selected unit: ", unit);
         this.setState({unit});
         let {metadata} = this.state;
+        const {properties, uid, type_id, id} = unit;
+
+        // Does rename mean shiuh lo nahon?
+        // if(metadata.line.uid === uid && metadata.insert_type === "3") {
+        //     console.log(":: This UID: "+uid+" - already slected!");
+        //     alert("This UID: "+uid+" - already slected!");
+        //     this.setState({ isValidated: false });
+        //     return
+        // }
 
         // Check if all Required meta is selected
         const {content_type, language, upload_type} = metadata;
@@ -109,7 +118,6 @@ class InsertApp extends Component {
         }
 
         // Meta from unit properties going to line
-        const {properties, uid, type_id, id} = unit;
         metadata.line.uid = uid;
         metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
         metadata.line.capture_date = properties.capture_date;
@@ -119,6 +127,7 @@ class InsertApp extends Component {
         const wfid = metadata.send_id;
         wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
     };
+
 
     newUnitWF = (metadata, wfid) => {
         console.log(":::: New Workflow UNIT :::: ");

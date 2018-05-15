@@ -37,17 +37,17 @@ class MdbData extends Component {
     };
 
     render() {
-        const {language,upload_type} = this.props.metadata;
+        const {language,upload_type,content_type} = this.props.metadata;
         const {units,active} = this.state;
         let lang = getLang(language);
 
         let uidList = units.map((unit) => {
-            const {number,part,capture_date,film_date,duration} = unit.properties;
+            const {number,part,capture_date,film_date,duration,workflow_id} = unit.properties;
             let name = lang && unit.i18n[lang] ? unit.i18n[lang].name : unit.i18n.he ? unit.i18n.he.name : "Name not found";
             let a = active === unit.uid ? 'active' : '';
             let n = number || "-";
             let p = part === -1 ? "full" : part;
-            let np = n !== "-" ? '( n: ' + n + ' p: ' + p + ' )' : "";
+            let np = n !== "-" && content_type === "LESSONS" ? '( n: ' + n + ' p: ' + p + ' )' : "";
             let date = capture_date || film_date;
             let d = upload_type.match(/^(article|publication)$/) ? "" : toHms(duration);
             let rtlclass = lang === "he" || !lang ? "rtl-dir" : "";
@@ -60,7 +60,7 @@ class MdbData extends Component {
                             flowing
                             position='bottom left'
                             hoverable >
-                            <NameHelper id={unit.id} {...this.props.metadata} />
+                            <NameHelper id={workflow_id} />
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>{d}</Table.Cell>

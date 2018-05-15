@@ -125,7 +125,7 @@ export const getDCT = (val) => {
 };
 
 export const getName = (metadata) => {
-
+    //console.log(":: GetName - got metadata: ",metadata);
     let name = [];
     const {line,language,upload_type} = metadata;
 
@@ -144,6 +144,9 @@ export const getName = (metadata) => {
 
     if(upload_type === "akladot") {
         name[4] = "akladot";
+    } else if(upload_type === "tamlil") {
+        name[4] = line.send_name.split("_").slice(4).join("_");
+        name.splice(-1,1);
     } else if(upload_type === "kitei-makor") {
         name[4] = "kitei-makor";
     } else if(upload_type === "article") {
@@ -178,7 +181,7 @@ export const fetchPublishers = cb => Fetcher('publishers/', cb);
 export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`)
     .then((response) => {
         if (response.ok) {
-            console.log("--FetchDataWithCB--");
+            //console.log("--FetchDataWithCB--");
             return response.json().then(data => cb(data));
         }
     })
@@ -187,7 +190,7 @@ export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${pa
 export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id}/persons/`)
     .then((response) => {
         if (response.ok) {
-            console.log("--FetchPersonsName--");
+            //console.log("--FetchPersonsName--");
             return response.json().then(data => cb(data));
         }
     })
@@ -196,7 +199,7 @@ export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id
 export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/find?key=${key}&value=${filename}`)
     .then((response) => {
         if (response.ok) {
-            console.log("--FetchInsertName--");
+            //console.log("--FetchInsertName--");
             return response.json().then(data => cb(data));
         }
     })
@@ -205,7 +208,7 @@ export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/f
 export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
     .then((response) => {
         if (response.ok) {
-            console.log("--FetchInsertSha--");
+            //console.log("--FetchInsertSha--");
             return response.json().then(data => cb(data));
         }
     })
