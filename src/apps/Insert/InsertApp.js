@@ -11,7 +11,7 @@ import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
 import { fetchPublishers, fetchPersons, insertName, getName, getLang, getWFData, fetchUnits, getDCT } from '../../shared/tools';
-import {content_options, language_options, upload_options, article_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
+import {content_options, language_options, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
 import MdbData from './MdbData';
 import NestedModal from './NestedModal';
@@ -48,7 +48,7 @@ class InsertApp extends Component {
 
     selectContentType = (content_type) => {
         let {metadata} = this.state;
-        this.setState({metadata: {...metadata, content_type}});
+        this.setState({metadata: {...metadata, content_type, upload_type: ""}});
     };
 
     selectLanguage = (language) => {
@@ -78,7 +78,7 @@ class InsertApp extends Component {
                 let unit = data.data[0];
                 console.log(":: Got UNIT: ", data);
                 metadata.content_type = getDCT(CONTENT_TYPE_BY_ID[unit.type_id]);
-                metadata.date = unit.properties.capture_date;
+                metadata.date = unit.properties.capture_date || unit.properties.film_date;
                 this.setState({metadata: {...metadata, send_uid}, isValidated: false, unit});
             })
         }
@@ -128,7 +128,6 @@ class InsertApp extends Component {
         wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
     };
 
-
     newUnitWF = (metadata, wfid) => {
         console.log(":::: New Workflow UNIT :::: ");
         console.log(":: Workflow ID: ", wfid);
@@ -138,7 +137,7 @@ class InsertApp extends Component {
             metadata.line.lecturer = wfdata.line.lecturer;
             metadata.insert_name = getName(metadata);
             console.log(":: Metadata insert_name: \n%c"+metadata.insert_name,"color:Green");
-            this.setMeta(metadata);
+            this.checkMeta(metadata);
         });
     };
 
@@ -149,12 +148,12 @@ class InsertApp extends Component {
             console.log(":: Got Persons: ",data);
             metadata.line.lecturer = (data.length > 0 && data[0].person.uid === "abcdefgh") ? "rav" : "norav";
             metadata.insert_name = getName(metadata);
-            console.log(":: Metadata insert_name: ", metadata.insert_name);
-            this.setMeta(metadata);
+            console.log(":: Metadata insert_name: \n%c"+metadata.insert_name,"color:Green");
+            this.checkMeta(metadata);
         });
     };
 
-    setMeta = (metadata) => {
+    checkMeta = (metadata) => {
         console.log(":: setMeta - metadata: ", metadata);
         const {insert_type,insert_name} = metadata;
         // Check if name already exist
@@ -220,6 +219,17 @@ class InsertApp extends Component {
         let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
         let rename_style = (<style>{'.ui.segment { background-color: #e6aaaa; }'}</style>);
 
+        const upload_options = [
+            { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: content_type !== "ARTICLES" },
+            { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: content_type !== "ARTICLES" },
+            { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
+            { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: content_type === "ARTICLES" },
+            { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: content_type === "ARTICLES" },
+            { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: content_type === "ARTICLES" },
+            { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: content_type === "ARTICLES" },
+            { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: content_type === "ARTICLES" },
+        ];
+
         return (
             <Container className="insert_app">
                 <Segment clearing>
@@ -251,46 +261,46 @@ class InsertApp extends Component {
                     <Header floated='right'>
                         {uid_input}
                     </Header>
-                    {date_picker}
+                        {date_picker}
                 </Segment>
                 <Segment clearing secondary color='blue'>
-                    <Modal.Content className="tabContent">
-                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
-                    </Modal.Content>
+                <Modal.Content className="tabContent">
+                    <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
+                </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
-                    <Modal.Actions>
-                        <Input
-                            disabled
-                            className="filename"
-                            icon='file'
-                            iconPosition='left'
-                            focus={true}
-                            value={filename}
-                        />
-                        <Dropdown
-                            upward
-                            error={!upload_type}
-                            disabled={this.props.metadata.upload_type !== ""}
-                            placeholder="Upload Type:"
-                            selection
-                            options={content_type === "ARTICLE" ? article_options : upload_options}
-                            upload_type={upload_type}
-                            onChange={(e,{value}) => this.selectUpload(value)}
-                            value={upload_type}
-                        />
-                        <NestedModal
-                            upload_type={upload_type}
-                            publishers={this.state.store.publishers}
-                            onUidSelect={this.onGetUID}
-                            onPubSelect={this.setPublisher}
-                        />
-                        <Button
-                            color='green'
-                            disabled={!isValidated}
-                            onClick={this.onComplete} >Select
-                        </Button>
-                    </Modal.Actions>
+                <Modal.Actions>
+                    <Input
+                        disabled
+                        className="filename"
+                        icon='file'
+                        iconPosition='left'
+                        focus={true}
+                        value={filename}
+                    />
+                    <Dropdown
+                        upward
+                        error={!upload_type}
+                        disabled={this.props.metadata.upload_type !== "" || content_type === ""}
+                        placeholder="Upload Type:"
+                        selection
+                        options={upload_options}
+                        upload_type={upload_type}
+                        onChange={(e,{value}) => this.selectUpload(value)}
+                        value={upload_type}
+                    />
+                    <NestedModal
+                        upload_type={upload_type}
+                        publishers={this.state.store.publishers}
+                        onUidSelect={this.onGetUID}
+                        onPubSelect={this.setPublisher}
+                    />
+                    <Button
+                        color='green'
+                        disabled={!isValidated}
+                        onClick={this.onComplete} >Select
+                    </Button>
+                </Modal.Actions>
                 </Segment>
             </Container>
         );

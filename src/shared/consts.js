@@ -24,22 +24,6 @@ export const DCT_OPTS = {
     ARTICLES: ['ARTICLE'],
 };
 
-export const article_options = [
-    { value: 'article', text: 'מאמרים ', icon: 'newspaper' },
-    { value: 'publication', text: 'פירסומים ', icon: 'announcement' },
-];
-
-export const upload_options = [
-    //{ value: 'article', text: 'מאמרים ', icon: 'newspaper' },
-    //{ value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: true },
-    { value: 'dibuv', text: 'דיבוב', icon: 'translate' },
-    { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
-    { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit' },
-    { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright' },
-    { value: 'tamlil', text: 'תמליל', icon: 'indent' },
-    { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline' },
-];
-
 export const mime_list = {
     "application/msword": "doc",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
