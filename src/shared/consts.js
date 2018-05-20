@@ -14,6 +14,17 @@ export const content_options = [
     //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
 ];
 
+export const upload_extensions = {
+    "akladot": ["doc","docx"],
+    "tamlil": ["doc","docx"],
+    "kitei-makor": ["doc","docx"],
+    "sirtutim": ["zip"],
+    "dibuv": ["mp3","mp4"],
+    "aricha": ["mp4"],
+    "article": ["doc","docx"],
+    "publication": ["zip"],
+};
+
 export const DCT_OPTS = {
     LESSONS: ['LESSON_PART','FULL_LESSON','WOMEN_LESSON'],
     PROGRAMS: ['VIDEO_PROGRAM_CHAPTER'],
