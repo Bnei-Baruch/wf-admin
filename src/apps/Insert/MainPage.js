@@ -59,6 +59,8 @@ class App extends Component {
             let test_date = moment(string_date);
             let date = test_date.isValid() ? string_date : moment().format('YYYY-MM-DD');
             metadata.date = date;
+        } else {
+            metadata.date = moment().format('YYYY-MM-DD');
         }
 
         // If mode rename get insert workflow data
@@ -68,6 +70,7 @@ class App extends Component {
                 if(data.length > 0) {
                     metadata.send_uid = data[0].line.uid;
                     metadata.line.uid = data[0].line.uid;
+                    metadata.line.old_name = data[0].insert_name;
                     let {upload_type, language, insert_id} = data[0];
                     metadata = {...metadata, upload_type, language, insert_id};
                     this.setState({filedata, metadata, open: true});
@@ -89,6 +92,13 @@ class App extends Component {
         this.setState({open: false});
         putData(`insert`, metadata, (cb) => {
             console.log(":: WFSRV respond: ",cb);
+            if(cb.status === "ok") {
+                alert("Insert successful :)");
+                this.setState({open: false, insert: null});
+            } else {
+                alert("Something gone wrong :(");
+                this.setState({open: false});
+            }
         });
     };
 

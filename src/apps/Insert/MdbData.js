@@ -47,7 +47,7 @@ class MdbData extends Component {
             let name = lang && unit.i18n[lang] ? unit.i18n[lang].name : unit.i18n.he ? unit.i18n.he.name : "Name not found";
             let a = active === unit.uid ? 'active' : '';
             let n = number || "-";
-            let p = part === -1 ? "full" : part || "";
+            let p = part === -1 ? "full" : part !== undefined ? part : "";
             let np = n !== "-" && content_type === "LESSONS" ? '( n: ' + n + ' p: ' + p + ' )' : "";
             let date = capture_date || film_date;
             let d = upload_type.match(/^(article|publication)$/) ? "" : toHms(duration);

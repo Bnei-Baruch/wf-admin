@@ -23,6 +23,7 @@ class InsertApp extends Component {
         unit: null,
         files: [],
         store: { sources: [], tags: [], publishers: []},
+        loading: false,
         locale: "he",
         isValidated: false,
     };
@@ -185,6 +186,7 @@ class InsertApp extends Component {
     };
 
     onComplete = () => {
+        this.setState({ isValidated: false, loading: true });
         let {metadata} = this.state;
         delete metadata.send_uid;
         delete metadata.content_type;
@@ -195,7 +197,7 @@ class InsertApp extends Component {
     render() {
 
         const {filename} = this.props.filedata;
-        const {metadata, isValidated, locale, unit} = this.state;
+        const {metadata, isValidated, loading, locale, unit} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         let date_picker = (
@@ -307,6 +309,7 @@ class InsertApp extends Component {
                                 fluid
                                 color='green'
                                 disabled={!isValidated}
+                                loading={loading}
                                 onClick={this.onComplete} >Send
                             </Button>
                         </Grid.Column>
