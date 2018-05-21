@@ -53,7 +53,7 @@ class AchareyAricha extends Component {
             // Build data for insert app
             let filename = file_data.file_name;
             let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            /////
+            // Make insert metadata
             let insert_data = {};
             insert_data.insert_id = "i"+moment().format('X');
             insert_data.line = file_data.line;
@@ -108,32 +108,19 @@ class AchareyAricha extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
-        file_data.parent = {id: insert_data.send_id, name: insert_data.line.send_name};
+        file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
         this.setState({...file_data, inserting: true, insert_button: true });
-        // FIXME: This must be done after success backend callback
-        setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
         putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
-        //Make insert meta
-        // insert_data.insert_id = "i"+moment().format('X');
-        // insert_data.line = file_data.line;
-        // insert_data.date = moment().format("YYYY-MM-DD");
-        // insert_data.file_name = file_data.file_name;
-        // insert_data.extension = "mp4";
-        // insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
-        // insert_data.insert_type = "1";
-        // insert_data.language = file_data.line.language;
         insert_data.send_id = file_data.aricha_id;
-        // insert_data.upload_type = "aricha";
-        // insert_data.sha1 = file_data.original.format.sha1;
-        // insert_data.size = parseInt(file_data.original.format.size, 10);
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
+            setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
         });
     };
 
