@@ -127,7 +127,7 @@ class AchareyAricha extends Component {
         // insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
         // insert_data.insert_type = "1";
         // insert_data.language = file_data.line.language;
-        // insert_data.send_id = file_data.aricha_id;
+        insert_data.send_id = file_data.aricha_id;
         // insert_data.upload_type = "aricha";
         // insert_data.sha1 = file_data.original.format.sha1;
         // insert_data.size = parseInt(file_data.original.format.size, 10);
@@ -287,7 +287,7 @@ class AchareyAricha extends Component {
                                        open={this.state.insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onInsert={this.onInsert} />
+                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
