@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, getDCT} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -52,11 +52,24 @@ class AchareyAricha extends Component {
             let sha1 = file_data.original.format.sha1;
             // Build data for insert app
             let filename = file_data.file_name;
-            let content_type = "CLIP";
-            let start_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            let upload_type = "aricha";
-            let language = file_data.line.language;
-            this.setState({filedata: {filename, content_type, start_date, upload_type, language}});
+            let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            /////
+            let insert_data = {};
+            insert_data.insert_id = "i"+moment().format('X');
+            insert_data.line = file_data.line;
+            insert_data.content_type = getDCT(file_data.line.content_type);
+            insert_data.date = date;
+            insert_data.file_name = file_data.file_name;
+            insert_data.extension = "mp4";
+            insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+            insert_data.insert_type = "1";
+            insert_data.language = file_data.line.language;
+            insert_data.send_id = file_data.aricha_id;
+            insert_data.send_uid = "";
+            insert_data.upload_type = "aricha";
+            insert_data.sha1 = file_data.original.format.sha1;
+            insert_data.size = parseInt(file_data.original.format.size, 10);
+            this.setState({filedata: {filename}, metadata:{...insert_data}});
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
@@ -106,18 +119,18 @@ class AchareyAricha extends Component {
             console.log(":: PUT Respond: ",cb);
         });
         //Make insert meta
-        insert_data.insert_id = "i"+moment().format('X');
-        insert_data.line = file_data.line;
-        insert_data.date = moment().format("YYYY-MM-DD");
-        insert_data.file_name = file_data.file_name;
-        insert_data.extension = "mp4";
-        insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
-        insert_data.insert_type = "1";
-        insert_data.language = file_data.line.language;
-        insert_data.send_id = file_data.aricha_id;
-        insert_data.upload_type = "aricha";
-        insert_data.sha1 = file_data.original.format.sha1;
-        insert_data.size = parseInt(file_data.original.format.size, 10);
+        // insert_data.insert_id = "i"+moment().format('X');
+        // insert_data.line = file_data.line;
+        // insert_data.date = moment().format("YYYY-MM-DD");
+        // insert_data.file_name = file_data.file_name;
+        // insert_data.extension = "mp4";
+        // insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+        // insert_data.insert_type = "1";
+        // insert_data.language = file_data.line.language;
+        // insert_data.send_id = file_data.aricha_id;
+        // insert_data.upload_type = "aricha";
+        // insert_data.sha1 = file_data.original.format.sha1;
+        // insert_data.size = parseInt(file_data.original.format.size, 10);
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
@@ -273,9 +286,8 @@ class AchareyAricha extends Component {
                                        onClose={this.onCancel}
                                        open={this.state.insert_open}
                                        size="large"
-                                       mountNode={document.getElementById("ltr-modal-mount")}
-                                >
-                                    <InsertApp filedata={this.state.filedata} onInsert={this.onInsert} />
+                                       mountNode={document.getElementById("ltr-modal-mount")}>
+                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onInsert={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
