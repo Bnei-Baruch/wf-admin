@@ -10,6 +10,21 @@ export default class InoutControls extends Component {
         outpoints: [],
     };
 
+    componentDidMount() {
+        this.props.onRef(this);
+    };
+
+    componentWillUnmount() {
+        this.props.onRef(undefined);
+    };
+
+    restoreIop(iop) {
+        console.log(":: Restore IOP: ",iop);
+        const {inpoints, outpoints} = iop;
+        this.setState({inpoints, outpoints});
+        this.props.onSetPoints(inpoints, outpoints);
+    };
+
     setIn = (i) => {
         const {inpoints,outpoints} = this.state;
         let currentTime = Number(this.props.player.getCurrentTime().toFixed(2));
