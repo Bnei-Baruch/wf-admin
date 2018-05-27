@@ -4,7 +4,7 @@ import moment from 'moment';
 import UploadFile from './UploadFile';
 import LoginPage from './LoginPage';
 import InsertApp from './InsertApp';
-import {insertName,insertSha,putData} from '../../shared/tools';
+import {insertName, insertSha, putData, WFSRV_BACKEND} from '../../shared/tools';
 import './InsertApp.css';
 
 class App extends Component {
@@ -90,7 +90,7 @@ class App extends Component {
     onComplete = (metadata) => {
         console.log(":: Put Metadata:", metadata);
         this.setState({open: false});
-        putData(`insert`, metadata, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/insert`, metadata, (cb) => {
             console.log(":: WFSRV respond: ",cb);
             if(cb.status === "ok") {
                 alert("Insert successful :)");

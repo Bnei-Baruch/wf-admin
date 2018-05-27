@@ -48,8 +48,9 @@ export const getWFData = (id, cb) =>  {
     fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`)
         .then((response) => {
             if (response.ok) {
-                //console.log("--FetchWorkflowData--");
                 return response.json().then(data => cb(data));
+            } else {
+                return response.json().then(cb(null));
             }
         })
         .catch(ex => console.log(`get ${id}`, ex));
