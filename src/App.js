@@ -30,6 +30,7 @@ class App extends Component {
         wf_admin: true,
         wf_aricha: true,
         wf_dgima: true,
+        wf_insert: true,
         wf_public: true,
 
     };
@@ -58,10 +59,11 @@ class App extends Component {
         let wf_censor = user.roles.filter(role => role === 'wf_censor').length === 0;
         let wf_admin = user.roles.filter(role => role === 'wf_admin').length === 0;
         let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
+        let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
         console.log(":: App - got user: ", user);
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert});
             setInterval(() => getConv('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
@@ -79,7 +81,7 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert} = this.state;
       let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
 
@@ -100,7 +102,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
               render: () => <Tab.Pane attached={false} ><DgimaApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_aricha },
+          { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },
               render: () => <Tab.Pane attached={false} ><WFDB user={this.state.user} /></Tab.Pane> },
