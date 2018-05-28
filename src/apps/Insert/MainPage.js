@@ -103,7 +103,7 @@ class App extends Component {
     };
 
     onCancel = () => {
-        this.setState({open: false});
+        this.setState({open: false, insert: null});
     };
 
     render() {
