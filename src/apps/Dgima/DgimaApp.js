@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from 'react'
+import DgimaUpload from "./DgimaUpload";
 import DgimaTrimmer from "../Trimmer/DgimaTrimmer";
 import DgimaTrimmed from "./DgimaTrimmed";
+import {putData} from "../../shared/tools";
 
 class DgimaApp extends Component {
 
@@ -8,10 +10,18 @@ class DgimaApp extends Component {
         ival: null,
     };
 
+    dgimaWorkflow = (filedata) => {
+        console.log(":: DgimaApp - got data: ", filedata);
+        putData(`http://wfserver.bbdomain.org:8010/workflow/dgima`, filedata, (cb) => {
+            console.log(":: DgimaApp - workflow respond: ",cb);
+        });
+    };
+
     render() {
 
         return (
             <Fragment>
+                <DgimaUpload onFileData={this.dgimaWorkflow}/>
                 <DgimaTrimmer/>
                 <DgimaTrimmed/>
             </Fragment>
