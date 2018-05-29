@@ -64,7 +64,7 @@ export default class TrimmerApp extends Component {
             let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
             let line = data.line;
             let originalsha1 = data.original.format.sha1;
-            let proxysha1 = data.proxy.format.sha1;
+            let proxysha1 = data.proxy?  data.proxy.format.sha1 : null;
             let filename = data.stop_name;
             let buffer = this.props.mode === "wfadmin";
             let secured = data.wfstatus.secured;
