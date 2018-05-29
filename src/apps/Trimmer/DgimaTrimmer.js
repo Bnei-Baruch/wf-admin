@@ -46,7 +46,7 @@ class DgimaTrimmer extends Component {
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
-        let path = file_data.proxy.format.filename;
+        let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
         this.setState({source, file_data, disabled: false});
@@ -75,9 +75,10 @@ class DgimaTrimmer extends Component {
         ];
 
         let trim_data = this.state[dgima_src].map((data) => {
-            let name = dgima_src === "insert" ? data.file_name : data.stop_name;
-            let id = dgima_src === "insert" ? data.trim_id : data.capture_id;
-            return ({ key: id, text: name, value: data })
+            const {id, stop_name} = data;
+            // let name = dgima_src === "insert" ? data.stop_name : data.file_name;
+            // let id = dgima_src === "insert" ? data.capture_id : data.trim_id;
+            return ({ key: id, text: stop_name, value: data })
         });
 
         return (

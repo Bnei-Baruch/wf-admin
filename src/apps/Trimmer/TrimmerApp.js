@@ -95,6 +95,7 @@ export default class TrimmerApp extends Component {
             };
             this.setState({trim_meta: trim_meta});
         }
+        //TODO: Make meta from dgima source
     };
 
     getPlayer = (player) => {
