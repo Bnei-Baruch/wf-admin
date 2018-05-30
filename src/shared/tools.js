@@ -1,5 +1,5 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
-
+import moment from 'moment';
 export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
 export const WFRP_STATE = 'http://wfrp.bbdomain.org:8000';
 export const MDB_BACKEND = 'https://insert.kbb1.com/rest';
@@ -162,6 +162,50 @@ export const getName = (metadata) => {
     }
 
     return name.join("_") + '.' + mime_list[line.mime_type];
+};
+
+export const newTrimMeta = (data, mode, source) => {
+
+    const {line,original,proxy,file_name,stop_name,wfstatus,capture_id,trim_id,parent} = data;
+    let p = source.match(/^(main|backup|trimmed)$/) ? "t" : "d";
+    let key_id = p === "t" ? "trim_id" : "dgima_id";
+    let wfid = p + moment().format('X');
+    let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
+    let originalsha1 = original.format.sha1;
+    let proxysha1 = proxy ? proxy.format.sha1 : null;
+    let name = source === "trimmed" ? file_name : stop_name;
+    let censored = mode === "censor";
+    let buffer = mode === "wfadmin";
+    let secured = wfstatus.secured;
+    return {date, line,
+        file_name: name,
+        [key_id]: wfid,
+        inpoints: [],
+        outpoints: [],
+        parent: {
+            id: source === "trimmed" ? trim_id : capture_id,
+            capture_id: source === "trimmed" ? parent.capture_id : data.capture_id,
+            original_sha1: originalsha1,
+            proxy_sha1: proxysha1,
+            file_name: name,
+            source
+        },
+        wfstatus: {
+            aricha: false,
+            buffer: buffer,
+            fixed: false,
+            trimmed: false,
+            renamed: false,
+            wfsend: false,
+            removed: false,
+            kmedia: false,
+            backup: false,
+            metus: false,
+            censored: censored,
+            secured: secured
+        }
+    };
+
 };
 
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)

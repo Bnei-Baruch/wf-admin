@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getUnits} from '../../shared/tools';
+import {getData, newTrimMeta, getUnits} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -16,6 +16,7 @@ class CensorTrimmer extends Component {
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "",
+        trim_meta: {},
         units: [],
     };
 
@@ -37,7 +38,8 @@ class CensorTrimmer extends Component {
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
-        this.setState({source, file_data, disabled: false});
+        let trim_meta = newTrimMeta(file_data, "censor", this.state.trim_src);
+        this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
@@ -104,7 +106,7 @@ class CensorTrimmer extends Component {
                 >
                     <TrimmerApp
                         source={this.state.source}
-                        file_data={this.state.file_data}
+                        trim_meta={this.state.trim_meta}
                         source_meta={this.state.trim_src}
                         mode="censor"
                         closeModal={this.onClose}

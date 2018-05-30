@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getUnits} from '../../shared/tools';
+import {getData, getUnits, newTrimMeta} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -19,6 +19,7 @@ class DgimaTrimmer extends Component {
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "",
+        trim_meta: {},
         units: [],
     };
 
@@ -49,7 +50,8 @@ class DgimaTrimmer extends Component {
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
-        this.setState({source, file_data, disabled: false});
+        let trim_meta = newTrimMeta(file_data, "ingest", this.state.dgima_src);
+        this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
@@ -66,7 +68,7 @@ class DgimaTrimmer extends Component {
 
     render() {
 
-        const {dgima_src,date,disabled,open,source,startDate,file_data} = this.state;
+        const {dgima_src,date,disabled,open,source,startDate,trim_meta} = this.state;
 
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
@@ -135,7 +137,7 @@ class DgimaTrimmer extends Component {
                 >
                     <TrimmerApp
                         source={source}
-                        file_data={file_data}
+                        trim_meta={trim_meta}
                         source_meta={dgima_src}
                         mode="wfadmin"
                         closeModal={this.onClose}
