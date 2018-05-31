@@ -133,7 +133,7 @@ export const getName = (metadata) => {
     // Language
     name[0] = language;
     // Original
-    name[1] = name[0] === line.original_language ? "o" : "t";
+    name[1] = name[0] === line.original_language || language === "mlt" ? "o" : "t";
     // Lecturer
     name[2] = line.lecturer;
     // Date
