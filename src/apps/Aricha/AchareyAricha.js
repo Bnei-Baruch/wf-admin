@@ -57,6 +57,7 @@ class AchareyAricha extends Component {
             let insert_data = {};
             insert_data.insert_id = "i"+moment().format('X');
             insert_data.line = file_data.line;
+            insert_data.line.mime_type = "video/mp4";
             insert_data.content_type = getDCT(file_data.line.content_type);
             insert_data.date = date;
             insert_data.file_name = file_data.file_name;
@@ -145,6 +146,8 @@ class AchareyAricha extends Component {
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
                 this.selectFile(file_data);
+                // Make proxy
+                fetch(`http://10.66.1.121:8081/convert?id=${file_data.aricha_id}&key=proxy`);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }
