@@ -92,15 +92,28 @@ class IngestTrimmed extends Component {
 
     sendFile = () => {
         const {file_data} = this.state;
+        const {file_name} = file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
-        putData(`${WFSRV_BACKEND}/workflow/send_ingest`, file_data, (cb) => {
-            console.log(":: Ingest - send respond: ",cb);
-            setTimeout(() => this.setState({ sending: false }), 2000);
-            // While polling done it does not necessary
-            //this.selectFile(file_data);
-            if(cb.status !== "ok") {
-                alert("Something goes wrong!");
+        // Check if already got unit with same name
+        getData(`trimmer/find?key=file_name&value=${file_name}`, (data) => {
+            console.log(":: Unit check name: ",data);
+            let chk = data.filter(b => b.file_name === file_name && b.wfstatus.wfsend);
+            console.log(":: Unit filter: ",chk);
+            if(chk.length > 0) {
+                alert("Unit with this name already exist");
+                this.setState({ sending: false });
+            } else {
+                console.log(":: Going to send :", file_data);
+                putData(`${WFSRV_BACKEND}/workflow/send_ingest`, file_data, (cb) => {
+                    console.log(":: Ingest - send respond: ",cb);
+                    setTimeout(() => this.setState({ sending: false }), 2000);
+                    // While polling done it does not necessary
+                    //this.selectFile(file_data);
+                    if(cb.status !== "ok") {
+                        alert("Something goes wrong!");
+                    }
+                });
             }
         });
     };
