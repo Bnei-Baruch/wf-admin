@@ -42,7 +42,8 @@ class IngestTrimmed extends Component {
         let path = file_data.proxy.format.filename;
         let source = `${url}${path}`;
         let active = file_data.trim_id;
-        let disabled = file_data.wfstatus.wfsend || file_data.wfstatus.censored;
+        const {wfsend,censored} = file_data.wfstatus;
+        let disabled = wfsend || censored;
         this.setState({source, active, file_data, disabled});
     };
 
@@ -95,6 +96,14 @@ class IngestTrimmed extends Component {
         const {file_name} = file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
+
+        // In lesson part we expect rename status
+        if(file_data.line.content_type === "LESSON_PART" && !file_data.wfstatus.renamed) {
+            alert("Lesson part must be renamed");
+            this.setState({ sending: false });
+            return
+        }
+
         // Check if already got unit with same name
         getData(`trimmer/find?key=file_name&value=${file_name}`, (data) => {
             console.log(":: Unit check name: ",data);
