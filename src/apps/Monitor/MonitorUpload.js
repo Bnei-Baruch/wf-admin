@@ -23,12 +23,8 @@ class MonitorUpload extends Component {
                                 "ID": itemts[0],
                                 "State": itemts[1],
                                 "Log": itemts[2],
-                                "ELevel": null,
-                                "Times": null,
+                                "Task": JSON.parse(itemts[3].split('[')[1].split(']')[0]),
                                 "Script": itemts[3],
-                                "Arg1": itemts[4],
-                                "Arg2": itemts[5],
-                                "Arg3": itemts[6],
                             };
                             wfts.push(jsonts);
                         }
@@ -49,15 +45,16 @@ class MonitorUpload extends Component {
         let l = (<Loader size='mini' active inline />);
 
         let upload_data = this.state.upload.map((data, i) => {
-            let task = data.Script.split('[')[1].split(']')[0];
-            let dest = data.Arg2 || "upload";
+            const {archive_type,file_name} = data.Task;
+            //let task = data.Script.split('[')[1].split(']')[0];
+            //let dest = data.Arg2 || "upload";
             let state = data.State;
-            let name = state === "running" ? <div>{l}&nbsp;&nbsp;&nbsp;{data.Arg1}</div> : data.Arg1;
+            let name = state === "running" ? <div>{l}&nbsp;&nbsp;&nbsp;{file_name}</div> : file_name;
             let ncolor = state === "running";
             return (
                 <Table.Row key={i} warning={ncolor} className="monitor_tr">
-                    <Table.Cell>{task}</Table.Cell>
-                    <Table.Cell>{dest}</Table.Cell>
+                    <Table.Cell>{archive_type}</Table.Cell>
+                    <Table.Cell>upload</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{state}</Table.Cell>
                 </Table.Row>
