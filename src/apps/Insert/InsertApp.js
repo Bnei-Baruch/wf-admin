@@ -173,6 +173,13 @@ class InsertApp extends Component {
             return
         }
 
+        // Check valid string
+        if(insert_name.length < 30) {
+            alert("Something wrong in file name building");
+            this.setState({ isValidated: false });
+            return
+        }
+
         // Check if name already exist
         insertName(insert_name, "insert_name", (data) => {
             console.log(":: insertName - got: ",data);
