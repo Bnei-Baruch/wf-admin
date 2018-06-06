@@ -50,7 +50,7 @@ class App extends Component {
 
         // Extract and validate UID from filename
         let uid = filename.split(".")[0].split("_").pop();
-        if(uid.length === 8 && (/[_]/).test(filename))
+        if(uid.match(/^([a-zA-Z0-9]{8})$/) && (/[_]/).test(filename))
             metadata.send_uid = uid;
 
         // Extract and validate date from filename
