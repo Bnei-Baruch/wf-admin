@@ -15,6 +15,7 @@ class MonitorKmedia extends Component {
         let ival = setInterval(() =>
             getData('kmedia/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.kmedia) !== JSON.stringify(data)) {
+                    //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
                     this.setState({kmedia: data});
                     this.restructure(data);
                 }
@@ -28,18 +29,27 @@ class MonitorKmedia extends Component {
         clearInterval(this.state.ival);
     };
 
+    componentDidUpdate(prevProps) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
+            this.restructure(this.state.kmedia);
+        }
+    };
+
     restructure = (data) => {
         let kmedia = data;
         let json = {};
-
+        const {insert, ingest, aricha} = this.props;
         for (let k in kmedia) {
             let c = kmedia[k];
+            let src = c.source;
+            if(insert && src === "insert")
+                continue;
+            if(ingest && src === "ingest")
+                continue;
+            if(aricha && src === "aricha")
+                continue;
             let ext = c.extension;
-            if(this.props.kmedia_full && ext.match(/^(doc|docx)$/))
-                continue;
             let name = c.file_name;
-            if(this.props.kmedia_full && name.match(/(_declamation_|_clip_)/))
-                continue;
             let lng = c.language;
             let n = name.split("_").splice(2).join("_");
             json[n] = json[n] || {};
