@@ -46,7 +46,7 @@ class DgimaTrimmed extends Component {
         console.log(":: DgimaApp - selected file: ", file_data);
         const {renamed,wfsend} = file_data.wfstatus;
         // If we got line, we can build meta for insert
-        if (file_data.line.content_type) {
+        if (file_data.line && file_data.line.content_type) {
             // Take sha for mdb fetch
             let sha1 = file_data.original.format.sha1;
             // Build data for insert app
