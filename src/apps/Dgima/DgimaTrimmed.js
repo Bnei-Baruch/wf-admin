@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getDCT, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -39,66 +39,60 @@ class DgimaTrimmed extends Component {
     };
 
     componentWillUnmount() {
-        console.log("-- Trimmed unmount");
         clearInterval(this.state.ival);
     };
 
-    selectFile = (data) => {
-        console.log(":: ArichaApp - selected file: ", data);
-        if (data.line) {
-            // Build url for preview
-            let url = 'http://wfserver.bbdomain.org';
-            let path = data.original.format.filename;
-            let source = `${url}${path}`;
+    selectFile = (file_data) => {
+        console.log(":: DgimaApp - selected file: ", file_data);
+        const {renamed,wfsend} = file_data.wfstatus;
+        // If we got line, we can build meta for insert
+        if (file_data.line.content_type) {
             // Take sha for mdb fetch
-            let sha1 = data.original.format.sha1;
+            let sha1 = file_data.original.format.sha1;
             // Build data for insert app
-            let filename = data.file_name;
-            let size = parseInt(data.original.format.size, 10);
-            let content_type = "";
-            let date = data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            let upload_type = "aricha";
-            let language = data.line.language;
-
-            let line = {content_type: null, upload_filename: filename, mime_type: "video/mp4", url: null}
-
-            this.setState({
-                source,
-                actived: data.dgima_id,
-                file_data: data,
-                metadata: {date, sha1, size, line, content_type, language, send_uid: "", upload_type, insert_type: "1"},
-                insert_button: !data.wfstatus.renamed,
-                rename_button: data.wfstatus.wfsend,
-                send_button: !data.wfstatus.renamed,
-                kmedia_option: data.wfstatus.wfsend,
-                filedata: {sha1, size, filename, type: "video/mp4", url}
-            });
+            let filename = file_data.file_name;
+            let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            // Make insert metadata
+            let insert_data = {};
+            insert_data.insert_id = "i"+moment().format('X');
+            insert_data.line = file_data.line;
+            insert_data.line.mime_type = "video/mp4";
+            insert_data.content_type = getDCT(file_data.line.content_type);
+            insert_data.date = date;
+            insert_data.file_name = file_data.file_name;
+            insert_data.extension = "mp4";
+            insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+            insert_data.insert_type = "1";
+            insert_data.language = file_data.line.language;
+            insert_data.send_id = file_data.dgima_id;
+            insert_data.send_uid = "";
+            insert_data.upload_type = "aricha";
+            insert_data.sha1 = file_data.original.format.sha1;
+            insert_data.size = parseInt(file_data.original.format.size, 10);
+            this.setState({filedata: {filename}, metadata:{...insert_data}});
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
                     console.log("The file already got unit!");
                 this.setState({units});
             });
-        } else {
-            console.log(":: ArichaApp - file must be renamed");
-            // Build url for preview
-            let url = 'http://wfserver.bbdomain.org';
-            let path = data.original.format.filename;
-            let source = `${url}${path}`;
-            this.setState({
-                source,
-                actived: data.dgima_id,
-                file_data: data,
-                insert_button: !data.wfstatus.renamed,
-                rename_button: data.wfstatus.wfsend,
-                send_button: !data.wfstatus.renamed,
-                kmedia_option: data.wfstatus.wfsend,
-            });
         }
+        // Build url for preview
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.original.format.filename;
+        let source = `${url}${path}`;
+        this.setState({
+            file_data, source,
+            actived: file_data.dgima_id,
+            insert_button: !renamed,
+            rename_button: wfsend,
+            send_button: !renamed,
+            kmedia_option: wfsend,
+        });
     };
 
     getPlayer = (player) => {
-        console.log(":: Trimmed - got player: ", player);
+        console.log(":: Dgima - got player: ", player);
         //this.setState({player: player});
     };
 
@@ -114,32 +108,19 @@ class DgimaTrimmed extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
-        file_data.parent = {id: insert_data.send_id, name: insert_data.line.send_name};
+        file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
         this.setState({...file_data, inserting: true, insert_button: true });
-        // FIXME: This must be done after success backend callback
-        setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
         putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
-        //Make insert meta
-        insert_data.insert_id = "i"+moment().format('X');
-        insert_data.line = file_data.line;
-        insert_data.date = moment().format("YYYY-MM-DD");
-        insert_data.file_name = file_data.file_name;
-        insert_data.extension = "mp4";
-        insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
-        insert_data.insert_type = "1";
-        insert_data.language = file_data.line.language;
         insert_data.send_id = file_data.dgima_id;
-        insert_data.upload_type = "aricha";
-        insert_data.sha1 = file_data.original.format.sha1;
-        insert_data.size = parseInt(file_data.original.format.size, 10);
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
-            console.log(":: ArichaApp - workflow respond: ",cb);
+            console.log(":: DgimaApp - workflow respond: ",cb);
+            setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
         });
     };
 
@@ -148,10 +129,11 @@ class DgimaTrimmed extends Component {
         let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
-        let opath = `/backup/dgima/${newfile_name}_${file_data.dgima_id}o.mp4`;
+        let src = file_data.parent.source;
+        let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.mp4`;
         //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.dgima_id}p.mp4`;
         file_data.line = {...newline};
-        file_data.parent = {...{file_name: oldfile_name}};
+        file_data.parent.file_name = oldfile_name;
         //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
         //file_data.proxy.format.filename = ppath;
@@ -188,20 +170,26 @@ class DgimaTrimmed extends Component {
     };
 
     sendFile = () => {
-        let file_data = this.state.file_data;
-        let special = this.state.special;
+        let {file_data,special} = this.state;
+        file_data.special = special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
-        //fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/${special}?value=true`, { method: 'POST',})
         this.setState({ sending: true, send_button: true });
-        setTimeout(() => {
-            //fetch(`${WFSRV_OLD_BACKEND}/hooks/send?id=${file_data.dgima_id}&special=${special}`);
-            this.setState({ sending: false, send_button: false });
-        }, 1000);
+        putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
+            console.log(":: Dgima - send respond: ",cb);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status === "ok") {
+                setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
+            } else {
+                alert("Something goes wrong!");
+            }
+        });
+
     };
 
     setRemoved = () => {
         const {file_data} = this.state;
-        console.log(":: Censor - set removed: ", file_data);
+        console.log(":: Dgima - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };

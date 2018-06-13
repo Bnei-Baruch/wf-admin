@@ -39,7 +39,6 @@ class AchareyAricha extends Component {
     };
 
     componentWillUnmount() {
-        console.log("-- Trimmed unmount");
         clearInterval(this.state.ival);
     };
 
