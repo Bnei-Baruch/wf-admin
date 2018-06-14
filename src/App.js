@@ -17,6 +17,7 @@ import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
 import {getConv} from "./shared/tools";
+import MetusApp from "./apps/Metus/MetusApp";
 
 class App extends Component {
 
@@ -104,6 +105,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><DgimaApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
+          { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
+              render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },
               render: () => <Tab.Pane attached={false} ><WFDB user={this.state.user} /></Tab.Pane> },
       ];
