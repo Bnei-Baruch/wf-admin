@@ -39,7 +39,10 @@ class MetusDB extends Component {
 
     selectFile = (file_data) => {
         console.log(":: MetusDB - selected file: ",file_data);
-        this.setState({file_data, active: file_data.object_id});
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.mlpath;
+        let source = `${url}${path}`;
+        this.setState({file_data, source, active: file_data.object_id});
     };
 
     getPlayer = (player) => {
@@ -98,7 +101,7 @@ class MetusDB extends Component {
                             <Menu.Item>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' icon='close' onClick={this.setRemoved} />
+                                <Button color='red' icon='close' disabled={true}  onClick={this.setRemoved} />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
