@@ -126,6 +126,9 @@ class DgimaTrimmed extends Component {
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let src = file_data.parent.source;
+        // Set capture date from string becouse CIT put today date
+        let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+        newline.capture_date = string_date;
         let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.mp4`;
         //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.dgima_id}p.mp4`;
         file_data.line = {...newline};
