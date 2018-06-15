@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import {getUnits } from '../../shared/tools';
-import { Menu, Input, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
+import {getData, getUnits} from '../../shared/tools';
+import { Menu, Input, Segment, Label, Table, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
 class MetusDB extends Component {
@@ -42,7 +42,12 @@ class MetusDB extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.mlpath;
         let source = `${url}${path}`;
+        let file_name = file_data.filename.split('.')[0];
         this.setState({file_data, source, active: file_data.object_id});
+        getData(`aricha/find?key=file_name&value=${file_name}`, (aricha) => {
+            console.log(":: Aricha DB Data: ",aricha);
+            //this.setState({aricha});
+        });
     };
 
     getPlayer = (player) => {
@@ -66,7 +71,7 @@ class MetusDB extends Component {
         // let f = (<Icon color='blue' name='configure'/>);
 
         let metus = this.state.metus.map((data) => {
-            const {filename,mlpath,mwpath,object_id,title} = data;
+            const {filename,object_id,title} = data;
             let active = this.state.active === object_id ? 'active' : 'admin_raw';
             return (
                 <Table.Row

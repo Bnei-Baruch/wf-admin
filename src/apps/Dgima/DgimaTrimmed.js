@@ -96,10 +96,6 @@ class DgimaTrimmed extends Component {
         //this.setState({player: player});
     };
 
-    openInsert = () => {
-        this.setState({insert_open: true});
-    };
-
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
         this.setState({insert_open: false});
@@ -159,6 +155,29 @@ class DgimaTrimmed extends Component {
         this.setState({cit_open: true});
     };
 
+    openInsert = () => {
+        let {file_data} = this.state;
+        // Dgima from insert we make unit in send
+        if(file_data.parent.source === "insert") {
+            file_data.special = "new";
+            console.log(":: Going to send: ",file_data);
+            this.setState({inserting: true, insert_button: true });
+            putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
+                console.log(":: Dgima - send respond: ",cb);
+                // While polling done it does not necessary
+                //this.selectFile(file_data);
+                if(cb.status === "ok") {
+                    setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                } else {
+                    alert("Something goes wrong!");
+                    this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
+                }
+            });
+        } else {
+            this.setState({insert_open: true});
+        }
+    };
+
     onCancel = () => {
         this.setState({cit_open: false, insert_open: false});
     };
@@ -182,6 +201,7 @@ class DgimaTrimmed extends Component {
                 setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
             } else {
                 alert("Something goes wrong!");
+                this.setState({ sending: false, send_button: false });
             }
         });
 
