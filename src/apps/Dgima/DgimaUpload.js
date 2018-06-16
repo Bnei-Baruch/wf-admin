@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {DGIMA_BACKEND} from "../../shared/tools";
 
 class DgimaUpload extends Component {
 
@@ -21,7 +21,7 @@ class DgimaUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/dgima/upload`,
+            action: `${DGIMA_BACKEND}/dgima/upload`,
             type: 'drag',
             accept: '.mp4, .mp3',
             beforeUpload(file) {

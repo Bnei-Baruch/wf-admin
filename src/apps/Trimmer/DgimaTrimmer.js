@@ -46,11 +46,11 @@ class DgimaTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        let url = 'http://wfserver.bbdomain.org';
+        let url = 'http://dgima.bbdomain.org';
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${url}${path}`;
-        let trim_meta = newTrimMeta(file_data, "ingest", this.state.dgima_src);
+        let trim_meta = newTrimMeta(file_data, "dgima", this.state.dgima_src);
         this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
@@ -139,7 +139,7 @@ class DgimaTrimmer extends Component {
                         source={source}
                         trim_meta={trim_meta}
                         source_meta={dgima_src}
-                        mode="wfadmin"
+                        mode="dgima"
                         closeModal={this.onClose}
                     />
                 </Modal>
