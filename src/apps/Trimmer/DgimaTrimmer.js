@@ -24,15 +24,16 @@ class DgimaTrimmer extends Component {
     };
 
     getCaptured = (date) => {
-        getData(`capture/find?key=date&value=${date}`, (data) => {
+        getData(`capture/find?key=date&value=${date.slice(0, -3)}`, (data) => {
             let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf);
             let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf);
             let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf);
             this.setState({cassette, congress, insert});
         });
-        getData(`dgima/find?key=date&value=${date}`, (data) => {
-            this.setState({dgima: data});
-        });
+        // If we want trim from dgima trimmed
+        // getData(`dgima/find?key=date&value=${date.slice(0, -3)}`, (data) => {
+        //     this.setState({dgima: data});
+        // });
     };
 
     changeDate = (data) => {
