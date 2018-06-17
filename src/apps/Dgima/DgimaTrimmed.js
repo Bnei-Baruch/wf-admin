@@ -62,6 +62,8 @@ class DgimaTrimmed extends Component {
             insert_data.file_name = file_data.file_name;
             insert_data.extension = "mp4";
             insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+            // In InsertApp upload_filename use for filename gen in OldWF
+            insert_data.line.upload_filename = insert_data.insert_name;
             insert_data.insert_type = "1";
             insert_data.language = file_data.line.language;
             insert_data.send_id = file_data.dgima_id;
