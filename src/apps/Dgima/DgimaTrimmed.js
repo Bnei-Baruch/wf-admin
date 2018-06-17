@@ -87,7 +87,7 @@ class DgimaTrimmed extends Component {
         this.setState({
             file_data, source,
             actived: file_data.dgima_id,
-            insert_button: !renamed,
+            insert_button: !renamed || wfsend,
             rename_button: wfsend,
             send_button: !renamed,
             kmedia_option: wfsend,
@@ -303,8 +303,7 @@ class DgimaTrimmed extends Component {
                                        onClose={this.onCancel}
                                        open={this.state.insert_open}
                                        size="large"
-                                       mountNode={document.getElementById("ltr-modal-mount")}
-                                >
+                                       mountNode={document.getElementById("ltr-modal-mount")}>
                                     <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
