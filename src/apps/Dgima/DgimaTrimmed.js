@@ -81,6 +81,9 @@ class DgimaTrimmed extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.original.format.filename;
         let source = `${url}${path}`;
+        //TODO: Check if date valid
+        let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+        file_data.line = {...file_data.line, capture_date: string_date };
         this.setState({
             file_data, source,
             actived: file_data.dgima_id,
@@ -127,15 +130,17 @@ class DgimaTrimmed extends Component {
         let oldfile_name = file_data.file_name;
         let src = file_data.parent.source;
         // Set capture date from string becouse CIT put today date
+        //TODO: Check if date valid
         let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
         newline.capture_date = string_date;
-        let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.mp4`;
-        //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.dgima_id}p.mp4`;
+        let ext = newline.mime_type === "video/mp3" ? "mp3" : "mp4";
+        let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.${ext}`;
+        let ppath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}p.${ext}`;
         file_data.line = {...newline};
         file_data.parent.file_name = oldfile_name;
         //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
-        //file_data.proxy.format.filename = ppath;
+        file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         // Build url for preview
