@@ -97,8 +97,8 @@ class VirtualLessonForm extends BaseForm {
             <Grid.Row>
               <Grid.Column>
                 {this.renderArtifactType()}
-               </Grid.Column>
-              </Grid.Row>
+              </Grid.Column>
+            </Grid.Row>
             <Grid.Row>
               <Grid.Column>
                 {this.renderLanguage()}

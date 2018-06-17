@@ -9,6 +9,7 @@ import {
   CT_LELO_MIKUD,
   CT_LESSON_PART,
   CT_VIDEO_PROGRAM_CHAPTER,
+  CT_WOMEN_LESSON,
   EMPTY_ARRAY,
   EMPTY_OBJECT,
   EVENT_CONTENT_TYPES,
@@ -304,6 +305,9 @@ class BaseForm extends Component {
       break;
     case CT_VIDEO_PROGRAM_CHAPTER:
       ctSpecificToClean.delete('episode');
+      break;
+    case CT_WOMEN_LESSON:
+      ctSpecificToClean.delete('artifact_type');
       break;
     default:
       break;
