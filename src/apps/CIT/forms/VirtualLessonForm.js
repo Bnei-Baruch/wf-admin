@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
-import { CONTENT_TYPES_MAPPINGS } from '../../../shared/consts';
+import {ARTIFACT_TYPES, CONTENT_TYPES_MAPPINGS} from '../../../shared/consts';
 import { isActive, sourcesTagsPattern } from '../shared/utils';
 import BaseForm from './BaseForm';
 
@@ -28,6 +28,7 @@ class VirtualLessonForm extends BaseForm {
             film_date: filmDate,
             sources,
             tags,
+            artifact_type: artifactType,
             major
           } = Object.assign({}, this.state, diff || {});
 
@@ -46,7 +47,7 @@ class VirtualLessonForm extends BaseForm {
       '_' +
       (this.props.metadata.label_id ? filmDate : captureDate) +
       '_' +
-      CONTENT_TYPES_MAPPINGS[contentType].pattern +
+      CONTENT_TYPES_MAPPINGS[artifactType === ARTIFACT_TYPES[0].value ? contentType : artifactType].pattern +
       (pattern ? `_${pattern}` : '') +
       (suffix ? `_${suffix}` : '');
 
@@ -93,6 +94,11 @@ class VirtualLessonForm extends BaseForm {
         <Grid.Column width={2} />
         <Grid.Column width={4}>
           <Grid className="bb-less-interesting">
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderArtifactType()}
+               </Grid.Column>
+              </Grid.Row>
             <Grid.Row>
               <Grid.Column>
                 {this.renderLanguage()}
