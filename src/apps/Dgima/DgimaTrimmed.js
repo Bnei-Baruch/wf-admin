@@ -62,6 +62,8 @@ class DgimaTrimmed extends Component {
             insert_data.file_name = file_data.file_name;
             insert_data.extension = "mp4";
             insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+            // In InsertApp upload_filename use for filename gen in OldWF
+            insert_data.line.upload_filename = insert_data.insert_name;
             insert_data.insert_type = "1";
             insert_data.language = file_data.line.language;
             insert_data.send_id = file_data.dgima_id;
@@ -87,7 +89,7 @@ class DgimaTrimmed extends Component {
         this.setState({
             file_data, source,
             actived: file_data.dgima_id,
-            insert_button: !renamed,
+            insert_button: !renamed || wfsend,
             rename_button: wfsend,
             send_button: !renamed,
             kmedia_option: wfsend,
@@ -303,8 +305,7 @@ class DgimaTrimmed extends Component {
                                        onClose={this.onCancel}
                                        open={this.state.insert_open}
                                        size="large"
-                                       mountNode={document.getElementById("ltr-modal-mount")}
-                                >
+                                       mountNode={document.getElementById("ltr-modal-mount")}>
                                     <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
