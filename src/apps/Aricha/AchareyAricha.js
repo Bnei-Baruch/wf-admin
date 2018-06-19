@@ -122,7 +122,13 @@ class AchareyAricha extends Component {
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
-            setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+            if(cb.status === "ok") {
+                alert("Insert successful :)");
+                setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+            } else {
+                alert("Something gone wrong :(");
+                this.setState({ inserting: false, insert_button: false});
+            }
         });
     };
 
