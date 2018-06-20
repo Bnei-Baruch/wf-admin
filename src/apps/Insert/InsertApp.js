@@ -138,7 +138,8 @@ class InsertApp extends Component {
                 console.log(":: Got Workflow Data: ", wfdata);
                 metadata.line.send_name = wfdata.file_name;
                 metadata.line.lecturer = wfdata.line.lecturer;
-                metadata.insert_name = getName(metadata);
+                if(metadata.upload_type !== "aricha")
+                    metadata.insert_name = getName(metadata);
                 console.log(":: Metadata insert_name: \n%c" + metadata.insert_name, "color:Green");
                 this.checkMeta(metadata);
             } else {
