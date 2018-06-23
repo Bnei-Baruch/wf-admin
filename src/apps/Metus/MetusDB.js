@@ -31,7 +31,9 @@ class MetusDB extends Component {
         const {search} = this.state;
         this.setState({loading: true, disabled: true});
         console.log(":: Search in MetusDB: ", search);
-        getUnits(`http://10.66.1.117:8081/hooks/metus?name=${search}`, (metus) => {
+        // Be sure we ask not many files so we can calculate sha1 on backend
+        let key = search.split('.').length === 2 ? "sha1" : "name";
+        getData(`metus/find?key=${key}&value=${search}`, (metus) => {
             console.log(":: MetusDB - respond: ",metus);
             this.setState({metus, loading: false, disabled: false});
         });
@@ -40,14 +42,32 @@ class MetusDB extends Component {
     selectFile = (file_data) => {
         console.log(":: MetusDB - selected file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
-        let path = file_data.mlpath;
+        let path = file_data.unix_path;
         let source = `${url}${path}`;
         let file_name = file_data.filename.split('.')[0];
-        this.setState({file_data, source, active: file_data.object_id});
+        this.setState({file_data, search: file_data.filename, source, active: file_data.metus_id});
+
         getData(`aricha/find?key=file_name&value=${file_name}`, (aricha) => {
             console.log(":: Aricha DB Data: ",aricha);
-            //this.setState({aricha});
+            this.setState({aricha});
         });
+        getData(`trimmer/find?key=file_name&value=${file_name}`, (trimmer) => {
+            console.log(":: Trimmer DB Data: ",trimmer);
+            this.setState({trimmer});
+        });
+        getData(`dgima/find?key=file_name&value=${file_name}`, (dgima) => {
+            console.log(":: Dgima DB Data: ",dgima);
+            this.setState({dgima});
+        });
+
+        if(file_data.sha1 !== "") {
+            getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${file_data.sha1}`, (units) => {
+                console.log(":: Meuts - got units: ", units);
+                if (units.total > 0)
+                    console.log("The file already got unit!");
+                this.setState({units});
+            });
+        }
     };
 
     getPlayer = (player) => {
@@ -62,7 +82,7 @@ class MetusDB extends Component {
 
     render() {
 
-        const {loading,disabled} = this.state;
+        const {loading,disabled,search} = this.state;
 
         // let v = (<Icon name='checkmark'/>);
         // let x = (<Icon name='close'/>);
@@ -71,11 +91,11 @@ class MetusDB extends Component {
         // let f = (<Icon color='blue' name='configure'/>);
 
         let metus = this.state.metus.map((data) => {
-            const {filename,object_id,title} = data;
-            let active = this.state.active === object_id ? 'active' : 'admin_raw';
+            const {filename,metus_id,title} = data;
+            let active = this.state.active === metus_id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    className={active} key={object_id}
+                    className={active} key={metus_id}
                     onClick={() => this.selectFile(data)} >
                     <Table.Cell>{filename}</Table.Cell>
                     <Table.Cell>{title}</Table.Cell>
@@ -89,7 +109,7 @@ class MetusDB extends Component {
                     {this.state.file_data.title ? this.state.file_data.title : "Metus"}
                 </Label>
                 <Input className='input_wfdb' type='text' placeholder='Search...' action
-                       onChange={e => this.setStatusValue(e.target.value)}>
+                       onChange={e => this.setStatusValue(e.target.value)} value={search}>
                     <input />
                     <Button type='submit' basic color='green' loading={loading} disabled={disabled} onClick={this.setSearchValue}>Search</Button>
                 </Input>
