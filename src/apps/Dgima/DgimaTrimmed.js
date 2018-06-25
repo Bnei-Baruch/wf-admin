@@ -264,17 +264,16 @@ class DgimaTrimmed extends Component {
         let c = (<Icon name='copyright'/>);
 
         let dgima_data = dgima.map((data) => {
-            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
+            const {trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked} = data.wfstatus;
             let id = data.dgima_id;
-            let ready = data.original;
-            let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
             let active = actived === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready}
+                    negative={rowcolor} positive={wfsend} disabled={!trimmed}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
