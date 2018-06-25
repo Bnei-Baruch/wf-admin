@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import {getData, getUnits} from '../../shared/tools';
-import { Menu, Input, Segment, Label, Table, Button, Modal, Message } from 'semantic-ui-react'
+import {getData, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
+import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import InsertApp from "../Insert/InsertApp"
 
 class MetusDB extends Component {
 
@@ -9,9 +10,15 @@ class MetusDB extends Component {
         active: null,
         disabled: false,
         loading: false,
+        insert_open: false,
+        insert_button: true,
+        inserting: false,
         file_data: {},
         metus: [],
         search: "",
+        send_button: true,
+        sending: false,
+        special: "buffer",
     };
 
     componentDidMount() {
@@ -75,14 +82,53 @@ class MetusDB extends Component {
         //this.setState({player: player});
     };
 
-    onCancel = (data) => {
-        console.log(":: Cit cancel: ", data);
-        this.setState({open: false});
+    openInsert = () => {
+        this.setState({insert_open: true});
+    };
+
+    onInsert = (data) => {
+        console.log(":: Got insert data: ", data);
+        this.setState({insert_open: false});
+        this.setMeta(data);
+    };
+
+    onCancel = () => {
+        this.setState({insert_open: false});
+    };
+
+    setSpecial = (e, data) => {
+        console.log(":: Selected send options: ", data.value);
+        let special = data.value;
+        this.setState({special});
+    };
+
+    sendFile = () => {
+        let {file_data,special} = this.state;
+        file_data.special = special;
+        console.log(":: Going to send File: ", file_data + " : to: ", special);
+        this.setState({ sending: true, send_button: true });
+        putData(`${WFSRV_BACKEND}/workflow/send_metus`, file_data, (cb) => {
+            console.log(":: Metus - send respond: ",cb);
+            // While polling done it does not necessary
+            //this.selectFile(file_data);
+            if(cb.status === "ok") {
+                setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
+            } else {
+                alert("Something goes wrong!");
+            }
+        });
+
     };
 
     render() {
 
         const {loading,disabled,search} = this.state;
+
+        const send_options = [
+            { key: 'Buffer', text: 'Buffer', value: 'buffer' },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !this.state.kmedia_option },
+            { key: 'youtube', text: 'Youtube', value: 'youtube' },
+        ];
 
         // let v = (<Icon name='checkmark'/>);
         // let x = (<Icon name='close'/>);
@@ -124,15 +170,29 @@ class MetusDB extends Component {
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='red' icon='close' disabled={true}  onClick={this.setRemoved} />
+                                <Modal { ...this.props }
+                                       trigger={<Button color='teal' icon='archive'
+                                                        loading={this.state.inserting}
+                                                        disabled={this.state.insert_button}
+                                                        onClick={this.openInsert} />}
+                                       closeOnDimmerClick={true}
+                                       closeIcon={true}
+                                       onClose={this.onCancel}
+                                       open={this.state.insert_open}
+                                       size="large"
+                                       mountNode={document.getElementById("ltr-modal-mount")}>
+                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
+                                </Modal>
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
+                                <Select compact options={send_options} defaultValue='buffer'
+                                        onChange={(e,data) => this.setSpecial(e,data)} />
                             </Menu.Item>
                             <Menu.Item>
+                                <Button positive icon="arrow right" disabled={this.state.send_button}
+                                        onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>
