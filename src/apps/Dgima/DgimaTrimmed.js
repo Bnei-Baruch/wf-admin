@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, getDCT, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
@@ -17,6 +17,7 @@ class DgimaTrimmed extends Component {
         dgima: [],
         file_data: {},
         filedata: {},
+        join_files: [],
         kmedia_option: false,
         metadata: {},
         input_id: "",
@@ -31,7 +32,7 @@ class DgimaTrimmed extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('dgima', (data) => {
+        let ival = setInterval(() => getData('drim', (data) => {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             }), IVAL );
@@ -224,8 +225,26 @@ class DgimaTrimmed extends Component {
         fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
+    fileToJoin = (join_files) => {
+        console.log(join_files);
+        this.setState({ join_files });
+    };
+
+    sendToJoin = () => {
+        const {join_files} = this.state;
+        console.log("Sending to join: ", join_files);
+        this.setState({ join_files: [] });
+        putData(`${WFSRV_BACKEND}/workflow/join`, join_files, (cb) => {
+            console.log(":: Join - respond: ",cb);
+            if(cb.status !== "ok") {
+                alert("Something goes wrong!");
+                this.setState({ join_files });
+            }
+        });
+    };
+
     render() {
-        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata} = this.state;
+        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files} = this.state;
 
         const send_options = [
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
@@ -233,6 +252,11 @@ class DgimaTrimmed extends Component {
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
         ];
+
+        const join_data = dgima.map((data) => {
+            const {id, file_name} = data;
+            return ({ key: id, text: file_name, value: data })
+        });
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -341,6 +365,24 @@ class DgimaTrimmed extends Component {
                         {dgima_data}
                     </Table.Body>
                 </Table>
+                <Menu secondary>
+                    <Menu.Item>
+                        <Dropdown
+                            className="join_files_dropdown"
+                            placeholder="Select Files To Join:"
+                            selection
+                            multiple
+                            options={join_data}
+                            value={join_files}
+                            onChange={(e, {value}) => this.fileToJoin(value)} />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button primary disabled={join_files.length < 2}
+                                onClick={this.sendToJoin}>
+                            Join
+                        </Button>
+                    </Menu.Item>
+                </Menu>
             </Segment>
         );
     }

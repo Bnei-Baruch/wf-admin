@@ -166,6 +166,10 @@ body {
     min-width: 39em!important;
 }
 
+.join_files_dropdown {
+    width: 835px;
+}
+
 .lines_dropdown {
     min-width: 39em!important;
 }
