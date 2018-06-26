@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getDCT, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getDCT, getUnits, IVAL, newTrimMeta, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -84,9 +84,11 @@ class DgimaTrimmed extends Component {
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.original.format.filename;
         let source = `${url}${path}`;
-        //TODO: Check if date valid
-        let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-        file_data.line = {...file_data.line, capture_date: string_date };
+        // Take date from string if exit
+        if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
+            let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            file_data.line = {...file_data.line, capture_date: string_date};
+        }
         this.setState({
             file_data, source,
             actived: file_data.dgima_id,
@@ -232,9 +234,24 @@ class DgimaTrimmed extends Component {
 
     sendToJoin = () => {
         const {join_files} = this.state;
-        console.log("Sending to join: ", join_files);
         this.setState({ join_files: [] });
-        putData(`${WFSRV_BACKEND}/workflow/join`, join_files, (cb) => {
+        let join_meta = newTrimMeta(join_files[0], "join", "cassette");
+        join_meta.original_join = join_files.map(obj => obj.original.format.filename);
+        join_meta.proxy_join = join_files.map(obj => obj.proxy.format.filename);
+        join_meta.parent.original_shas = join_files.map(obj => obj.original.format.sha1);
+        join_meta.parent.proxy_shas = join_files.map(obj => obj.proxy.format.sha1);
+        join_meta.parent.dgima_ids = join_files.map(obj => obj.dgima_id);
+        join_meta.parent.label_ids = join_files.map(obj => obj.line.label_id);
+        //join_meta.file_name = join_files[0].file_name + "_join";
+        delete join_meta.parent.id;
+        //delete join_meta.parent.file_name;
+        delete join_meta.parent.capture_id;
+        delete join_meta.parent.original_sha1;
+        delete join_meta.parent.proxy_sha1;
+        delete join_meta.inpoints;
+        delete join_meta.outpoints;
+        console.log("Sending to join: ", join_meta);
+        putData(`${WFSRV_BACKEND}/workflow/join`, join_meta, (cb) => {
             console.log(":: Join - respond: ",cb);
             if(cb.status !== "ok") {
                 alert("Something goes wrong!");
@@ -253,9 +270,11 @@ class DgimaTrimmed extends Component {
             { key: 'Backup', text: 'Backup', value: 'backup' },
         ];
 
-        const join_data = dgima.map((data) => {
+        const join_data = dgima
+            .filter(data => data.parent.source === "cassette")
+            .map(data => {
             const {id, file_name} = data;
-            return ({ key: id, text: file_name, value: data })
+            return ({key: id, text: file_name, value: data})
         });
 
         let v = (<Icon name='checkmark'/>);
