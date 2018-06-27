@@ -12,7 +12,7 @@ class MetusDB extends Component {
         disabled: false,
         loading: false,
         insert_open: false,
-        insert_button: false,
+        insert_button: true,
         inserting: false,
         file_data: {},
         metus: [],
@@ -55,33 +55,6 @@ class MetusDB extends Component {
         let file_name = file_data.filename.split('.')[0];
         this.setState({file_data, search: file_data.filename, source, active: file_data.metus_id});
 
-        if (!file_data.workflow) {
-            // Build data for insert app
-            let insert_data = {};
-            insert_data.line = {};
-            insert_data.insert_id = "i"+moment().format('X');
-            insert_data.date = file_data.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
-            [insert_data.file_name,insert_data.extension] = file_data.filename.split('.');
-            insert_data.insert_name = file_data.filename;
-            insert_data.sha1 = file_data.sha1;
-            insert_data.language = file_data.language;
-            insert_data.send_id = file_data.metus_id;
-            insert_data.insert_type = "1";
-            insert_data.send_uid = "";
-            insert_data.upload_type = "aricha";
-            insert_data.line.upload_filename = insert_data.insert_name;
-            insert_data.line.metus_id = file_data.metus_id;
-            insert_data.line.capture_date = insert_data.date;
-            if(file_data.collection === "clip") insert_data.line.content_type = "CLIP";
-            if(file_data.collection === "program") insert_data.line.content_type = "VIDEO_PROGRAM_CHAPTER";
-            if(file_data.collection === "lecture") insert_data.line.content_type = "LECTURE";
-            if(insert_data.extension === "mp4") insert_data.line.mime_type = "video/mp4";
-            if(insert_data.extension === "mpg") insert_data.line.mime_type = "video/mpeg";
-            insert_data.content_type = getDCT(insert_data.line.content_type);
-            //insert_data.size = parseInt(file_data.original.format.size, 10);
-            this.setState({filedata: {file_data}, metadata:{...insert_data}});
-        }
-
         getData(`aricha/find?key=file_name&value=${file_name}`, (aricha) => {
             console.log(":: Aricha DB Data: ",aricha);
             this.setState({aricha});
@@ -98,8 +71,37 @@ class MetusDB extends Component {
         if(file_data.sha1 !== "") {
             getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${file_data.sha1}`, (units) => {
                 console.log(":: Meuts - got units: ", units);
-                if (units.total > 0)
+                if (units.total > 0) {
                     console.log("The file already got unit!");
+                } else {
+                    if (file_data.workflow.length === 0) {
+                        // Build data for insert app
+                        let insert_data = {};
+                        insert_data.line = {};
+                        insert_data.insert_id = "i"+moment().format('X');
+                        insert_data.date = file_data.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
+                        [insert_data.file_name,insert_data.extension] = file_data.filename.split('.');
+                        insert_data.insert_name = file_data.filename;
+                        insert_data.sha1 = file_data.sha1;
+                        insert_data.language = file_data.language;
+                        insert_data.send_id = file_data.metus_id;
+                        insert_data.insert_type = "1";
+                        insert_data.send_uid = "";
+                        insert_data.upload_type = "aricha";
+                        insert_data.line.upload_filename = insert_data.insert_name;
+                        insert_data.line.metus_id = file_data.metus_id;
+                        insert_data.line.capture_date = insert_data.date;
+                        insert_data.line.url = source;
+                        if(file_data.collection === "clip") insert_data.line.content_type = "CLIP";
+                        if(file_data.collection === "program") insert_data.line.content_type = "VIDEO_PROGRAM_CHAPTER";
+                        if(file_data.collection === "lecture") insert_data.line.content_type = "LECTURE";
+                        if(insert_data.extension === "mp4") insert_data.line.mime_type = "video/mp4";
+                        if(insert_data.extension === "mpg") insert_data.line.mime_type = "video/mpeg";
+                        insert_data.content_type = getDCT(insert_data.line.content_type);
+                        //insert_data.size = parseInt(file_data.original.format.size, 10);
+                        this.setState({filedata: {file_data}, metadata:{...insert_data}, insert_button: false});
+                    }
+                }
                 this.setState({units});
             });
         }

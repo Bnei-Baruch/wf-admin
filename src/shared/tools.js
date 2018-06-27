@@ -68,6 +68,8 @@ export const getUnits = (path, cb) => fetch(`${path}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
+        } else {
+            return cb({total: 0});
         }
     })
     .catch(ex => console.log(`get ${path}`, ex));
