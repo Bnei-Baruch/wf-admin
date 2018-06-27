@@ -20,7 +20,7 @@ export const upload_extensions = {
     "kitei-makor": ["doc","docx"],
     "sirtutim": ["zip"],
     "dibuv": ["mp3","mp4"],
-    "aricha": ["mp4"],
+    "aricha": ["mp4","mpg"],
     "article": ["doc","docx"],
     "publication": ["zip"],
 };
@@ -40,9 +40,9 @@ export const mime_list = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
     "image/jpeg": "jpg",
     "image/png": "png",
-    "audio/mpeg": "mp3",
     "audio/mp3": "mp3",
     "video/mp4": "mp4",
+    "video/mpeg": "mpg",
     "application/zip": "zip"
 };
 

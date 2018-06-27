@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {getData, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
+import moment from 'moment';
+import {getData, getDCT, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -11,7 +12,7 @@ class MetusDB extends Component {
         disabled: false,
         loading: false,
         insert_open: false,
-        insert_button: true,
+        insert_button: false,
         inserting: false,
         file_data: {},
         metus: [],
@@ -54,6 +55,33 @@ class MetusDB extends Component {
         let file_name = file_data.filename.split('.')[0];
         this.setState({file_data, search: file_data.filename, source, active: file_data.metus_id});
 
+        if (!file_data.workflow) {
+            // Build data for insert app
+            let insert_data = {};
+            insert_data.line = {};
+            insert_data.insert_id = "i"+moment().format('X');
+            insert_data.date = file_data.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
+            [insert_data.file_name,insert_data.extension] = file_data.filename.split('.');
+            insert_data.insert_name = file_data.filename;
+            insert_data.sha1 = file_data.sha1;
+            insert_data.language = file_data.language;
+            insert_data.send_id = file_data.metus_id;
+            insert_data.insert_type = "1";
+            insert_data.send_uid = "";
+            insert_data.upload_type = "aricha";
+            insert_data.line.upload_filename = insert_data.insert_name;
+            insert_data.line.metus_id = file_data.metus_id;
+            insert_data.line.capture_date = insert_data.date;
+            if(file_data.collection === "clip") insert_data.line.content_type = "CLIP";
+            if(file_data.collection === "program") insert_data.line.content_type = "VIDEO_PROGRAM_CHAPTER";
+            if(file_data.collection === "lecture") insert_data.line.content_type = "LECTURE";
+            if(insert_data.extension === "mp4") insert_data.line.mime_type = "video/mp4";
+            if(insert_data.extension === "mpg") insert_data.line.mime_type = "video/mpeg";
+            insert_data.content_type = getDCT(insert_data.line.content_type);
+            //insert_data.size = parseInt(file_data.original.format.size, 10);
+            this.setState({filedata: {file_data}, metadata:{...insert_data}});
+        }
+
         getData(`aricha/find?key=file_name&value=${file_name}`, (aricha) => {
             console.log(":: Aricha DB Data: ",aricha);
             this.setState({aricha});
@@ -83,6 +111,8 @@ class MetusDB extends Component {
     };
 
     openInsert = () => {
+        const {metadata} = this.state;
+        console.log(":: Going to insert metadata: ", metadata);
         this.setState({insert_open: true});
     };
 
@@ -118,6 +148,14 @@ class MetusDB extends Component {
             }
         });
 
+    };
+
+    getFromMetus = () => {
+        let {file_data} = this.state;
+        console.log(":: ArichaApp workflow from Metus: ", file_data);
+        putData(`http://wfserver.bbdomain.org:8010/workflow/aricha`, file_data, (cb) => {
+            console.log(":: ArichaApp workflow from Metus respond: ",cb);
+        });
     };
 
     render() {
