@@ -125,7 +125,7 @@ class MetusDB extends Component {
     };
 
     onCancel = () => {
-        this.setState({insert_open: false});
+        this.setState({insert_open: false, insert_button: true});
     };
 
     setSpecial = (e, data) => {
