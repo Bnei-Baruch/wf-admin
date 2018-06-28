@@ -73,6 +73,7 @@ class MetusDB extends Component {
                 console.log(":: Meuts - got units: ", units);
                 if (units.total > 0) {
                     console.log("The file already got unit!");
+                    this.setState({insert_button: true, kmedia_option: true});
                 } else {
                     if (file_data.workflow.length === 0) {
                         // Build data for insert app
@@ -92,14 +93,14 @@ class MetusDB extends Component {
                         insert_data.line.upload_filename = insert_data.insert_name;
                         insert_data.line.metus_id = file_data.metus_id;
                         insert_data.line.capture_date = insert_data.date;
-                        insert_data.line.url = source;
+                        insert_data.line.url = file_data.unix_path;
                         if(file_data.collection === "clip") insert_data.line.content_type = "CLIP";
                         if(file_data.collection === "program") insert_data.line.content_type = "VIDEO_PROGRAM_CHAPTER";
                         if(file_data.collection === "lecture") insert_data.line.content_type = "LECTURE";
                         if(insert_data.extension === "mp4") insert_data.line.mime_type = "video/mp4";
                         if(insert_data.extension === "mpg") insert_data.line.mime_type = "video/mpeg";
                         insert_data.content_type = getDCT(insert_data.line.content_type);
-                        this.setState({filedata: {file_data}, metadata:{...insert_data}, insert_button: false});
+                        this.setState({filedata: {file_data}, metadata:{...insert_data}, insert_button: false, kmedia_option: false});
                     }
                 }
                 this.setState({units});
@@ -122,6 +123,20 @@ class MetusDB extends Component {
         console.log(":: Got insert data: ", data);
         this.setState({insert_open: false});
         this.setMeta(data);
+    };
+
+    setMeta = (insert_data) => {
+        this.setState({inserting: true, insert_button: true });
+        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
+            console.log(":: MetusApp - workflow respond: ",cb);
+            if(cb.status === "ok") {
+                alert("Insert successful :)");
+                setTimeout(() => this.setState({ inserting: false, insert_button: true, send_button: false, kmedia_option: true}), 2000);
+            } else {
+                alert("Something gone wrong :(");
+                this.setState({ inserting: false, insert_button: false});
+            }
+        });
     };
 
     onCancel = () => {
