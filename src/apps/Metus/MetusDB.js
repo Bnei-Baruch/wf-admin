@@ -83,6 +83,7 @@ class MetusDB extends Component {
                         [insert_data.file_name,insert_data.extension] = file_data.filename.split('.');
                         insert_data.insert_name = file_data.filename;
                         insert_data.sha1 = file_data.sha1;
+                        insert_data.size = file_data.size;
                         insert_data.language = file_data.language;
                         insert_data.send_id = file_data.metus_id;
                         insert_data.insert_type = "1";
@@ -98,7 +99,6 @@ class MetusDB extends Component {
                         if(insert_data.extension === "mp4") insert_data.line.mime_type = "video/mp4";
                         if(insert_data.extension === "mpg") insert_data.line.mime_type = "video/mpeg";
                         insert_data.content_type = getDCT(insert_data.line.content_type);
-                        //insert_data.size = parseInt(file_data.original.format.size, 10);
                         this.setState({filedata: {file_data}, metadata:{...insert_data}, insert_button: false});
                     }
                 }
