@@ -10,7 +10,7 @@ import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Grid, Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchPublishers, fetchPersons, insertName, getName, getLang, getWFData, fetchUnits, getDCT } from '../../shared/tools';
+import { fetchPublishers, fetchPersons, insertName, getName, getLang, getDataByID, fetchUnits, getDCT } from '../../shared/tools';
 import {content_options, language_options, upload_extensions, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
 import MdbData from './MdbData';
@@ -133,7 +133,7 @@ class InsertApp extends Component {
     newUnitWF = (metadata, wfid) => {
         console.log(":::: New Workflow UNIT :::: ");
         console.log(":: Workflow ID: ", wfid);
-        getWFData(wfid, (wfdata) => {
+        getDataByID(wfid, (wfdata) => {
             if(wfdata) {
                 console.log(":: Got Workflow Data: ", wfdata);
                 metadata.line.send_name = wfdata.file_name;

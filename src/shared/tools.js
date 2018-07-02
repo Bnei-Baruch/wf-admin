@@ -1,13 +1,13 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
 import moment from 'moment';
-export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
+
+export const WFDB_STATE = 'http://wfdb.bbdomain.org:8000';
 export const WFRP_STATE = 'http://wfrp.bbdomain.org:8000';
 export const MDB_BACKEND = 'https://insert.kbb1.com/rest';
 export const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
-export const WFDB_STATE = 'http://wfdb.bbdomain.org:8000';
+export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
 export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
 export const DGIMA_BACKEND = 'http://dgima.bbdomain.org:8010';
-export const WFSRV_OLD_BACKEND = 'http://wfserver.bbdomain.org:8080';
 export const CARBON1_BACKEND = 'http://wfconv1.bbdomain.org:8081';
 export const WFWEB_SERVER = 'http://wfserver.bbdomain.org';
 export const IVAL = 1000;
@@ -30,13 +30,6 @@ export const randomString = (len, charSet) => {
     return randomString;
 };
 
-// export const toSeconds = (time) => {
-//     var hms = time ;
-//     var a = hms.split(':');
-//     var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
-//     return seconds;
-// };
-
 export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
@@ -45,7 +38,7 @@ export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-export const getWFData = (id, cb) =>  {
+export const getDataByID = (id, cb) =>  {
     fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`)
         .then((response) => {
             if (response.ok) {
@@ -97,7 +90,7 @@ export const removeData = (path, cb) => fetch(`${path}`, {
     })
     .catch(ex => console.log("Remove Data error:", ex));
 
-export const getConv = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
+export const getState = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -117,7 +110,7 @@ export const getStatus = (ep, cb) => {
             }
         })
         .catch(ex => console.log(`getUpload`, ex));
-}
+};
 
 
 export const getLang = (lang) => {
@@ -129,7 +122,7 @@ export const getDCT = (val) => {
 };
 
 export const getName = (metadata) => {
-    //console.log(":: GetName - got metadata: ",metadata);
+
     let name = [];
     const {line,language,upload_type} = metadata;
 
@@ -220,16 +213,11 @@ export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-// export const fetchSources = cb => Fetcher('sources/', cb);
-//
-// export const fetchTags = cb => Fetcher('tags/', cb);
-
 export const fetchPublishers = cb => Fetcher('publishers/', cb);
 
 export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`)
     .then((response) => {
         if (response.ok) {
-            //console.log("--FetchDataWithCB--");
             return response.json().then(data => cb(data));
         }
     })
@@ -238,7 +226,6 @@ export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${pa
 export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id}/persons/`)
     .then((response) => {
         if (response.ok) {
-            //console.log("--FetchPersonsName--");
             return response.json().then(data => cb(data));
         }
     })
@@ -247,7 +234,6 @@ export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id
 export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/find?key=${key}&value=${filename}`)
     .then((response) => {
         if (response.ok) {
-            //console.log("--FetchInsertName--");
             return response.json().then(data => cb(data));
         }
     })
@@ -256,27 +242,10 @@ export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/f
 export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
     .then((response) => {
         if (response.ok) {
-            //console.log("--FetchInsertSha--");
             return response.json().then(data => cb(data));
         }
     })
     .catch(ex => console.log(`get ${sha}`, ex));
 
-//export const fetchUnits = (path,cb) => fetcher(path, cb);
-
-export const fetchCollections = (data,col) => {
-    console.log("--FetchCollection--");
-    data.data.forEach((u,i) => {
-        let path = `${u.id}/collections/`;
-        fetchUnits(path,cb => {
-                if(cb.length === 0)
-                    return;
-                u["number"] = cb[0].collection.properties.number || "?";
-                u["part"] = cb[0].name || "?";
-                col(data)
-            }
-        )
-    })
-};
 
 

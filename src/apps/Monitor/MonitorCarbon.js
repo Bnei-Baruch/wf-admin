@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment';
-import { getConv, IVAL } from '../../shared/tools';
+import { getState, IVAL } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
 class MonitorCarbon extends Component {
@@ -12,7 +12,7 @@ class MonitorCarbon extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getConv('state/carbon/'+moment().format('YYYY-MM-DD'), (data) => {
+            getState('state/carbon/'+moment().format('YYYY-MM-DD'), (data) => {
                 if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                     this.setState({carbon: data})
             }), IVAL

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {getWFData} from '../../shared/tools';
+import {getDataByID} from '../../shared/tools';
 import { Grid, Header } from 'semantic-ui-react'
 
 class NameHelper extends Component {
@@ -8,7 +8,7 @@ class NameHelper extends Component {
 
     componentDidMount() {
         if(this.props.id)
-            getWFData(this.props.id, (wfdata) => {
+            getDataByID(this.props.id, (wfdata) => {
                 console.log(":: Got Workflow Data: ", wfdata);
                 this.setState({send_name: wfdata.file_name});
             });

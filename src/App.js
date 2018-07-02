@@ -16,7 +16,7 @@ import DgimaApp from "./apps/Dgima/DgimaApp";
 import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
-import {getConv} from "./shared/tools";
+import {getState} from "./shared/tools";
 import MetusApp from "./apps/Metus/MetusApp";
 
 class App extends Component {
@@ -65,7 +65,7 @@ class App extends Component {
         console.log(":: App - got user: ", user);
         if(!wf_public) {
             this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert});
-            setInterval(() => getConv('state/langcheck', (data) => {
+            setInterval(() => getState('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
                     this.setState({count})

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getConv, putData, removeData, WFDB_STATE} from '../../shared/tools';
+import {getState, putData, removeData, WFDB_STATE} from '../../shared/tools';
 import { Icon, Button, Table, Segment, Label } from 'semantic-ui-react'
 import IngestNames from "./IngestNames";
 
@@ -20,7 +20,7 @@ class IngestPresets extends Component {
     };
 
     getPresets = () => {
-        getConv(`names/presets`, (presets) => {
+        getState(`names/presets`, (presets) => {
             console.log(":: Got Presets: ",presets);
             this.setState({presets});
         });

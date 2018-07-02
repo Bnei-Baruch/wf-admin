@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getConv, putData, WFDB_STATE, randomString, removeData} from '../../shared/tools';
+import {getState, putData, WFDB_STATE, randomString, removeData} from '../../shared/tools';
 import { Input, Menu, Dropdown, Button, Modal } from 'semantic-ui-react';
 import CIT from '../CIT/CIT';
 
@@ -23,7 +23,7 @@ class IngestNames extends Component {
     };
 
     getLines = () => {
-        getConv(`names/lines`, (lines) => {
+        getState(`names/lines`, (lines) => {
             console.log(":: Got Lines: ",lines);
             this.setState({lines});
         });

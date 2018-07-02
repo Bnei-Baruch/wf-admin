@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getConv, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
+import {getState, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
 import LangSelector from "../../components/LangSelector";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -19,7 +19,7 @@ class LangCheck extends Component {
     };
 
     getLangState = () => {
-        getConv(`state/langcheck`, (langcheck) => {
+        getState(`state/langcheck`, (langcheck) => {
             this.setState({langcheck, newlangs: false});
         });
     };

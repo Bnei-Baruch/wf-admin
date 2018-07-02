@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getConv, putData, WFDB_STATE} from '../../shared/tools';
+import {getState, putData, WFDB_STATE} from '../../shared/tools';
 import { Menu, Dropdown, Button } from 'semantic-ui-react'
 
 class LangRestore extends Component {
@@ -16,7 +16,7 @@ class LangRestore extends Component {
     };
 
     getCarbon = (date) => {
-        getConv(`state/carbon/${date}`, (data) => {
+        getState(`state/carbon/${date}`, (data) => {
             let json = {};
             for (let k in data) {
                 let c = data[k];

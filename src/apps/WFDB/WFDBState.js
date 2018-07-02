@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getConv } from '../../shared/tools';
+import { getState } from '../../shared/tools';
 import { Table, Container, Loader } from 'semantic-ui-react'
 
 class WFDBState extends Component {
@@ -20,7 +20,7 @@ class WFDBState extends Component {
     };
 
     getCarbonData = (date) => {
-        getConv(`state/carbon/${date}`, (data) => {
+        getState(`state/carbon/${date}`, (data) => {
             if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                 this.setState({carbon: data})
         });
