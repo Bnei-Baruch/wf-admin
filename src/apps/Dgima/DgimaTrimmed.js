@@ -195,9 +195,8 @@ class DgimaTrimmed extends Component {
         this.setState({cit_open: false, insert_open: false});
     };
 
-    setSpecial = (e, data) => {
-        console.log(":: Selected send options: ", data.value);
-        let special = data.value;
+    setSpecial = (special) => {
+        console.log(":: Selected send options: ", special);
         this.setState({special});
     };
 
@@ -264,6 +263,7 @@ class DgimaTrimmed extends Component {
         const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files} = this.state;
 
         const send_options = [
+            { key: 'buffer', text: 'Buffer', value: 'buffer' },
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
@@ -358,7 +358,7 @@ class DgimaTrimmed extends Component {
                         <Menu.Menu position='right'>
                             <Menu.Item>
                                 <Select compact options={send_options} defaultValue='backup'
-                                        onChange={(e,data) => this.setSpecial(e,data)} />
+                                        onChange={(e,{value}) => this.setSpecial(value)} />
                             </Menu.Item>
                             <Menu.Item>
                                 <Button positive icon="arrow right" disabled={this.state.send_button}
