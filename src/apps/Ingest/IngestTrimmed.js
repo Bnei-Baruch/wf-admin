@@ -93,12 +93,12 @@ class IngestTrimmed extends Component {
 
     sendFile = () => {
         const {file_data} = this.state;
-        const {file_name} = file_data;
+        const {file_name, wfstatus, line} = file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
 
         // In lesson part we expect rename status
-        if(file_data.line.content_type === "LESSON_PART" && !file_data.wfstatus.renamed) {
+        if(line.content_type === "LESSON_PART" && line.collection_type !== "CONGRESS" && !wfstatus.renamed) {
             alert("Lesson part must be renamed");
             this.setState({ sending: false });
             return

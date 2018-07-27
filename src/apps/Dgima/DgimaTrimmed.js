@@ -240,7 +240,7 @@ class DgimaTrimmed extends Component {
         join_meta.parent.original_shas = join_files.map(obj => obj.original.format.sha1);
         join_meta.parent.proxy_shas = join_files.map(obj => obj.proxy.format.sha1);
         join_meta.parent.dgima_ids = join_files.map(obj => obj.dgima_id);
-        join_meta.parent.label_ids = join_files.map(obj => obj.line.label_id);
+        if(join_files.line) join_meta.parent.label_ids = join_files.map(obj => obj.line.label_id);
         //join_meta.file_name = join_files[0].file_name + "_join";
         delete join_meta.parent.id;
         //delete join_meta.parent.file_name;
