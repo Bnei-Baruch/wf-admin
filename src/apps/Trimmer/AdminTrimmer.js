@@ -12,7 +12,7 @@ class AdminTrimmer extends Component {
         main: [],
         backup: [],
         trimmed: [],
-        file_data: {},
+        file_data: "",
         open: false,
         trim_src: "main",
         date: moment().format('YYYY-MM-DD'),
@@ -42,8 +42,7 @@ class AdminTrimmer extends Component {
         this.setState({trim_src: data.value, disabled: true});
     };
 
-    selectFile = (e, data) => {
-        let file_data = data.value;
+    selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
@@ -62,7 +61,7 @@ class AdminTrimmer extends Component {
     };
 
     onClose = () => {
-        this.setState({open: false});
+        this.setState({open: false, disabled: true, file_data: ""});
     };
 
     render() {
@@ -110,11 +109,13 @@ class AdminTrimmer extends Component {
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
+                            error={this.state.disabled}
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
+                            value={this.state.file_data}
                             options={trim_data}
-                            onChange={this.selectFile}
+                            onChange={(e,{value}) => this.selectFile(value)}
                             onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>

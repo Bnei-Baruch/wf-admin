@@ -10,7 +10,7 @@ class CensorTrimmer extends Component {
     state = {
         disabled: true,
         trimmed: [],
-        file_data: {},
+        file_data: "",
         open: false,
         trim_src: "trimmed",
         date: moment().format('YYYY-MM-DD'),
@@ -31,8 +31,7 @@ class CensorTrimmer extends Component {
         this.setState({startDate: data, date: date, disabled: true});
     };
 
-    selectFile = (e, data) => {
-        let file_data = data.value;
+    selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
         let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
@@ -51,7 +50,7 @@ class CensorTrimmer extends Component {
     };
 
     onClose = () => {
-        this.setState({open: false});
+        this.setState({open: false, disabled: true, file_data: ""});
     };
 
     render() {
@@ -82,11 +81,13 @@ class CensorTrimmer extends Component {
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
+                            error={this.state.disabled}
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
+                            value={this.state.file_data}
                             options={trim_data}
-                            onChange={this.selectFile}
+                            onChange={(e,{value}) => this.selectFile(value)}
                             onClick={() => this.getCaptured(this.state.date)}
                              >
                         </Dropdown>
