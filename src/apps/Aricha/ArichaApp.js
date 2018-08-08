@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import AchareyAricha from "./AchareyAricha";
 import ArichaUpload from "./ArichaUpload";
-import {putData} from "../../shared/tools";
+import {WFSRV_BACKEND, putData} from "../../shared/tools";
 
 class ArichaApp extends Component {
 
@@ -11,7 +11,7 @@ class ArichaApp extends Component {
 
     arichaWorkflow = (filedata) => {
         console.log(":: ArichaApp - got data: ", filedata);
-        putData(`http://wfserver.bbdomain.org:8010/workflow/aricha`, filedata, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/aricha`, filedata, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
         });
     };
