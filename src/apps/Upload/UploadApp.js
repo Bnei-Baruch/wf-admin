@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import AkladaUpload from "./AkladaUpload";
+import BackupUpload from "./BackupUpload";
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 
 class UploadApp extends Component {
@@ -18,10 +19,18 @@ class UploadApp extends Component {
         });
     };
 
+    backupWorkflow = (filedata) => {
+        console.log(":: UploadApp - got data: ", filedata);
+        // putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
+        //     console.log(":: UploadApp - workflow respond: ",cb);
+        // });
+    };
+
     render() {
 
         return (
             <Fragment>
+                {this.props.user.preferred_username === "amnonbb@gmail.com" ? <BackupUpload onFileData={this.backupWorkflow} /> : ""}
                 <AkladaUpload onFileData={this.akladaWorkflow}/>
             </Fragment>
         );

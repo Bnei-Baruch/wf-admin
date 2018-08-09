@@ -3,7 +3,7 @@ import { Label,Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {WFSRV_BACKEND} from "../../shared/tools";
 
-class AkladaUpload extends Component {
+class BackupUpload extends Component {
 
     state = { percent: 0 };
 
@@ -21,9 +21,9 @@ class AkladaUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/aklada/upload`,
+            action: `${WFSRV_BACKEND}/backup/upload`,
             type: 'drag',
-            accept: '.mp4, .mp3',
+            accept: '',
             beforeUpload(file) {
                 console.log('beforeUpload', file.name);
             },
@@ -37,8 +37,8 @@ class AkladaUpload extends Component {
         };
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Label attached='top' className="trimmed_label">הקלדות</Label>
+            <Segment textAlign='center' className="ingest_segment" color='brown' raised>
+                <Label attached='top' className="trimmed_label">Backup</Label>
                 <Message>
                     <Upload
                         {...this.props}
@@ -55,4 +55,4 @@ class AkladaUpload extends Component {
     }
 }
 
-export default AkladaUpload;
+export default BackupUpload;
