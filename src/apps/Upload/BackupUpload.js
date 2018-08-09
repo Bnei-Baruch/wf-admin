@@ -43,7 +43,7 @@ class BackupUpload extends Component {
                     <Upload
                         {...this.props}
                         {...props}
-                        className="aricha"
+                        className="backup"
                         onSuccess={this.uploadDone}
                         onProgress={this.progress} >
                         Drop file here or click me

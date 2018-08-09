@@ -20,17 +20,20 @@ class UploadApp extends Component {
     };
 
     backupWorkflow = (filedata) => {
+        filedata.archive_type = "backup";
+        filedata.source = "upload";
+        filedata.source_path = "/backup/upload/backup";
         console.log(":: UploadApp - got data: ", filedata);
-        // putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
-        //     console.log(":: UploadApp - workflow respond: ",cb);
-        // });
+        putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
+            console.log(":: UploadApp - workflow respond: ",cb);
+        });
     };
 
     render() {
 
         return (
             <Fragment>
-                {this.props.user.preferred_username === "amnonbb@gmail.com" ? <BackupUpload onFileData={this.backupWorkflow} /> : ""}
+                {this.props.user.preferred_username.match(/^(amnonbb@gmail\.com|natashazh57@gmail\.com)$/) ? <BackupUpload onFileData={this.backupWorkflow} /> : ""}
                 <AkladaUpload onFileData={this.akladaWorkflow}/>
             </Fragment>
         );
