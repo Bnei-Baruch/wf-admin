@@ -17,7 +17,7 @@ import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
 import {getState} from "./shared/tools";
-import MetusApp from "./apps/Metus/MetusApp";
+// import MetusApp from "./apps/Metus/MetusApp";
 import UploadApp from "./apps/Upload/UploadApp";
 
 class App extends Component {
@@ -106,8 +106,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><DgimaApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
               render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
+          // { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
+          //     render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_public },
               render: () => <Tab.Pane attached={false} ><UploadApp user={this.state.user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },

@@ -186,6 +186,21 @@ class DgimaTrimmed extends Component {
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
                 }
             });
+        } else if(file_data.parent.source === "congress") {
+            file_data.special = "congress";
+            console.log(":: Going to send: ",file_data);
+            this.setState({inserting: true, insert_button: true });
+            putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
+                console.log(":: Dgima - send respond: ",cb);
+                // While polling done it does not necessary
+                //this.selectFile(file_data);
+                if(cb.status === "ok") {
+                    setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                } else {
+                    alert("Something goes wrong!");
+                    this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
+                }
+            });
         } else {
             this.setState({insert_open: true});
         }
