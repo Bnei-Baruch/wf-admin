@@ -45,51 +45,51 @@ class AchareyAricha extends Component {
     selectFile = (file_data) => {
         console.log(":: ArichaApp - selected file: ", file_data);
         const {renamed,wfsend} = file_data.wfstatus;
-        // If we got line, we can build meta for insert
-        if (file_data.line.content_type) {
-            // Take sha for mdb fetch
-            let sha1 = file_data.original.format.sha1;
-            // Build data for insert app
-            let filename = file_data.file_name;
-            let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            // Make insert metadata
-            let insert_data = {};
-            insert_data.insert_id = "i"+moment().format('X');
-            insert_data.line = file_data.line;
-            insert_data.line.mime_type = "video/mp4";
-            insert_data.content_type = getDCT(file_data.line.content_type);
-            insert_data.date = date;
-            insert_data.file_name = file_data.file_name;
-            insert_data.extension = "mp4";
-            insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
-            // In InsertApp upload_filename use for filename gen in OldWF
-            insert_data.line.upload_filename = insert_data.insert_name;
-            insert_data.insert_type = "1";
-            insert_data.language = file_data.line.language;
-            insert_data.send_id = file_data.aricha_id;
-            insert_data.send_uid = "";
-            insert_data.upload_type = "aricha";
-            insert_data.sha1 = file_data.original.format.sha1;
-            insert_data.size = parseInt(file_data.original.format.size, 10);
-            this.setState({filedata: {filename}, metadata:{...insert_data}});
-            getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-                console.log(":: Trimmer - got units: ", units);
-                if (units.total > 0)
-                    console.log("The file already got unit!");
-                this.setState({units});
+        // Take sha for mdb fetch
+        let sha1 = file_data.original.format.sha1;
+        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+            console.log(":: Trimmer - got units: ", units);
+            if (units.total > 0)
+                console.log("The file already got unit!");
+            this.setState({units});
+            // If we got line, we can build meta for insert
+            if (file_data.line.content_type) {
+                // Build data for insert app
+                let filename = file_data.file_name;
+                let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+                // Make insert metadata
+                let insert_data = {};
+                insert_data.insert_id = units.total > 0 ? file_data.parent.insert_id : "i"+moment().format('X');
+                insert_data.line = file_data.line;
+                insert_data.line.mime_type = "video/mp4";
+                insert_data.content_type = getDCT(file_data.line.content_type);
+                insert_data.date = date;
+                insert_data.file_name = file_data.file_name;
+                insert_data.extension = "mp4";
+                insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+                // In InsertApp upload_filename use for filename gen in OldWF
+                insert_data.line.upload_filename = insert_data.insert_name;
+                insert_data.insert_type = units.total > 0 ? "3" : "1";
+                insert_data.language = file_data.line.language;
+                insert_data.send_id = file_data.aricha_id;
+                insert_data.send_uid = "";
+                insert_data.upload_type = "aricha";
+                insert_data.sha1 = file_data.original.format.sha1;
+                insert_data.size = parseInt(file_data.original.format.size, 10);
+                this.setState({filedata: {filename}, metadata:{...insert_data}});
+            }
+            // Build url for preview
+            let url = 'http://wfserver.bbdomain.org';
+            let path = file_data.original.format.filename;
+            let source = `${url}${path}`;
+            this.setState({
+                file_data, source,
+                active: file_data.aricha_id,
+                insert_button: !renamed,
+                rename_button: wfsend,
+                send_button: !renamed,
+                kmedia_option: wfsend,
             });
-        }
-        // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
-        let path = file_data.original.format.filename;
-        let source = `${url}${path}`;
-        this.setState({
-            file_data, source,
-            active: file_data.aricha_id,
-            insert_button: !renamed,
-            rename_button: wfsend,
-            send_button: !renamed,
-            kmedia_option: wfsend,
         });
     };
 

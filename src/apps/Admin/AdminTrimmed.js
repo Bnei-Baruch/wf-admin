@@ -102,9 +102,8 @@ class AdminTrimmed extends Component {
         file_data.wfstatus.renamed = true;
         // It's indicate that rename was done in admin mode
         file_data.wfstatus.buffer = true;
+        // Following status indicate that file must be fixed
         // -->
-        // Following status indicate that file going to be fixed
-        // TODO: Next action must be fixed send
         file_data.wfstatus.fixed = false;
         file_data.wfstatus.wfsend = false;
         // <--
