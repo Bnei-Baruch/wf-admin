@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, getDCT} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, getDCT, insertName} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -17,9 +17,11 @@ class AchareyAricha extends Component {
         aricha: [],
         file_data: {},
         filedata: {},
+        fixReq: false,
         kmedia_option: false,
         metadata: {},
         input_id: "",
+        insert_mode: "1",
         ival: null,
         renaming: false,
         rename_button: true,
@@ -43,10 +45,13 @@ class AchareyAricha extends Component {
     };
 
     selectFile = (file_data) => {
+        this.setState({insert_button: true});
         console.log(":: ArichaApp - selected file: ", file_data);
         const {renamed,wfsend} = file_data.wfstatus;
+
         // Take sha for mdb fetch
         let sha1 = file_data.original.format.sha1;
+
         getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
             console.log(":: Trimmer - got units: ", units);
             if (units.total > 0)
@@ -69,10 +74,10 @@ class AchareyAricha extends Component {
                 insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
                 // In InsertApp upload_filename use for filename gen in OldWF
                 insert_data.line.upload_filename = insert_data.insert_name;
-                insert_data.insert_type = units.total > 0 ? "3" : "1";
+                insert_data.insert_type = units.total > 0 ? "3" : this.state.insert_mode;
                 insert_data.language = file_data.line.language;
                 insert_data.send_id = file_data.aricha_id;
-                insert_data.send_uid = "";
+                insert_data.send_uid = file_data.line.uid;
                 insert_data.upload_type = "aricha";
                 insert_data.sha1 = file_data.original.format.sha1;
                 insert_data.size = parseInt(file_data.original.format.size, 10);
@@ -89,6 +94,7 @@ class AchareyAricha extends Component {
                 rename_button: wfsend,
                 send_button: !renamed,
                 kmedia_option: wfsend,
+                fixReq: this.state.insert_mode !== "1",
             });
         });
     };
@@ -146,6 +152,23 @@ class AchareyAricha extends Component {
         //file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
+
+        // Check in insert if name already exist. If so, then insert must be done in update mode
+        insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
+            console.log(":: insertName - got: ",data);
+            if(data.length > 0) {
+                this.setState({insert_mode: "2", fixReq: true});
+            }
+        });
+
+        // Rename done after send to kmedia
+        if(file_data.wfstatus.kmedia) {
+            // Following status indicate that file must be fixed
+            file_data.wfstatus.fixed = false;
+            file_data.wfstatus.wfsend = false;
+            this.setState({fixReq: true});
+        }
+
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
@@ -169,15 +192,14 @@ class AchareyAricha extends Component {
         this.setState({cit_open: false, insert_open: false});
     };
 
-    setSpecial = (e, data) => {
-        console.log(":: Selected send options: ", data.value);
-        let special = data.value;
+    setSpecial = (special) => {
+        console.log(":: Selected send options: ", special);
         this.setState({special});
     };
 
     sendFile = () => {
         let {file_data,special} = this.state;
-        file_data.special = special;
+        file_data.special = this.state.fixReq ? "fix" : this.state.special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
         this.setState({ sending: true, send_button: true });
         putData(`${WFSRV_BACKEND}/workflow/send_aricha`, file_data, (cb) => {
@@ -185,8 +207,9 @@ class AchareyAricha extends Component {
             // While polling done it does not necessary
             //this.selectFile(file_data);
             if(cb.status === "ok") {
-                setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
+                setTimeout(() => this.setState({sending: false, disabled: false, fixReq: false}), 2000);
             } else {
+                setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
                 alert("Something goes wrong!");
             }
         });
@@ -293,11 +316,15 @@ class AchareyAricha extends Component {
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                <Select compact options={send_options} defaultValue='backup'
-                                        onChange={(e,data) => this.setSpecial(e,data)} />
+                                    {this.state.fixReq ? "" :
+                                        <Select compact options={send_options}
+                                                defaultValue={this.state.special}
+                                                placeholder='Send options'
+                                                onChange={(e, {value}) => this.setSpecial(value)} />}
                             </Menu.Item>
                             <Menu.Item>
-                                <Button positive icon="arrow right" disabled={this.state.send_button}
+                                <Button positive icon={this.state.fixReq ? "configure" : "arrow right"}
+                                        disabled={this.state.send_button}
                                         onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
                         </Menu.Menu>
