@@ -6,7 +6,7 @@ import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
 
-class AchareyAricha extends Component {
+class ArichaAdmin extends Component {
 
     state = {
         active: null,
@@ -17,7 +17,6 @@ class AchareyAricha extends Component {
         aricha: [],
         file_data: {},
         filedata: {},
-        fixReq: false,
         kmedia_option: false,
         metadata: {},
         input_id: "",
@@ -45,58 +44,84 @@ class AchareyAricha extends Component {
     };
 
     selectFile = (file_data) => {
-        this.setState({insert_button: true});
         console.log(":: ArichaApp - selected file: ", file_data);
-        const {renamed,wfsend} = file_data.wfstatus;
+        const {wfsend} = file_data.wfstatus;
 
-        // Take sha for mdb fetch
-        let sha1 = file_data.original.format.sha1;
-
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
-            console.log(":: Trimmer - got units: ", units);
-            if (units.total > 0)
-                console.log("The file already got unit!");
-            this.setState({units});
-            // If we got line, we can build meta for insert
-            if (file_data.line.content_type) {
-                // Build data for insert app
-                let filename = file_data.file_name;
-                let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-                // Make insert metadata
-                let insert_data = {};
-                insert_data.insert_id = units.total > 0 ? file_data.parent.insert_id : "i"+moment().format('X');
-                insert_data.line = file_data.line;
-                insert_data.line.mime_type = "video/mp4";
-                insert_data.content_type = getDCT(file_data.line.content_type);
-                insert_data.date = date;
-                insert_data.file_name = file_data.file_name;
-                insert_data.extension = "mp4";
-                insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
-                // In InsertApp upload_filename use for filename gen in OldWF
-                insert_data.line.upload_filename = insert_data.insert_name;
-                insert_data.insert_type = units.total > 0 ? "3" : this.state.insert_mode;
-                insert_data.language = file_data.line.language;
-                insert_data.send_id = file_data.aricha_id;
-                insert_data.send_uid = file_data.line.uid;
-                insert_data.upload_type = "aricha";
-                insert_data.sha1 = file_data.original.format.sha1;
-                insert_data.size = parseInt(file_data.original.format.size, 10);
-                this.setState({filedata: {filename}, metadata:{...insert_data}});
-            }
-            // Build url for preview
-            let url = 'http://wfserver.bbdomain.org';
-            let path = file_data.original.format.filename;
-            let source = `${url}${path}`;
-            this.setState({
-                file_data, source,
-                active: file_data.aricha_id,
-                insert_button: !renamed,
-                rename_button: wfsend,
-                send_button: !renamed,
-                kmedia_option: wfsend,
-                fixReq: this.state.insert_mode !== "1",
-            });
+        // Build url for preview
+        let url = 'http://wfserver.bbdomain.org';
+        let path = file_data.original.format.filename;
+        let source = `${url}${path}`;
+        this.setState({
+            file_data, source,
+            active: file_data.aricha_id,
+            rename_button: false,
+            send_button: !wfsend,
+            filedata: {filename: file_data.file_name},
+            insert_button: true
+            //kmedia_option: wfsend,
         });
+
+        // Check SHA1 in MDB
+        let sha1 = file_data.original.format.sha1;
+        let fetch_url = `http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`;
+        getUnits(fetch_url, (units) => {
+            if (units.total > 0) {
+                console.log("The SHA1 exist in MDB!", units);
+
+                // Check SHA1 in Workflow
+                insertName(sha1, "sha1", (data) => {
+                    if (data.length > 0) {
+                        console.log("The SHA1 exist in WorkFlow!", data);
+                    } else {
+                        console.log("The SHA1 exist in MDB but does NOT exist in WorkFlow!");
+                    }
+                    this.newInsertData(file_data, units, "3");
+                });
+            } else {
+
+                // Check filename in Workflow
+                insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
+                    if(data.length > 0) {
+                        console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
+                        this.newInsertData(file_data, units, "2");
+                    } else {
+                        console.log("-- Normal mode --");
+                        this.newInsertData(file_data, units, "1");
+                    }
+
+                });
+            }
+        });
+    };
+
+    newInsertData = (file_data, units, insert_mode) => {
+        if (file_data.line.content_type) {
+
+            // Build data for insert app
+            let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+
+            // Make insert metadata
+            let insert_data = {};
+            insert_data.insert_id = units.total > 0 ? file_data.parent.insert_id : "i"+moment().format('X');
+            insert_data.line = file_data.line;
+            insert_data.line.mime_type = "video/mp4";
+            insert_data.content_type = getDCT(file_data.line.content_type);
+            insert_data.date = date;
+            insert_data.file_name = file_data.file_name;
+            insert_data.extension = "mp4";
+            insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+
+            // In InsertApp upload_filename use for filename gen in OldWF
+            insert_data.line.upload_filename = insert_data.insert_name;
+            insert_data.insert_type = insert_mode;
+            insert_data.language = file_data.line.language;
+            insert_data.send_id = file_data.aricha_id;
+            insert_data.send_uid = units.total > 0 ? units.data[0].uid : "";
+            insert_data.upload_type = "aricha";
+            insert_data.sha1 = file_data.original.format.sha1;
+            insert_data.size = parseInt(file_data.original.format.size, 10);
+            this.setState({metadata:{...insert_data}, units, insert_button: false});
+        }
     };
 
     getPlayer = (player) => {
@@ -116,6 +141,7 @@ class AchareyAricha extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
+        // TODO: Does we need to check if in rename mode filename really changed?
         file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
@@ -125,6 +151,7 @@ class AchareyAricha extends Component {
             console.log(":: PUT Respond: ",cb);
         });
         insert_data.send_id = file_data.aricha_id;
+
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
@@ -153,22 +180,10 @@ class AchareyAricha extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
 
-        // Check in insert if name already exist. If so, then insert must be done in update mode
-        insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
-            console.log(":: insertName - got: ",data);
-            if(data.length > 0) {
-                this.setState({insert_mode: "2", fixReq: true});
-            }
-        });
-
-        // Rename done after send to kmedia
-        if(file_data.wfstatus.kmedia) {
-            // Following status indicate that file must be fixed
-            file_data.wfstatus.fixed = false;
+        // If rename done after send we need to do insert
+        if(file_data.wfstatus.wfsend) {
             file_data.wfstatus.wfsend = false;
-            this.setState({fixReq: true});
         }
-
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
@@ -199,7 +214,7 @@ class AchareyAricha extends Component {
 
     sendFile = () => {
         let {file_data,special} = this.state;
-        file_data.special = this.state.fixReq ? "fix" : this.state.special;
+        file_data.special = special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
         this.setState({ sending: true, send_button: true });
         putData(`${WFSRV_BACKEND}/workflow/send_aricha`, file_data, (cb) => {
@@ -207,9 +222,8 @@ class AchareyAricha extends Component {
             // While polling done it does not necessary
             //this.selectFile(file_data);
             if(cb.status === "ok") {
-                setTimeout(() => this.setState({sending: false, disabled: false, fixReq: false}), 2000);
-            } else {
                 setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
+            } else {
                 alert("Something goes wrong!");
             }
         });
@@ -217,7 +231,7 @@ class AchareyAricha extends Component {
     };
 
     setRemoved = () => {
-        let file_data = this.state.file_data;
+        let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
@@ -263,32 +277,35 @@ class AchareyAricha extends Component {
             )
         });
 
+        const {file_data, source, renaming, rename_button, cit_open, inserting, insert_button, insert_open,
+            filedata, metadata, special, send_button, sending} = this.state;
+
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                    {file_data.file_name ? file_data.file_name : ""}
                 </Label>
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
+                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
                                    size='tiny'
                                    mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
+                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
                             </Modal>
                         </Menu.Item>
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
-                                                    loading={this.state.renaming}
-                                                    disabled={this.state.rename_button}
+                                                    loading={renaming}
+                                                    disabled={rename_button}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
-                                   open={this.state.cit_open}
+                                   open={cit_open}
                                    closeIcon="close"
                                    mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content>
-                                    <CIT metadata={this.state.file_data.line}
+                                    <CIT metadata={file_data.line}
                                          onCancel={this.onCancel}
                                          onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
@@ -298,16 +315,16 @@ class AchareyAricha extends Component {
                             <Menu.Item>
                                 <Modal { ...this.props }
                                        trigger={<Button color='teal' icon='archive'
-                                                        loading={this.state.inserting}
-                                                        disabled={this.state.insert_button}
+                                                        loading={inserting}
+                                                        disabled={insert_button}
                                                         onClick={this.openInsert} />}
                                        closeOnDimmerClick={true}
                                        closeIcon={true}
                                        onClose={this.onCancel}
-                                       open={this.state.insert_open}
+                                       open={insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
+                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
@@ -316,16 +333,15 @@ class AchareyAricha extends Component {
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                    {this.state.fixReq ? "" :
-                                        <Select compact options={send_options}
-                                                defaultValue={this.state.special}
-                                                placeholder='Send options'
-                                                onChange={(e, {value}) => this.setSpecial(value)} />}
+                                    <Select compact options={send_options}
+                                            defaultValue={special}
+                                            placeholder='Send options'
+                                            onChange={(e, {value}) => this.setSpecial(value)} />
                             </Menu.Item>
                             <Menu.Item>
-                                <Button positive icon={this.state.fixReq ? "configure" : "arrow right"}
-                                        disabled={this.state.send_button}
-                                        onClick={this.sendFile} loading={this.state.sending} />
+                                <Button positive icon="arrow right"
+                                        disabled={send_button}
+                                        onClick={this.sendFile} loading={sending} />
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>
@@ -351,4 +367,4 @@ class AchareyAricha extends Component {
     }
 }
 
-export default AchareyAricha;
+export default ArichaAdmin;

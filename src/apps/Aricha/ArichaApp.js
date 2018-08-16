@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import AchareyAricha from "./AchareyAricha";
+import ArichaAdmin from "./ArichaAdmin";
 import ArichaUpload from "./ArichaUpload";
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 
@@ -21,7 +21,7 @@ class ArichaApp extends Component {
         return (
             <Fragment>
                 <ArichaUpload onFileData={this.arichaWorkflow}/>
-                <AchareyAricha user={this.props.user} />
+                <ArichaAdmin user={this.props.user} />
             </Fragment>
         );
     }
