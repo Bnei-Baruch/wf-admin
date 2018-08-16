@@ -20,14 +20,12 @@ class ArichaAdmin extends Component {
         kmedia_option: false,
         metadata: {},
         input_id: "",
-        insert_mode: "1",
         ival: null,
         renaming: false,
         rename_button: true,
         send_button: true,
         sending: false,
         special: "backup",
-        units: [],
 
     };
 
@@ -70,12 +68,16 @@ class ArichaAdmin extends Component {
 
                 // Check SHA1 in Workflow
                 insertName(sha1, "sha1", (data) => {
-                    if (data.length > 0) {
+                    if (data.length > 0 && file_data.file_name !== data[0].file_name) {
                         console.log("The SHA1 exist in WorkFlow!", data);
+                        console.log("-- Rename Insert mode --");
+                        this.newInsertData(file_data, data, "3");
+                    } else if (data.length > 0 && file_data.file_name === data[0].file_name) {
+                        console.log("-- Insert Done --");
                     } else {
                         console.log("The SHA1 exist in MDB but does NOT exist in WorkFlow!");
+                        alert("File already in MDB, but did pass WorkFlow!");
                     }
-                    this.newInsertData(file_data, units, "3");
                 });
             } else {
 
@@ -83,10 +85,11 @@ class ArichaAdmin extends Component {
                 insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
                     if(data.length > 0) {
                         console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
-                        this.newInsertData(file_data, units, "2");
+                        console.log("-- Update Insert mode --");
+                        this.newInsertData(file_data, data, "2");
                     } else {
-                        console.log("-- Normal mode --");
-                        this.newInsertData(file_data, units, "1");
+                        console.log("-- New Insert mode --");
+                        this.newInsertData(file_data, data, "1");
                     }
 
                 });
@@ -94,7 +97,7 @@ class ArichaAdmin extends Component {
         });
     };
 
-    newInsertData = (file_data, units, insert_mode) => {
+    newInsertData = (file_data, insert_old, insert_mode) => {
         if (file_data.line.content_type) {
 
             // Build data for insert app
@@ -102,7 +105,7 @@ class ArichaAdmin extends Component {
 
             // Make insert metadata
             let insert_data = {};
-            insert_data.insert_id = units.total > 0 ? file_data.parent.insert_id : "i"+moment().format('X');
+            insert_data.insert_id = insert_old.length > 0 ? insert_old[0].insert_id : "i"+moment().format('X');
             insert_data.line = file_data.line;
             insert_data.line.mime_type = "video/mp4";
             insert_data.content_type = getDCT(file_data.line.content_type);
@@ -116,11 +119,13 @@ class ArichaAdmin extends Component {
             insert_data.insert_type = insert_mode;
             insert_data.language = file_data.line.language;
             insert_data.send_id = file_data.aricha_id;
-            insert_data.send_uid = units.total > 0 ? units.data[0].uid : "";
+            insert_data.send_uid = insert_old.length > 0 ? insert_old[0].line.uid : "";
             insert_data.upload_type = "aricha";
             insert_data.sha1 = file_data.original.format.sha1;
             insert_data.size = parseInt(file_data.original.format.size, 10);
-            this.setState({metadata:{...insert_data}, units, insert_button: false});
+            this.setState({metadata:{...insert_data}, insert_button: false});
+        } else {
+            console.log("Content Type not known, rename must be done");
         }
     };
 
