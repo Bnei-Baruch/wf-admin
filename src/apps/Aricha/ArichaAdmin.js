@@ -69,6 +69,8 @@ class ArichaAdmin extends Component {
                 // Check SHA1 in Workflow
                 insertName(sha1, "sha1", (data) => {
                     if (data.length > 0 && file_data.file_name !== data[0].file_name) {
+                        file_data.line.old_name = data[0].file_name;
+                        file_data.line.fix_aricha_id = data[0].send_id;
                         console.log("The SHA1 exist in WorkFlow!", data);
                         console.log("-- Rename Insert mode --");
                         this.newInsertData(file_data, data, "3");
@@ -84,6 +86,9 @@ class ArichaAdmin extends Component {
                 // Check filename in Workflow
                 insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
                     if(data.length > 0) {
+                        file_data.line.old_sha1 = data[0].sha1;
+                        file_data.line.fix_aricha_id = data[0].send_id;
+                        file_data.line.fix_unit_uid = data[0].line.uid;
                         console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
                         console.log("-- Update Insert mode --");
                         this.newInsertData(file_data, data, "2");
@@ -119,7 +124,7 @@ class ArichaAdmin extends Component {
             insert_data.insert_type = insert_mode;
             insert_data.language = file_data.line.language;
             insert_data.send_id = file_data.aricha_id;
-            insert_data.send_uid = insert_old.length > 0 ? insert_old[0].line.uid : "";
+            insert_data.send_uid = insert_mode === "3" ? insert_old[0].line.uid : "";
             insert_data.upload_type = "aricha";
             insert_data.sha1 = file_data.original.format.sha1;
             insert_data.size = parseInt(file_data.original.format.size, 10);
@@ -146,7 +151,6 @@ class ArichaAdmin extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
-        // TODO: Does we need to check if in rename mode filename really changed?
         file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
@@ -245,7 +249,7 @@ class ArichaAdmin extends Component {
     render() {
 
         const send_options = [
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !this.state.kmedia_option },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
