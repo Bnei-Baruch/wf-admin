@@ -68,12 +68,23 @@ class CensorTrimmer extends Component {
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
                 <Menu secondary >
                     <Menu.Item>
+                        {/*<DatePicker*/}
+                            {/*className="datepickercs"*/}
+                            {/*dateFormat="YYYY-MM-DD"*/}
+                            {/*locale='he'*/}
+                            {/*maxDate={moment()}*/}
+                            {/*minDate={moment().add(-40, "days")}*/}
+                            {/*selected={this.state.startDate}*/}
+                            {/*onChange={this.changeDate}*/}
+                        {/*/>*/}
                         <DatePicker
                             className="datepickercs"
                             dateFormat="YYYY-MM-DD"
                             locale='he'
+                            showYearDropdown
+                            showMonthDropdown
+                            scrollableYearDropdown
                             maxDate={moment()}
-                            minDate={moment().add(-40, "days")}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
                         />
