@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getDCT, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -49,9 +49,8 @@ class MetusDB extends Component {
 
     selectFile = (file_data) => {
         console.log(":: MetusDB - selected file: ",file_data);
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.unix_path;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         let file_name = file_data.filename.split('.')[0];
         this.setState({file_data, search: file_data.filename, source, active: file_data.metus_id});
 
@@ -69,7 +68,7 @@ class MetusDB extends Component {
         });
 
         if(file_data.sha1 !== "") {
-            getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${file_data.sha1}`, (units) => {
+            getUnits(`${MDB_FINDSHA}/${file_data.sha1}`, (units) => {
                 console.log(":: Meuts - got units: ", units);
                 if (units.total > 0) {
                     console.log("The file already got unit!");
@@ -170,7 +169,7 @@ class MetusDB extends Component {
     getFromMetus = () => {
         let {file_data} = this.state;
         console.log(":: ArichaApp workflow from Metus: ", file_data);
-        putData(`http://wfserver.bbdomain.org:8010/workflow/aricha`, file_data, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/aricha`, file_data, (cb) => {
             console.log(":: ArichaApp workflow from Metus respond: ",cb);
         });
     };

@@ -1,6 +1,16 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getDCT, getUnits, IVAL, newTrimMeta, putData, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {
+    getData,
+    getDCT,
+    getUnits,
+    IVAL, MDB_FINDSHA,
+    newTrimMeta,
+    putData,
+    WFDB_BACKEND,
+    WFSRV_BACKEND,
+    WFWEB_SERVER
+} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -73,7 +83,7 @@ class DgimaTrimmed extends Component {
             insert_data.sha1 = file_data.original.format.sha1;
             insert_data.size = parseInt(file_data.original.format.size, 10);
             this.setState({filedata: {filename}, metadata:{...insert_data}});
-            getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+            getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
                     console.log("The file already got unit!");
@@ -81,9 +91,8 @@ class DgimaTrimmed extends Component {
             });
         }
         // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.original.format.filename;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         // Take date from string if exit
         if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
             let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
@@ -149,9 +158,8 @@ class DgimaTrimmed extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.original.format.filename;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {

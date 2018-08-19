@@ -1,15 +1,17 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
 import moment from 'moment';
 
-export const WFDB_STATE = 'http://wfdb.bbdomain.org:8000';
-export const WFRP_STATE = 'http://wfrp.bbdomain.org:8000';
-export const MDB_BACKEND = 'https://insert.kbb1.com/rest';
-export const WFDB_BACKEND = 'http://wfdb.bbdomain.org:8080';
-export const WFRP_BACKEND = 'http://wfrp.bbdomain.org:8080';
-export const WFSRV_BACKEND = 'http://wfsrv.bbdomain.org:8010';
-export const DGIMA_BACKEND = 'http://dgima.bbdomain.org:8010';
-export const CARBON1_BACKEND = 'http://wfconv1.bbdomain.org:8081';
-export const WFWEB_SERVER = 'http://wfserver.bbdomain.org';
+export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/wfdb_state';
+export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/wfrp_state';
+export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb_rest';
+export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/mdb_findsha';
+export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb_backend';
+export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp_backend';
+export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfsrv_backend';
+export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_BACKEND : '/dgima_backend';
+export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgima_server';
+export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/carbon1_backend';
+export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFWEB_SERVER : '/wfweb_server';
 export const IVAL = 1000;
 
 export const toHms = (totalSec) => {

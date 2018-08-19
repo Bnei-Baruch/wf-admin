@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {WFRP_STATE, putData} from '../../shared/tools';
+import {WFRP_STATE, putData, WFSRV_BACKEND} from '../../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBIngest from './WFDBIngest';
@@ -34,14 +34,14 @@ class WFDB extends Component {
         fetch(`${WFRP_STATE}`).then((response) => {
             return response.json().then(data => console.log(data));
         });
-        putData(`http://wfserver.bbdomain.org:8010/workflow/lock`, {req: "get"}, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/lock`, {req: "get"}, (cb) => {
             console.log(":: WFDB - workflow lock respond: ",cb);
             this.setState({ lock: cb.jsonst.val });
         });
     };
 
     setLock = () => {
-        putData(`http://wfserver.bbdomain.org:8010/workflow/lock`, {req: "set",val: !this.state.lock}, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/lock`, {req: "set",val: !this.state.lock}, (cb) => {
             console.log(":: WFDB - workflow set lock: ",cb);
             this.setState({ lock: cb.jsonst.val });
         });

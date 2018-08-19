@@ -1,5 +1,15 @@
 import React, {Component} from 'react'
-import {getData, getUnits, IVAL, putData, toHms, WFDB_BACKEND, WFSRV_BACKEND} from '../../shared/tools';
+import {
+    getData,
+    getUnits,
+    IVAL,
+    MDB_FINDSHA,
+    putData,
+    toHms,
+    WFDB_BACKEND,
+    WFSRV_BACKEND,
+    WFWEB_SERVER
+} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
@@ -25,7 +35,7 @@ class CensorTrimmed extends Component {
                     this.setState({trimmed: data})
             }), IVAL );
         this.setState({ival});
-        getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
+        getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
     };
@@ -37,12 +47,11 @@ class CensorTrimmed extends Component {
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
         const {wfsend,fixed} = file_data.wfstatus;
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         this.setState({source, active: file_data.trim_id, file_data, disabled: true});
         let sha1 = file_data.parent.original_sha1;
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+        getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             if(!wfsend && !fixed && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);
                 file_data.line.fix_unit_uid = units.data[0].uid;

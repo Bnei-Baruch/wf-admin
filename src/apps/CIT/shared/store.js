@@ -3,7 +3,7 @@ import { CONTENT_TYPE_BY_ID, CT_VIDEO_PROGRAM, EVENT_CONTENT_TYPES, LECTURE_CONT
 
 const API_BACKEND = process.env.NODE_ENV !== 'production' ?
   process.env.REACT_APP_MDB_URL :
-  'http://app.mdb.bbdomain.org/';
+  '/mdb_backend/';
 
 const Fetcher = (path, cb) => fetch(`${API_BACKEND}${path}`)
   .then((response) => {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getUnits, newTrimMeta} from '../../shared/tools';
+import {DGIMA_SERVER, getData, getUnits, MDB_FINDSHA, newTrimMeta} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -47,13 +47,12 @@ class DgimaTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        let url = 'http://dgima.bbdomain.org';
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
-        let source = `${url}${path}`;
+        let source = `${DGIMA_SERVER}${path}`;
         let trim_meta = newTrimMeta(file_data, "dgima", this.state.dgima_src);
         this.setState({source, file_data, trim_meta, disabled: false});
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+        getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
         });

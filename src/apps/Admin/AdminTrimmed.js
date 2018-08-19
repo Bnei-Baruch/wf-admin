@@ -1,6 +1,15 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND } from '../../shared/tools';
+import {
+    getData,
+    getUnits,
+    IVAL,
+    MDB_FINDSHA,
+    putData,
+    WFDB_BACKEND,
+    WFSRV_BACKEND,
+    WFWEB_SERVER
+} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -31,7 +40,7 @@ class AdminTrimmed extends Component {
                     this.setState({trimmed: data})
             }), IVAL );
         this.setState({ival});
-        getUnits('http://wfserver.bbdomain.org/trim/titles.json', (tags) => {
+        getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
     };
@@ -44,12 +53,11 @@ class AdminTrimmed extends Component {
         // When polling will be disabled here must be fetch new data
         console.log(":: Trimmed - selected file: ",file_data);
         const {wfsend,fixed,buffer} = file_data.wfstatus;
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.proxy.format.filename;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         this.setState({file_data, source, active: file_data.trim_id, disabled: true});
         let sha1 = file_data.parent.original_sha1;
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+        getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             //FIXME: Does we need disable any action if censored=true?
             if(!wfsend && !fixed && buffer && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);

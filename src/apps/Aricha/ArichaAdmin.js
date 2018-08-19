@@ -1,6 +1,16 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFDB_BACKEND, WFSRV_BACKEND, getDCT, insertName} from '../../shared/tools';
+import {
+    getData,
+    getUnits,
+    IVAL,
+    putData,
+    WFDB_BACKEND,
+    WFSRV_BACKEND,
+    getDCT,
+    insertName,
+    WFWEB_SERVER, MDB_FINDSHA
+} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -46,9 +56,8 @@ class ArichaAdmin extends Component {
         const {wfsend} = file_data.wfstatus;
 
         // Build url for preview
-        let url = 'http://wfserver.bbdomain.org';
         let path = file_data.original.format.filename;
-        let source = `${url}${path}`;
+        let source = `${WFWEB_SERVER}${path}`;
         this.setState({
             file_data, source,
             active: file_data.aricha_id,
@@ -61,7 +70,7 @@ class ArichaAdmin extends Component {
 
         // Check SHA1 in MDB
         let sha1 = file_data.original.format.sha1;
-        let fetch_url = `http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`;
+        let fetch_url = `${MDB_FINDSHA}/${sha1}`;
         getUnits(fetch_url, (units) => {
             if (units.total > 0) {
                 console.log("The SHA1 exist in MDB!", units);

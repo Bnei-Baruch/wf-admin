@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, newTrimMeta, getUnits, WFWEB_SERVER} from '../../shared/tools';
+import {getData, newTrimMeta, getUnits, WFWEB_SERVER, MDB_FINDSHA} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button, Label } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -45,7 +45,7 @@ class IngestTrimmer extends Component {
         let source = `${WFWEB_SERVER}${path}`;
         let trim_meta = newTrimMeta(file_data, "ingest", this.state.trim_src);
         this.setState({source, file_data, trim_meta, disabled: false});
-        getUnits(`http://app.mdb.bbdomain.org/operations/descendant_units/${sha1}`, (units) => {
+        getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
             this.setState({units});
         });
