@@ -38,8 +38,8 @@ class AdminTrimmer extends Component {
         this.setState({startDate: data, date: date, disabled: true});
     };
 
-    setTrimSrc = (e, data) => {
-        this.setState({trim_src: data.value, disabled: true});
+    setTrimSrc = (trim_src) => {
+        this.setState({trim_src, disabled: true, file_data: ""});
     };
 
     selectFile = (file_data) => {
@@ -90,7 +90,7 @@ class AdminTrimmer extends Component {
                             selection
                             options={options}
                             defaultValue="main"
-                            onChange={this.setTrimSrc}
+                            onChange={(e, {value}) => this.setTrimSrc(value)}
                              >
                         </Dropdown>
                     </Menu.Item>

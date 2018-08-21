@@ -13,7 +13,7 @@ class DgimaTrimmer extends Component {
         congress: [],
         insert: [],
         dgima: [],
-        file_data: {},
+        file_data: "",
         open: false,
         dgima_src: "cassette",
         date: moment().format('YYYY-MM-DD'),
@@ -42,7 +42,7 @@ class DgimaTrimmer extends Component {
     };
 
     setTrimSrc = (dgima_src) => {
-        this.setState({dgima_src, disabled: true});
+        this.setState({dgima_src, disabled: true, file_data: ""});
     };
 
     selectFile = (file_data) => {
@@ -63,12 +63,12 @@ class DgimaTrimmer extends Component {
     };
 
     onClose = () => {
-        this.setState({open: false});
+        this.setState({open: false, disabled: true, file_data: ""});
     };
 
     render() {
 
-        const {dgima_src,date,disabled,open,source,startDate,trim_meta} = this.state;
+        const {dgima_src,date,disabled,open,source,startDate,file_data,trim_meta} = this.state;
 
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
@@ -110,13 +110,15 @@ class DgimaTrimmer extends Component {
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
+                            error={disabled}
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
+                            value={file_data}
                             options={trim_data}
-                            onChange={(e, {value}) => this.selectFile(value)}
+                            onChange={(e,{value}) => this.selectFile(value)}
                             onClick={() => this.getCaptured(date)}
-                             >
+                        >
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
