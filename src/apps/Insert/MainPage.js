@@ -4,7 +4,7 @@ import moment from 'moment';
 import UploadFile from './UploadFile';
 import LoginPage from './LoginPage';
 import InsertApp from './InsertApp';
-import {insertName, insertSha, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {insertName, insertSha, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
 import './InsertApp.css';
 
 class App extends Component {
@@ -44,7 +44,7 @@ class App extends Component {
         console.log(":: Setting metadata from:", filedata);
         const {sha1,size,filename,type,url} = filedata;
         let line = {content_type: null, upload_filename: filename, mime_type: type,
-            url: `http://wfsrv.bbdomain.org/u/${url}`};
+            url: `${WFWEB_SERVER}/${url}`};
         let metadata = {sha1, size, line, content_type: "", language: null,
             send_uid: "", upload_type: "", insert_type: this.state.insert};
 
