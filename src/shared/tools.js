@@ -1,17 +1,18 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
 import moment from 'moment';
 
-export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/wfdb_state';
-export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/wfrp_state';
-export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb_rest';
-export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/mdb_findsha';
-export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb_backend';
-export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp_backend';
-export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfsrv_backend';
-export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_BACKEND : '/dgima_backend';
-export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgima_server';
-export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/carbon1_backend';
-export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFWEB_SERVER : '/wfweb_server';
+export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
+export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
+export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
+export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
+export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
+export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
+export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
+export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_BACKEND : '/dgapi';
+export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFWEB_SERVER : '/wfweb';
+export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgweb';
+export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/convert';
+
 export const IVAL = 1000;
 
 export const toHms = (totalSec) => {
