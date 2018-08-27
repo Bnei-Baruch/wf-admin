@@ -21,7 +21,7 @@ class BackupUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/backup/upload`,
+            action: `http://wfserver.bbdomain.org:8010/backup/upload`,
             type: 'drag',
             accept: '',
             beforeUpload(file) {

@@ -12,6 +12,7 @@ export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env
 export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFWEB_SERVER : '/wfweb';
 export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgweb';
 export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/convert';
+export const CARBON1_STATUS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_STATUS : '/carbon';
 
 export const IVAL = 1000;
 
@@ -105,7 +106,7 @@ export const getState = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
     .catch(ex => console.log(`get ${path}`, ex));
 
 export const getStatus = (ep, cb) => {
-    let url = ep === "carbon" ? CARBON1_BACKEND : WFSRV_BACKEND;
+    let url = ep === "carbon" ? CARBON1_STATUS : WFSRV_BACKEND;
     fetch(`${url}/${ep}/status`)
         .then((response) => {
             if (response.ok) {
