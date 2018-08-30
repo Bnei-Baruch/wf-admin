@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Label,Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {WFSRV_URL} from "../../shared/tools";
+//import {WFSRV_BACKEND} from "../../shared/tools";
 
 class BackupUpload extends Component {
 
@@ -21,7 +22,7 @@ class BackupUpload extends Component {
     render() {
 
         const props = {
-            action: `http://wfserver.bbdomain.org:8010/backup/upload`,
+            action: `${WFSRV_URL}/backup/upload`,
             type: 'drag',
             accept: '',
             beforeUpload(file) {

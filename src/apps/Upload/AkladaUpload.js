@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Label,Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {WFSRV_URL} from "../../shared/tools";
+//import {WFSRV_BACKEND} from "../../shared/tools";
 
 class AkladaUpload extends Component {
 
@@ -21,7 +22,7 @@ class AkladaUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/aklada/upload`,
+            action: `${WFSRV_URL}/aklada/upload`,
             type: 'drag',
             accept: '.mp4, .mp3',
             beforeUpload(file) {
