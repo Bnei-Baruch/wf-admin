@@ -9,7 +9,7 @@ import {
     WFSRV_BACKEND,
     getDCT,
     insertName,
-    WFWEB_SERVER, MDB_FINDSHA
+    WFWEB_SERVER, MDB_FINDSHA, CARBON2_BACKEND
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -210,7 +210,7 @@ class ArichaAdmin extends Component {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
                 this.selectFile(file_data);
                 // Make proxy
-                fetch(`http://10.66.1.121:8081/convert?id=${file_data.aricha_id}&key=proxy`);
+                fetch(`${CARBON2_BACKEND}/convert?id=${file_data.aricha_id}&key=proxy`);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }

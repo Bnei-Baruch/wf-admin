@@ -13,6 +13,8 @@ export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.
 export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgweb';
 export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/convert';
 export const CARBON1_STATUS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_STATUS : '/carbon';
+export const CARBON2_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/qsvconv';
+export const CARBON2_STATUS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_STATUS : '/carbon';
 export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
 
 export const IVAL = 1000;
