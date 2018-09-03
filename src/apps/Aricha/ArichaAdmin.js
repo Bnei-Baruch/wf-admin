@@ -9,7 +9,7 @@ import {
     WFSRV_BACKEND,
     getDCT,
     insertName,
-    WFWEB_SERVER, MDB_FINDSHA, CARBON2_BACKEND
+    MDB_FINDSHA
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -57,7 +57,7 @@ class ArichaAdmin extends Component {
 
         // Build url for preview
         let path = file_data.original.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         this.setState({
             file_data, source,
             active: file_data.aricha_id,
@@ -210,7 +210,7 @@ class ArichaAdmin extends Component {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
                 this.selectFile(file_data);
                 // Make proxy
-                fetch(`${CARBON2_BACKEND}/convert?id=${file_data.aricha_id}&key=proxy`);
+                //fetch(`${CARBON2_BACKEND}/convert?id=${file_data.aricha_id}&key=proxy`);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }
@@ -275,7 +275,7 @@ class ArichaAdmin extends Component {
             }
             const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
             let id = data.aricha_id;
-            let ready = data.original;
+            let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;

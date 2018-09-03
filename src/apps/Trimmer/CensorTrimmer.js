@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, newTrimMeta, getUnits, WFWEB_SERVER, MDB_FINDSHA} from '../../shared/tools';
+import {getData, newTrimMeta, getUnits, MDB_FINDSHA, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
@@ -35,7 +35,7 @@ class CensorTrimmer extends Component {
         console.log(":: Select file: ",file_data);
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         let trim_meta = newTrimMeta(file_data, "censor", this.state.trim_src);
         this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {

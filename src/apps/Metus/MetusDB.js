@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
+import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
@@ -50,7 +50,7 @@ class MetusDB extends Component {
     selectFile = (file_data) => {
         console.log(":: MetusDB - selected file: ",file_data);
         let path = file_data.unix_path;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         let file_name = file_data.filename.split('.')[0];
         this.setState({file_data, search: file_data.filename, source, active: file_data.metus_id});
 

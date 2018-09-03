@@ -8,8 +8,7 @@ import {
     newTrimMeta,
     putData,
     WFDB_BACKEND,
-    WFSRV_BACKEND,
-    WFWEB_SERVER
+    WFSRV_BACKEND
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -92,7 +91,7 @@ class DgimaTrimmed extends Component {
         }
         // Build url for preview
         let path = file_data.original.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         // Take date from string if exit
         if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
             let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
@@ -159,7 +158,7 @@ class DgimaTrimmed extends Component {
         file_data.wfstatus.renamed = true;
         // Build url for preview
         let path = file_data.original.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {

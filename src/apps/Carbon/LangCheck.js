@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getState, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
+import {getState, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
 import LangSelector from "../../components/LangSelector";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -44,7 +44,7 @@ class LangCheck extends Component {
         const {file_name,lang_data} = this.state;
         let ot = lang_data.language === lang ? "o" : "t";
         let name = lang + '_' + ot + file_name.substring(5) + '.mp3';
-        let url = `${WFWEB_SERVER}/backup/tmp/carbon`;
+        let url = `${WFSRV_BACKEND}/backup/tmp/carbon`;
         let source = `${url}/${name}`;
         this.state.player.setSrc(source);
         this.state.player.play();

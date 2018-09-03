@@ -7,8 +7,7 @@ import {
     MDB_FINDSHA,
     putData,
     WFDB_BACKEND,
-    WFSRV_BACKEND,
-    WFWEB_SERVER
+    WFSRV_BACKEND
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -54,7 +53,7 @@ class AdminTrimmed extends Component {
         console.log(":: Trimmed - selected file: ",file_data);
         const {wfsend,fixed,buffer} = file_data.wfstatus;
         let path = file_data.proxy.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         this.setState({file_data, source, active: file_data.trim_id, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {

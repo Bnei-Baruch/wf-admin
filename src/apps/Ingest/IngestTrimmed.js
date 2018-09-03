@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFSRV_BACKEND, WFWEB_SERVER} from '../../shared/tools';
+import {getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -39,7 +39,7 @@ class IngestTrimmed extends Component {
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
         let path = file_data.proxy.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         let active = file_data.trim_id;
         const {wfsend,censored} = file_data.wfstatus;
         let disabled = wfsend || censored;
@@ -71,7 +71,7 @@ class IngestTrimmed extends Component {
         file_data.wfstatus.renamed = true;
         // Build url for preview
         let path = file_data.proxy.format.filename;
-        let source = `${WFWEB_SERVER}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({open: false, disabled: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
