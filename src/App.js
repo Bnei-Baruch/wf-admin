@@ -17,7 +17,6 @@ import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
 import {getState} from "./shared/tools";
-// import MetusApp from "./apps/Metus/MetusApp";
 import UploadApp from "./apps/Upload/UploadApp";
 
 class App extends Component {
@@ -25,8 +24,6 @@ class App extends Component {
     state = {
         count: 0,
         user: null,
-        disabled: true,
-        loading: true,
         wf_ingest: true,
         wf_censor: true,
         wf_admin: true,
@@ -34,12 +31,9 @@ class App extends Component {
         wf_dgima: true,
         wf_insert: true,
         wf_public: true,
-
     };
 
     componentDidMount() {
-        // FIXME: hack solution
-        setTimeout(() => this.setState({ loading: false }), 1000);
         getUser(cb => {
             if(cb) {
                 this.checkPermission(cb);
@@ -83,35 +77,34 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert} = this.state;
-      let login = (<LoginPage user={this.state.user} loading={this.state.loading} />);
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,user} = this.state;
+
+      let login = (<LoginPage user={user} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
 
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
           { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={this.state.user} admin={this.state.wf_admin}/></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={user} admin={wf_admin}/></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><IngestApp user={this.state.user} admin={this.state.wf_admin} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><IngestApp user={user} admin={wf_admin} /></Tab.Pane> },
           { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
-              render: () => <Tab.Pane attached={false} ><CensorApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><CensorApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><AdminApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_public },
-              render: () => <Tab.Pane attached={false} ><MonitorApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
-              render: () => <Tab.Pane attached={false} ><ArichaApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
-              render: () => <Tab.Pane attached={false} ><DgimaApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><DgimaApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
-              render: () => <Tab.Pane attached={false} ><MainPage user={this.state.user} /></Tab.Pane> },
-          // { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
-          //     render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
           { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_public },
-              render: () => <Tab.Pane attached={false} ><UploadApp user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><UploadApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><WFDB user={this.state.user} /></Tab.Pane> },
+              render: () => <Tab.Pane attached={false} ><WFDB user={user} /></Tab.Pane> },
       ];
 
     return (

@@ -5,7 +5,13 @@ import logo from './KL_Tree_128.png';
 
 class LoginPage extends Component {
 
+    state = {
+        disabled: false,
+        loading: false,
+    };
+
     getUser = () => {
+        this.setState({disabled: true, loading: true});
         client.getUser().then(function(user) {
             (user === null) ? client.signinRedirect({state: `${BASE_URL}`}) : console.log(":: What just happend?");
         }).catch(function(error) {
@@ -15,7 +21,9 @@ class LoginPage extends Component {
 
     render() {
 
-        let login = (<Button size='massive' primary onClick={this.getUser} {...this.props} disabled={this.props.loading} >Login</Button>);
+        const {disabled, loading} = this.state;
+
+        let login = (<Button size='massive' primary onClick={this.getUser} disabled={disabled} loading={loading}>Login</Button>);
         let logout = (<Image src={logo} centered />);
         let profile = (
             <Dropdown inline text=''>
