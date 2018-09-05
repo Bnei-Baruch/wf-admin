@@ -11,7 +11,7 @@ class MonitorConvert extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getStatus("carbon", (data) => {
+            getStatus("convert", (data) => {
                 let convert = JSON.parse(data.stdout);
                 convert.splice(0,1);
                 if (JSON.stringify(this.state.convert) !== JSON.stringify(data)) {

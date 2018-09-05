@@ -9,12 +9,9 @@ export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
 export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_BACKEND : '/dgapi';
-export const WFWEB_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFWEB_SERVER : '/wfweb';
 export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgweb';
-export const CARBON1_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/convert';
-export const CARBON1_STATUS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_STATUS : '/carbon';
-export const CARBON2_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_BACKEND : '/qsvconv';
-export const CARBON2_STATUS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CARBON1_STATUS : '/carbon';
+export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
+export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
 
 export const IVAL = 1000;
@@ -109,7 +106,7 @@ export const getState = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
     .catch(ex => console.log(`get ${path}`, ex));
 
 export const getStatus = (ep, cb) => {
-    let url = ep === "carbon" ? CARBON1_STATUS : WFSRV_BACKEND;
+    let url = ep === "convert" ? CNV_BACKEND : WFSRV_BACKEND;
     fetch(`${url}/${ep}/status`)
         .then((response) => {
             if (response.ok) {

@@ -41,6 +41,7 @@ class App extends Component {
     };
 
     setMetaData = (filedata) => {
+        filedata.filename = filedata.file_name;
         console.log(":: Setting metadata from:", filedata);
         const {sha1,size,filename,type,url} = filedata;
         let line = {content_type: null, upload_filename: filename, mime_type: type,
