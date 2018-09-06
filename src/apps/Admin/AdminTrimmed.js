@@ -154,10 +154,10 @@ class AdminTrimmed extends Component {
         this.setState({ sending: true, disabled: true });
         putData(`${WFSRV_BACKEND}/workflow/send_admin`, file_data, (cb) => {
             console.log(":: Admin - send respond: ",cb);
-            // While polling done it does not necessary
-            //this.selectFile(file_data);
+            //TODO: We need get here changed event from backend
             if(cb.status === "ok") {
-                setTimeout(() => this.setState({sending: false, disabled: false, fixReq: false}), 2000);
+                file_data.wfstatus[file_data.special] = true;
+                setTimeout(() => this.setState({file_data, sending: false, disabled: false, fixReq: false}), 2000);
             } else {
                 setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
                 alert("Something goes wrong!");
