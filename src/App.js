@@ -35,17 +35,7 @@ class App extends Component {
 
     componentDidMount() {
         getUser(cb => {
-            if(cb) {
-                this.checkPermission(cb);
-            }
-        });
-        client.signinRedirectCallback().then(function(user) {
-            console.log(":: callback", user);
-            if(user.state) {
-                window.location = user.state;
-            }
-        }).catch(function(err) {
-            //console.log("callback error",err);
+            if(cb) this.checkPermission(cb);
         });
     };
 
@@ -57,7 +47,6 @@ class App extends Component {
         let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
         let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
-        console.log(":: App - got user: ", user);
         if(!wf_public) {
             this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert});
             setInterval(() => getState('state/langcheck', (data) => {

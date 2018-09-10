@@ -6,8 +6,17 @@ import logo from './KL_Tree_128.png';
 class LoginPage extends Component {
 
     state = {
-        disabled: false,
-        loading: false,
+        disabled: true,
+        loading: true,
+    };
+
+    componentDidMount() {
+        setTimeout(() => this.setState({disabled: false, loading: false}), 1000);
+        client.signinRedirectCallback().then(function(user) {
+            if(user.state) window.location = user.state;
+        }).catch(function(err) {
+            //console.log("callback error",err);
+        });
     };
 
     getUser = () => {
