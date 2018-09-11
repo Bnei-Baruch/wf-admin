@@ -132,7 +132,7 @@ class IngestTrimmed extends Component {
         let l = (<Loader size='mini' active inline />);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,renamed,buffer,removed,wfsend,censored} = data.wfstatus;
+            const {locked,trimmed,renamed,buffer,removed,wfsend,censored} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -141,7 +141,7 @@ class IngestTrimmed extends Component {
             let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    positive={wfsend} warning={!trimmed} disabled={!trimmed}
+                    positive={wfsend} warning={!trimmed} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>

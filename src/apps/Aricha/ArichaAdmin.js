@@ -273,7 +273,7 @@ class ArichaAdmin extends Component {
             if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
                 return false;
             }
-            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked} = data.wfstatus;
+            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,locked} = data.wfstatus;
             let id = data.aricha_id;
             let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -283,7 +283,7 @@ class ArichaAdmin extends Component {
             let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready}
+                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
