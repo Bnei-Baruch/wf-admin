@@ -180,6 +180,7 @@ class AdminTrimmed extends Component {
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon color='blue' name='copyright'/>);
         let f = (<Icon color='blue' name='configure'/>);
+        let d = (<Icon color='blue' name='lock'/>);
 
         const send_options = [
             { key: 'backup', text: 'Backup', value: 'backup' },
@@ -203,7 +204,7 @@ class AdminTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)} >
-                    <Table.Cell>{censored && trimmed ? c : ""}{fixed ? f : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored && trimmed ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>

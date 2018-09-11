@@ -46,6 +46,7 @@ class WFDBDgima extends Component {
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
+        let d = (<Icon color='blue' name='lock'/>);
         let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
         let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
             <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
@@ -61,7 +62,7 @@ class WFDBDgima extends Component {
 
         let dgima_data = this.state.dgima.map((data) => {
             let id = data.dgima_id;
-            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed} = data.wfstatus;
+            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked} = data.wfstatus;
             let name = data.file_name;
             let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -76,7 +77,7 @@ class WFDBDgima extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
-                    <Table.Cell>{censor}{name}</Table.Cell>
+                    <Table.Cell>{censor}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{removed ? v : x}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>

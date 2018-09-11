@@ -130,6 +130,7 @@ class IngestTrimmed extends Component {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
+        let d = (<Icon color='blue' name='lock'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
             const {locked,trimmed,renamed,buffer,removed,wfsend,censored} = data.wfstatus;
@@ -143,7 +144,7 @@ class IngestTrimmed extends Component {
                 <Table.Row
                     positive={wfsend} warning={!trimmed} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{name}</Table.Cell>
+                    <Table.Cell>{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>

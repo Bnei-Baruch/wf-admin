@@ -303,6 +303,7 @@ class DgimaTrimmed extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
+        let d = (<Icon color='blue' name='lock'/>);
 
         let dgima_data = dgima.map((data) => {
             const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked} = data.wfstatus;
@@ -316,7 +317,7 @@ class DgimaTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>

@@ -268,6 +268,7 @@ class ArichaAdmin extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
+        let d = (<Icon color='blue' name='lock'/>);
 
         let aricha = this.state.aricha.map((data) => {
             if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
@@ -285,7 +286,7 @@ class ArichaAdmin extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
