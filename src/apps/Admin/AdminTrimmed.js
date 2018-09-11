@@ -191,7 +191,7 @@ class AdminTrimmed extends Component {
         ];
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,backup,kmedia,metus,removed,wfsend,censored,checked,fixed} = data.wfstatus;
+            const {trimmed,backup,kmedia,metus,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -201,7 +201,7 @@ class AdminTrimmed extends Component {
             let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={wfsend} disabled={!trimmed}
+                    negative={rowcolor} positive={wfsend} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)} >
                     <Table.Cell>{censored && trimmed ? c : ""}{fixed ? f : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
