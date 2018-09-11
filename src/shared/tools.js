@@ -202,7 +202,8 @@ export const newTrimMeta = (data, mode, source) => {
             backup: false,
             metus: false,
             censored: censored,
-            secured: secured
+            secured: secured,
+            locked: false
         }
     };
 
