@@ -45,7 +45,7 @@ class App extends Component {
         console.log(":: Setting metadata from:", filedata);
         const {sha1,size,filename,type,url} = filedata;
         let line = {content_type: null, upload_filename: filename, mime_type: type,
-            url: `${WFSRV_BACKEND}/${url}`};
+            url: window.location.href`${url}`};
         let metadata = {sha1, size, line, content_type: "", language: null,
             send_uid: "", upload_type: "", insert_type: this.state.insert};
 

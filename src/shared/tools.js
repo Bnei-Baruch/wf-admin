@@ -8,8 +8,6 @@ export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.R
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
-export const DGIMA_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_BACKEND : '/dgapi';
-export const DGIMA_SERVER = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_DGIMA_SERVER : '/dgweb';
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';

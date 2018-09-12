@@ -3,7 +3,7 @@ import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
-import {DGIMA_BACKEND, getState, putData, WFDB_STATE, WFSRV_BACKEND} from "../../shared/tools";
+import {getState, putData, WFDB_STATE, WFSRV_BACKEND} from "../../shared/tools";
 
 export default class TrimmerApp extends Component {
 
@@ -36,8 +36,7 @@ export default class TrimmerApp extends Component {
         this.setState({ioValid: false, loading: true});
         setTimeout(() => { this.props.closeModal() }, 2000);
         if(this.state.lelomikud) trim_meta.line.artifact_type = "LELO_MIKUD";
-        let BACKEND = trim_meta.parent.source.match(/^(main|backup|trimmed)$/) ? WFSRV_BACKEND : DGIMA_BACKEND;
-        putData(`${BACKEND}/workflow/trim`, trim_meta, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/trim`, trim_meta, (cb) => {
             console.log(":: Trimmer - trim respond: ",cb);
             if(cb.status !== "ok") {
                 alert("Trimmer: Something goes wrong!");
