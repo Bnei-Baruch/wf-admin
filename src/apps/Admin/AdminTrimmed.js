@@ -207,7 +207,7 @@ class AdminTrimmed extends Component {
                     <Table.Cell>{censored && trimmed ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup} warning={backup}>{backup ? v : x}</Table.Cell>
-                    <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia  ? v : x}</Table.Cell>
+                    <Table.Cell negative={!kmedia} warning={kmedia}>{kmedia ? v : x}</Table.Cell>
                     <Table.Cell negative={!metus} warning={metus}>{metus  ? v : x}</Table.Cell>
                 </Table.Row>
             )
