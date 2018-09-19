@@ -8,6 +8,7 @@ class Trimmer extends Component {
     state = {
         trimmer: [],
         wfstatus: {},
+        line: {},
     };
 
     componentDidMount() {
@@ -34,6 +35,16 @@ class Trimmer extends Component {
     getStatus = (data) => {
         console.log(":: Got status: ",data);
         this.setState({wfstatus: {...data.wfstatus}, id: data.trim_id})
+    };
+
+    getLine = (data) => {
+        console.log(":: Got status: ",data);
+        this.setState({line: {...data.line}, value: data.line.week_date})
+    };
+
+    setDate = () => {
+        console.log(":: Set Week Date: ",this.state.value);
+        //this.setState({line: {...data.line}, value: data.line.week_date})
     };
 
     toggle = (data) => {
@@ -67,6 +78,11 @@ class Trimmer extends Component {
             <Checkbox label='Secured' onClick={() => this.toggle("secured")} checked={this.state.wfstatus.secured} /><br />
             <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
 
+        let week_date = (<div className='ui mini action input'>
+            <input type='text' value={this.state.value} onChange={e => this.setState({value: e.target.value})}/>
+            <button className='ui button' role='button' onClick={this.setDate}>Save</button>
+        </div>);
+
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked} = data.wfstatus;
@@ -83,7 +99,14 @@ class Trimmer extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
-                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Popup
+                        trigger={<Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>}
+                        on='click'
+                        hideOnScroll
+                        onOpen={() => this.getLine(data)}
+                        mountNode={document.getElementById("ltr-modal-mount")}>
+                        {this.props.wf_root ? week_date : ""}
+                    </Popup>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
                     <Table.Cell warning={renamed}>{renamed ? v : x}</Table.Cell>
