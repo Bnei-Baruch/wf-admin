@@ -81,6 +81,18 @@ export const putData = (path, data, cb) => fetch(`${path}`, {
     })
     .catch(ex => console.log("Put Data error:", ex));
 
+export const postData = (path, data, cb) => fetch(`${path}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:  JSON.stringify(data)
+})
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(respond => cb(respond));
+        }
+    })
+    .catch(ex => console.log("Put Data error:", ex));
+
 export const removeData = (path, cb) => fetch(`${path}`, {
     method: 'DELETE',
     headers: {'Content-Type': 'application/json'},

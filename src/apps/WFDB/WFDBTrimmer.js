@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { getData, WFDB_BACKEND } from '../../shared/tools';
-import { Icon, Table, Container, Loader, Popup, Checkbox } from 'semantic-ui-react'
+import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
+import { Icon, Table, Container, Loader, Popup, Checkbox, Input, Button } from 'semantic-ui-react'
 
 class Trimmer extends Component {
 
@@ -39,12 +39,16 @@ class Trimmer extends Component {
 
     getLine = (data) => {
         console.log(":: Got status: ",data);
-        this.setState({line: {...data.line}, value: data.line.week_date})
+        this.setState({line: {...data.line}, id: data.trim_id, value: data.line.week_date})
     };
 
     setDate = () => {
-        console.log(":: Set Week Date: ",this.state.value);
-        //this.setState({line: {...data.line}, value: data.line.week_date})
+        let {line, id, value} = this.state;
+        line.week_date = value;
+        console.log(":: Save Line: ",line);
+        postData(`${WFDB_BACKEND}/trimmer/${id}/line`, line, (cb) => {
+            console.log(":: POST Line in WFDB: ",cb);
+        });
     };
 
     toggle = (data) => {
@@ -79,8 +83,8 @@ class Trimmer extends Component {
             <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
 
         let week_date = (<div className='ui mini action input'>
-            <input type='text' value={this.state.value} onChange={e => this.setState({value: e.target.value})}/>
-            <button className='ui button' role='button' onClick={this.setDate}>Save</button>
+            <Input type='text' value={this.state.value} onChange={e => this.setState({value: e.target.value})}/>
+            <Button className='ui button' role='button' onClick={this.setDate}>Save</Button>
         </div>);
 
         let trimmer_data = this.state.trimmer.map((data) => {
