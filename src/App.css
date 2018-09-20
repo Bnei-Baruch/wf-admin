@@ -106,6 +106,10 @@ body {
     width: 600px!important;
 }
 
+.input_line {
+    width: 120px;
+}
+
 .admin_table {
     cursor: pointer!important;
 }

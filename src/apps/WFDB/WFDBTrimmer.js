@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
-import { Icon, Table, Container, Loader, Popup, Checkbox, Input, Button } from 'semantic-ui-react'
+import { Icon, Table, Container, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class Trimmer extends Component {
 
@@ -42,7 +42,7 @@ class Trimmer extends Component {
         this.setState({line: {...data.line}, id: data.trim_id, value: data.line.week_date})
     };
 
-    setDate = () => {
+    setLine = () => {
         let {line, id, value} = this.state;
         line.week_date = value;
         console.log(":: Save Line: ",line);
@@ -67,8 +67,12 @@ class Trimmer extends Component {
         let l = (<Loader size='mini' active inline />);
         let d = (<Icon color='blue' name='lock'/>);
 
-        let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
-        let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
+        let admin = (
+            <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />
+        );
+
+        let root =(
+            <div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
             <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
             <Checkbox label='Checked' onClick={() => this.toggle("checked")} checked={this.state.wfstatus.checked} /><br />
             <Checkbox label='Censored' onClick={() => this.toggle("censored")} checked={this.state.wfstatus.censored} /><br />
@@ -80,12 +84,15 @@ class Trimmer extends Component {
             <Checkbox label='Renamed' onClick={() => this.toggle("renamed")} checked={this.state.wfstatus.renamed} /><br />
             <Checkbox label='Locked' onClick={() => this.toggle("locked")} checked={this.state.wfstatus.locked} /><br />
             <Checkbox label='Secured' onClick={() => this.toggle("secured")} checked={this.state.wfstatus.secured} /><br />
-            <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
+            <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>
+        );
 
-        let week_date = (<div className='ui mini action input'>
-            <Input type='text' value={this.state.value} onChange={e => this.setState({value: e.target.value})}/>
-            <Button className='ui button' role='button' onClick={this.setDate}>Save</Button>
-        </div>);
+        let week_date = (
+            <Input type='text' labelPosition='left' action
+                   value={this.state.value} onChange={e => this.setState({value: e.target.value})}>
+                <Label basic>Date:</Label><input className='input_line' />
+            <Button role='button' onClick={this.setLine} disabled={!this.state.value}>Save</Button></Input>
+        );
 
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
