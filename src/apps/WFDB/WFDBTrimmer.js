@@ -66,6 +66,7 @@ class Trimmer extends Component {
         let f = (<Icon color='blue' name='configure'/>);
         let l = (<Loader size='mini' active inline />);
         let d = (<Icon color='blue' name='lock'/>);
+        let s = (<Icon color='red' name='key'/>);
 
         let admin = (
             <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />
@@ -96,7 +97,7 @@ class Trimmer extends Component {
 
         let trimmer_data = this.state.trimmer.map((data) => {
             let id = data.trim_id;
-            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked} = data.wfstatus;
+            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let rowcolor = censored && !checked;
@@ -111,7 +112,7 @@ class Trimmer extends Component {
                         {this.props.wf_root ? root : admin}
                     </Popup>
                     <Popup
-                        trigger={<Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>}
+                        trigger={<Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>}
                         on='click'
                         hideOnScroll
                         onOpen={() => this.getLine(data)}

@@ -31,8 +31,10 @@ class WFDBIngest extends Component {
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
+        let d = (<Icon color='blue' name='lock'/>);
+        let s = (<Icon color='red' name='key'/>);
         let ingest_data = this.state.ingest.map((data) => {
-            const {capwf,trimmed} = data.wfstatus;
+            const {capwf,trimmed,locked,secured} = data.wfstatus;
             let id = data.capture_id;
             let time = data.start_name.split("_")[1];
             let name = data.stop_name || "recording...";
@@ -42,7 +44,7 @@ class WFDBIngest extends Component {
                 <Table.Row key={id} positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
                     <Table.Cell>{id}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{stop_name}</Table.Cell>
+                    <Table.Cell>{secured ? s : ""}{locked ? d : ""}{stop_name}</Table.Cell>
                     <Table.Cell>{capture_src}</Table.Cell>
                     <Table.Cell>{trimmed ? v : x}</Table.Cell>
                 </Table.Row>

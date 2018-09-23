@@ -131,9 +131,10 @@ class IngestTrimmed extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let d = (<Icon color='blue' name='lock'/>);
+        let s = (<Icon color='red' name='key'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {locked,trimmed,renamed,buffer,removed,wfsend,censored} = data.wfstatus;
+            const {trimmed,renamed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -144,7 +145,7 @@ class IngestTrimmed extends Component {
                 <Table.Row
                     positive={wfsend} warning={!trimmed} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{secured ? s : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>

@@ -120,9 +120,12 @@ class CensorTrimmed extends Component {
 
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
+        let f = (<Icon color='blue' name='configure'/>);
+        let d = (<Icon color='blue' name='lock'/>);
+        let s = (<Icon color='red' name='key'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,kmedia,buffer,censored,checked} = data.wfstatus;
+            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
@@ -132,9 +135,14 @@ class CensorTrimmed extends Component {
             let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed}
+                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored && trimmed ? c : ""}{name}</Table.Cell>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored && trimmed ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                 </Table.Row>
             )
