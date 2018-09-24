@@ -24,12 +24,13 @@ class AdminTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`ingest/find?key=date&value=${date}`, (data) => {
-            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf);
-            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/) && b.wfstatus.capwf);
+            let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
+            let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcup)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             this.setState({main, backup});
         });
         getData(`trimmer/find?key=date&value=${date}`, (data) => {
-            this.setState({trimmed: data});
+            let trimmed = data.filter(t => !t.wfstatus.locked);
+            this.setState({trimmed});
         });
     };
 

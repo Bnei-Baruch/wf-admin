@@ -22,7 +22,8 @@ class CensorTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`trimmer/find?key=date&value=${date}`, (data) => {
-            this.setState({trimmed: data});
+            let trimmed = data.filter(t => !t.wfstatus.locked);
+            this.setState({trimmed});
         });
     };
 
