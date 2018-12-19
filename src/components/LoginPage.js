@@ -14,7 +14,7 @@ class LoginPage extends Component {
         setTimeout(() => this.setState({disabled: false, loading: false}), 1000);
         client.signinRedirectCallback().then(function(user) {
             if(user.state) window.location = user.state;
-        }).catch(function(err) {
+        }).catch(function(err)  {
             //console.log("callback error",err);
         });
     };

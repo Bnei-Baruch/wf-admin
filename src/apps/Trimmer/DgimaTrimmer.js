@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
-import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
+import {Menu, Segment, Modal, Dropdown, Button, Input} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
 class DgimaTrimmer extends Component {
@@ -13,6 +13,8 @@ class DgimaTrimmer extends Component {
         congress: [],
         insert: [],
         dgima: [],
+        search: [],
+        cassette_id: null,
         file_data: "",
         open: false,
         dgima_src: "cassette",
@@ -45,6 +47,11 @@ class DgimaTrimmer extends Component {
         this.setState({dgima_src, disabled: true, file_data: ""});
     };
 
+    setSearchValue = (cassette_id) => {
+        console.log(":: Selected value options: ", cassette_id);
+        this.setState({cassette_id, disabled: cassette_id.length === 0});
+    };
+
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
@@ -59,7 +66,18 @@ class DgimaTrimmer extends Component {
     };
 
     sendToTrim = () => {
-        this.setState({open: true});
+        let {cassette_id} = this.state;
+        if(cassette_id) {
+            getData(`capture/find?key=stop_name&value=${cassette_id}`, (data) => {
+                if(data.length > 0) {
+                    this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
+                    this.selectFile(data[0]);
+                    this.setState({open: true});
+                }
+            });
+        } else {
+            this.setState({open: true});
+        }
     };
 
     onClose = () => {
@@ -74,6 +92,7 @@ class DgimaTrimmer extends Component {
             { key: 1, text: 'Cassete', value: 'cassette' },
             { key: 2, text: 'Congress', value: 'congress' },
             { key: 3, text: 'Dgima', value: 'insert' },
+            { key: 4, text: 'Search', value: 'search' },
         ];
 
         let trim_data = this.state[dgima_src].map((data) => {
@@ -108,18 +127,21 @@ class DgimaTrimmer extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item>
-                        <Dropdown
-                            className="trim_files_dropdown"
-                            error={disabled}
-                            scrolling={false}
-                            placeholder="Select File To Trim:"
-                            selection
-                            value={file_data}
-                            options={trim_data}
-                            onChange={(e,{value}) => this.selectFile(value)}
-                            onClick={() => this.getCaptured(date)}
-                        >
-                        </Dropdown>
+                        {dgima_src === "search" ?
+                            <Input type='text' placeholder='Search...'
+                                   onChange={e => this.setSearchValue(e.target.value)} />
+                            :
+                            <Dropdown
+                                className="trim_files_dropdown"
+                                error={disabled}
+                                scrolling={false}
+                                placeholder="Select File To Trim:"
+                                selection
+                                value={file_data}
+                                options={trim_data}
+                                onChange={(e, {value}) => this.selectFile(value)}
+                                onClick={() => this.getCaptured(date)} />
+                        }
                     </Menu.Item>
                     <Menu.Item>
                         <Button primary disabled={disabled}
