@@ -35,7 +35,7 @@ class DgimaTrimmed extends Component {
         rename_button: true,
         send_button: true,
         sending: false,
-        special: "backup",
+        special: "buffer",
         units: [],
 
     };
@@ -97,14 +97,25 @@ class DgimaTrimmed extends Component {
             let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
             file_data.line = {...file_data.line, capture_date: string_date};
         }
-        this.setState({
-            file_data, source,
-            actived: file_data.dgima_id,
-            insert_button: !renamed || wfsend,
-            rename_button: wfsend,
-            send_button: !renamed,
-            kmedia_option: wfsend,
-        });
+        if(file_data.parent.source === "cassette") {
+            this.setState({
+                file_data, source,
+                actived: file_data.dgima_id,
+                insert_button: !renamed || wfsend,
+                rename_button: wfsend,
+                send_button: false,
+                kmedia_option: wfsend,
+            });
+        } else {
+            this.setState({
+                file_data, source,
+                actived: file_data.dgima_id,
+                insert_button: !renamed || wfsend,
+                rename_button: wfsend,
+                send_button: !renamed,
+                kmedia_option: wfsend,
+            });
+        }
     };
 
     getPlayer = (player) => {
@@ -287,7 +298,7 @@ class DgimaTrimmed extends Component {
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
-            { key: 'youtube', text: 'Youtube', value: 'youtube' },
+            // { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
         ];
@@ -380,7 +391,7 @@ class DgimaTrimmed extends Component {
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                <Select compact options={send_options} defaultValue='backup'
+                                <Select compact options={send_options} defaultValue='buffer'
                                         onChange={(e,{value}) => this.setSpecial(value)} />
                             </Menu.Item>
                             <Menu.Item>

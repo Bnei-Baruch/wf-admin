@@ -198,7 +198,7 @@ export const newTrimMeta = (data, mode, source) => {
             original_sha1: originalsha1,
             proxy_sha1: proxysha1,
             file_name: name,
-            source
+            source: source === "search" ? "cassette" : source,
         },
         wfstatus: {
             aricha: false,
