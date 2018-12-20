@@ -97,6 +97,7 @@ class WFDB extends Component {
         const labels_options = [
             { key: 'date', text: 'Date', value: 'date' },
             { key: 'id', text: 'ID', value: 'id' },
+            { key: 'archive_place', text: 'AP', value: 'archive_place' },
             { key: 'comments', text: 'Name', value: 'comments' },
             { key: 'content_type', text: 'Type', value: 'content_type' },
             { key: 'subject', text: 'No', value: 'subject' },

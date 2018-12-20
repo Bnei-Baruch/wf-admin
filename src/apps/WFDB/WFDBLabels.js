@@ -43,7 +43,7 @@ class WFDBLabels extends Component {
                     <Table.Cell>{duration}</Table.Cell>
                     <Table.Cell>{location}</Table.Cell>
                     <Table.Cell>{mof}</Table.Cell>
-                    <Table.Cell>{subject}</Table.Cell>
+                    {/*<Table.Cell>{subject}</Table.Cell>*/}
                     <Table.Cell>{cassete_type}</Table.Cell>
                     <Table.Cell>{archive_place}</Table.Cell>
                     <Table.Cell>{bar_code}</Table.Cell>
@@ -66,7 +66,7 @@ class WFDBLabels extends Component {
                             <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Location</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Mof</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Subj</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>Subj</Table.HeaderCell>*/}
                             <Table.HeaderCell width={1}>CT</Table.HeaderCell>
                             <Table.HeaderCell width={1}>AP</Table.HeaderCell>
                             <Table.HeaderCell width={2}>BC</Table.HeaderCell>
