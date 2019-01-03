@@ -31,7 +31,7 @@ class WFDBLabels extends Component {
 
     render() {
         let capture_data = this.state.capture.map((data) => {
-            const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof,subject} = data;
+            const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = data;
             return (
                 <Table.Row key={id} className="monitor_tr">
                     <Table.Cell>{id}</Table.Cell>
