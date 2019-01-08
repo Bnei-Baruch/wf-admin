@@ -164,6 +164,9 @@ class ArichaAdmin extends Component {
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
+        if(insert_data.insert_type !== "1") {
+            file_data.wfstatus.fixed = true;
+        }
         this.setState({...file_data, inserting: true, insert_button: true });
         putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -175,7 +178,7 @@ class ArichaAdmin extends Component {
             console.log(":: ArichaApp - workflow respond: ",cb);
             if(cb.status === "ok") {
                 alert("Insert successful :)");
-                setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                setTimeout(() => this.setState({ inserting: false, send_button: false, kmedia_option: true}), 2000);
             } else {
                 alert("Something gone wrong :(");
                 this.setState({ inserting: false, insert_button: false});
