@@ -271,13 +271,14 @@ class ArichaAdmin extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
+        let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
 
         let aricha = this.state.aricha.map((data) => {
             if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
                 return false;
             }
-            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,locked} = data.wfstatus;
+            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
             let id = data.aricha_id;
             let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -289,7 +290,7 @@ class ArichaAdmin extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
