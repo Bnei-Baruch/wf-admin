@@ -68,44 +68,54 @@ class ArichaAdmin extends Component {
             //kmedia_option: wfsend,
         });
 
-        // Check SHA1 in MDB
-        let sha1 = file_data.original.format.sha1;
-        let fetch_url = `${MDB_FINDSHA}/${sha1}`;
-        getUnits(fetch_url, (units) => {
-            if (units.total > 0) {
-                console.log("The SHA1 exist in MDB!", units);
-
-                // Check SHA1 in Workflow
-                insertName(sha1, "sha1", (data) => {
-                    if (data.length > 0 && file_data.file_name !== data[0].file_name) {
-                        file_data.line.old_name = data[0].file_name;
-                        file_data.line.fix_aricha_id = data[0].send_id;
-                        console.log("The SHA1 exist in WorkFlow!", data);
-                        console.log("-- Rename Insert mode --");
-                        this.newInsertData(file_data, data, "3");
-                    } else if (data.length > 0 && file_data.file_name === data[0].file_name) {
-                        console.log("-- Insert Done --");
-                    } else {
-                        console.log("The SHA1 exist in MDB but does NOT exist in WorkFlow!");
-                        alert("File already in MDB, but did pass WorkFlow!");
-                    }
-                });
+        // Check SHA1 in WFDB
+        getData(`trimmer/sha1?value=${file_data.original.format.sha1}`, (trimmer) => {
+            if(trimmer.length > 0) {
+                console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
+                alert("File did NOT changed from trimmer");
+                //this.setState({trimmer});
             } else {
 
-                // Check filename in Workflow
-                insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
-                    if(data.length > 0) {
-                        file_data.line.old_sha1 = data[0].sha1;
-                        file_data.line.fix_aricha_id = data[0].send_id;
-                        file_data.line.fix_unit_uid = data[0].line.uid;
-                        console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
-                        console.log("-- Update Insert mode --");
-                        this.newInsertData(file_data, data, "2");
-                    } else {
-                        console.log("-- New Insert mode --");
-                        this.newInsertData(file_data, data, "1");
-                    }
+                // Check SHA1 in MDB
+                let sha1 = file_data.original.format.sha1;
+                let fetch_url = `${MDB_FINDSHA}/${sha1}`;
+                getUnits(fetch_url, (units) => {
+                    if (units.total > 0) {
+                        console.log("The SHA1 exist in MDB!", units);
 
+                        // Check SHA1 in Workflow
+                        insertName(sha1, "sha1", (data) => {
+                            if (data.length > 0 && file_data.file_name !== data[0].file_name) {
+                                file_data.line.old_name = data[0].file_name;
+                                file_data.line.fix_aricha_id = data[0].send_id;
+                                console.log("The SHA1 exist in WorkFlow!", data);
+                                console.log("-- Rename Insert mode --");
+                                this.newInsertData(file_data, data, "3");
+                            } else if (data.length > 0 && file_data.file_name === data[0].file_name) {
+                                console.log("-- Insert Done --");
+                            } else {
+                                console.log("The SHA1 exist in MDB but does NOT exist in WorkFlow!");
+                                alert("File already in MDB, but did pass WorkFlow!");
+                            }
+                        });
+                    } else {
+
+                        // Check filename in Workflow
+                        insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
+                            if(data.length > 0) {
+                                file_data.line.old_sha1 = data[0].sha1;
+                                file_data.line.fix_aricha_id = data[0].send_id;
+                                file_data.line.fix_unit_uid = data[0].line.uid;
+                                console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
+                                console.log("-- Update Insert mode --");
+                                this.newInsertData(file_data, data, "2");
+                            } else {
+                                console.log("-- New Insert mode --");
+                                this.newInsertData(file_data, data, "1");
+                            }
+
+                        });
+                    }
                 });
             }
         });
