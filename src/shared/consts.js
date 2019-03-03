@@ -18,10 +18,11 @@ export const upload_extensions = {
     "akladot": ["doc","docx"],
     "tamlil": ["doc","docx"],
     "kitei-makor": ["doc","docx"],
+    "research-material": ["doc","docx"],
     "sirtutim": ["zip"],
     "dibuv": ["mp3","mp4"],
     "aricha": ["mp4","mpg"],
-    "article": ["doc","docx"],
+    "article": ["doc","docx","pdf"],
     "publication": ["zip"],
 };
 
@@ -42,6 +43,7 @@ export const mime_list = {
     "image/png": "png",
     "audio/mp3": "mp3",
     "video/mp4": "mp4",
+    "application/pdf": "pdf",
     "video/mpeg": "mpg",
     "application/zip": "zip"
 };
@@ -186,6 +188,7 @@ export const CT_TRAINING              = 'TRAINING';
 export const CT_KITEI_MAKOR           = 'KITEI_MAKOR';
 export const CT_PUBLICATION           = 'PUBLICATION';
 export const CT_LELO_MIKUD            = 'LELO_MIKUD';
+export const CT_RESEARCH_MATERIAL     = 'RESEARCH_MATERIAL';
 
 export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY];
 export const LECTURE_CONTENT_TYPES = [CT_LECTURE_SERIES, CT_CHILDREN_LESSONS, CT_WOMEN_LESSONS, CT_VIRTUAL_LESSONS];
@@ -229,6 +232,7 @@ export const CONTENT_TYPE_BY_ID = {
   36: CT_PUBLICATION,
   37: CT_ARTICLES,
   38: CT_LELO_MIKUD,
+    45: CT_RESEARCH_MATERIAL,
 };
 
 export const CONTENT_TYPES_MAPPINGS = {
@@ -248,6 +252,7 @@ export const CONTENT_TYPES_MAPPINGS = {
   [CT_EVENT_PART]: { collection_type: null, pattern: 'event-part' },
     [CT_ARTICLE]: { collection_type: null, pattern: 'art' },
     [CT_PUBLICATION]: { collection_type: null, pattern: 'pub' },
+    [CT_RESEARCH_MATERIAL]: { collection_type: null, pattern: 'research-material' },
 };
 
 export const EVENT_PART_TYPES = [

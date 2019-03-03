@@ -250,6 +250,7 @@ class InsertApp extends Component {
             { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: content_type === "ARTICLES" },
             { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: content_type === "ARTICLES" },
             { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: content_type === "ARTICLES" },
+            { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: content_type === "ARTICLES" },
             { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
             { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: content_type !== "ARTICLES" },
             { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: content_type !== "ARTICLES" },
