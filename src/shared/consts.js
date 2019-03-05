@@ -48,7 +48,7 @@ export const mime_list = {
     "application/zip": "zip"
 };
 
-export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn","amh","hin","per"];
 
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
@@ -75,6 +75,9 @@ export const language_options = [
     { key: 'ua', value: 'ukr', flag: 'ua', text: 'Ukrainian' },
     { key: 'nl', value: 'dut', flag: 'nl', text: 'Dutch' },
     { key: 'cn', value: 'chn', flag: 'cn', text: 'Chinese' },
+    { key: 'et', value: 'amh', flag: 'et', text: 'Amharic' },
+    { key: 'in', value: 'hin', flag: 'in', text: 'Hindi' },
+    { key: 'ir', value: 'per', flag: 'ir', text: 'Persian' },
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
