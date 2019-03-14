@@ -192,7 +192,7 @@ export const newTrimMeta = (data, mode, source) => {
     let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
     let originalsha1 = original.format.sha1;
     let proxysha1 = proxy ? proxy.format.sha1 : null;
-    let name = source.match(/^(cassette|trimmed)$/) ? file_name : stop_name;
+    let name = source.match(/^(cassette|trimmed|custom)$/) ? file_name : stop_name;
     let censored = mode === "censor";
     let buffer = mode === "wfadmin";
     let secured = wfstatus.secured;
@@ -202,7 +202,7 @@ export const newTrimMeta = (data, mode, source) => {
         inpoints: [],
         outpoints: [],
         parent: {
-            id: source === "trimmed" ? trim_id : capture_id,
+            id: source.match(/^(trimmed|custom)$/) ? trim_id : capture_id,
             capture_id: source === "trimmed" ? parent.capture_id : data.capture_id,
             original_sha1: originalsha1,
             proxy_sha1: proxysha1,

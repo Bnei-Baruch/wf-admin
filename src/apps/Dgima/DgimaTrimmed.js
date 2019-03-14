@@ -131,19 +131,26 @@ class DgimaTrimmed extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
-        file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
+        file_data.parent.insert_id = insert_data.insert_id;
+        file_data.parent.name = insert_data.line.send_name;
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
-        file_data.wfstatus.wfsend = true;
-        this.setState({...file_data, inserting: true, insert_button: true });
-        putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-        });
+        this.setState({inserting: true, insert_button: true });
         insert_data.send_id = file_data.dgima_id;
+        insert_data.line.source = file_data.parent.source;
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: DgimaApp - workflow respond: ",cb);
-            setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+            if(cb.status === "ok") {
+                file_data.wfstatus.wfsend = true;
+                setTimeout(() => this.setState({...file_data, inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
+                    console.log(":: PUT Respond: ",cb);
+                });
+            } else {
+                alert("Something goes wrong!");
+                this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
+            }
         });
     };
 
@@ -204,7 +211,7 @@ class DgimaTrimmed extends Component {
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
                 }
             });
-        } else if(file_data.parent.source === "congress") {
+        } else if(file_data.parent.source === "congress" && file_data.line.content_type === "FULL_LESSON") {
             file_data.special = "congress";
             console.log(":: Going to send: ",file_data);
             this.setState({inserting: true, insert_button: true });

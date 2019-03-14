@@ -14,6 +14,7 @@ class DgimaTrimmer extends Component {
         insert: [],
         dgima: [],
         search: [],
+        trimmed: [],
         cassette_id: null,
         file_data: "",
         open: false,
@@ -31,6 +32,10 @@ class DgimaTrimmer extends Component {
             let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             this.setState({cassette, congress, insert});
+        });
+        getData(`trimmer/find?key=date&value=${date}`, (data) => {
+            let trimmed = data.filter(t => !t.wfstatus.locked);
+            this.setState({trimmed});
         });
         // If we want trim from dgima trimmed
         // getData(`dgima/find?key=date&value=${date.slice(0, -3)}`, (data) => {
@@ -57,7 +62,8 @@ class DgimaTrimmer extends Component {
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${WFSRV_BACKEND}${path}`;
-        let trim_meta = newTrimMeta(file_data, "dgima", this.state.dgima_src);
+        let src = this.state.dgima_src === "trimmed" ? "custom" : this.state.dgima_src;
+        let trim_meta = newTrimMeta(file_data, "dgima", src);
         this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
@@ -93,13 +99,14 @@ class DgimaTrimmer extends Component {
             { key: 2, text: 'Congress', value: 'congress' },
             { key: 3, text: 'Dgima', value: 'insert' },
             { key: 4, text: 'Search', value: 'search' },
+            { key: 5, text: 'Trimmed', value: 'trimmed' },
         ];
 
         let trim_data = this.state[dgima_src].map((data) => {
-            const {id, stop_name} = data;
-            // let name = dgima_src === "insert" ? data.stop_name : data.file_name;
+            const {id} = data;
+            let name = dgima_src !== "trimmed" ? data.stop_name : data.file_name;
             // let id = dgima_src === "insert" ? data.capture_id : data.trim_id;
-            return ({ key: id, text: stop_name, value: data })
+            return ({ key: id, text: name, value: data })
         });
 
         return (

@@ -36,7 +36,8 @@ export default class TrimmerApp extends Component {
         this.setState({ioValid: false, loading: true});
         setTimeout(() => { this.props.closeModal() }, 2000);
         if(this.state.lelomikud) trim_meta.line.artifact_type = "LELO_MIKUD";
-        putData(`${WFSRV_BACKEND}/workflow/trim`, trim_meta, (cb) => {
+        let ep = trim_meta.parent.source === "custom" ? "drim" : "trim";
+        putData(`${WFSRV_BACKEND}/workflow/${ep}`, trim_meta, (cb) => {
             console.log(":: Trimmer - trim respond: ",cb);
             if(cb.status !== "ok") {
                 alert("Trimmer: Something goes wrong!");
