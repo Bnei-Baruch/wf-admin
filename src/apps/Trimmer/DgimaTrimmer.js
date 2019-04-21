@@ -24,6 +24,8 @@ class DgimaTrimmer extends Component {
         source: "",
         trim_meta: {},
         units: [],
+        label: {},
+        labels: [],
     };
 
     getCaptured = (date) => {
@@ -43,6 +45,21 @@ class DgimaTrimmer extends Component {
         // });
     };
 
+    getLabelsData = (skey, svalue) => {
+        if(skey === "id") {
+            getData(`label/${svalue}`, (label) => {
+                console.log(" Got label: ", label);
+                this.setState({label});
+                this.getLabelsData("date", label.date);
+            });
+        } else {
+            getData(`labels/find?key=${skey}&value=${svalue}`, (labels) => {
+                console.log(" Labels with same date: ", labels);
+                this.setState({labels});
+            });
+        }
+    };
+
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
         this.setState({startDate: data, date: date, disabled: true});
@@ -59,6 +76,8 @@ class DgimaTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
+        if(file_data.line.label_id)
+            this.getLabelsData("id", file_data.line.label_id);
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${WFSRV_BACKEND}${path}`;
@@ -146,6 +165,7 @@ class DgimaTrimmer extends Component {
                                 selection
                                 value={file_data}
                                 options={trim_data}
+                                onBlur={() => console.log()}
                                 onChange={(e, {value}) => this.selectFile(value)}
                                 onClick={() => this.getCaptured(date)} />
                         }
