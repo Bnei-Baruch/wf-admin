@@ -2,8 +2,9 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
-import {Menu, Segment, Modal, Dropdown, Button, Input} from 'semantic-ui-react'
+import {Menu, Segment, Modal, Dropdown, Button, Input, Table} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
+import '../WFDB/WFDB.css';
 
 class DgimaTrimmer extends Component {
 
@@ -111,7 +112,8 @@ class DgimaTrimmer extends Component {
 
     render() {
 
-        const {dgima_src,date,disabled,open,source,startDate,file_data,trim_meta} = this.state;
+        const {dgima_src,disabled,open,source,startDate,file_data,trim_meta} = this.state;
+        const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = this.state.label;
 
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
@@ -128,8 +130,29 @@ class DgimaTrimmer extends Component {
             return ({ key: id, text: name, value: data })
         });
 
+        let capture_data = this.state.labels.map((data) => {
+            const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = data;
+            return (
+                <Table.Row key={id} className="monitor_tr">
+                    <Table.Cell>{id}</Table.Cell>
+                    <Table.Cell>{date}</Table.Cell>
+                    <Table.Cell>{comments}</Table.Cell>
+                    <Table.Cell>{content_type}</Table.Cell>
+                    <Table.Cell>{language}</Table.Cell>
+                    <Table.Cell>{lecturer}</Table.Cell>
+                    <Table.Cell>{duration}</Table.Cell>
+                    <Table.Cell>{location}</Table.Cell>
+                    {/*<Table.Cell>{mof}</Table.Cell>*/}
+                    {/*<Table.Cell>{subject}</Table.Cell>*/}
+                    {/*<Table.Cell>{cassete_type}</Table.Cell>*/}
+                    {/*<Table.Cell>{archive_place}</Table.Cell>*/}
+                    {/*<Table.Cell>{bar_code}</Table.Cell>*/}
+                </Table.Row>
+            )
+        });
+
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
+            <Segment textAlign='center' color='blue' raised>
                 <Menu secondary>
                     <Menu.Item>
                         <Dropdown
@@ -167,7 +190,7 @@ class DgimaTrimmer extends Component {
                                 options={trim_data}
                                 onBlur={() => console.log()}
                                 onChange={(e, {value}) => this.selectFile(value)}
-                                onClick={() => this.getCaptured(date)} />
+                                onClick={() => this.getCaptured(this.state.date)} />
                         }
                     </Menu.Item>
                     <Menu.Item>
@@ -194,6 +217,44 @@ class DgimaTrimmer extends Component {
                         closeModal={this.onClose}
                     />
                 </Modal>
+                <Table compact='very' selectable fixed basic size='small'>
+                    <Table.Header>
+                        <Table.Row className='table_header' compact>
+                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Date</Table.HeaderCell>
+                            <Table.HeaderCell width={6}>Comments</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Content</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Lang</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Lecturer</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Location</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>Mof</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell width={1}>Subj</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell width={1}>CT</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell width={1}>AP</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell width={2}>BC</Table.HeaderCell>*/}
+                        </Table.Row>
+                        <Table.Row key={id} compact active>
+                            <Table.HeaderCell>{id}</Table.HeaderCell>
+                            <Table.HeaderCell>{date}</Table.HeaderCell>
+                            <Table.HeaderCell>{comments}</Table.HeaderCell>
+                            <Table.HeaderCell>{content_type}</Table.HeaderCell>
+                            <Table.HeaderCell>{language}</Table.HeaderCell>
+                            <Table.HeaderCell>{lecturer}</Table.HeaderCell>
+                            <Table.HeaderCell>{duration}</Table.HeaderCell>
+                            <Table.HeaderCell>{location}</Table.HeaderCell>
+                            {/*<Table.HeaderCell>{mof}</Table.HeaderCell>*/}
+                            {/*<Table.Cell>{subject}</Table.Cell>*/}
+                            {/*<Table.HeaderCell>{cassete_type}</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell>{archive_place}</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell>{bar_code}</Table.HeaderCell>*/}
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {capture_data}
+                    </Table.Body>
+                </Table>
             </Segment>
         );
     }

@@ -346,7 +346,7 @@ class DgimaTrimmed extends Component {
         });
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='brown' raised>
+            <Segment textAlign='center' color='brown' raised>
                 <Label  attached='top' className="trimmed_label">
                     {file_data.file_name ? file_data.file_name : ""}
                 </Label>

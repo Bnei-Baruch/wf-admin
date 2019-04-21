@@ -37,7 +37,7 @@ class DgimaUpload extends Component {
         };
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
+            <Segment textAlign='center' color='blue' raised>
                 <Message>
                     <Upload
                         {...this.props}
