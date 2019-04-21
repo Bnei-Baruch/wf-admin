@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { getData } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
+import {langs_bb} from '../../shared/consts';
 
 class WFDBCarbon extends Component {
 
@@ -49,7 +50,7 @@ class WFDBCarbon extends Component {
     };
 
     render() {
-        const languages = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
+        const languages = langs_bb;
         let carbon_data = Object.keys(this.state.json).map((id) => {
             let data = this.state.json;
             let exts = Object.keys(data[id]).map((ext) => {
@@ -63,7 +64,7 @@ class WFDBCarbon extends Component {
             });
             return (
                 <Fragment key={id}>
-                    <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='24' >{id}</Table.Cell></Table.Row>
+                    <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan={languages.length + 1} >{id}</Table.Cell></Table.Row>
                     {exts}
                 </Fragment>
             );
@@ -74,7 +75,7 @@ class WFDBCarbon extends Component {
                 <Table compact='very' selectable fixed basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell colSpan='24'>File Name</Table.HeaderCell>
+                            <Table.HeaderCell colSpan={languages.length + 1}>File Name</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 

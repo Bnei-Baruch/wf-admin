@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import moment from 'moment';
 import { getData, IVAL } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
+import {langs_bb} from '../../shared/consts';
 
 class MonitorKmedia extends Component {
 
@@ -61,7 +62,7 @@ class MonitorKmedia extends Component {
     };
 
     render() {
-        const languages = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn"];
+        const languages = langs_bb;
 
         let full_kmedia_data = Object.keys(this.state.json).map((id, i) => {
             let data = this.state.json;
@@ -76,7 +77,7 @@ class MonitorKmedia extends Component {
             });
             return (
                 <Fragment key={i}>
-                    <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan='24' >{id}</Table.Cell></Table.Row>
+                    <Table.Row key={id} className="monitor_tr" ><Table.Cell colSpan={languages.length + 1}>{id}</Table.Cell></Table.Row>
                     {exts}
                 </Fragment>
             );
@@ -93,7 +94,7 @@ class MonitorKmedia extends Component {
                 });
                 return (
                     <Fragment key={i}>
-                        <Table.Row className="monitor_tr" ><Table.Cell colSpan='23' >{id}</Table.Cell></Table.Row>
+                        <Table.Row className="monitor_tr" ><Table.Cell colSpan={languages.length} >{id}</Table.Cell></Table.Row>
                         <Table.Row>{langs}</Table.Row>
                     </Fragment>
                 );
@@ -107,7 +108,7 @@ class MonitorKmedia extends Component {
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell colSpan={this.props.kmedia_full ? 24 : 23}>File Name</Table.HeaderCell>
+                            <Table.HeaderCell colSpan={this.props.kmedia_full ? languages.length + 1 : languages.length}>File Name</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
