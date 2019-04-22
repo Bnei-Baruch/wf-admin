@@ -27,6 +27,7 @@ class DgimaTrimmer extends Component {
         units: [],
         label: {},
         labels: [],
+        disable_ids: [],
     };
 
     getCaptured = (date) => {
@@ -51,7 +52,8 @@ class DgimaTrimmer extends Component {
             getData(`label/${svalue}`, (label) => {
                 console.log(" Got label: ", label);
                 this.setState({label});
-                this.getLabelsData("date", label.date);
+                if(this.state.dgima_src !== "search")
+                    this.getLabelsData("date", label.date);
             });
         } else {
             getData(`labels/find?key=${skey}&value=${svalue}`, (labels) => {
@@ -62,8 +64,11 @@ class DgimaTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
+        let date = data.format(this.state.dgima_src === "search" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
         this.setState({startDate: data, date: date, disabled: true});
+        if(this.state.dgima_src === "search") {
+            this.getLabelsData("date", date);
+        }
     };
 
     setTrimSrc = (dgima_src) => {
@@ -91,9 +96,26 @@ class DgimaTrimmer extends Component {
         });
     };
 
+    selectLabel = (active_label) => {
+        this.setState({active_label});
+        if(active_label && this.state.dgima_src === "search") {
+            getData(`capture/find?key=stop_name&value=${active_label}`, (data) => {
+                if(data.length > 0) {
+                    //this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
+                    this.selectFile(data[0]);
+                    this.setState({cassette_id: active_label});
+                } else {
+                    let {disable_ids} = this.state;
+                    disable_ids.push(active_label);
+                    this.setState({disable_ids});
+                }
+            });
+        }
+    };
+
     sendToTrim = () => {
         let {cassette_id} = this.state;
-        if(cassette_id) {
+        if(cassette_id && this.state.dgima_src !== "search") {
             getData(`capture/find?key=stop_name&value=${cassette_id}`, (data) => {
                 if(data.length > 0) {
                     this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
@@ -112,7 +134,7 @@ class DgimaTrimmer extends Component {
 
     render() {
 
-        const {dgima_src,disabled,open,source,startDate,file_data,trim_meta} = this.state;
+        const {dgima_src,disabled,open,source,startDate,file_data,trim_meta,active_label,cassette_id,disable_ids} = this.state;
         const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = this.state.label;
 
         const options = [
@@ -133,8 +155,13 @@ class DgimaTrimmer extends Component {
 
         let capture_data = this.state.labels.map((data) => {
             const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = data;
+            let dd = disable_ids.filter(d => d === id).length > 0;
             return (
-                <Table.Row key={id} className="monitor_tr">
+                <Table.Row key={id}
+                           active={id === active_label}
+                           disabled={dd}
+                           className="monitor_tr"
+                           onClick={() => this.selectLabel(id)}>
                     <Table.Cell>{id}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
                     <Table.Cell>{comments}</Table.Cell>
@@ -167,10 +194,21 @@ class DgimaTrimmer extends Component {
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
+                        {/*<DatePicker*/}
+                        {/*    className="datepickercs"*/}
+                        {/*    dateFormat="YYYY-MM-DD"*/}
+                        {/*    locale='he'*/}
+                        {/*    maxDate={moment()}*/}
+                        {/*    selected={startDate}*/}
+                        {/*    onChange={this.changeDate}*/}
+                        {/*/>*/}
                         <DatePicker
                             className="datepickercs"
-                            dateFormat="YYYY-MM-DD"
+                            dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
                             locale='he'
+                            showYearDropdown
+                            showMonthDropdown
+                            scrollableYearDropdown
                             maxDate={moment()}
                             selected={startDate}
                             onChange={this.changeDate}
@@ -178,7 +216,7 @@ class DgimaTrimmer extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         {dgima_src === "search" ?
-                            <Input type='text' placeholder='Search...'
+                            <Input type='text' placeholder='Search...' value={cassette_id}
                                    onChange={e => this.setSearchValue(e.target.value)} />
                             :
                             <Dropdown
@@ -218,7 +256,7 @@ class DgimaTrimmer extends Component {
                         closeModal={this.onClose}
                     />
                 </Modal>
-                <Table compact='very' selectable fixed basic size='small'>
+                <Table compact='very' selectable fixed basic size='small' className='wfdb_app'>
                     <Table.Header>
                         <Table.Row className='table_header' compact>
                             <Table.HeaderCell width={1}>ID</Table.HeaderCell>
@@ -235,6 +273,7 @@ class DgimaTrimmer extends Component {
                             {/*<Table.HeaderCell width={1}>AP</Table.HeaderCell>*/}
                             {/*<Table.HeaderCell width={2}>BC</Table.HeaderCell>*/}
                         </Table.Row>
+                        {dgima_src === "search" ? "" :
                         <Table.Row key={id} compact active>
                             <Table.HeaderCell>{id}</Table.HeaderCell>
                             <Table.HeaderCell>{date}</Table.HeaderCell>
@@ -249,7 +288,7 @@ class DgimaTrimmer extends Component {
                             {/*<Table.HeaderCell>{cassete_type}</Table.HeaderCell>*/}
                             {/*<Table.HeaderCell>{archive_place}</Table.HeaderCell>*/}
                             {/*<Table.HeaderCell>{bar_code}</Table.HeaderCell>*/}
-                        </Table.Row>
+                        </Table.Row>}
                     </Table.Header>
 
                     <Table.Body>

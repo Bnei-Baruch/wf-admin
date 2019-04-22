@@ -5,6 +5,7 @@
 .wfdb_app .monitor_tr {
     background: #eaeaea;
     font-weight: bolder;
+    cursor: pointer!important;
 }
 
 .wfdb_app .settings_btn {
