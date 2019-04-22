@@ -226,8 +226,10 @@ class DgimaTrimmed extends Component {
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
                 }
             });
-        } else {
+        } else if(file_data.parent.source === "cassette") {
             this.setState({insert_open: true});
+        } else {
+            alert("Dgima source unknown")
         }
     };
 
@@ -397,6 +399,7 @@ class DgimaTrimmed extends Component {
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
                         </Menu.Menu>
+                        {file_data.parent && file_data.parent.source === "cassette" ? "" :
                         <Menu.Menu position='right'>
                             <Menu.Item>
                                 <Select compact options={send_options} defaultValue='buffer'
@@ -406,7 +409,7 @@ class DgimaTrimmed extends Component {
                                 <Button positive icon="arrow right" disabled={this.state.send_button}
                                         onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
-                        </Menu.Menu>
+                        </Menu.Menu>}
                     </Menu>
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table">

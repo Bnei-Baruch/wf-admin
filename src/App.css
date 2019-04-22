@@ -176,7 +176,7 @@ body {
 }
 
 .scoped-semantic-ltr .ui.selection.dropdown .menu {
-    max-height: 40rem;
+    max-height: 30rem;
 }
 
 .trim_files_dropdown {
