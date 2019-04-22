@@ -126,8 +126,9 @@ class DgimaTrimmer extends Component {
         let trim_data = this.state[dgima_src].map((data) => {
             const {id} = data;
             let name = dgima_src !== "trimmed" ? data.stop_name : data.file_name;
+            let icon = data.wfstatus.trimmed ? "cut" : "";
             // let id = dgima_src === "insert" ? data.capture_id : data.trim_id;
-            return ({ key: id, text: name, value: data })
+            return ({ key: id, text: name, value: data, icon })
         });
 
         let capture_data = this.state.labels.map((data) => {

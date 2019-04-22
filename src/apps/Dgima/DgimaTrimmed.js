@@ -322,6 +322,7 @@ class DgimaTrimmed extends Component {
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
         let d = (<Icon color='blue' name='lock'/>);
+        let j = (<Icon color='blue' name='linkify'/>);
 
         let dgima_data = dgima.map((data) => {
             const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked} = data.wfstatus;
@@ -335,7 +336,7 @@ class DgimaTrimmed extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{data.parent.dgima_ids ? j : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
@@ -431,6 +432,7 @@ class DgimaTrimmed extends Component {
                             placeholder="Select Files To Join:"
                             selection
                             multiple
+                            upward
                             options={join_data}
                             value={join_files}
                             onChange={(e, {value}) => this.fileToJoin(value)} />
