@@ -52,7 +52,7 @@ export const getDataByID = (id, cb) =>  {
         .catch(ex => console.log(`get ${id}`, ex));
 };
 
-const getEndpoint = (id) => {
+export const getEndpoint = (id) => {
     if(id.match(/^t[\d]{10}$/)) return "trimmer";
     if(id.match(/^a[\d]{10}$/)) return "aricha";
     if(id.match(/^d[\d]{10}$/)) return "dgima";
