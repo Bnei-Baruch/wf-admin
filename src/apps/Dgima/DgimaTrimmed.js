@@ -103,8 +103,9 @@ class DgimaTrimmed extends Component {
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
                 rename_button: wfsend,
-                send_button: false,
+                send_button: !renamed || wfsend,
                 kmedia_option: wfsend,
+                special: "cassette",
             });
         } else {
             this.setState({
@@ -351,7 +352,7 @@ class DgimaTrimmed extends Component {
         return (
             <Segment textAlign='center' color='brown' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {file_data.file_name ? file_data.file_name : ""}
+                    {file_data.file_name ? file_data.file_name : "Trimmed"}
                 </Label>
                 <Message>
                     <Menu size='large' secondary >
@@ -399,17 +400,17 @@ class DgimaTrimmed extends Component {
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
                         </Menu.Menu>
-                        {file_data.parent && file_data.parent.source === "cassette" ? "" :
                         <Menu.Menu position='right'>
+                            {file_data.parent && file_data.parent.source === "cassette" ? "" :
                             <Menu.Item>
                                 <Select compact options={send_options} defaultValue='buffer'
                                         onChange={(e,{value}) => this.setSpecial(value)} />
-                            </Menu.Item>
+                            </Menu.Item>}
                             <Menu.Item>
                                 <Button positive icon="arrow right" disabled={this.state.send_button}
                                         onClick={this.sendFile} loading={this.state.sending} />
                             </Menu.Item>
-                        </Menu.Menu>}
+                        </Menu.Menu>
                     </Menu>
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table">

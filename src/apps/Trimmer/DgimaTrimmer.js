@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
-import {Menu, Segment, Modal, Dropdown, Button, Input, Table} from 'semantic-ui-react'
+import {Menu, Segment, Modal, Dropdown, Button, Input, Table, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 import '../WFDB/WFDB.css';
 
@@ -181,6 +181,7 @@ class DgimaTrimmer extends Component {
 
         return (
             <Segment textAlign='center' color='blue' raised>
+                <Label  attached='top' className="trimmed_label">Captured</Label>
                 <Menu secondary>
                     <Menu.Item>
                         <Dropdown
