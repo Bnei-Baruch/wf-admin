@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import CensorTrimmer from "../Trimmer/CensorTrimmer";
-import CensorTrimmed from "./CensorTrimmed";
+import CensorCheck from "./CensorCheck";
 
 class CensorApp extends Component {
 
@@ -13,7 +13,7 @@ class CensorApp extends Component {
         return (
             <Fragment>
                 <CensorTrimmer/>
-                <CensorTrimmed/>
+                <CensorCheck/>
             </Fragment>
         );
     }

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {
     getData,
     getUnits,
+    getEndpoint,
     IVAL,
     MDB_FINDSHA,
     putData,
@@ -12,31 +13,34 @@ import {
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
-class CensorTrimmed extends Component {
+class CensorCheck extends Component {
 
     state = {
         active: null,
         disabled: true,
         open: false,
         trimmed: [],
+        dgima: [],
         file_data: {},
         fixReq: false,
         ival: null,
         sending: false,
-        tags: {},
         units: [],
 
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('trim', (data) => {
+        let ival = setInterval(() => {
+            getData('trim', (data) => {
                 if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
                     this.setState({trimmed: data})
-            }), IVAL );
+            });
+            getData('drim', (data) => {
+                if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
+                    this.setState({dgima: data})
+            });
+        }, IVAL );
         this.setState({ival});
-        getUnits('titles.json', (tags) => {
-            this.setState({tags});
-        });
     };
 
     componentWillUnmount() {
@@ -45,10 +49,11 @@ class CensorTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
+        let id = file_data.trim_id || file_data.dgima_id;
         const {wfsend,fixed} = file_data.wfstatus;
         let path = file_data.proxy.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: file_data.trim_id, file_data, disabled: true});
+        this.setState({source, active: id, file_data, disabled: true});
         let sha1 = file_data.parent.original_sha1;
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             if(!wfsend && !fixed && units.total === 1) {
@@ -110,10 +115,11 @@ class CensorTrimmed extends Component {
     };
 
     setRemoved = () => {
-        let {file_data} = this.state;
+        let {file_data,active} = this.state;
+        let ep = getEndpoint(active);
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {
@@ -148,10 +154,34 @@ class CensorTrimmed extends Component {
             )
         });
 
+        let dgima = this.state.dgima.map((data) => {
+            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured} = data.wfstatus;
+            let id = data.dgima_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
+            if(!censored || buffer)
+                return false;
+            let rowcolor = censored && !checked;
+            let active = this.state.active === id ? 'active' : '';
+            return (
+                <Table.Row
+                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored && trimmed ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {name}</Table.Cell>
+                    <Table.Cell>{time}</Table.Cell>
+                </Table.Row>
+            )
+        });
+
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : ""}
+                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Files To Check"}
                 </Label>
                 <Message size='large'>
                 <Menu size='large' secondary >
@@ -178,8 +208,8 @@ class CensorTrimmed extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Duration</Table.HeaderCell>
+                            <Table.HeaderCell textAlign='center'>Ingest</Table.HeaderCell>
+                            <Table.HeaderCell width={2}></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -187,9 +217,21 @@ class CensorTrimmed extends Component {
                         {trimmed}
                     </Table.Body>
                 </Table>
+                <Table selectable compact='very' basic structured className="ingest_table">
+                    <Table.Header>
+                        <Table.Row className='table_header'>
+                            <Table.HeaderCell textAlign='center'>Dgima</Table.HeaderCell>
+                            <Table.HeaderCell width={2}></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {dgima}
+                    </Table.Body>
+                </Table>
             </Segment>
         );
     }
 }
 
-export default CensorTrimmed;
+export default CensorCheck;

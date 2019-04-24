@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, newTrimMeta, getUnits, MDB_FINDSHA, WFSRV_BACKEND} from '../../shared/tools';
-import { Menu, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
+import {Menu, Segment, Modal, Dropdown, Button, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 
 class CensorTrimmer extends Component {
@@ -66,6 +66,7 @@ class CensorTrimmer extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='blue' raised>
+                <Label  attached='top' className="trimmed_label">Trimmed Files</Label>
                 <Menu secondary >
                     <Menu.Item>
                         <DatePicker
