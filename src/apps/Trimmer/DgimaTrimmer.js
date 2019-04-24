@@ -99,10 +99,10 @@ class DgimaTrimmer extends Component {
     selectLabel = (active_label) => {
         this.setState({active_label});
         if(active_label && this.state.dgima_src === "search") {
-            getData(`capture/find?key=stop_name&value=${active_label}`, (data) => {
-                if(data.length > 0) {
+            getData(`capture/${active_label}`, (data) => {
+                if(data) {
                     //this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
-                    this.selectFile(data[0]);
+                    this.selectFile(data);
                     this.setState({cassette_id: active_label});
                 } else {
                     let {disable_ids} = this.state;
@@ -116,10 +116,10 @@ class DgimaTrimmer extends Component {
     sendToTrim = () => {
         let {cassette_id} = this.state;
         if(cassette_id && this.state.dgima_src !== "search") {
-            getData(`capture/find?key=stop_name&value=${cassette_id}`, (data) => {
-                if(data.length > 0) {
-                    this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
-                    this.selectFile(data[0]);
+            getData(`capture/${cassette_id}`, (data) => {
+                if(data) {
+                    this.changeDate(moment(data.date ,'YYYY-MM-DD'));
+                    this.selectFile(data);
                     this.setState({open: true});
                 }
             });

@@ -36,6 +36,8 @@ export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
+        } else {
+            return response.json().then(cb(null));
         }
     })
     .catch(ex => console.log(`get ${path}`, ex));
