@@ -285,13 +285,13 @@ class DgimaTrimmed extends Component {
     sendToJoin = () => {
         const {join_files} = this.state;
         this.setState({ join_files: [] });
-        let join_meta = newTrimMeta(join_files[0], "join", "cassette");
+        let join_meta = newTrimMeta(join_files[0], "join", "joined");
         join_meta.original_join = join_files.map(obj => obj.original.format.filename);
         join_meta.proxy_join = join_files.map(obj => obj.proxy.format.filename);
         join_meta.parent.original_shas = join_files.map(obj => obj.original.format.sha1);
         join_meta.parent.proxy_shas = join_files.map(obj => obj.proxy.format.sha1);
         join_meta.parent.dgima_ids = join_files.map(obj => obj.dgima_id);
-        if(join_files.line) join_meta.parent.label_ids = join_files.map(obj => obj.line.label_id);
+        if(join_files[0].line) join_meta.parent.label_ids = join_files.map(obj => obj.line.label_id);
         //join_meta.file_name = join_files[0].file_name + "_join";
         delete join_meta.parent.id;
         //delete join_meta.parent.file_name;

@@ -51,7 +51,7 @@ class DgimaTrimmer extends Component {
         if(skey === "id") {
             getData(`label/${svalue}`, (label) => {
                 console.log(" Got label: ", label);
-                this.setState({label});
+                this.setState({label, cassette_id: svalue});
                 if(this.state.dgima_src !== "search")
                     this.getLabelsData("date", label.date);
             });
@@ -114,18 +114,19 @@ class DgimaTrimmer extends Component {
     };
 
     sendToTrim = () => {
-        let {cassette_id} = this.state;
-        if(cassette_id && this.state.dgima_src !== "search") {
-            getData(`capture/${cassette_id}`, (data) => {
-                if(data) {
-                    this.changeDate(moment(data.date ,'YYYY-MM-DD'));
-                    this.selectFile(data);
-                    this.setState({open: true});
-                }
-            });
-        } else {
-            this.setState({open: true});
-        }
+        this.setState({open: true});
+        // let {cassette_id} = this.state;
+        // if(cassette_id && this.state.dgima_src !== "search") {
+        //     getData(`capture/${cassette_id}`, (data) => {
+        //         if(data) {
+        //             this.changeDate(moment(data.date ,'YYYY-MM-DD'));
+        //             this.selectFile(data);
+        //             this.setState({open: true});
+        //         }
+        //     });
+        // } else {
+        //     this.setState({open: true});
+        // }
     };
 
     onClose = () => {
