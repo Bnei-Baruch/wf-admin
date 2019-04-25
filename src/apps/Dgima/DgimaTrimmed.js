@@ -124,37 +124,6 @@ class DgimaTrimmed extends Component {
         //this.setState({player: player});
     };
 
-    onInsert = (data) => {
-        console.log(":: Got insert data: ", data);
-        this.setState({insert_open: false});
-        this.setMeta(data);
-    };
-
-    setMeta = (insert_data) => {
-        let {file_data} = this.state;
-        file_data.parent.insert_id = insert_data.insert_id;
-        file_data.parent.name = insert_data.line.send_name;
-        file_data.line.uid = insert_data.line.uid;
-        file_data.line.mime_type = "video/mp4";
-        this.setState({inserting: true, insert_button: true });
-        insert_data.send_id = file_data.dgima_id;
-        insert_data.line.source = file_data.parent.source;
-        // Now we put metadata to mdb on backend
-        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
-            console.log(":: DgimaApp - workflow respond: ",cb);
-            if(cb.status === "ok") {
-                file_data.wfstatus.wfsend = true;
-                setTimeout(() => this.setState({...file_data, inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
-                putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
-                    console.log(":: PUT Respond: ",cb);
-                });
-            } else {
-                alert("Something goes wrong!");
-                this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
-            }
-        });
-    };
-
     renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
         let {file_data} = this.state;
@@ -188,6 +157,11 @@ class DgimaTrimmed extends Component {
                 setTimeout(() => this.setState({renaming: false}), 2000);
             }
         });
+    };
+
+    setSpecial = (special) => {
+        console.log(":: Selected send options: ", special);
+        this.setState({special});
     };
 
     openCit = () => {
@@ -238,9 +212,43 @@ class DgimaTrimmed extends Component {
         this.setState({cit_open: false, insert_open: false});
     };
 
-    setSpecial = (special) => {
-        console.log(":: Selected send options: ", special);
-        this.setState({special});
+    onInsert = (data) => {
+        console.log(":: Got insert data: ", data);
+        this.setState({insert_open: false});
+        this.setMeta(data);
+    };
+
+    setMeta = (insert_data) => {
+        let {file_data} = this.state;
+        file_data.parent.insert_id = insert_data.insert_id;
+        file_data.parent.name = insert_data.line.send_name;
+        file_data.line.uid = insert_data.line.uid;
+        file_data.line.mime_type = "video/mp4";
+        this.setState({inserting: true, insert_button: true });
+        insert_data.send_id = file_data.dgima_id;
+        insert_data.line.source = file_data.parent.source;
+        insert_data.upload_type = file_data.parent.source === "cassette" ? "cassette" : "aricha";
+        // Now we put metadata to mdb on backend
+        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
+            console.log(":: DgimaApp - workflow respond: ",cb);
+            if(cb.status === "ok") {
+                // After that correct only throw fix workflow
+                file_data.wfstatus.wfsend = true;
+                setTimeout(() => this.setState({...file_data, inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
+                    console.log(":: PUT Respond: ",cb);
+                    // Here we send without creation unit
+                    if(file_data.parent.source === "cassette") {
+                        putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
+                            console.log(":: Dgima - send respond: ",cb);
+                        });
+                    }
+                });
+            } else {
+                alert("Something goes wrong!");
+                this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
+            }
+        });
     };
 
     sendFile = () => {
