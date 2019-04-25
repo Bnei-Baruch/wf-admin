@@ -32,7 +32,7 @@ class DgimaTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`capture/find?key=date&value=${date.slice(0, -3)}`, (data) => {
-            let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
+            let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf && (!m.wfstatus.locked || !m.wfstatus.buffer || !m.wfstatus.removed));
             let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             this.setState({cassette, congress, insert});

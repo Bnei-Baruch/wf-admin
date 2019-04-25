@@ -336,11 +336,11 @@ class DgimaTrimmed extends Component {
         let j = (<Icon color='blue' name='linkify'/>);
 
         let dgima_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer} = data.wfstatus;
             let id = data.dgima_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(removed) return false;
+            if(buffer || removed) return false;
             let rowcolor = censored && !checked;
             let active = actived === id ? 'active' : 'admin_raw';
             return (
