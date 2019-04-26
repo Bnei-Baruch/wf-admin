@@ -82,7 +82,7 @@ class DgimaTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        if(file_data.line.label_id)
+        if(file_data.line && file_data.line.label_id)
             this.getLabelsData("id", file_data.line.label_id);
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
@@ -91,8 +91,12 @@ class DgimaTrimmer extends Component {
         let trim_meta = newTrimMeta(file_data, "dgima", src);
         this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
-            console.log(":: Ingest - got units: ", units);
-            this.setState({units});
+            if(units.total > 0) {
+                console.log(":: Unit already exist: ", units);
+                this.setState({units});
+            } else {
+                console.log(":: Did not found unit :: ");
+            }
         });
     };
 
