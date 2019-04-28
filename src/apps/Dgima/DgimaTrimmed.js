@@ -239,6 +239,7 @@ class DgimaTrimmed extends Component {
                     console.log(":: PUT Respond: ",cb);
                     // Here we send without creation unit
                     if(file_data.parent.source === "cassette") {
+                        file_data.special = "cassette";
                         putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
                             console.log(":: Dgima - send respond: ",cb);
                         });

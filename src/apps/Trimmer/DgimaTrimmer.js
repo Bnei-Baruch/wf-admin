@@ -82,8 +82,9 @@ class DgimaTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        if(file_data.line && file_data.line.label_id)
+        if(file_data.line && file_data.line.label_id) {
             this.getLabelsData("id", file_data.line.label_id);
+        }
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${WFSRV_BACKEND}${path}`;
@@ -118,19 +119,15 @@ class DgimaTrimmer extends Component {
     };
 
     sendToTrim = () => {
-        this.setState({open: true});
-        // let {cassette_id} = this.state;
-        // if(cassette_id && this.state.dgima_src !== "search") {
-        //     getData(`capture/${cassette_id}`, (data) => {
-        //         if(data) {
-        //             this.changeDate(moment(data.date ,'YYYY-MM-DD'));
-        //             this.selectFile(data);
-        //             this.setState({open: true});
-        //         }
-        //     });
-        // } else {
-        //     this.setState({open: true});
-        // }
+        let {file_data, label} = this.state;
+        if(file_data.line && file_data.line.label_id) {
+            // There is no translation on cassettes
+            file_data.line.has_translation = false;
+            // Try to take date from labels db and put as captured date
+            let cassette_date = label.date.split('/').join('-');
+            file_data.line.captured_date = (/\d{4}-\d{2}-\d{2}/).test(cassette_date) ? cassette_date : "1970-01-01";
+        }
+        this.setState({file_data, open: true});
     };
 
     onClose = () => {
