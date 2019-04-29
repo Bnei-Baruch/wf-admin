@@ -125,7 +125,7 @@ class DgimaTrimmer extends Component {
             file_data.line.has_translation = false;
             // Try to take date from labels db and put as captured date
             let cassette_date = label.date.split('/').join('-');
-            file_data.line.captured_date = (/\d{4}-\d{2}-\d{2}/).test(cassette_date) ? cassette_date : "1970-01-01";
+            file_data.line.capture_date = (/\d{4}-\d{2}-\d{2}/).test(cassette_date) ? cassette_date : "1970-01-01";
         }
         this.setState({file_data, open: true});
     };
