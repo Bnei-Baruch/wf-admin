@@ -22,6 +22,7 @@ export const upload_extensions = {
     "sirtutim": ["zip"],
     "dibuv": ["mp3","mp4"],
     "aricha": ["mp4","mpg"],
+    "dgima": ["mp4","mp3"],
     "article": ["doc","docx","pdf"],
     "publication": ["zip"],
 };

@@ -74,11 +74,11 @@ class DgimaTrimmed extends Component {
             insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
             // In InsertApp upload_filename use for filename gen in OldWF
             insert_data.line.upload_filename = insert_data.insert_name;
-            insert_data.insert_type = "1";
+            insert_data.insert_type = "3";
             insert_data.language = file_data.line.language;
             insert_data.send_id = file_data.dgima_id;
             insert_data.send_uid = "";
-            insert_data.upload_type = "aricha";
+            insert_data.upload_type = "dgima";
             insert_data.sha1 = file_data.original.format.sha1;
             insert_data.size = parseInt(file_data.original.format.size, 10);
             this.setState({filedata: {filename}, metadata:{...insert_data}});
@@ -227,7 +227,6 @@ class DgimaTrimmed extends Component {
         this.setState({inserting: true, insert_button: true });
         insert_data.send_id = file_data.dgima_id;
         insert_data.line.source = file_data.parent.source;
-        insert_data.upload_type = file_data.parent.source === "cassette" ? "cassette" : "aricha";
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: DgimaApp - workflow respond: ",cb);
