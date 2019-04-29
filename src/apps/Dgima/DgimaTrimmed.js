@@ -171,7 +171,7 @@ class DgimaTrimmed extends Component {
     openInsert = () => {
         let {file_data} = this.state;
         // Dgima from insert we make unit in send
-        if(file_data.parent.source === "insert") {
+        if(file_data.parent.source === "dgima") {
             file_data.special = "new";
             console.log(":: Going to send: ",file_data);
             this.setState({inserting: true, insert_button: true });
