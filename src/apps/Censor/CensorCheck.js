@@ -122,6 +122,15 @@ class CensorCheck extends Component {
         fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
+    setSecured = () => {
+        let {file_data,active} = this.state;
+        let status = !file_data.wfstatus.secured || false;
+        let ep = getEndpoint(active);
+        console.log(":: Censor - set secured: ", file_data);
+        this.setState({ disabled: true });
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=${status}`, { method: 'POST',})
+    };
+
     render() {
 
         let l = (<Loader size='mini' active inline />);
@@ -191,6 +200,9 @@ class CensorCheck extends Component {
                                mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
                         </Modal>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
                     </Menu.Item>
                     <Menu.Item>
                         <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />

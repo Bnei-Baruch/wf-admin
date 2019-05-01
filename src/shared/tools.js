@@ -197,7 +197,7 @@ export const newTrimMeta = (data, mode, source) => {
     let name = source.match(/^(joined|trimmed|custom)$/) ? file_name : stop_name;
     let censored = mode === "censor";
     let buffer = mode === "wfadmin";
-    let secured = wfstatus.secured;
+    let secured = wfstatus.secured || false;
     return {date, line,
         file_name: name,
         [key_id]: wfid,

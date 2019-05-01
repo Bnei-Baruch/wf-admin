@@ -334,9 +334,10 @@ class DgimaTrimmed extends Component {
         let c = (<Icon name='copyright'/>);
         let d = (<Icon color='blue' name='lock'/>);
         let j = (<Icon color='blue' name='linkify'/>);
+        let s = (<Icon color='red' name='key'/>);
 
         let dgima_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined,secured} = data.wfstatus;
             let id = data.dgima_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -345,9 +346,15 @@ class DgimaTrimmed extends Component {
             let active = actived === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={wfsend} disabled={!trimmed || locked}
+                    negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{censored ? c : ""}{locked ? d : ""}{joined ? j : ""}{name}</Table.Cell>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored ? c : ""}
+                        {locked ? d : ""}
+                        {joined ? j : ""}
+                        {name}
+                    </Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
