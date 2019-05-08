@@ -341,7 +341,7 @@ class DgimaTrimmed extends Component {
             let id = data.dgima_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(buffer || removed) return false;
+            if(removed) return false;
             let rowcolor = censored && !checked;
             let active = actived === id ? 'active' : 'admin_raw';
             return (
