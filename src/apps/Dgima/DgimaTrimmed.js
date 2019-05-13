@@ -134,7 +134,7 @@ class DgimaTrimmed extends Component {
         //TODO: Check if date valid
         let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
         newline.capture_date = string_date;
-        let ext = newline.mime_type === "video/mp3" ? "mp3" : "mp4";
+        let ext = newline.mime_type === "video/mp4" ? "mp4" : "mp3";
         let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.${ext}`;
         let ppath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}p.${ext}`;
         file_data.line = {...newline};

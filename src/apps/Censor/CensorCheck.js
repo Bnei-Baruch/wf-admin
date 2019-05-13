@@ -232,7 +232,7 @@ class CensorCheck extends Component {
                         </Modal>
                     </Menu.Item>
                     <Menu.Item>
-                        <Button color='blue' icon='cut' disabled={this.state.disabled} onClick={this.sendToTrim} />
+                        <Button color='blue' icon='cut' disabled onClick={this.sendToTrim} />
                     </Menu.Item>
                     <Menu.Item>
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
