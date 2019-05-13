@@ -23,7 +23,7 @@ class DgimaUpload extends Component {
         const props = {
             action: `${WFSRV_BACKEND}/dgima/upload`,
             type: 'drag',
-            accept: '.mp4, .mp3',
+            accept: '.mp4, .mp3, .m4a',
             beforeUpload(file) {
                 console.log('beforeUpload', file.name);
             },

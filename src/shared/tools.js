@@ -203,6 +203,7 @@ export const newTrimMeta = (data, mode, source) => {
         [key_id]: wfid,
         inpoints: [],
         outpoints: [],
+        original,
         parent: {
             id: source.match(/^(trimmed|custom)$/) ? trim_id : capture_id,
             capture_id: source === "trimmed" ? parent.capture_id : data.capture_id,

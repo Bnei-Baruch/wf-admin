@@ -142,7 +142,7 @@ class DgimaTrimmer extends Component {
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
             { key: 2, text: 'Congress', value: 'congress' },
-            { key: 3, text: 'Dgima', value: 'dgima' },
+            { key: 3, text: 'Dgima', value: 'insert' },
             { key: 4, text: 'Search', value: 'search' },
             { key: 5, text: 'Trimmed', value: 'trimmed' },
         ];
