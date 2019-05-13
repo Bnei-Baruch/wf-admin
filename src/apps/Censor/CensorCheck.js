@@ -8,10 +8,11 @@ import {
     putData,
     toHms,
     WFDB_BACKEND,
-    WFSRV_BACKEND
+    WFSRV_BACKEND, newTrimMeta
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import TrimmerApp from "../Trimmer/TrimmerApp";
 
 class CensorCheck extends Component {
 
@@ -25,6 +26,9 @@ class CensorCheck extends Component {
         fixReq: false,
         ival: null,
         sending: false,
+        source: "",
+        trim_src: "trimmed",
+        trim_meta: {},
         units: [],
 
     };
@@ -52,9 +56,10 @@ class CensorCheck extends Component {
         let id = file_data.trim_id || file_data.dgima_id;
         const {wfsend,fixed} = file_data.wfstatus;
         let path = file_data.proxy.format.filename;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: id, file_data, disabled: true});
         let sha1 = file_data.parent.original_sha1;
+        let source = `${WFSRV_BACKEND}${path}`;
+        let trim_meta = newTrimMeta(file_data, "censor", this.state.trim_src);
+        this.setState({source, active: id, file_data, trim_meta, disabled: true});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             if(!wfsend && !fixed && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);
@@ -131,6 +136,14 @@ class CensorCheck extends Component {
         fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=${status}`, { method: 'POST',})
     };
 
+    sendToTrim = () => {
+        this.setState({open: true});
+    };
+
+    onClose = () => {
+        this.setState({open: false, disabled: true, file_data: ""});
+    };
+
     render() {
 
         let l = (<Loader size='mini' active inline />);
@@ -188,11 +201,28 @@ class CensorCheck extends Component {
         });
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='brown' raised>
+            <Segment textAlign='center' className="ingest_segment" color='red' raised>
                 <Label attached='top' className="trimmed_label">
                     {this.state.file_data.file_name ? this.state.file_data.file_name : "Files To Check"}
                 </Label>
                 <Message size='large'>
+                    <Modal
+                        className="trimmer_modal"
+                        closeOnDimmerClick={false}
+                        closeIcon={true}
+                        onClose={this.onClose}
+                        open={this.state.open}
+                        size="large"
+                        mountNode={document.getElementById("ltr-modal-mount")}
+                    >
+                        <TrimmerApp
+                            source={this.state.source}
+                            trim_meta={this.state.trim_meta}
+                            source_meta={this.state.trim_src}
+                            mode="censor"
+                            closeModal={this.onClose}
+                        />
+                    </Modal>
                 <Menu size='large' secondary >
                     <Menu.Item>
                         <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
@@ -200,6 +230,9 @@ class CensorCheck extends Component {
                                mountNode={document.getElementById("ltr-modal-mount")}>
                             <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
                         </Modal>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button color='blue' icon='cut' disabled={this.state.disabled} onClick={this.sendToTrim} />
                     </Menu.Item>
                     <Menu.Item>
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
