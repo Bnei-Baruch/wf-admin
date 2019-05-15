@@ -55,33 +55,34 @@ class DgimaTrimmed extends Component {
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
         const {renamed,wfsend} = file_data.wfstatus;
+        let {filedata,metadata} = this.state;
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
             // Take sha for mdb fetch
             let sha1 = file_data.original.format.sha1;
             // Build data for insert app
-            let filename = file_data.file_name;
+            filedata = file_data.file_name;
             let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let ext = file_data.original.format.format_name === "mp3" ? "mp3" : "mp4";
             // Make insert metadata
-            let insert_data = {};
-            insert_data.insert_id = "i"+moment().format('X');
-            insert_data.line = file_data.line;
-            insert_data.line.mime_type = "video/mp4";
-            insert_data.content_type = getDCT(file_data.line.content_type);
-            insert_data.date = date;
-            insert_data.file_name = file_data.file_name;
-            insert_data.extension = "mp4";
-            insert_data.insert_name = `${file_data.file_name}.${insert_data.extension}`;
+            metadata.insert_id = "i"+moment().format('X');
+            metadata.line = file_data.line;
+            //insert_data.line.mime_type = "video/mp4";
+            metadata.content_type = getDCT(file_data.line.content_type);
+            metadata.date = date;
+            metadata.file_name = file_data.file_name;
+            metadata.extension = ext;
+            metadata.insert_name = `${file_data.file_name}.${metadata.extension}`;
             // In InsertApp upload_filename use for filename gen in OldWF
-            insert_data.line.upload_filename = insert_data.insert_name;
-            insert_data.insert_type = "3";
-            insert_data.language = file_data.line.language;
-            insert_data.send_id = file_data.dgima_id;
-            insert_data.send_uid = "";
-            insert_data.upload_type = "dgima";
-            insert_data.sha1 = file_data.original.format.sha1;
-            insert_data.size = parseInt(file_data.original.format.size, 10);
-            this.setState({filedata: {filename}, metadata:{...insert_data}});
+            metadata.line.upload_filename = metadata.insert_name;
+            metadata.insert_type = "3";
+            metadata.language = file_data.line.language;
+            metadata.send_id = file_data.dgima_id;
+            metadata.send_uid = "";
+            metadata.upload_type = "dgima";
+            metadata.sha1 = file_data.original.format.sha1;
+            metadata.size = parseInt(file_data.original.format.size, 10);
+            this.setState({filedata, metadata});
             getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
@@ -95,7 +96,7 @@ class DgimaTrimmed extends Component {
         // Take date from string if exit
         if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
             let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            file_data.line = {...file_data.line, capture_date: string_date};
+            file_data.line.capture_date = string_date;
         }
         if(file_data.parent.source === "cassette") {
             this.setState({
@@ -206,7 +207,7 @@ class DgimaTrimmed extends Component {
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
                 }
             });
-        } else if(file_data.parent.source === "cassette") {
+        } else if(file_data.parent.source.match(/^(cassette|insert)$/)) {
             this.setState({insert_open: true});
         } else {
             alert("Dgima source unknown")
@@ -228,7 +229,7 @@ class DgimaTrimmed extends Component {
         file_data.parent.insert_id = insert_data.insert_id;
         file_data.parent.name = insert_data.line.send_name;
         file_data.line.uid = insert_data.line.uid;
-        file_data.line.mime_type = "video/mp4";
+        file_data.line.mime_type = insert_data.line.mime_type;
         this.setState({inserting: true, insert_button: true });
         insert_data.send_id = file_data.dgima_id;
         insert_data.line.source = file_data.parent.source;
@@ -238,7 +239,7 @@ class DgimaTrimmed extends Component {
             if(cb.status === "ok") {
                 // After that correct only throw fix workflow
                 file_data.wfstatus.wfsend = true;
-                setTimeout(() => this.setState({...file_data, inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                setTimeout(() => this.setState({file_data, inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
                 putData(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}`, file_data, (cb) => {
                     console.log(":: PUT Respond: ",cb);
                     // Here we send without creation unit
