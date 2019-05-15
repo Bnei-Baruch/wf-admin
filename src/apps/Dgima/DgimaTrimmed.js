@@ -340,30 +340,62 @@ class DgimaTrimmed extends Component {
 
         let dgima_data = dgima.map((data) => {
             const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined,secured} = data.wfstatus;
-            let id = data.dgima_id;
-            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(removed) return false;
-            let rowcolor = censored && !checked;
-            let active = actived === id ? 'active' : 'admin_raw';
-            return (
-                <Table.Row
-                    negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
-                    className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>
-                        {secured ? s : ""}
-                        {censored ? c : ""}
-                        {locked ? d : ""}
-                        {joined ? j : ""}
-                        {name}
-                    </Table.Cell>
-                    <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
-                    <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
-                    <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
-                </Table.Row>
-            )
+            if(data.parent.source !== "cassette") {
+                let id = data.dgima_id;
+                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+                let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+                if(removed) return false;
+                let rowcolor = censored && !checked;
+                let active = actived === id ? 'active' : 'admin_raw';
+                return (
+                    <Table.Row
+                        negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
+                        className={active} key={id} onClick={() => this.selectFile(data)}>
+                        <Table.Cell>
+                            {secured ? s : ""}
+                            {censored ? c : ""}
+                            {locked ? d : ""}
+                            {joined ? j : ""}
+                            {name}
+                        </Table.Cell>
+                        <Table.Cell>{time}</Table.Cell>
+                        <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
+                        <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
+                        <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
+                        <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
+                    </Table.Row>
+                )
+            }
+        });
+
+        let cassette_data = dgima.map((data) => {
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined,secured} = data.wfstatus;
+            if(data.parent.source === "cassette") {
+                let id = data.dgima_id;
+                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+                let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+                if(removed) return false;
+                let rowcolor = censored && !checked;
+                let active = actived === id ? 'active' : 'admin_raw';
+                return (
+                    <Table.Row
+                        negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
+                        className={active} key={id} onClick={() => this.selectFile(data)}>
+                        <Table.Cell>
+                            {secured ? s : ""}
+                            {censored ? c : ""}
+                            {locked ? d : ""}
+                            {joined ? j : ""}
+                            {name}
+                        </Table.Cell>
+                        <Table.Cell>{time}</Table.Cell>
+                        <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
+                        <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
+                        <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
+                        <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
+                    </Table.Row>
+                )
+            }
         });
 
         return (
@@ -432,8 +464,24 @@ class DgimaTrimmed extends Component {
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell>File Name</Table.HeaderCell>
+                        <Table.Row className='table_header' warning>
+                            <Table.HeaderCell  textAlign='center'><Icon name='file video outline' />Cassette</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>BA</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>KM</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ME</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {cassette_data}
+                    </Table.Body>
+                </Table>
+                <Table selectable compact='very' basic structured className="ingest_table">
+                    <Table.Header>
+                        <Table.Row className='table_header' warning>
+                            <Table.HeaderCell  textAlign='center'><Icon name='download' />External</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BA</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KM</Table.HeaderCell>
