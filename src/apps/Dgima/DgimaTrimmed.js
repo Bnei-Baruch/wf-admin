@@ -316,6 +316,7 @@ class DgimaTrimmed extends Component {
 
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
+            { key: 'censor', text: 'Censor', value: 'censor' },
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
             // { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
