@@ -85,13 +85,14 @@ class CensorCheck extends Component {
         });
     };
 
-    selectFixUID = (uid) => {
-        console.log(":: Selected fix_uid option: ", uid);
+    selectFixUID = (fix_uid) => {
+        console.log(":: Selected fix_uid option: ", fix_uid);
         let {file_data} = this.state;
-        let fix_uid = uid;
+        let id = file_data.trim_id || file_data.dgima_id;
+        let ep = getEndpoint(id);
         file_data.line.fix_unit_uid = fix_uid;
         this.setState({file_data, fix_uid, disabled: false});
-        putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        putData(`${WFDB_BACKEND}/${ep}/${id}`, file_data, (cb) => {
             console.log(":: PUT Fix UID in WFDB: ",cb);
         });
     };
@@ -232,7 +233,7 @@ class CensorCheck extends Component {
                         </Modal>
                     </Menu.Item>
                     <Menu.Item>
-                        <Button color='blue' icon='cut' disabled onClick={this.sendToTrim} />
+                        <Button color='blue' icon='cut' disabled={this.state.disabled} onClick={this.sendToTrim} />
                     </Menu.Item>
                     <Menu.Item>
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
