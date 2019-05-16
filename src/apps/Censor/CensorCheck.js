@@ -57,9 +57,11 @@ class CensorCheck extends Component {
         const {wfsend,fixed} = file_data.wfstatus;
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.parent.original_sha1;
+        let parent_src = file_data.parent.source;
         let source = `${WFSRV_BACKEND}${path}`;
-        let trim_meta = newTrimMeta(file_data, "censor", this.state.trim_src);
-        this.setState({source, active: id, file_data, trim_meta, disabled: true});
+        let trim_src = parent_src.match(/^(main|backup|trimmed)$/) ? "trimmed" : parent_src;
+        let trim_meta = newTrimMeta(file_data, "censor", trim_src);
+        this.setState({source, active: id, file_data, trim_src, trim_meta, disabled: true});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             if(!wfsend && !fixed && units.total === 1) {
                 console.log(":: Fix needed - unit: ", units);
@@ -154,17 +156,17 @@ class CensorCheck extends Component {
         let s = (<Icon color='red' name='key'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured} = data.wfstatus;
+            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
             if(!censored || buffer)
                  return false;
-            let rowcolor = censored && !checked;
+            let rowcolor = secured && !checked;
             let active = this.state.active === id ? 'active' : '';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                    negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>
                         {secured ? s : ""}
@@ -179,17 +181,17 @@ class CensorCheck extends Component {
 
         let dgima_data = this.state.dgima.map((data) => {
             if(data.parent.source !== "cassette") {
-                const {trimmed, kmedia, buffer, censored, checked, fixed, locked, secured} = data.wfstatus;
+                const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
                 if (!censored || buffer)
                     return false;
-                let rowcolor = censored && !checked;
+                let rowcolor = secured && !checked;
                 let active = this.state.active === id ? 'active' : '';
                 return (
                     <Table.Row
-                        negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                        negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
                         className={active} key={id} onClick={() => this.selectFile(data)}>
                         <Table.Cell>
                             {secured ? s : ""}
@@ -205,17 +207,17 @@ class CensorCheck extends Component {
 
         let cassette_data = this.state.dgima.map((data) => {
             if(data.parent.source === "cassette") {
-                const {trimmed, kmedia, buffer, censored, checked, fixed, locked, secured} = data.wfstatus;
+                const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
                 if (!censored || buffer)
                     return false;
-                let rowcolor = censored && !checked;
+                let rowcolor = secured && !checked;
                 let active = this.state.active === id ? 'active' : '';
                 return (
                     <Table.Row
-                        negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                        negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
                         className={active} key={id} onClick={() => this.selectFile(data)}>
                         <Table.Cell>
                             {secured ? s : ""}

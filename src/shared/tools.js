@@ -187,14 +187,14 @@ export const getName = (metadata) => {
 
 export const newTrimMeta = (data, mode, source) => {
 
-    const {line,original,proxy,file_name,stop_name,wfstatus,capture_id,trim_id,parent} = data;
+    const {line,original,proxy,file_name,stop_name,wfstatus,capture_id,trim_id,dgima_id,parent} = data;
     let p = source.match(/^(main|backup|trimmed)$/) ? "t" : "d";
     let key_id = p === "t" ? "trim_id" : "dgima_id";
     let wfid = p + moment().format('X');
     let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
     let originalsha1 = original.format.sha1;
     let proxysha1 = proxy ? proxy.format.sha1 : null;
-    let name = source.match(/^(joined|trimmed|custom)$/) ? file_name : stop_name;
+    let name = file_name || stop_name;
     let censored = mode === "censor";
     let buffer = mode === "wfadmin";
     let secured = wfstatus.secured || false;
@@ -204,9 +204,10 @@ export const newTrimMeta = (data, mode, source) => {
         inpoints: [],
         outpoints: [],
         original,
+        proxy,
         parent: {
-            id: source.match(/^(trimmed|custom)$/) ? trim_id : capture_id,
-            capture_id: source === "trimmed" ? parent.capture_id : data.capture_id,
+            id: parent ? p === "t" ? trim_id : dgima_id : capture_id,
+            capture_id: parent ? parent.capture_id : data.capture_id,
             original_sha1: originalsha1,
             proxy_sha1: proxysha1,
             file_name: name,
