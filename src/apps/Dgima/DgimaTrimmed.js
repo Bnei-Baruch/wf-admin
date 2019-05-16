@@ -326,6 +326,7 @@ class DgimaTrimmed extends Component {
             // { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
+            { key: 'akladot', text: 'Akladot', value: 'akladot' },
         ];
 
         const join_data = dgima
