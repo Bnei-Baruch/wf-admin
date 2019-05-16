@@ -177,28 +177,56 @@ class CensorCheck extends Component {
             )
         });
 
-        let dgima = this.state.dgima.map((data) => {
-            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured} = data.wfstatus;
-            let id = data.dgima_id;
-            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
-            if(!censored || buffer)
-                return false;
-            let rowcolor = censored && !checked;
-            let active = this.state.active === id ? 'active' : '';
-            return (
-                <Table.Row
-                    negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
-                    className={active} key={id} onClick={() => this.selectFile(data)}>
-                    <Table.Cell>
-                        {secured ? s : ""}
-                        {censored && trimmed ? c : ""}
-                        {fixed ? f : ""}
-                        {locked ? d : ""}
-                        {name}</Table.Cell>
-                    <Table.Cell>{time}</Table.Cell>
-                </Table.Row>
-            )
+        let dgima_data = this.state.dgima.map((data) => {
+            if(data.parent.source !== "cassette") {
+                const {trimmed, kmedia, buffer, censored, checked, fixed, locked, secured} = data.wfstatus;
+                let id = data.dgima_id;
+                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+                let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
+                if (!censored || buffer)
+                    return false;
+                let rowcolor = censored && !checked;
+                let active = this.state.active === id ? 'active' : '';
+                return (
+                    <Table.Row
+                        negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                        className={active} key={id} onClick={() => this.selectFile(data)}>
+                        <Table.Cell>
+                            {secured ? s : ""}
+                            {censored && trimmed ? c : ""}
+                            {fixed ? f : ""}
+                            {locked ? d : ""}
+                            {name}</Table.Cell>
+                        <Table.Cell>{time}</Table.Cell>
+                    </Table.Row>
+                )
+            }
+        });
+
+        let cassette_data = this.state.dgima.map((data) => {
+            if(data.parent.source === "cassette") {
+                const {trimmed, kmedia, buffer, censored, checked, fixed, locked, secured} = data.wfstatus;
+                let id = data.dgima_id;
+                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+                let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
+                if (!censored || buffer)
+                    return false;
+                let rowcolor = censored && !checked;
+                let active = this.state.active === id ? 'active' : '';
+                return (
+                    <Table.Row
+                        negative={rowcolor} positive={checked} warning={!kmedia} disabled={!trimmed || locked}
+                        className={active} key={id} onClick={() => this.selectFile(data)}>
+                        <Table.Cell>
+                            {secured ? s : ""}
+                            {censored && trimmed ? c : ""}
+                            {fixed ? f : ""}
+                            {locked ? d : ""}
+                            {name}</Table.Cell>
+                        <Table.Cell>{time}</Table.Cell>
+                    </Table.Row>
+                )
+            }
         });
 
         return (
@@ -254,7 +282,7 @@ class CensorCheck extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell textAlign='center'>Ingest</Table.HeaderCell>
+                            <Table.HeaderCell textAlign='center'><Icon name='record' />Ingest</Table.HeaderCell>
                             <Table.HeaderCell width={2}></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -266,13 +294,25 @@ class CensorCheck extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell textAlign='center'>Dgima</Table.HeaderCell>
+                            <Table.HeaderCell textAlign='center'><Icon name='file video outline' />Cassette</Table.HeaderCell>
                             <Table.HeaderCell width={2}></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {dgima}
+                        {cassette_data}
+                    </Table.Body>
+                </Table>
+                <Table selectable compact='very' basic structured className="ingest_table">
+                    <Table.Header>
+                        <Table.Row className='table_header'>
+                            <Table.HeaderCell textAlign='center'><Icon name='download' />External</Table.HeaderCell>
+                            <Table.HeaderCell width={2}></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {dgima_data}
                     </Table.Body>
                 </Table>
             </Segment>
