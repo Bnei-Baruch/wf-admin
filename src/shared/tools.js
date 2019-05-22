@@ -188,7 +188,7 @@ export const getName = (metadata) => {
 export const newTrimMeta = (data, mode, source) => {
 
     const {line,original,proxy,file_name,stop_name,wfstatus,capture_id,trim_id,dgima_id,parent} = data;
-    let p = source.match(/^(main|backup|trimmed)$/) ? "t" : "d";
+    let p = source.match(/^(main|backup|trimmed|custom)$/) ? "t" : "d";
     let key_id = p === "t" ? "trim_id" : "dgima_id";
     let wfid = p + moment().format('X');
     let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
