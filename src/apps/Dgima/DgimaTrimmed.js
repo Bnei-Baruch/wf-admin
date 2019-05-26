@@ -10,7 +10,7 @@ import {
     WFDB_BACKEND,
     WFSRV_BACKEND
 } from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
@@ -37,6 +37,7 @@ class DgimaTrimmed extends Component {
         sending: false,
         special: "buffer",
         units: [],
+        hide_censored: false,
 
     };
 
@@ -317,8 +318,13 @@ class DgimaTrimmed extends Component {
         });
     };
 
+    toggleCensored = () => {
+        const {hide_censored} = this.state;
+        this.setState({hide_censored: !hide_censored});
+    };
+
     render() {
-        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files} = this.state;
+        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored} = this.state;
 
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
@@ -351,7 +357,8 @@ class DgimaTrimmed extends Component {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-                if(removed) return false;
+                let hide = hide_censored && censored && !checked;
+                if(hide || removed) return false;
                 let rowcolor = censored && !checked;
                 let active = actived === id ? 'active' : 'admin_raw';
                 return (
@@ -381,7 +388,8 @@ class DgimaTrimmed extends Component {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-                if(removed) return false;
+                let hide = hide_censored && censored && !checked;
+                if(hide || removed) return false;
                 let rowcolor = censored && !checked;
                 let active = actived === id ? 'active' : 'admin_raw';
                 return (
@@ -412,6 +420,11 @@ class DgimaTrimmed extends Component {
                 </Label>
                 <Message>
                     <Menu size='large' secondary >
+                        <Menu.Item>
+                            <Checkbox toggle label='Hide Censored'
+                                      checked={hide_censored}
+                                      onChange={this.toggleCensored}/>
+                        </Menu.Item>
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
                                    size='tiny'
