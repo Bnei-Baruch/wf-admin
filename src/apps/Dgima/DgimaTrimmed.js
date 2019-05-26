@@ -158,6 +158,7 @@ class DgimaTrimmed extends Component {
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
             console.log(":: Dgima - rename respond: ",cb);
             if(cb.status === "ok") {
+                this.selectFile(file_data);
                 setTimeout(() => this.setState({ file_data, source, renaming: false, insert_button: false}), 2000);
             } else {
                 setTimeout(() => this.setState({renaming: false}), 2000);
