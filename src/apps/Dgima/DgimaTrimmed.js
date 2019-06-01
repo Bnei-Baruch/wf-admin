@@ -95,10 +95,10 @@ class DgimaTrimmed extends Component {
         let path = file_data.original.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
         // Take date from string if exit
-        if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
-            let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            file_data.line.capture_date = string_date;
-        }
+        // if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
+        //     let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+        //     file_data.line.capture_date = string_date;
+        // }
         if(file_data.parent.source === "cassette") {
             this.setState({
                 file_data, source,
