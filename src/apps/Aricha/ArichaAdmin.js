@@ -270,8 +270,11 @@ class ArichaAdmin extends Component {
 
     render() {
 
+        const {file_data, source, renaming, rename_button, cit_open, inserting, insert_button, insert_open,
+            filedata, metadata, special, send_button, sending} = this.state;
+
         const send_options = [
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia' },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !insert_button },
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
@@ -309,9 +312,6 @@ class ArichaAdmin extends Component {
                 </Table.Row>
             )
         });
-
-        const {file_data, source, renaming, rename_button, cit_open, inserting, insert_button, insert_open,
-            filedata, metadata, special, send_button, sending} = this.state;
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
