@@ -96,6 +96,7 @@ body {
 
 .inout_btn:hover {
     background-color: #21BA45!important;
+    vertical-align: top;
 }
 
 .input_idrecover {
