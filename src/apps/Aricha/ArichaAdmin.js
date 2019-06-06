@@ -9,6 +9,7 @@ import {
     WFSRV_BACKEND,
     getDCT,
     insertName,
+    arichaName,
     MDB_FINDSHA
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
@@ -101,14 +102,17 @@ class ArichaAdmin extends Component {
                     } else {
 
                         // Check filename in Workflow
-                        insertName(file_data.file_name + ".mp4", "insert_name", (data) => {
-                            if(data.length > 0) {
-                                file_data.line.old_sha1 = data[0].sha1;
-                                file_data.line.fix_aricha_id = data[0].send_id;
-                                file_data.line.fix_unit_uid = data[0].line.uid;
-                                console.log("The Filename exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
+                        arichaName(file_data.file_name, (data) => {
+                            if(data.length > 1 && data[data.length-2].original.format.sha1 !== file_data.original.format.sha1) {
+                                file_data.line.old_sha1 = data[data.length-2].original.format.sha1;
+                                file_data.line.fix_aricha_id = data[data.length-2].aricha_id;
+                                file_data.line.fix_unit_uid = data[data.length-2].line.uid;
+                                console.log("The Filename already exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
                                 console.log("-- Update Insert mode --");
                                 this.newInsertData(file_data, data, "2");
+                            } else if(data.length > 1 && data[data.length-2].original.format.sha1 === file_data.original.format.sha1) {
+                                console.log("It's duplicate");
+                                alert("It's duplicate");
                             } else {
                                 console.log("-- New Insert mode --");
                                 this.newInsertData(file_data, data, "1");
@@ -177,18 +181,19 @@ class ArichaAdmin extends Component {
         if(insert_data.insert_type !== "1") {
             file_data.wfstatus.fixed = true;
         }
-        this.setState({...file_data, inserting: true, insert_button: true });
-        putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-        });
+        this.setState({inserting: true, insert_button: true });
         insert_data.send_id = file_data.aricha_id;
 
         // Now we put metadata to mdb on backend
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
             console.log(":: ArichaApp - workflow respond: ",cb);
             if(cb.status === "ok") {
+                setTimeout(() => this.setState({file_data, inserting: false, send_button: false, kmedia_option: true}), 2000);
+                putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
+                    console.log(":: PUT Respond: ",cb);
+                    this.selectFile(file_data);
+                });
                 alert("Insert successful :)");
-                setTimeout(() => this.setState({ inserting: false, send_button: false, kmedia_option: true}), 2000);
             } else {
                 alert("Something gone wrong :(");
                 this.setState({ inserting: false, insert_button: false});
@@ -202,12 +207,10 @@ class ArichaAdmin extends Component {
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
         let opath = `/backup/aricha/${newfile_name}_${file_data.aricha_id}o.mp4`;
-        //let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.aricha_id}p.mp4`;
         file_data.line = {...newline};
         file_data.parent = {...{file_name: oldfile_name}};
         //file_data.line.title = this.state.tags[newline.pattern] || "";
         file_data.original.format.filename = opath;
-        //file_data.proxy.format.filename = ppath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
 
@@ -222,8 +225,6 @@ class ArichaAdmin extends Component {
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
                 this.selectFile(file_data);
-                // Make proxy
-                //fetch(`${CARBON2_BACKEND}/convert?id=${file_data.aricha_id}&key=proxy`);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }

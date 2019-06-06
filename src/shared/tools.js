@@ -267,6 +267,14 @@ export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/f
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
+export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?key=file_name&value=${filename}`)
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+    })
+    .catch(ex => console.log(`get ${filename}`, ex));
+
 export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
     .then((response) => {
         if (response.ok) {
