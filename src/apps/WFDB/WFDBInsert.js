@@ -40,7 +40,8 @@ class WFDBInsert extends Component {
             let ext = c.extension;
             let name = c.file_name;
             let lng = c.language;
-            let n = name.split("_").splice(2).join("_");
+            let user = c.line.name ? " --- ("+c.line.name+")" : "";
+            let n = name.split("_").splice(2).join("_") + user;
             json[n] = json[n] || {};
             json[n][ext] = json[n][ext] || {};
             json[n][ext][lng] = json[n][ext][lng] || {};
