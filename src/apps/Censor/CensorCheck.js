@@ -281,6 +281,7 @@ class CensorCheck extends Component {
                     </Menu.Menu>
                 </Menu>
                 </Message>
+                <Segment attached raised textAlign='center' className='censor_content'>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
@@ -317,6 +318,7 @@ class CensorCheck extends Component {
                         {dgima_data}
                     </Table.Body>
                 </Table>
+                </Segment>
             </Segment>
         );
     }
