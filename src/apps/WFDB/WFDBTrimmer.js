@@ -18,8 +18,8 @@ class Trimmer extends Component {
     componentDidUpdate(prevProps) {
         let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
         let next = [this.props.date, this.props.skey, this.props.svalue];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getTrimmerData(this.props.sjson, this.props.skey, this.props.svalue);
+        // if (JSON.stringify(prev) !== JSON.stringify(next))
+        //     this.getTrimmerData(this.props.sjson, this.props.skey, this.props.svalue);
     };
 
     getTrimmerData = (sjson, skey, svalue) => {
@@ -27,6 +27,18 @@ class Trimmer extends Component {
         let endpoint = sjson === "wfdb" ? "find" : sjson;
         if(!search) return;
         getData(`trimmer/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
+            console.log(":: Trimmer DB Data: ",trimmer);
+            this.setState({trimmer});
+        });
+    };
+
+    searchData = (tab) => {
+        const {sjson,skey,svalue} = this.props;
+        console.log(tab);
+        let search = skey === "date" && !svalue ? this.props.date : svalue;
+        let endpoint = sjson === "wfdb" ? "find" : sjson;
+        if(!search) return;
+        getData(`${tab}/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
@@ -134,8 +146,8 @@ class Trimmer extends Component {
 
         return (
 
-            <Container>
-                <Table selectable compact='very' fixed basic size='small' structured>
+            <div>
+                <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>
@@ -156,7 +168,7 @@ class Trimmer extends Component {
                         {trimmer_data}
                     </Table.Body>
                 </Table>
-            </Container>
+            </div>
         );
     }
 }

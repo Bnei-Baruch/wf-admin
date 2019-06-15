@@ -70,6 +70,7 @@ class WFDB extends Component {
     setSearchValue = () => {
         console.log(":: Going to search: ", this.state.value);
         this.setState({svalue: this.state.value});
+        this.tab.searchData(this.state.tab);
     };
 
     selectTab = (e, data) => {
@@ -108,9 +109,9 @@ class WFDB extends Component {
 
         const panes = [
             { menuItem: { key: 'ingest', content: 'Ingest' },
-                render: () => <Tab.Pane attached={true} ><WFDBIngest {...this.state} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={true} ><WFDBIngest {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'trimmer', content: 'Trimmer' },
-                render: () => <Tab.Pane attached={false} ><WFDBTrimmer {...this.state} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} ><WFDBTrimmer {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'carbon', content: 'Carbon' },
                 render: () => <Tab.Pane attached={false} ><WFDBCarbon {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'kmedia', content: 'Kmedia' },

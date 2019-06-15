@@ -17,8 +17,8 @@ class WFDBIngest extends Component {
     componentDidUpdate(prevProps) {
         let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
         let next = [this.props.date, this.props.skey, this.props.svalue];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getIngestData(this.props.skey, this.props.svalue);
+        // if (JSON.stringify(prev) !== JSON.stringify(next))
+        //     this.getIngestData(this.props.skey, this.props.svalue);
     };
 
     getIngestData = (skey, svalue) => {
@@ -27,6 +27,18 @@ class WFDBIngest extends Component {
         getData(`ingest/find?key=${skey}&value=${search}`, (ingest) => {
             console.log(":: Ingest DB Data: ",ingest);
             this.setState({ingest})
+        });
+    };
+
+    searchData = (tab) => {
+        const {sjson,skey,svalue} = this.props;
+        console.log(tab);
+        let search = skey === "date" && !svalue ? this.props.date : svalue;
+        let endpoint = sjson === "wfdb" ? "find" : sjson;
+        if(!search) return;
+        getData(`${tab}/${endpoint}?key=${skey}&value=${search}`, (ingest) => {
+            console.log(":: Trimmer DB Data: ",ingest);
+            this.setState({ingest});
         });
     };
 
