@@ -25,11 +25,12 @@ class WFDBInsert extends Component {
     };
 
     searchData = (tab) => {
-        const {sjson,skey,svalue} = this.props;
+        const {skey,svalue} = this.props;
         console.log(tab);
         let search = this.props.skey === "date" ? this.props.date : svalue;
+        let endpoint = skey === "uid" ? "line" : "find";
         if(!search) return;
-        getData(`insert/find?key=${skey}&value=${search}`, (insert) => {
+        getData(`insert/${endpoint}?key=${skey}&value=${search}`, (insert) => {
             console.log(":: Insert DB Data: ",insert);
             this.setState({insert});
             this.restructure(insert);
