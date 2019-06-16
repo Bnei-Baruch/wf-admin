@@ -29,7 +29,7 @@ class Trimmer extends Component {
         const {sjson,skey,svalue} = this.props;
         console.log(tab);
         let search = skey === "date" && !svalue ? this.props.date : svalue;
-        let endpoint = skey === "sha1" ? "sha1" : sjson === "wfdb" ? "find" : sjson;
+        let endpoint = skey === "sha1" ? "sha1" : skey === "uid" ? "line" : sjson === "wfdb" ? "find" : sjson;
         if(!search) return;
         getData(`${tab}/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);
