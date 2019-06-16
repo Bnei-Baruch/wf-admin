@@ -22,6 +22,7 @@ class WFDB extends Component {
         sjson: "wfdb",
         skey: "date",
         svalue: "",
+        value: "",
         startDate: moment(),
         wf_root: false,
         lock: false,
@@ -49,7 +50,7 @@ class WFDB extends Component {
 
     changeDate = (data) => {
         let date = data.format(this.state.tab === "labels" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
-        this.setState({startDate: data, date, skey: "date", svalue: ""},() => {
+        this.setState({startDate: data, date, skey: "date", value: "", svalue: ""},() => {
             this.tab.searchData(this.state.tab);
         });
     };
@@ -169,7 +170,7 @@ class WFDB extends Component {
                     </Menu.Item>
                     <Menu.Item>
                     <Input className='input_wfdb' type='text' placeholder='Search...' action
-                           onChange={e => this.setStatusValue(e.target.value)}>
+                           value={this.state.value} onChange={e => this.setStatusValue(e.target.value)}>
                         <input />
                         <Button type='submit' onClick={this.setSearchValue}>Search</Button>
                     </Input>
