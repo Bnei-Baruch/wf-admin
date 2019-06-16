@@ -15,16 +15,9 @@ class Trimmer extends Component {
         this.getTrimmerData("wfdb", "date", this.props.date);
     };
 
-    componentDidUpdate(prevProps) {
-        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
-        let next = [this.props.date, this.props.skey, this.props.svalue];
-        // if (JSON.stringify(prev) !== JSON.stringify(next))
-        //     this.getTrimmerData(this.props.sjson, this.props.skey, this.props.svalue);
-    };
-
     getTrimmerData = (sjson, skey, svalue) => {
         let search = this.props.skey === "date" && !svalue ? this.props.date : svalue;
-        let endpoint = sjson === "wfdb" ? "find" : sjson;
+        let endpoint = sjson === "wfdb" ? "find" : skey === "sha1" ? "sha1" : sjson;
         if(!search) return;
         getData(`trimmer/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);
@@ -36,7 +29,7 @@ class Trimmer extends Component {
         const {sjson,skey,svalue} = this.props;
         console.log(tab);
         let search = skey === "date" && !svalue ? this.props.date : svalue;
-        let endpoint = sjson === "wfdb" ? "find" : sjson;
+        let endpoint = skey === "sha1" ? "sha1" : sjson === "wfdb" ? "find" : sjson;
         if(!search) return;
         getData(`${tab}/${endpoint}?key=${skey}&value=${search}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);

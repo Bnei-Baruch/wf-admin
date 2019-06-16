@@ -49,7 +49,9 @@ class WFDB extends Component {
 
     changeDate = (data) => {
         let date = data.format(this.state.tab === "labels" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
-        this.setState({startDate: data, date, skey: "date"});
+        this.setState({startDate: data, date, skey: "date", svalue: ""},() => {
+            this.tab.searchData(this.state.tab);
+        });
     };
 
     setJsonKey = (sjson) => {
@@ -69,8 +71,9 @@ class WFDB extends Component {
 
     setSearchValue = () => {
         console.log(":: Going to search: ", this.state.value);
-        this.setState({svalue: this.state.value});
-        this.tab.searchData(this.state.tab);
+        this.setState({svalue: this.state.value},() => {
+            this.tab.searchData(this.state.tab);
+        });
     };
 
     selectTab = (e, data) => {
@@ -154,13 +157,13 @@ class WFDB extends Component {
                         onChange={this.changeDate}
                     />
                     </Menu.Item>
+                    {/*<Menu.Item>*/}
+                    {/*    <Select compact defaultValue='wfdb'*/}
+                    {/*            options={this.state.tab === "labels" ? "" : json_options}*/}
+                    {/*            onChange={(e, {value}) => this.setJsonKey(value)} />*/}
+                    {/*</Menu.Item>*/}
                     <Menu.Item>
-                        <Select compact defaultValue='wfdb'
-                                options={this.state.tab === "labels" ? "" : json_options}
-                                onChange={(e, {value}) => this.setJsonKey(value)} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Select compact defaultValue='date'
+                        <Select compact value={this.state.skey}
                                 options={this.state.tab === "labels" ? labels_options : wfdb_options}
                                 onChange={(e, {value}) => this.setStatusKey(value)} />
                     </Menu.Item>
