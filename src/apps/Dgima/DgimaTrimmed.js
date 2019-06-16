@@ -37,7 +37,7 @@ class DgimaTrimmed extends Component {
         sending: false,
         special: "buffer",
         units: [],
-        hide_censored: false,
+        hide_censored: true,
 
     };
 
