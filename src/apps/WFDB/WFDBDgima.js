@@ -14,17 +14,22 @@ class WFDBDgima extends Component {
         this.getTrimmerData("date", this.props.date);
     };
 
-    componentDidUpdate(prevProps) {
-        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
-        let next = [this.props.date, this.props.skey, this.props.svalue];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getTrimmerData(this.props.skey, this.props.svalue);
-    };
-
     getTrimmerData = (skey, svalue) => {
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`dgima/find?key=${skey}&value=${search}`, (dgima) => {
+            console.log(":: Dgima DB Data: ",dgima);
+            this.setState({dgima});
+        });
+    };
+
+    searchData = (tab) => {
+        const {sjson,skey,svalue} = this.props;
+        console.log(tab);
+        let search = skey === "date" && !svalue ? this.props.date : svalue;
+        let endpoint = skey === "sha1" ? "sha1" : sjson === "wfdb" ? "find" : sjson;
+        if(!search) return;
+        getData(`${tab}/${endpoint}?key=${skey}&value=${search}`, (dgima) => {
             console.log(":: Dgima DB Data: ",dgima);
             this.setState({dgima});
         });

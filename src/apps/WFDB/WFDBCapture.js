@@ -28,6 +28,19 @@ class WFDBCapture extends Component {
         });
     };
 
+    searchData = (tab) => {
+        const {sjson,skey,svalue} = this.props;
+        console.log(tab);
+        let search = skey === "date" && !svalue ? this.props.date : svalue;
+        let key = skey === "file_name" ? "stop_name" : skey;
+        let endpoint = sjson === "wfdb" ? "find" : sjson;
+        if(!search) return;
+        getData(`${tab}/${endpoint}?key=${key}&value=${search}`, (capture) => {
+            console.log(":: Capture DB Data: ",capture);
+            this.setState({capture});
+        });
+    };
+
     render() {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);

@@ -14,14 +14,19 @@ class WFDBInsert extends Component {
         this.getKmediaData("date", this.props.date);
     };
 
-    componentDidUpdate(prevProps) {
-        let prev = [prevProps.date, prevProps.skey, prevProps.svalue];
-        let next = [this.props.date, this.props.skey, this.props.svalue];
-        if (JSON.stringify(prev) !== JSON.stringify(next))
-            this.getKmediaData(this.props.skey, this.props.svalue);
+    getKmediaData = (skey, svalue) => {
+        let search = this.props.skey === "date" ? this.props.date : svalue;
+        if(!search) return;
+        getData(`insert/find?key=${skey}&value=${search}`, (insert) => {
+            console.log(":: Insert DB Data: ",insert);
+            this.setState({insert});
+            this.restructure(insert);
+        });
     };
 
-    getKmediaData = (skey, svalue) => {
+    searchData = (tab) => {
+        const {sjson,skey,svalue} = this.props;
+        console.log(tab);
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;
         getData(`insert/find?key=${skey}&value=${search}`, (insert) => {
