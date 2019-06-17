@@ -23,7 +23,7 @@ class DgimaApp extends Component {
             <Fragment>
                 {this.props.user.preferred_username.match(/^(amnonbb@gmail\.com|natashazh57@gmail\.com|alex\.mizrachi@gmail\.com)$/) ? <DgimaUpload onFileData={this.dgimaWorkflow}/> : ""}
                 <DgimaTrimmer/>
-                <DgimaTrimmed/>
+                <DgimaTrimmed user={this.props.user} />
             </Fragment>
         );
     }

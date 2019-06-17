@@ -13,7 +13,7 @@ class CensorApp extends Component {
         return (
             <Fragment>
                 {/*<CensorTrimmer/>*/}
-                <CensorCheck/>
+                <CensorCheck user={this.props.user} />
             </Fragment>
         );
     }

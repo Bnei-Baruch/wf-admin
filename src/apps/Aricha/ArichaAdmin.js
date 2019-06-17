@@ -358,7 +358,7 @@ class ArichaAdmin extends Component {
                                        open={insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} />
+                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} user={this.props.user} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>

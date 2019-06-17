@@ -125,7 +125,8 @@ class App extends Component {
                     <InsertApp
                         filedata={filedata}
                         metadata={metadata}
-                        onComplete={this.onComplete} />
+                        onComplete={this.onComplete}
+                        user={this.props.user} />
                 </Modal>
             </Fragment>
         );

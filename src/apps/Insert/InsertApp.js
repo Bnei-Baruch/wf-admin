@@ -264,6 +264,11 @@ class InsertApp extends Component {
         let {metadata} = this.state;
         delete metadata.send_uid;
         delete metadata.content_type;
+        if(this.props.user) {
+            const {name,email} = this.props.user;
+            metadata.line.name = name;
+            metadata.line.email = email;
+        }
         console.log(" ::: onComplete metadata ::: ", metadata);
         this.props.onComplete(metadata);
     };

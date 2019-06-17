@@ -13,7 +13,7 @@ class AdminApp extends Component {
         return (
             <Fragment>
                 <AdminTrimmer/>
-                <AdminTrimmed/>
+                <AdminTrimmed user={this.props.user} />
             </Fragment>
         );
     }
