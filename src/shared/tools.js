@@ -160,6 +160,8 @@ export const getName = (metadata) => {
     } else if(upload_type === "tamlil") {
         name[4] = line.send_name.split("_").slice(4).join("_").replace(/([^-_a-zA-Z0-9]+)/g, '').toLowerCase();
         name.splice(-1,1);
+    } else if(line.collection_type === "CONGRESS") {
+        return line.upload_filename;
     } else if(upload_type === "kitei-makor") {
         name[4] = "kitei-makor";
     } else if(upload_type === "research-material") {

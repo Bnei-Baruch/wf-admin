@@ -68,7 +68,7 @@ class DgimaTrimmed extends Component {
             // Make insert metadata
             metadata.insert_id = "i"+moment().format('X');
             metadata.line = file_data.line;
-            //insert_data.line.mime_type = "video/mp4";
+            if(ext === "mp4") metadata.line.mime_type = "video/mp4";
             metadata.content_type = getDCT(file_data.line.content_type);
             metadata.date = date;
             metadata.file_name = file_data.file_name;
@@ -209,6 +209,8 @@ class DgimaTrimmed extends Component {
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
                 }
             });
+        } else if(file_data.parent.source === "congress" && file_data.line.content_type !== "FULL_LESSON") {
+            this.setState({insert_open: true});
         } else if(file_data.parent.source.match(/^(cassette|insert)$/)) {
             this.setState({insert_open: true});
         } else {
@@ -249,9 +251,11 @@ class DgimaTrimmed extends Component {
                         file_data.special = "cassette";
                         putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
                             console.log(":: Dgima - send respond: ",cb);
+                            this.selectFile(file_data);
                         });
                     }
                 });
+                alert("Insert successful :)");
             } else {
                 alert("Something goes wrong!");
                 this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
