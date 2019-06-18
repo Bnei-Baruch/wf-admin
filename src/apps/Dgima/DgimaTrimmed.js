@@ -6,6 +6,7 @@ import {
     getUnits,
     IVAL, MDB_FINDSHA,
     newTrimMeta,
+    newInsertMeta,
     putData,
     WFDB_BACKEND,
     WFSRV_BACKEND
@@ -55,35 +56,16 @@ class DgimaTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
-        const {renamed,wfsend} = file_data.wfstatus;
+        const {renamed,wfsend,secured} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
+            metadata = newInsertMeta(file_data);
+            // filedata needed for insert app
+            filedata = file_data.file_name;
+            this.setState({filedata, metadata});
             // Take sha for mdb fetch
             let sha1 = file_data.original.format.sha1;
-            // Build data for insert app
-            filedata = file_data.file_name;
-            let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            let ext = file_data.original.format.format_name === "mp3" ? "mp3" : "mp4";
-            // Make insert metadata
-            metadata.insert_id = "i"+moment().format('X');
-            metadata.line = file_data.line;
-            if(ext === "mp4") metadata.line.mime_type = "video/mp4";
-            metadata.content_type = getDCT(file_data.line.content_type);
-            metadata.date = date;
-            metadata.file_name = file_data.file_name;
-            metadata.extension = ext;
-            metadata.insert_name = `${file_data.file_name}.${metadata.extension}`;
-            // In InsertApp upload_filename use for filename gen in OldWF
-            metadata.line.upload_filename = metadata.insert_name;
-            metadata.insert_type = "3";
-            metadata.language = file_data.line.language;
-            metadata.send_id = file_data.dgima_id;
-            metadata.send_uid = "";
-            metadata.upload_type = "dgima";
-            metadata.sha1 = file_data.original.format.sha1;
-            metadata.size = parseInt(file_data.original.format.size, 10);
-            this.setState({filedata, metadata});
             getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
                 console.log(":: Trimmer - got units: ", units);
                 if (units.total > 0)
@@ -94,11 +76,6 @@ class DgimaTrimmed extends Component {
         // Build url for preview
         let path = file_data.original.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
-        // Take date from string if exit
-        // if((/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
-        //     let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-        //     file_data.line.capture_date = string_date;
-        // }
         if(file_data.parent.source === "cassette") {
             this.setState({
                 file_data, source,
@@ -116,7 +93,7 @@ class DgimaTrimmed extends Component {
                 insert_button: !renamed || wfsend,
                 rename_button: wfsend,
                 send_button: !renamed,
-                kmedia_option: wfsend,
+                kmedia_option: !wfsend || secured,
             });
         }
     };
@@ -333,7 +310,7 @@ class DgimaTrimmed extends Component {
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
             { key: 'censor', text: 'Censor', value: 'censor' },
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !kmedia_option },
+            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: kmedia_option },
             // { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
@@ -350,7 +327,7 @@ class DgimaTrimmed extends Component {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
-        let c = (<Icon name='copyright'/>);
+        let c = (<Icon color='blue' name='copyright'/>);
         let d = (<Icon color='blue' name='lock'/>);
         let j = (<Icon color='blue' name='linkify'/>);
         let s = (<Icon color='red' name='key'/>);

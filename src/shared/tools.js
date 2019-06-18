@@ -234,6 +234,30 @@ export const newTrimMeta = (data, mode, source) => {
 
 };
 
+export const newInsertMeta = (file_data) => {
+    let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+    let ext = file_data.original.format.format_name === "mp3" ? "mp3" : "mp4";
+    let metadata = {};
+    metadata.insert_id = "i"+moment().format('X');
+    metadata.line = file_data.line;
+    if(ext === "mp4") metadata.line.mime_type = "video/mp4";
+    metadata.content_type = getDCT(file_data.line.content_type);
+    metadata.date = date;
+    metadata.file_name = file_data.file_name;
+    metadata.extension = ext;
+    metadata.insert_name = `${file_data.file_name}.${metadata.extension}`;
+    // In InsertApp upload_filename use for filename gen in OldWF
+    metadata.line.upload_filename = metadata.insert_name;
+    metadata.insert_type = "3";
+    metadata.language = file_data.line.language;
+    metadata.send_id = file_data.dgima_id;
+    metadata.send_uid = "";
+    metadata.upload_type = "dgima";
+    metadata.sha1 = file_data.original.format.sha1;
+    metadata.size = parseInt(file_data.original.format.size, 10);
+    return metadata;
+};
+
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
