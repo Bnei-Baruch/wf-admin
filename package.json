@@ -4,7 +4,6 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "browserslist": "4.6.3",
     "lodash": "^4.17.5",
     "mediaelement": "^4.2.9",
     "mediaelement-plugins": "^2.5.0",
@@ -25,10 +24,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": {
+    "production": [],
+    "development": []
+  }
 }
