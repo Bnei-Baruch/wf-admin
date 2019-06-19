@@ -146,7 +146,7 @@ class CensorCheck extends Component {
     onClose = () => {
         let {active} = this.state;
         let ep = getEndpoint(active);
-        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=${status}`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=true`, { method: 'POST',})
         this.setState({open: false, disabled: true, file_data: ""});
     };
 
@@ -271,9 +271,9 @@ class CensorCheck extends Component {
                     <Menu.Item>
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
                     </Menu.Item>
-                    <Menu.Item>
-                        <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />
-                    </Menu.Item>
+                    {/*<Menu.Item>*/}
+                    {/*    <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />*/}
+                    {/*</Menu.Item>*/}
                     <Menu.Menu position='right'>
                         <Menu.Item>
                             <Button positive disabled={this.state.disabled}
