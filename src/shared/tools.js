@@ -8,6 +8,7 @@ export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.R
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
+export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 //export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 //export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
