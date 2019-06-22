@@ -1,13 +1,11 @@
 import React, { Component, Fragment } from 'react'
-import { getData } from '../../shared/tools';
-import { Table } from 'semantic-ui-react'
-import {langs_bb} from "../../shared/consts";
+import {getData, MDB_UNIT_URL} from '../../shared/tools';
+import {Table} from 'semantic-ui-react'
 
 class WFDBInsert extends Component {
 
     state = {
         insert: [],
-        json: {},
     };
 
     componentDidMount() {
@@ -20,7 +18,6 @@ class WFDBInsert extends Component {
         getData(`insert/find?key=${skey}&value=${search}`, (insert) => {
             console.log(":: Insert DB Data: ",insert);
             this.setState({insert});
-            this.restructure(insert);
         });
     };
 
@@ -33,62 +30,39 @@ class WFDBInsert extends Component {
         getData(`insert/${endpoint}?key=${skey}&value=${search}`, (insert) => {
             console.log(":: Insert DB Data: ",insert);
             this.setState({insert});
-            this.restructure(insert);
         });
     };
 
-    restructure = (data) => {
-        let insert = data;
-        let json = {};
-
-        for (let k in insert) {
-            let c = insert[k];
-            let ext = c.extension;
-            let name = c.file_name;
-            let lng = c.language;
-            let user = c.line.name ? ":"+c.line.name+" - ("+c.line.email+")" : ":";
-            let n = name.split("_").splice(2).join("_") + user;
-            json[n] = json[n] || {};
-            json[n][ext] = json[n][ext] || {};
-            json[n][ext][lng] = json[n][ext][lng] || {};
-            json[n][ext][lng].filename = name;
-        }
-        this.setState({json})
-    };
-
     render() {
-        const languages = langs_bb;
-        let insert_data = Object.keys(this.state.json).map((id) => {
-            let data = this.state.json;
-            let name = id.split(":")[0];
-            let user = id.split(":")[1];
-            let exts = Object.keys(data[id]).map((ext) => {
-                let langs = languages.map((lang) => {
-                    let ex = data[id][ext].hasOwnProperty(lang);
-                    return (
-                        <Table.Cell key={lang} disabled  positive={ex} colSpan={2}>{lang}</Table.Cell>
-                    )
-                });
-                return (<Table.Row key={ext}><Table.Cell active colSpan={2}>{ext}</Table.Cell>{langs}</Table.Row>);
-            });
+        let insert_data = this.state.insert.map((data) => {
+            const {id,insert_id,insert_name,send_id,upload_type,line} = data;
+            const {name,email,uid,unit_id} = line;
+            let user = name ? name+" - ("+email+")" : "";
+            let href = `${MDB_UNIT_URL}/${unit_id}`;
+            let link = unit_id ? (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>) : (<b>{uid}</b>);
             return (
-                <Fragment key={id}>
-                    <Table.Row key={id} className="monitor_tr" >
-                        <Table.Cell colSpan={languages.length + 1}><strong>{name}</strong></Table.Cell>
-                        <Table.Cell colSpan={languages.length + 1}><i>{user}</i></Table.Cell>
-                    </Table.Row>
-                    {exts}
-                </Fragment>
-            );
+                <Table.Row key={id} className="monitor_tr">
+                    <Table.Cell>{insert_id}</Table.Cell>
+                    <Table.Cell>{link}</Table.Cell>
+                    <Table.Cell>{send_id}</Table.Cell>
+                    <Table.Cell>{insert_name}</Table.Cell>
+                    <Table.Cell>{upload_type}</Table.Cell>
+                    <Table.Cell>{user}</Table.Cell>
+                </Table.Row>
+            )
         });
 
         return (
             <Fragment>
-                <Table compact='very' selectable basic size='small'>
+                <Table compact='very' selectable basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell colSpan={languages.length + 1}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell colSpan={languages.length + 1}>Operator</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Parent ID</Table.HeaderCell>
+                            <Table.HeaderCell width={7}>File Name</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Upload Type</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>Operator</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
