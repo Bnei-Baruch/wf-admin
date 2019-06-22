@@ -72,7 +72,7 @@ class WFDBDgima extends Component {
             let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
-            let link = !wfsend ? (<b>{x}</b>) : (<a target="_blank" rel="noopener noreferrer" href={href}>{v}</a>);
+            let link = !wfsend ? "" : (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>);
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!aricha} className="monitor_tr">
@@ -84,6 +84,7 @@ class WFDBDgima extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
+                    <Table.Cell>{link}</Table.Cell>
                     <Table.Cell>{censor}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{removed ? v : x}</Table.Cell>
@@ -93,7 +94,7 @@ class WFDBDgima extends Component {
                     <Table.Cell>{backup ? v : x}</Table.Cell>
                     <Table.Cell>{metus ? v : x}</Table.Cell>
                     <Table.Cell>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!wfsend}>{link}</Table.Cell>
+                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -104,7 +105,8 @@ class WFDBDgima extends Component {
                 <Table compact='very' selectable basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={2}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                             <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>RMV</Table.HeaderCell>

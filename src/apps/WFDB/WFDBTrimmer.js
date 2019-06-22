@@ -106,7 +106,7 @@ class Trimmer extends Component {
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
-            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{v}</a>) : (<b>{x}</b>);
+            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
@@ -118,6 +118,7 @@ class Trimmer extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
+                    <Table.Cell>{link}</Table.Cell>
                     <Popup
                         trigger={<Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>}
                         on='click'
@@ -134,7 +135,7 @@ class Trimmer extends Component {
                     <Table.Cell warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell warning={metus}>{metus ? v : x}</Table.Cell>
                     <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!wfsend}>{link}</Table.Cell>
+                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -145,7 +146,8 @@ class Trimmer extends Component {
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={2}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                             <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>RMV</Table.HeaderCell>
