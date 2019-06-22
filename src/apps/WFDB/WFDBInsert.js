@@ -38,8 +38,8 @@ class WFDBInsert extends Component {
             const {id,insert_id,insert_name,send_id,upload_type,line} = data;
             const {name,email,uid,unit_id} = line;
             let user = name ? name+" - ("+email+")" : "";
-            let href = `${MDB_UNIT_URL}/${unit_id}`;
-            let link = unit_id ? (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>) : (<b>{uid}</b>);
+            let href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
+            let link = (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>);
             return (
                 <Table.Row key={id} className="monitor_tr">
                     <Table.Cell>{insert_id}</Table.Cell>

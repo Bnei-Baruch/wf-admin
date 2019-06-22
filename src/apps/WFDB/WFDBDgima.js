@@ -71,8 +71,8 @@ class WFDBDgima extends Component {
             let name = data.file_name;
             let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
-            let link = !wfsend ? (<b>{x}</b>) : data.line.unit_id ? (<a target="_blank" rel="noopener noreferrer" href={href}>{v}</a>) : (<div>{v}</div>);
+            let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
+            let link = !wfsend ? (<b>{x}</b>) : (<a target="_blank" rel="noopener noreferrer" href={href}>{v}</a>);
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!aricha} className="monitor_tr">
