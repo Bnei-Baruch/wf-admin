@@ -318,7 +318,7 @@ class DgimaTrimmed extends Component {
         ];
 
         const join_data = dgima
-            .filter(data => data.parent.source === "cassette")
+            .filter(data => data.parent.source === "cassette" && !data.wfstatus.renamed)
             .map(data => {
             const {id, file_name} = data;
             return ({key: id, text: file_name, value: data})
