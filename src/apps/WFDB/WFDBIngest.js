@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, {Component, Fragment} from 'react'
 import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
-import { Icon, Table, Container, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
+import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class WFDBIngest extends Component {
 
@@ -117,8 +117,8 @@ class WFDBIngest extends Component {
 
         return (
 
-            <Container textAlign='center'>
-                <Table compact='very' selectable fixed basic size='small'>
+            <Fragment>
+                <Table compact='very' selectable basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>
@@ -133,7 +133,7 @@ class WFDBIngest extends Component {
                         {ingest_data}
                     </Table.Body>
                 </Table>
-            </Container>
+            </Fragment>
         );
     }
 }

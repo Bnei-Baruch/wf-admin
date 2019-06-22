@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component, Fragment} from 'react';
 import moment from 'moment';
 import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
-import { Icon, Table, Container, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
+import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class Trimmer extends Component {
 
@@ -139,7 +139,7 @@ class Trimmer extends Component {
 
         return (
 
-            <div>
+            <Fragment>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
@@ -161,7 +161,7 @@ class Trimmer extends Component {
                         {trimmer_data}
                     </Table.Body>
                 </Table>
-            </div>
+            </Fragment>
         );
     }
 }

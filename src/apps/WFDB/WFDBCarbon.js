@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { getData } from '../../shared/tools';
-import { Table, Container } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import {langs_bb} from '../../shared/consts';
 
 class WFDBCarbon extends Component {
@@ -76,8 +76,8 @@ class WFDBCarbon extends Component {
         });
 
         return (
-            <Container textAlign='center'>
-                <Table compact='very' selectable fixed basic size='small'>
+            <Fragment>
+                <Table compact='very' selectable basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell colSpan={languages.length + 1}>File Name</Table.HeaderCell>
@@ -88,7 +88,7 @@ class WFDBCarbon extends Component {
                         {carbon_data}
                     </Table.Body>
                 </Table>
-            </Container>
+            </Fragment>
         );
     }
 }

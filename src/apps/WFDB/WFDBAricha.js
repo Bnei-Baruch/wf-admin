@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component, Fragment} from 'react';
 import moment from 'moment';
 import { getData, WFDB_BACKEND} from '../../shared/tools';
-import { Icon, Table, Container, Loader, Popup, Checkbox } from 'semantic-ui-react'
+import { Icon, Table, Loader, Popup, Checkbox } from 'semantic-ui-react'
 
 class WFDBAricha extends Component {
 
@@ -98,8 +98,8 @@ class WFDBAricha extends Component {
 
         return (
 
-            <Container>
-                <Table compact='very' selectable fixed basic size='small' structured>
+            <Fragment>
+                <Table compact='very' selectable basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>
@@ -120,7 +120,7 @@ class WFDBAricha extends Component {
                         {aricha_data}
                     </Table.Body>
                 </Table>
-            </Container>
+            </Fragment>
         );
     }
 }

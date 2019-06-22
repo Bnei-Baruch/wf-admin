@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, {Component, Fragment} from 'react'
 import { getData } from '../../shared/tools';
-import { Icon, Table, Container, Loader } from 'semantic-ui-react'
+import { Icon, Table, Loader } from 'semantic-ui-react'
 
 class WFDBCapture extends Component {
 
@@ -64,8 +64,8 @@ class WFDBCapture extends Component {
 
         return (
 
-            <Container textAlign='center'>
-                <Table compact='very' selectable fixed basic size='small'>
+            <Fragment>
+                <Table compact='very' selectable basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>ID</Table.HeaderCell>
@@ -80,7 +80,7 @@ class WFDBCapture extends Component {
                         {capture_data}
                     </Table.Body>
                 </Table>
-            </Container>
+            </Fragment>
         );
     }
 }
