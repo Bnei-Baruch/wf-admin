@@ -9,6 +9,7 @@ export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
+export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 //export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 //export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';

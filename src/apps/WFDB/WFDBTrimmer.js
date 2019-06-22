@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import moment from 'moment';
-import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
+import {getData, postData, WFDB_BACKEND, MDB_UNIT_URL} from '../../shared/tools';
 import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class Trimmer extends Component {
@@ -105,6 +105,8 @@ class Trimmer extends Component {
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
+            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{v}</a>) : (<b>{x}</b>);
             let rowcolor = censored && !checked;
             return (
                 <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
@@ -132,7 +134,7 @@ class Trimmer extends Component {
                     <Table.Cell warning={backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell warning={metus}>{metus ? v : x}</Table.Cell>
                     <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
+                    <Table.Cell negative={!wfsend}>{link}</Table.Cell>
                 </Table.Row>
             )
         });
