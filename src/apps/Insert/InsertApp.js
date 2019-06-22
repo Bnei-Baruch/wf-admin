@@ -113,6 +113,7 @@ class InsertApp extends Component {
 
         // Meta from unit properties going to line
         metadata.line.uid = uid;
+        metadata.line.unit_id = id;
         metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
         metadata.line.capture_date = properties.capture_date;
         metadata.line.film_date = properties.film_date;
