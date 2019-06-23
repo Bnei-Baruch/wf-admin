@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import {getData, MDB_UNIT_URL} from '../../shared/tools';
+import {getData, getEndpoint, MDB_UNIT_URL} from '../../shared/tools';
 import {Table} from 'semantic-ui-react'
 
 class WFDBInsert extends Component {
@@ -33,6 +33,13 @@ class WFDBInsert extends Component {
         });
     };
 
+    getParent = (id) => {
+        let ep = getEndpoint(id);
+        getData(`${ep}/${id}`, data => {
+            console.log(data);
+        })
+    };
+
     render() {
         let insert_data = this.state.insert.map((data) => {
             const {id,insert_id,insert_name,send_id,upload_type,line} = data;
@@ -42,9 +49,9 @@ class WFDBInsert extends Component {
             let link = (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>);
             return (
                 <Table.Row key={id} className="monitor_tr">
-                    <Table.Cell>{insert_id}</Table.Cell>
+                    <Table.Cell onClick={() => console.log(data)}>{insert_id}</Table.Cell>
                     <Table.Cell>{link}</Table.Cell>
-                    <Table.Cell>{send_id}</Table.Cell>
+                    <Table.Cell onClick={() => this.getParent(send_id)}>{send_id}</Table.Cell>
                     <Table.Cell>{insert_name}</Table.Cell>
                     <Table.Cell>{upload_type}</Table.Cell>
                     <Table.Cell>{user}</Table.Cell>
