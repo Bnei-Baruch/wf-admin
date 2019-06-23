@@ -10,7 +10,17 @@ import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Grid, Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import { fetchPublishers, fetchPersons, insertName, getName, getLang, getDataByID, fetchUnits, getDCT } from '../../shared/tools';
+import {
+    fetchPublishers,
+    fetchPersons,
+    insertName,
+    getName,
+    getLang,
+    getDataByID,
+    fetchUnits,
+    getDCT,
+    insertData
+} from '../../shared/tools';
 import {content_options, language_options, upload_extensions, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
 import MdbData from './MdbData';
@@ -129,10 +139,58 @@ class InsertApp extends Component {
                 let lchk = published.find(l => l.name.match(language+"_"));
                 console.log(" :: Check: ", lchk);
                 // Check if uploaded language already exist
-                if(lchk) {
+                if(lchk && metadata.insert_type === "1") {
                     alert("Selected language already exist");
                     this.setState({ isValidated: false });
                     return;
+                } else if(lchk && metadata.insert_type === "2") {
+                    insertData(uid, "uid", (data) => {
+                        console.log(":: insert data - got: ",data);
+                        if(data.length > 0) {
+                            //Not in all files we got original_language property so we going to check string
+                            //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
+                            let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                            console.log(" :: Got sources for remux: ", remux_src);
+                            // We must get here 1 or 2 files and save their url
+                            if(remux_src.length === 0 || remux_src.length > 2) {
+                                alert("Fail to get valid sources for remux");
+                                this.setState({ isValidated: false });
+                                return;
+                                // It's mean we did not get HD here
+                            } else if(remux_src.length === 1) {
+                                metadata.insert_id = data[0].insert_id;
+                                metadata.line.nHD = remux_src[0].properties.url;
+                                metadata.line.nHD_sha1 = remux_src[0].sha1;
+                                metadata.line.HD = null;
+                                metadata.line.HD_sha1 = null;
+                                metadata.insert_type = "5";
+                                const wfid = metadata.send_id;
+                                wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+                                return
+                                // It's mean we get HD and nHD here
+                            } else {
+                                for(let i=0;i<remux_src.length;i++) {
+                                    metadata.line[remux_src[i].properties.video_size] = remux_src[i].properties.url;
+                                    metadata.line[remux_src[i].properties.video_size + "_sha1"] = remux_src[i].sha1;
+                                }
+                                metadata.insert_type = "5";
+                                metadata.insert_id = data[0].insert_id;
+                                const wfid = metadata.send_id;
+                                wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+                                return
+                            }
+                        } else {
+                            console.log("Not found insert we going to fix");
+                            alert("Not found insert we going to fix");
+                            this.setState({ isValidated: false });
+                            return false;
+                        }
+                    });
+                } else if(lchk && metadata.insert_type === "3") {
+                    //TODO: Rename mode
+                    alert("Not ready yet");
+                    this.setState({ isValidated: false });
+                    return false;
                 } else {
                     // Not in all files we got original_language property so we going to check string
                     // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
