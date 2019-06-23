@@ -312,6 +312,11 @@ class InsertApp extends Component {
                 console.log(":: File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 this.setState({ isValidated: false });
+            } else if(data.length === 0 && insert_type === "5") {
+                // This validation to check that we update inserted dibuv and NOT translation from ingest
+                console.log(":: File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
+                alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
+                this.setState({ isValidated: false });
             } else {
                 this.setState({metadata: { ...metadata }});
             }
