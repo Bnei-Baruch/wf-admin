@@ -117,7 +117,7 @@ class DgimaTrimmed extends Component {
                 alert("Name already exist!");
 
             // Name NOT exist, Unit exist: rename fix
-            } else if(data.length === 0 && file_data.wfstatus.wfsend) {
+            } else if(data.length > 0 && file_data.wfstatus.wfsend) {
                 this.renameFile(file_data,newline,true);
 
             // Name NOT exist, Unit NOT exist: rename action
