@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react'
+import moment from 'moment';
 import {getData, getEndpoint, MDB_UNIT_URL} from '../../shared/tools';
 import {Table} from 'semantic-ui-react'
 
@@ -45,6 +46,7 @@ class WFDBInsert extends Component {
             const {id,insert_id,insert_name,send_id,upload_type,line} = data;
             const {name,email,uid,unit_id} = line;
             let user = name ? name+" - ("+email+")" : "";
+            let time = moment.unix(insert_id.substr(1)).format("HH:mm:ss") || "";
             let href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
             let link = (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>);
             return (
@@ -54,6 +56,7 @@ class WFDBInsert extends Component {
                     <Table.Cell onClick={() => this.getParent(send_id)}>{send_id}</Table.Cell>
                     <Table.Cell>{insert_name}</Table.Cell>
                     <Table.Cell>{upload_type}</Table.Cell>
+                    <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{user}</Table.Cell>
                 </Table.Row>
             )
@@ -69,6 +72,7 @@ class WFDBInsert extends Component {
                             <Table.HeaderCell width={1}>Parent ID</Table.HeaderCell>
                             <Table.HeaderCell width={7}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Upload Type</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={5}>Operator</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
