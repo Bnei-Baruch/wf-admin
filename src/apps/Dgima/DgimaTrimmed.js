@@ -81,7 +81,7 @@ class DgimaTrimmed extends Component {
                 file_data, source,
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
-                rename_button: wfsend,
+                rename_button: false,
                 send_button: !renamed || wfsend,
                 kmedia_option: wfsend,
                 special: "cassette",
@@ -91,7 +91,7 @@ class DgimaTrimmed extends Component {
                 file_data, source,
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
-                rename_button: wfsend,
+                rename_button: false,
                 send_button: !renamed,
                 kmedia_option: !wfsend || secured,
             });
@@ -103,7 +103,7 @@ class DgimaTrimmed extends Component {
         //this.setState({player: player});
     };
 
-    renameFile = (newline) => {
+    checkName = (newline) => {
         console.log(":: Cit callback: ", newline);
         let {file_data} = this.state;
         let newfile_name = newline.final_name;
@@ -111,44 +111,64 @@ class DgimaTrimmed extends Component {
         // Check WFDB if name already exist
         getData(`dgima/find?key=file_name&value=${newfile_name}`, (data) => {
             console.log(":: CheckName result: ",data);
-            if(data.length > 0) {
+
+            // Name exist , Unit NOT exist: raise error
+            if(data.length > 0 && !file_data.wfstatus.wfsend) {
                 alert("Name already exist!");
+
+            // Name NOT exist, Unit exist: rename fix
+            } else if(data.length === 0 && file_data.wfstatus.wfsend) {
+                this.renameFile(file_data,newline,true);
+
+            // Name NOT exist, Unit NOT exist: rename action
+            } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
+                this.renameFile(file_data,newline,false);
+            }
+        });
+    };
+
+    renameFile = (file_data,newline,fix) => {
+        let newfile_name = newline.final_name;
+        let oldfile_name = file_data.file_name;
+        let src = file_data.parent.source;
+
+        // Set capture date from string because CIT put today date
+        if((/\d{4}-\d{2}-\d{2}/).test(newfile_name)) {
+            let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            let check_date = moment(string_date);
+            if(check_date.isValid()) newline.capture_date = string_date;
+        }
+
+        let ext = "mp4";
+        if(file_data.original.format.format_name === "mp3") {
+            ext = "mp3";
+            newline.mime_type = "audio/mp3";
+        }
+        let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.${ext}`;
+        let ppath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}p.${ext}`;
+        file_data.line = {...newline};
+        file_data.parent.file_name = oldfile_name;
+        //file_data.line.title = this.state.tags[newline.pattern] || "";
+        file_data.original.format.filename = opath;
+        file_data.proxy.format.filename = ppath;
+        file_data.file_name = newfile_name;
+        file_data.wfstatus.renamed = true;
+        if(fix) {
+            file_data.wfstatus.wfsend = false;
+            file_data.wfstatus.fixed = false;
+        }
+        // Build url for preview
+        let path = file_data.original.format.filename;
+        let source = `${WFSRV_BACKEND}${path}`;
+        console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
+        this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
+        putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
+            console.log(":: Dgima - rename respond: ",cb);
+            if(cb.status === "ok") {
+                this.selectFile(file_data);
+                setTimeout(() => this.setState({ file_data, source, renaming: false, insert_button: false}), 2000);
             } else {
-                let oldfile_name = file_data.file_name;
-                let src = file_data.parent.source;
-                // Set capture date from string becouse CIT put today date
-                //TODO: Check if date valid
-                let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-                newline.capture_date = string_date;
-                //let ext = newline.mime_type === "video/mp4" ? "mp4" : "mp3";
-                let ext = "mp4";
-                if(file_data.original.format.format_name === "mp3") {
-                    ext = "mp3";
-                    newline.mime_type = "audio/mp3";
-                }
-                let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.${ext}`;
-                let ppath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}p.${ext}`;
-                file_data.line = {...newline};
-                file_data.parent.file_name = oldfile_name;
-                //file_data.line.title = this.state.tags[newline.pattern] || "";
-                file_data.original.format.filename = opath;
-                file_data.proxy.format.filename = ppath;
-                file_data.file_name = newfile_name;
-                file_data.wfstatus.renamed = true;
-                // Build url for preview
-                let path = file_data.original.format.filename;
-                let source = `${WFSRV_BACKEND}${path}`;
-                console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-                this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
-                putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
-                    console.log(":: Dgima - rename respond: ",cb);
-                    if(cb.status === "ok") {
-                        this.selectFile(file_data);
-                        setTimeout(() => this.setState({ file_data, source, renaming: false, insert_button: false}), 2000);
-                    } else {
-                        setTimeout(() => this.setState({renaming: false}), 2000);
-                    }
-                });
+                setTimeout(() => this.setState({renaming: false}), 2000);
             }
         });
     };
@@ -435,7 +455,7 @@ class DgimaTrimmed extends Component {
                                 <Modal.Content>
                                     <CIT metadata={file_data.line}
                                          onCancel={this.onCancel}
-                                         onComplete={(x) => this.renameFile(x)}/>
+                                         onComplete={(x) => this.checkName(x)}/>
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>
