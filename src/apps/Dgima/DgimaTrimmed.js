@@ -56,11 +56,14 @@ class DgimaTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
-        const {renamed,wfsend,secured} = file_data.wfstatus;
+        const {renamed,wfsend,secured,fixed} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
             metadata = newInsertMeta(file_data);
+            if(!wfsend && fixed) {
+                metadata.insert_id = file_data.parent.insert_id;
+            }
             // filedata needed for insert app
             filedata = file_data.file_name;
             this.setState({filedata, metadata});
@@ -118,6 +121,10 @@ class DgimaTrimmed extends Component {
 
             // Name NOT exist, Unit exist: rename fix
             } else if(data.length > 0 && file_data.wfstatus.wfsend) {
+                this.renameFile(file_data,newline,true);
+
+            // Name exist, Unit exist: rename fix
+            } else if(data.length === 0 && file_data.wfstatus.wfsend) {
                 this.renameFile(file_data,newline,true);
 
             // Name NOT exist, Unit NOT exist: rename action
