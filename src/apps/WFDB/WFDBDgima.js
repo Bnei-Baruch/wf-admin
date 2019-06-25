@@ -55,6 +55,7 @@ class WFDBDgima extends Component {
         let s = (<Icon color='red' name='key'/>);
         let f = (<Icon color='blue' name='configure'/>);
         let c = (<Icon color='blue' name='copyright'/>);
+        let j = (<Icon color='blue' name='linkify'/>);
 
         let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
         let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
@@ -71,7 +72,7 @@ class WFDBDgima extends Component {
 
         let dgima_data = this.state.dgima.map((data) => {
             let id = data.dgima_id;
-            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked,secured} = data.wfstatus;
+            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked,secured,joined} = data.wfstatus;
             let name = data.file_name;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
@@ -88,7 +89,14 @@ class WFDBDgima extends Component {
                         {this.props.wf_root ? root : admin}
                     </Popup>
                     <Table.Cell>{link}</Table.Cell>
-                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {joined ? j : ""}
+                        {name}
+                    </Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{removed ? v : x}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>
