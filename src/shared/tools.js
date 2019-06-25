@@ -303,6 +303,14 @@ export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/line
     })
     .catch(ex => console.log(`get ${value}`, ex));
 
+export const getChildren = (value, key, cb) => fetch(`${WFDB_BACKEND}/dgima/parent?key=${key}&value=${value}`)
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+    })
+    .catch(ex => console.log(`get ${value}`, ex));
+
 export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?key=file_name&value=${filename}`)
     .then((response) => {
         if (response.ok) {
@@ -312,6 +320,14 @@ export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?k
     .catch(ex => console.log(`get ${filename}`, ex));
 
 export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+    })
+    .catch(ex => console.log(`get ${sha}`, ex));
+
+export const captureSha = (sha, cb) => fetch(`${WFDB_BACKEND}/capture/find?key=sha1&value=${sha}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
