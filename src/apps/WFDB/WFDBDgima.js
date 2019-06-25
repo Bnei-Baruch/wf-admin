@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import moment from 'moment';
 import {getData, MDB_UNIT_URL, WFDB_BACKEND} from '../../shared/tools';
-import { Icon, Table, Popup, Checkbox } from 'semantic-ui-react'
+import {Icon, Table, Popup, Checkbox, Loader} from 'semantic-ui-react'
 
 class WFDBDgima extends Component {
 
@@ -52,6 +52,10 @@ class WFDBDgima extends Component {
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let d = (<Icon color='blue' name='lock'/>);
+        let s = (<Icon color='red' name='key'/>);
+        let f = (<Icon color='blue' name='configure'/>);
+        let c = (<Icon color='blue' name='copyright'/>);
+
         let admin = (<Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} />);
         let root =(<div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
             <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
@@ -67,9 +71,8 @@ class WFDBDgima extends Component {
 
         let dgima_data = this.state.dgima.map((data) => {
             let id = data.dgima_id;
-            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked} = data.wfstatus;
+            const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = data.file_name;
-            let censor = censored ? <Icon name='copyright'/> : "";
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
             let link = !wfsend ? "" : (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>);
@@ -85,7 +88,7 @@ class WFDBDgima extends Component {
                         {this.props.wf_root ? root : admin}
                     </Popup>
                     <Table.Cell>{link}</Table.Cell>
-                    <Table.Cell>{censor}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{removed ? v : x}</Table.Cell>
                     <Table.Cell>{renamed ? v : x}</Table.Cell>

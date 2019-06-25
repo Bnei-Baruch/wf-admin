@@ -61,9 +61,6 @@ class DgimaTrimmed extends Component {
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
             metadata = newInsertMeta(file_data);
-            if(!wfsend && fixed) {
-                metadata.insert_id = file_data.parent.insert_id;
-            }
             // filedata needed for insert app
             filedata = file_data.file_name;
             this.setState({filedata, metadata});
@@ -161,8 +158,9 @@ class DgimaTrimmed extends Component {
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
         if(fix) {
+            // This status mean file must be fixed
             file_data.wfstatus.wfsend = false;
-            file_data.wfstatus.fixed = false;
+            file_data.wfstatus.fixed = null;
         }
         // Build url for preview
         let path = file_data.original.format.filename;
