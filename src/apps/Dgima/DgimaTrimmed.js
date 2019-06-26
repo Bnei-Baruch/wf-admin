@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {
+    getChildren,
     getData,
     getDCT,
     getUnits,
@@ -58,21 +59,37 @@ class DgimaTrimmed extends Component {
         console.log(":: DgimaApp - selected file: ", file_data);
         const {renamed,wfsend,secured,fixed} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
+
+        // Find files with units
+        getChildren(file_data.parent.capture_id,"capture_id", (data) => {
+            console.log(":: Got capture children: ", data);
+            let wfunits = data.filter(d => d.wfstatus.wfsend);
+            if(wfunits.length === 0) {
+                console.log(":: Did not found children :: ");
+            } else if(wfunits.length === 1) {
+                this.setState({wfunits});
+                console.log(":: Found 1 children :: ");
+                // Take sha for mdb fetch
+                let sha1 = file_data.original.format.sha1;
+                getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
+                    console.log(":: Got from sha1 units: ", units);
+                    this.setState({units});
+                });
+            } else if(wfunits.length > 1) {
+                this.setState({wfunits});
+                console.log(":: Found many children :: ");
+            }
+        });
+
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
             metadata = newInsertMeta(file_data);
             // filedata needed for insert app
             filedata = file_data.file_name;
             this.setState({filedata, metadata});
-            // Take sha for mdb fetch
-            let sha1 = file_data.original.format.sha1;
-            getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
-                console.log(":: Trimmer - got units: ", units);
-                if (units.total > 0)
-                    console.log("The file already got unit!");
-                this.setState({units});
-            });
+
         }
+
         // Build url for preview
         let path = file_data.original.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;

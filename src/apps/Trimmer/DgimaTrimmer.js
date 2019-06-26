@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getChildren, getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Modal, Dropdown, Button, Input, Table, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 import '../WFDB/WFDB.css';
@@ -91,25 +91,14 @@ class DgimaTrimmer extends Component {
         let src = this.state.dgima_src === "trimmed" ? "custom" : this.state.dgima_src;
         let trim_meta = newTrimMeta(file_data, "dgima", src);
         this.setState({source, file_data, trim_meta, disabled: false});
-        getChildren(file_data.capture_id,"capture_id", (data) => {
-            console.log(":: Got capture children: ", data);
-            if(data.length > 0) {
-                this.setState({children: data});
-                if(data[data.length-1].wfstatus.wfsend) {
-                    console.log(" :: Already got unit: ", data[data.length-1].line.uid)
-                }
+        getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
+            if(units.total > 0) {
+                console.log(":: Unit already exist: ", units);
+                this.setState({units});
             } else {
-                console.log(":: Did not found children :: ");
+                console.log(":: Did not found unit :: ");
             }
-        })
-        // getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
-        //     if(units.total > 0) {
-        //         console.log(":: Unit already exist: ", units);
-        //         this.setState({units});
-        //     } else {
-        //         console.log(":: Did not found unit :: ");
-        //     }
-        // });
+        });
     };
 
     selectLabel = (active_label) => {
