@@ -66,18 +66,13 @@ class DgimaTrimmed extends Component {
             let wfunits = data.filter(d => d.wfstatus.wfsend);
             if(wfunits.length === 0) {
                 console.log(":: Did not found children :: ");
-            } else if(wfunits.length === 1) {
-                this.setState({wfunits});
-                console.log(":: Found 1 children :: ");
-                // Take sha for mdb fetch
-                let sha1 = file_data.original.format.sha1;
-                getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
-                    console.log(":: Got from sha1 units: ", units);
-                    this.setState({units});
+                this.setState({fixReq: false});
+            } else if(wfunits.length > 0) {
+                let wfunits_options = wfunits.map((wf,i) => {
+                    return ({ key: i, text: wf.file_name, value: i })
                 });
-            } else if(wfunits.length > 1) {
-                this.setState({wfunits});
-                console.log(":: Found many children :: ");
+                this.setState({wfunits,wfunits_options,fixReq: true});
+                console.log(":: Found children :: ");
             }
         });
 
@@ -357,6 +352,18 @@ class DgimaTrimmed extends Component {
         this.setState({hide_censored: !hide_censored});
     };
 
+    selectFixUID = (i) => {
+        let fix_unit = this.state.wfunits[i];
+        console.log(":: Selected fix_uid option: ", fix_unit);
+        let {file_data} = this.state;
+        file_data.line.fix_unit_uid = fix_unit.line.uid;
+        file_data.line.fix_trim_id = fix_unit.dgima_id;
+        this.setState({file_data});
+        // putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
+        //     console.log(":: PUT Fix UID in WFDB: ",cb);
+        // });
+    };
+
     render() {
         const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored} = this.state;
 
@@ -501,6 +508,11 @@ class DgimaTrimmed extends Component {
                             </Menu.Item>
                             <Menu.Item>
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
+                            </Menu.Item>
+                            <Menu.Item>
+                                {this.state.fixReq ?
+                                    <Select placeholder='Choose File Name to fix:' options={this.state.wfunits_options}
+                                            onChange={(e, {value}) => this.selectFixUID(value)} /> : ""}
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
