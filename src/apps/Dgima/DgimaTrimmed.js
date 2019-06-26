@@ -27,6 +27,7 @@ class DgimaTrimmed extends Component {
         inserting: false,
         dgima: [],
         file_data: {},
+        fix_unit: null,
         filedata: {},
         join_files: [],
         kmedia_option: false,
@@ -40,6 +41,7 @@ class DgimaTrimmed extends Component {
         special: "buffer",
         units: [],
         hide_censored: true,
+        wfunits: [],
 
     };
 
@@ -60,21 +62,25 @@ class DgimaTrimmed extends Component {
         const {renamed,wfsend,secured,fixed} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
 
-        // Find files with units
-        getChildren(file_data.parent.capture_id,"capture_id", (data) => {
-            console.log(":: Got capture children: ", data);
-            let wfunits = data.filter(d => d.wfstatus.wfsend);
-            if(wfunits.length === 0) {
-                console.log(":: Did not found children :: ");
-                this.setState({fixReq: false});
-            } else if(wfunits.length > 0) {
-                let wfunits_options = wfunits.map((wf,i) => {
-                    return ({ key: i, text: wf.file_name, value: i })
-                });
-                this.setState({wfunits,wfunits_options,fixReq: true});
-                console.log(":: Found children :: ");
-            }
-        });
+        if(!file_data.wfstatus.secured) {
+            // Find files with units
+            getChildren(file_data.parent.capture_id,"capture_id", (data) => {
+                console.log(":: Got capture children: ", data);
+                let wfunits = data.filter(d => d.wfstatus.wfsend && d.original.format.sha1 !== file_data.original.format.sha1 && !d.wfstatus.secured);
+                if(wfunits.length === 0) {
+                    console.log(":: Did not found children :: ");
+                    this.setState({fixReq: false, wfunits: [], fix_unit: null});
+                } else if(wfunits.length > 0) {
+                    let wfunits_options = wfunits.map((wf,i) => {
+                        return ({ key: i, text: wf.file_name, value: i })
+                    });
+                    this.setState({wfunits,wfunits_options,fixReq: true});
+                    console.log(":: Found children :: ");
+                }
+            });
+        } else {
+            this.setState({wfunits: [], fix_unit: null, fixReq: false});
+        }
 
         // If we got line, we can build meta for insert
         if (file_data.line && file_data.line.content_type) {
@@ -352,15 +358,20 @@ class DgimaTrimmed extends Component {
         this.setState({hide_censored: !hide_censored});
     };
 
-    selectFixUID = (i) => {
+    selectFixData = (i) => {
         let fix_unit = this.state.wfunits[i];
         console.log(":: Selected fix_uid option: ", fix_unit);
-        let {file_data} = this.state;
+        this.setState({fix_unit});
+    };
+
+    setFixData = () => {
+        let {fix_unit,file_data} = this.state;
         file_data.line.fix_unit_uid = fix_unit.line.uid;
         file_data.line.fix_trim_id = fix_unit.dgima_id;
         this.setState({file_data});
-        // putData(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}`, file_data, (cb) => {
-        //     console.log(":: PUT Fix UID in WFDB: ",cb);
+        console.log(" :: Going to save fixed data: ",file_data);
+        // putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
+        //     console.log(cb);
         // });
     };
 
@@ -511,8 +522,9 @@ class DgimaTrimmed extends Component {
                             </Menu.Item>
                             <Menu.Item>
                                 {this.state.fixReq ?
-                                    <Select placeholder='Choose File Name to fix:' options={this.state.wfunits_options}
-                                            onChange={(e, {value}) => this.selectFixUID(value)} /> : ""}
+                                    <Select placeholder='Options To Fix:' options={this.state.wfunits_options}
+                                            onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
+                                {this.state.fix_unit ? <Button color='orange' attached='right' icon="configure" onClick={this.setFixData} /> : ""}
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
