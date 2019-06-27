@@ -61,7 +61,7 @@ class DgimaTrimmed extends Component {
         const {renamed,wfsend,secured} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
 
-        if(!file_data.wfstatus.secured) {
+        if(!wfsend) {
             // Find files with units
             getChildren(file_data.parent.capture_id,"capture_id", (data) => {
                 console.log(":: Got capture children: ", data);
@@ -218,7 +218,7 @@ class DgimaTrimmed extends Component {
                 // While polling done it does not necessary
                 //this.selectFile(file_data);
                 if(cb.status === "ok") {
-                    setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                    setTimeout(() => this.setState({ inserting: false, send_button: false, kmedia_option: true}), 2000);
                 } else {
                     alert("Something goes wrong!");
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
@@ -233,7 +233,7 @@ class DgimaTrimmed extends Component {
                 // While polling done it does not necessary
                 //this.selectFile(file_data);
                 if(cb.status === "ok") {
-                    setTimeout(() => this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true}), 2000);
+                    setTimeout(() => this.setState({ inserting: false, send_button: false, kmedia_option: true}), 2000);
                 } else {
                     alert("Something goes wrong!");
                     this.setState({ inserting: false, insert_button: false, send_button: false, kmedia_option: true});
