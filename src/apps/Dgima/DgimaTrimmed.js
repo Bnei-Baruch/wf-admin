@@ -59,7 +59,6 @@ class DgimaTrimmed extends Component {
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
         const {renamed,wfsend,secured} = file_data.wfstatus;
-        let {filedata,metadata} = this.state;
 
         if(!wfsend) {
             // Find files with units
@@ -81,14 +80,8 @@ class DgimaTrimmed extends Component {
             this.setState({wfunits: [], fix_unit: null, fixReq: false});
         }
 
-        // If we got line, we can build meta for insert
-        if (file_data.line && file_data.line.content_type) {
-            metadata = newInsertMeta(file_data);
-            // filedata needed for insert app
-            filedata = file_data.file_name;
-            this.setState({filedata, metadata});
-
-        }
+        // Build meta for insert
+        this.insertMeta(file_data);
 
         // Build url for preview
         let path = file_data.original.format.filename;
@@ -112,6 +105,17 @@ class DgimaTrimmed extends Component {
                 send_button: !renamed,
                 kmedia_option: !wfsend || secured,
             });
+        }
+    };
+
+    insertMeta = (file_data) => {
+        let {filedata,metadata} = this.state;
+        // If we got line, we can build meta for insert
+        if (file_data.line && file_data.line.content_type) {
+            metadata = newInsertMeta(file_data);
+            // filedata needed for insert app
+            filedata = file_data.file_name;
+            this.setState({filedata, metadata});
         }
     };
 
@@ -255,10 +259,10 @@ class DgimaTrimmed extends Component {
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
         this.setState({insert_open: false});
-        this.setMeta(data);
+        this.complteInsert(data);
     };
 
-    setMeta = (insert_data) => {
+    complteInsert = (insert_data) => {
         let {file_data} = this.state;
         file_data.parent.insert_id = insert_data.insert_id;
         file_data.parent.name = insert_data.line.send_name;
@@ -368,11 +372,12 @@ class DgimaTrimmed extends Component {
         if(confirmed) {
             file_data.line.fix_unit_uid = fix_unit.line.uid;
             file_data.line.fix_trim_id = fix_unit.dgima_id;
+            this.insertMeta(file_data);
             this.setState({file_data,confirm_open: false});
             console.log(" :: Going to save fixed data: ",file_data);
-            // putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
-            //     console.log(cb);
-            // });
+            putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
+                console.log(cb);
+            });
         } else {
             console.log("Aur you sure?");
             this.setState({confirm_open: true});

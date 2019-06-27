@@ -250,7 +250,7 @@ export const newInsertMeta = (file_data) => {
     metadata.insert_name = `${file_data.file_name}.${metadata.extension}`;
     // In InsertApp upload_filename use for filename gen in OldWF
     metadata.line.upload_filename = metadata.insert_name;
-    metadata.insert_type = "3";
+    metadata.insert_type = file_data.line && file_data.line.fix_unit_uid ? "2" : "3";
     metadata.language = file_data.line.language;
     metadata.send_id = file_data.dgima_id;
     metadata.send_uid = "";
