@@ -75,7 +75,7 @@ class WFDBDgima extends Component {
             const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked,secured,joined} = data.wfstatus;
             let name = data.file_name;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
+            let href = data.line && data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : data.line && data.line.uid ? `${MDB_UNIT_URL}/?query=${data.line.uid}` : "";
             let link = !wfsend ? "" : (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>);
             let rowcolor = censored && !checked;
             return (
