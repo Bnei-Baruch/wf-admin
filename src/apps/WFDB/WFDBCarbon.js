@@ -25,7 +25,7 @@ class WFDBCarbon extends Component {
     };
 
     searchData = (tab) => {
-        const {sjson,skey,svalue} = this.props;
+        const {skey,svalue} = this.props;
         console.log(tab);
         let search = this.props.skey === "date" ? this.props.date : svalue;
         if(!search) return;

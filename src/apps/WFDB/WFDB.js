@@ -85,13 +85,6 @@ class WFDB extends Component {
 
     render() {
 
-        const json_options = [
-            { key: 'wfdb', text: 'WFDB', value: 'wfdb' },
-            { key: 'line', text: 'Line', value: 'line' },
-            { key: 'parent', text: 'Parent', value: 'parent' },
-            { key: 'status', text: 'Status', value: 'wfstatus' },
-        ];
-
         const wfdb_options = [
             { key: 'date', text: 'Date', value: 'date' },
             { key: 'name', text: 'Name', value: 'file_name' },

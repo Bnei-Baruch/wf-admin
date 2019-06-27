@@ -159,7 +159,7 @@ class CensorCheck extends Component {
         let s = (<Icon color='red' name='key'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+            const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
@@ -184,7 +184,7 @@ class CensorCheck extends Component {
 
         let dgima_data = this.state.dgima.map((data) => {
             if(data.parent.source !== "cassette") {
-                const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+                const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
@@ -205,12 +205,12 @@ class CensorCheck extends Component {
                         <Table.Cell>{time}</Table.Cell>
                     </Table.Row>
                 )
-            }
+            } return true
         });
 
         let cassette_data = this.state.dgima.map((data) => {
             if(data.parent.source === "cassette") {
-                const {trimmed,kmedia,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+                const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
                 let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
@@ -231,7 +231,7 @@ class CensorCheck extends Component {
                         <Table.Cell>{time}</Table.Cell>
                     </Table.Row>
                 )
-            }
+            } return true
         });
 
         return (

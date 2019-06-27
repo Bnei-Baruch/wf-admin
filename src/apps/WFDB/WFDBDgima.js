@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import moment from 'moment';
 import {getData, MDB_UNIT_URL, WFDB_BACKEND} from '../../shared/tools';
-import {Icon, Table, Popup, Checkbox, Loader} from 'semantic-ui-react'
+import {Icon, Table, Popup, Checkbox} from 'semantic-ui-react'
 
 class WFDBDgima extends Component {
 

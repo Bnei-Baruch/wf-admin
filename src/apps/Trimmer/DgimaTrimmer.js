@@ -137,7 +137,7 @@ class DgimaTrimmer extends Component {
     render() {
 
         const {dgima_src,disabled,open,source,startDate,file_data,trim_meta,active_label,cassette_id,disable_ids} = this.state;
-        const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = this.state.label;
+        const {comments,content_type,date,duration,language,id,lecturer,location} = this.state.label;
 
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
@@ -156,7 +156,7 @@ class DgimaTrimmer extends Component {
         });
 
         let capture_data = this.state.labels.map((data) => {
-            const {archive_place,bar_code,cassete_type,comments,content_type,date,duration,language,id,lecturer,location,mof} = data;
+            const {comments,content_type,date,duration,language,id,lecturer,location} = data;
             let dd = disable_ids.filter(d => d === id).length > 0;
             return (
                 <Table.Row key={id}

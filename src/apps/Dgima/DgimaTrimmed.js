@@ -3,16 +3,14 @@ import moment from 'moment';
 import {
     getChildren,
     getData,
-    getDCT,
-    getUnits,
-    IVAL, MDB_FINDSHA,
+    IVAL,
     newTrimMeta,
     newInsertMeta,
     putData,
     WFDB_BACKEND,
     WFSRV_BACKEND
 } from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown, Checkbox } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown, Checkbox, Confirm } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
@@ -21,6 +19,7 @@ class DgimaTrimmed extends Component {
 
     state = {
         actived: null,
+        confirm_open: false,
         cit_open: false,
         insert_open: false,
         insert_button: true,
@@ -59,7 +58,7 @@ class DgimaTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
-        const {renamed,wfsend,secured,fixed} = file_data.wfstatus;
+        const {renamed,wfsend,secured} = file_data.wfstatus;
         let {filedata,metadata} = this.state;
 
         if(!file_data.wfstatus.secured) {
@@ -364,15 +363,20 @@ class DgimaTrimmed extends Component {
         this.setState({fix_unit});
     };
 
-    setFixData = () => {
+    setFixData = (confirmed) => {
         let {fix_unit,file_data} = this.state;
-        file_data.line.fix_unit_uid = fix_unit.line.uid;
-        file_data.line.fix_trim_id = fix_unit.dgima_id;
-        this.setState({file_data});
-        console.log(" :: Going to save fixed data: ",file_data);
-        // putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
-        //     console.log(cb);
-        // });
+        if(confirmed) {
+            file_data.line.fix_unit_uid = fix_unit.line.uid;
+            file_data.line.fix_trim_id = fix_unit.dgima_id;
+            this.setState({file_data,confirm_open: false});
+            console.log(" :: Going to save fixed data: ",file_data);
+            // putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
+            //     console.log(cb);
+            // });
+        } else {
+            console.log("Aur you sure?");
+            this.setState({confirm_open: true});
+        }
     };
 
     render() {
@@ -404,7 +408,7 @@ class DgimaTrimmed extends Component {
         let s = (<Icon color='red' name='key'/>);
 
         let dgima_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined,secured} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured} = data.wfstatus;
             if(data.parent.source !== "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -431,11 +435,11 @@ class DgimaTrimmed extends Component {
                         <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
                     </Table.Row>
                 )
-            }
+            } return true
         });
 
         let cassette_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,buffer,joined,secured} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured} = data.wfstatus;
             if(data.parent.source === "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -462,7 +466,7 @@ class DgimaTrimmed extends Component {
                         <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
                     </Table.Row>
                 )
-            }
+            } return true
         });
 
         return (
@@ -524,7 +528,11 @@ class DgimaTrimmed extends Component {
                                 {this.state.fixReq ?
                                     <Select placeholder='Options To Fix:' options={this.state.wfunits_options}
                                             onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
-                                {this.state.fix_unit ? <Button color='orange' attached='right' icon="configure" onClick={this.setFixData} /> : ""}
+                                {this.state.fix_unit ? <Button color='orange' attached='right' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
+                                <Confirm mountNode={document.getElementById("ltr-modal-mount")}
+                                         open={this.state.confirm_open}
+                                         onCancel={() => this.setState({confirm_open: false})}
+                                         onConfirm={() => this.setFixData(true)} />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
