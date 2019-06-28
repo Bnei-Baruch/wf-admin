@@ -62,7 +62,7 @@ class DgimaTrimmed extends Component {
         const {fix_mode} = this.state;
         const {renamed,wfsend,secured} = file_data.wfstatus;
 
-        if(!wfsend) {
+        if(!wfsend && fix_mode) {
             // Find files with units
             getChildren(file_data.parent.capture_id,"capture_id", (data) => {
                 console.log(":: Got capture children: ", data);
@@ -92,9 +92,9 @@ class DgimaTrimmed extends Component {
             this.setState({
                 file_data, source,
                 actived: file_data.dgima_id,
-                insert_button: !renamed || wfsend,
+                insert_button: !renamed || fix_mode ? false : wfsend,
                 rename_button: fix_mode ? false : wfsend,
-                send_button: !renamed || wfsend,
+                send_button: !renamed || fix_mode ? false : wfsend,
                 kmedia_option: wfsend,
                 special: "cassette",
             });
@@ -128,28 +128,37 @@ class DgimaTrimmed extends Component {
 
     checkName = (newline) => {
         console.log(":: Cit callback: ", newline);
-        let {file_data} = this.state;
+        let {file_data,fix_mode} = this.state;
         let newfile_name = newline.final_name;
 
         // Check WFDB if name already exist
         getData(`dgima/find?key=file_name&value=${newfile_name}`, (data) => {
             console.log(":: CheckName result: ",data);
 
-            // Name exist , Unit NOT exist: raise error
-            if(data.length > 0 && !file_data.wfstatus.wfsend) {
-                alert("Name already exist!");
+            if(fix_mode) {
+                // Name exist , Unit NOT exist: raise error
+                if(data.length > 0 && !file_data.wfstatus.wfsend) {
+                    alert("Name already exist!");
 
-            // Name NOT exist, Unit exist: rename fix
-            } else if(data.length > 0 && file_data.wfstatus.wfsend) {
-                this.renameFile(file_data,newline,true);
+                    // Name NOT exist, Unit exist: rename fix
+                } else if(data.length > 0 && file_data.wfstatus.wfsend) {
+                    this.renameFile(file_data,newline,true);
 
-            // Name exist, Unit exist: rename fix
-            } else if(data.length === 0 && file_data.wfstatus.wfsend) {
-                this.renameFile(file_data,newline,true);
+                    // Name exist, Unit exist: rename fix
+                } else if(data.length === 0 && file_data.wfstatus.wfsend) {
+                    this.renameFile(file_data,newline,true);
 
-            // Name NOT exist, Unit NOT exist: rename action
-            } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
-                this.renameFile(file_data,newline,false);
+                    // Name NOT exist, Unit NOT exist: rename action
+                } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
+                    alert("Exit Fix Mode");
+                }
+            } else {
+                // Name exist , Unit NOT exist: raise error
+                if(data.length > 0) {
+                    alert("Name already exist!");
+                } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
+                    this.renameFile(file_data,newline,false);
+                }
             }
         });
     };
