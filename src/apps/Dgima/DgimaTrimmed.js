@@ -19,6 +19,7 @@ class DgimaTrimmed extends Component {
 
     state = {
         actived: null,
+        fix_mode: false,
         confirm_open: false,
         cit_open: false,
         insert_open: false,
@@ -58,6 +59,7 @@ class DgimaTrimmed extends Component {
 
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
+        const {fix_mode} = this.state;
         const {renamed,wfsend,secured} = file_data.wfstatus;
 
         if(!wfsend) {
@@ -91,7 +93,7 @@ class DgimaTrimmed extends Component {
                 file_data, source,
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
-                rename_button: false,
+                rename_button: fix_mode ? false : wfsend,
                 send_button: !renamed || wfsend,
                 kmedia_option: wfsend,
                 special: "cassette",
@@ -101,7 +103,7 @@ class DgimaTrimmed extends Component {
                 file_data, source,
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
-                rename_button: false,
+                rename_button: fix_mode ? false : wfsend,
                 send_button: !renamed,
                 kmedia_option: !wfsend || secured,
             });
@@ -361,6 +363,11 @@ class DgimaTrimmed extends Component {
         this.setState({hide_censored: !hide_censored});
     };
 
+    toggleMode = () => {
+        const {fix_mode} = this.state;
+        this.setState({fix_mode: !fix_mode});
+    };
+
     selectFixData = (i) => {
         let fix_unit = this.state.wfunits[i];
         console.log(":: Selected fix_uid option: ", fix_unit);
@@ -385,7 +392,7 @@ class DgimaTrimmed extends Component {
     };
 
     render() {
-        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored} = this.state;
+        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored,fix_mode} = this.state;
 
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
@@ -476,15 +483,33 @@ class DgimaTrimmed extends Component {
 
         return (
             <Segment textAlign='center' color='brown' raised>
-                <Label  attached='top' className="trimmed_label">
+                <Label  attached='top' className="trimmed_label" color={fix_mode ? 'orange' : ''}>
                     {file_data.file_name ? file_data.file_name : "Trimmed"}
                 </Label>
+                <Segment.Group size='mini' clearing horizontal>
+                    <Segment clearing textAlign='left'>
+                        <Checkbox toggle label='Hide Censored'
+                                  checked={hide_censored}
+                                  onChange={this.toggleCensored}/>
+                    </Segment>
+                    <Segment clearing>{this.state.fixReq ?
+                        <Select placeholder='Options To Fix:' options={this.state.wfunits_options}
+                                onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
+                        {this.state.fix_unit ? <Button size='mini' color='orange' attached='right' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
+                        <Confirm mountNode={document.getElementById("ltr-modal-mount")}
+                                 open={this.state.confirm_open}
+                                 onCancel={() => this.setState({confirm_open: false})}
+                                 onConfirm={() => this.setFixData(true)} /></Segment>
+                    <Segment clearing textAlign='right'>
+                        <Checkbox toggle label='Fix Mode'
+                                  checked={fix_mode}
+                                  onChange={this.toggleMode}/>
+                    </Segment>
+                </Segment.Group>
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Checkbox toggle label='Hide Censored'
-                                      checked={hide_censored}
-                                      onChange={this.toggleCensored}/>
+
                         </Menu.Item>
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
@@ -530,14 +555,7 @@ class DgimaTrimmed extends Component {
                                 <Button color='red' icon='close' onClick={this.setRemoved} />
                             </Menu.Item>
                             <Menu.Item>
-                                {this.state.fixReq ?
-                                    <Select placeholder='Options To Fix:' options={this.state.wfunits_options}
-                                            onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
-                                {this.state.fix_unit ? <Button color='orange' attached='right' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
-                                <Confirm mountNode={document.getElementById("ltr-modal-mount")}
-                                         open={this.state.confirm_open}
-                                         onCancel={() => this.setState({confirm_open: false})}
-                                         onConfirm={() => this.setFixData(true)} />
+
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
