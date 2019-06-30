@@ -489,7 +489,7 @@ class DgimaTrimmed extends Component {
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
                     <Segment textAlign='right' className='toggle'>
-                        <Checkbox toggle label='Fix Mode'
+                        <Checkbox toggle label='Fix Mode' disabled
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>
                     </Segment>
