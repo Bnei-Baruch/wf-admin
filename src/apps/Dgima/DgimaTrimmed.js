@@ -249,11 +249,11 @@ class DgimaTrimmed extends Component {
     onInsert = (data) => {
         console.log(":: Got insert data: ", data);
         this.setState({insert_open: false});
-        this.complteInsert(data);
+        this.completeInsert(data);
     };
 
-    complteInsert = (insert_data) => {
-        let {file_data} = this.state;
+    completeInsert = (insert_data) => {
+        let {file_data,fix_mode} = this.state;
         file_data.parent.insert_id = insert_data.insert_id;
         file_data.parent.name = insert_data.line.send_name;
         file_data.line.uid = insert_data.line.uid;
@@ -275,7 +275,7 @@ class DgimaTrimmed extends Component {
                         file_data.special = "cassette";
                         putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
                             console.log(":: Dgima - send respond: ",cb);
-                            this.selectFile(file_data);
+                            fix_mode ? this.toggleMode() : this.selectFile(file_data);
                         });
                     }
                 });
@@ -288,7 +288,7 @@ class DgimaTrimmed extends Component {
     };
 
     sendFile = () => {
-        let {file_data,special} = this.state;
+        let {file_data,special,fix_mode} = this.state;
         file_data.special = special;
         console.log(":: Going to send File: ", file_data + " : to: ", special);
         this.setState({ sending: true, send_button: true });
@@ -298,6 +298,7 @@ class DgimaTrimmed extends Component {
             //this.selectFile(file_data);
             if(cb.status === "ok") {
                 setTimeout(() => {this.setState({ sending: false, send_button: false });}, 1000);
+                if(fix_mode) this.toggleMode();
             } else {
                 alert("Something goes wrong!");
                 this.setState({ sending: false, send_button: false });
@@ -403,12 +404,13 @@ class DgimaTrimmed extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon color='blue' name='copyright'/>);
+        let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
         let j = (<Icon color='blue' name='linkify'/>);
         let s = (<Icon color='red' name='key'/>);
 
         let dgima_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured,fixed} = data.wfstatus;
             if(data.parent.source !== "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -424,6 +426,7 @@ class DgimaTrimmed extends Component {
                         <Table.Cell>
                             {secured ? s : ""}
                             {censored ? c : ""}
+                            {fixed ? f : ""}
                             {locked ? d : ""}
                             {joined ? j : ""}
                             {name}
@@ -439,7 +442,7 @@ class DgimaTrimmed extends Component {
         });
 
         let cassette_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured,fixed} = data.wfstatus;
             if(data.parent.source === "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -455,6 +458,7 @@ class DgimaTrimmed extends Component {
                         <Table.Cell>
                             {secured ? s : ""}
                             {censored ? c : ""}
+                            {fixed ? f : ""}
                             {locked ? d : ""}
                             {joined ? j : ""}
                             {name}
@@ -472,7 +476,7 @@ class DgimaTrimmed extends Component {
         return (
             <Segment textAlign='center' color='brown' raised>
                 <Label  attached='top' className="trimmed_label" color={fix_mode ? 'orange' : ''}>
-                    {file_data.file_name ? file_data.file_name : "Trimmed"}
+                    {fix_mode ? f : ""}{file_data.file_name ? file_data.file_name : "Trimmed"}
                 </Label>
                 <Segment.Group horizontal>
                     <Segment textAlign='left' className='toggle'>
@@ -489,7 +493,7 @@ class DgimaTrimmed extends Component {
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
                     <Segment textAlign='right' className='toggle'>
-                        <Checkbox toggle label='Fix Mode' disabled
+                        <Checkbox toggle label='Fix Mode'
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>
                     </Segment>
