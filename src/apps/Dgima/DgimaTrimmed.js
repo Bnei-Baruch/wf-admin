@@ -134,31 +134,10 @@ class DgimaTrimmed extends Component {
         // Check WFDB if name already exist
         getData(`dgima/find?key=file_name&value=${newfile_name}`, (data) => {
             console.log(":: CheckName result: ",data);
-
-            if(fix_mode) {
-                // Name exist , Unit NOT exist: raise error
-                if(data.length > 0 && !file_data.wfstatus.wfsend) {
-                    alert("Name already exist!");
-
-                    // Name NOT exist, Unit exist: rename fix
-                } else if(data.length > 0 && file_data.wfstatus.wfsend) {
-                    this.renameFile(file_data,newline,true);
-
-                    // Name exist, Unit exist: rename fix
-                } else if(data.length === 0 && file_data.wfstatus.wfsend) {
-                    this.renameFile(file_data,newline,true);
-
-                    // Name NOT exist, Unit NOT exist: rename action
-                } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
-                    alert("Exit Fix Mode");
-                }
+            if(data.length > 0) {
+                alert("Name already exist!");
             } else {
-                // Name exist , Unit NOT exist: raise error
-                if(data.length > 0) {
-                    alert("Name already exist!");
-                } else if(data.length === 0 && !file_data.wfstatus.wfsend) {
-                    this.renameFile(file_data,newline,false);
-                }
+                this.renameFile(file_data,newline,fix_mode);
             }
         });
     };
@@ -374,7 +353,7 @@ class DgimaTrimmed extends Component {
 
     toggleMode = () => {
         const {fix_mode} = this.state;
-        this.setState({fix_mode: !fix_mode});
+        this.setState({fix_mode: !fix_mode, file_data: {}, actived: null, fix_unit: null, wfunits: [], fixReq: false});
     };
 
     selectFixData = (i) => {
@@ -495,21 +474,21 @@ class DgimaTrimmed extends Component {
                 <Label  attached='top' className="trimmed_label" color={fix_mode ? 'orange' : ''}>
                     {file_data.file_name ? file_data.file_name : "Trimmed"}
                 </Label>
-                <Segment.Group size='mini' clearing horizontal>
-                    <Segment clearing textAlign='left'>
+                <Segment.Group horizontal>
+                    <Segment textAlign='left' className='toggle'>
                         <Checkbox toggle label='Hide Censored'
                                   checked={hide_censored}
                                   onChange={this.toggleCensored}/>
                     </Segment>
-                    <Segment clearing>{this.state.fixReq ?
-                        <Select placeholder='Options To Fix:' options={this.state.wfunits_options}
+                    <Segment>{this.state.fixReq ?
+                        <Select comact placeholder='Options To Fix:' options={this.state.wfunits_options}
                                 onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
-                        {this.state.fix_unit ? <Button size='mini' color='orange' attached='right' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
+                        {this.state.fix_unit ? <Button color='orange' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
                         <Confirm mountNode={document.getElementById("ltr-modal-mount")}
                                  open={this.state.confirm_open}
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
-                    <Segment clearing textAlign='right'>
+                    <Segment textAlign='right' className='toggle'>
                         <Checkbox toggle label='Fix Mode'
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>

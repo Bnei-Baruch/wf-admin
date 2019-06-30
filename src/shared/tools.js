@@ -222,7 +222,7 @@ export const newTrimMeta = (data, mode, source) => {
             buffer: buffer,
             fixed: false,
             trimmed: false,
-            renamed: source.match(/^(congress)$/),
+            renamed: !!source.match(/^(congress)$/),
             wfsend: false,
             removed: false,
             kmedia: false,
