@@ -312,7 +312,21 @@ class InsertApp extends Component {
             return
         }
 
-        // Check if name already exist
+        // Check if name already exist in MDB
+        if(metadata.upload_type === "dgima") {
+            fetchUnits(`${metadata.line.unit_id}/files/`, (data) => {
+                console.log(":: Fetch file for dgima: ",data);
+                let published = data.filter(p => p.published && p.removed_at === null);
+                console.log(" :: Published: ", published);
+                let mdb_name = published.filter(s => s.name.match(metadata.insert_name));
+                if(mdb_name.length > 0) {
+                    alert("File with name: "+metadata.insert_name+" - exist in MDB");
+                    this.setState({ isValidated: false });
+                }
+            });
+        }
+
+        // Check if name already exist in WFDB
         insertName(insert_name, "insert_name", (data) => {
             console.log(":: insertName - got: ",data);
             if(data.length > 0 && insert_type === "1") {
