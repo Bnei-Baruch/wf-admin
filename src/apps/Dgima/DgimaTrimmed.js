@@ -69,12 +69,12 @@ class DgimaTrimmed extends Component {
                 let wfunits = data.filter(d => d.wfstatus.wfsend && d.original.format.sha1 !== file_data.original.format.sha1 && !d.wfstatus.secured);
                 if(wfunits.length === 0) {
                     console.log(":: Did not found children :: ");
-                    this.setState({fixReq: false, wfunits: [], fix_unit: null});
+                    this.setState({fixReq: false, wfunits: [], fix_unit: null, insert_button: true, rename_button: true, send_button: true});
                 } else if(wfunits.length > 0) {
                     let wfunits_options = wfunits.map((wf,i) => {
                         return ({ key: i, text: wf.file_name, value: i })
                     });
-                    this.setState({wfunits,wfunits_options,fixReq: true});
+                    this.setState({wfunits,wfunits_options,fixReq: true, insert_button: true, rename_button: true, send_button: true});
                     console.log(":: Found children :: ");
                 }
             });
