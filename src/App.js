@@ -19,6 +19,7 @@ import CarbonApp from "./apps/Carbon/CarbonApp";
 import {getState} from "./shared/tools";
 import UploadApp from "./apps/Upload/UploadApp";
 import MetusApp from "./apps/Metus/MetusApp";
+import ExternalApp from "./apps/External/ExternalApp";
 
 class App extends Component {
 
@@ -31,6 +32,7 @@ class App extends Component {
         wf_aricha: true,
         wf_dgima: true,
         wf_insert: true,
+        wf_external: true,
         wf_public: true,
     };
 
@@ -48,8 +50,9 @@ class App extends Component {
         let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
         let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
+        let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external});
             setInterval(() => getState('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
@@ -67,7 +70,7 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,user} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,user} = this.state;
 
       let login = (<LoginPage user={user} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
@@ -89,6 +92,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
               render: () => <Tab.Pane attached={false} ><DgimaApp user={user} /></Tab.Pane> },
+          { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
+              render: () => <Tab.Pane attached={false} ><ExternalApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
               render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
           { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_public },
