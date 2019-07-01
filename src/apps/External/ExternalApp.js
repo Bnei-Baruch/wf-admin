@@ -29,7 +29,7 @@ class ExternalApp extends Component {
 
         return (
             <Fragment>
-                {this.props.user.preferred_username.match(/^(amnonbb@gmail\.com|natashazh57@gmail\.com|alex\.mizrachi@gmail\.com)$/) ? <ExternalUpload onFileData={this.dgimaWorkflow}/> : ""}
+                <ExternalUpload onFileData={this.dgimaWorkflow}/>
                 <ExternalTrimmer/>
                 <ExternalTrimmed user={this.props.user} />
             </Fragment>

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
-import {Menu, Segment, Modal, Dropdown, Button, Input, Table, Label} from 'semantic-ui-react'
+import {Menu, Segment, Modal, Dropdown, Button, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
 import '../WFDB/WFDB.css';
 
@@ -10,7 +10,6 @@ class ExternalTrimmer extends Component {
 
     state = {
         disabled: true,
-        cassette: [],
         congress: [],
         insert: [],
         dgima: [],
@@ -19,7 +18,7 @@ class ExternalTrimmer extends Component {
         cassette_id: null,
         file_data: "",
         open: false,
-        dgima_src: "cassette",
+        dgima_src: "insert",
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
         source: "",
@@ -32,10 +31,9 @@ class ExternalTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`capture/find?key=date&value=${date.slice(0, -3)}`, (data) => {
-            let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf && (!m.wfstatus.locked || !m.wfstatus.buffer || !m.wfstatus.removed));
-            let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
-            this.setState({cassette, congress, insert});
+            let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
+            this.setState({congress, insert});
         });
         getData(`trimmer/find?key=date&value=${date}`, (data) => {
             let trimmed = data.filter(t => !t.wfstatus.locked);
@@ -45,22 +43,6 @@ class ExternalTrimmer extends Component {
         // getData(`dgima/find?key=date&value=${date.slice(0, -3)}`, (data) => {
         //     this.setState({dgima: data});
         // });
-    };
-
-    getLabelsData = (skey, svalue) => {
-        if(skey === "id") {
-            getData(`label/${svalue}`, (label) => {
-                console.log(" Got label: ", label);
-                this.setState({label, cassette_id: svalue});
-                if(this.state.dgima_src !== "search")
-                    this.getLabelsData("date", label.date);
-            });
-        } else {
-            getData(`labels/find?key=${skey}&value=${svalue}`, (labels) => {
-                console.log(" Labels with same date: ", labels);
-                this.setState({labels});
-            });
-        }
     };
 
     changeDate = (data) => {
@@ -82,9 +64,6 @@ class ExternalTrimmer extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Select file: ",file_data);
-        if(file_data.line && file_data.line.label_id) {
-            this.getLabelsData("id", file_data.line.label_id);
-        }
         let path = file_data.proxy ? file_data.proxy.format.filename : file_data.original.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${WFSRV_BACKEND}${path}`;
@@ -99,23 +78,6 @@ class ExternalTrimmer extends Component {
                 console.log(":: Did not found unit :: ");
             }
         });
-    };
-
-    selectLabel = (active_label) => {
-        this.setState({active_label});
-        if(active_label && this.state.dgima_src === "search") {
-            getData(`capture/${active_label}`, (data) => {
-                if(data) {
-                    //this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
-                    this.selectFile(data);
-                    this.setState({cassette_id: active_label});
-                } else {
-                    let {disable_ids} = this.state;
-                    disable_ids.push(active_label);
-                    this.setState({disable_ids});
-                }
-            });
-        }
     };
 
     sendToTrim = () => {
@@ -136,14 +98,11 @@ class ExternalTrimmer extends Component {
 
     render() {
 
-        const {dgima_src,disabled,open,source,startDate,file_data,trim_meta,active_label,cassette_id,disable_ids} = this.state;
-        const {comments,content_type,date,duration,language,id,lecturer,location} = this.state.label;
+        const {dgima_src,disabled,open,source,startDate,file_data,trim_meta} = this.state;
 
         const options = [
-            { key: 1, text: 'Cassete', value: 'cassette' },
+            { key: 1, text: 'Dgima', value: 'insert' },
             { key: 2, text: 'Congress', value: 'congress' },
-            { key: 3, text: 'Dgima', value: 'insert' },
-            { key: 4, text: 'Search', value: 'search' },
             { key: 5, text: 'Trimmed', value: 'trimmed' },
         ];
 
@@ -153,32 +112,6 @@ class ExternalTrimmer extends Component {
             let icon = data.wfstatus.trimmed ? "cut" : "";
             // let id = dgima_src === "insert" ? data.capture_id : data.trim_id;
             return ({ key: id, text: name, value: data, icon })
-        });
-
-        let capture_data = this.state.labels.map((data) => {
-            const {comments,content_type,date,duration,language,id,lecturer,location} = data;
-            let dd = disable_ids.filter(d => d === id).length > 0;
-            return (
-                <Table.Row key={id}
-                           active={id === active_label}
-                           disabled={dd}
-                           className="monitor_tr"
-                           onClick={() => this.selectLabel(id)}>
-                    <Table.Cell>{id}</Table.Cell>
-                    <Table.Cell>{date}</Table.Cell>
-                    <Table.Cell>{comments}</Table.Cell>
-                    <Table.Cell>{content_type}</Table.Cell>
-                    <Table.Cell>{language}</Table.Cell>
-                    <Table.Cell>{lecturer}</Table.Cell>
-                    <Table.Cell>{duration}</Table.Cell>
-                    <Table.Cell>{location}</Table.Cell>
-                    {/*<Table.Cell>{mof}</Table.Cell>*/}
-                    {/*<Table.Cell>{subject}</Table.Cell>*/}
-                    {/*<Table.Cell>{cassete_type}</Table.Cell>*/}
-                    {/*<Table.Cell>{archive_place}</Table.Cell>*/}
-                    {/*<Table.Cell>{bar_code}</Table.Cell>*/}
-                </Table.Row>
-            )
         });
 
         return (
@@ -191,20 +124,12 @@ class ExternalTrimmer extends Component {
                             className="trim_src_dropdown"
                             selection
                             options={options}
-                            defaultValue="cassette"
+                            defaultValue="insert"
                             onChange={(e, {value}) => this.setTrimSrc(value)}
                              >
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
-                        {/*<DatePicker*/}
-                        {/*    className="datepickercs"*/}
-                        {/*    dateFormat="YYYY-MM-DD"*/}
-                        {/*    locale='he'*/}
-                        {/*    maxDate={moment()}*/}
-                        {/*    selected={startDate}*/}
-                        {/*    onChange={this.changeDate}*/}
-                        {/*/>*/}
                         <DatePicker
                             className="datepickercs"
                             dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
@@ -218,22 +143,17 @@ class ExternalTrimmer extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item>
-                        {dgima_src === "search" ?
-                            <Input type='text' placeholder='Search...' value={cassette_id}
-                                   onChange={e => this.setSearchValue(e.target.value)} />
-                            :
-                            <Dropdown
-                                className="trim_files_dropdown"
-                                error={disabled}
-                                scrolling={false}
-                                placeholder="Select File To Trim:"
-                                selection
-                                value={file_data}
-                                options={trim_data}
-                                onBlur={() => console.log()}
-                                onChange={(e, {value}) => this.selectFile(value)}
-                                onClick={() => this.getCaptured(this.state.date)} />
-                        }
+                        <Dropdown
+                            className="trim_files_dropdown"
+                            error={disabled}
+                            scrolling={false}
+                            placeholder="Select File To Trim:"
+                            selection
+                            value={file_data}
+                            options={trim_data}
+                            onBlur={() => console.log()}
+                            onChange={(e, {value}) => this.selectFile(value)}
+                            onClick={() => this.getCaptured(this.state.date)} />
                     </Menu.Item>
                     <Menu.Item>
                         <Button primary disabled={disabled}
@@ -259,45 +179,6 @@ class ExternalTrimmer extends Component {
                         closeModal={this.onClose}
                     />
                 </Modal>
-                <Table compact='very' selectable fixed basic size='small' className='wfdb_app'>
-                    <Table.Header>
-                        <Table.Row className='table_header' compact>
-                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={6}>Comments</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Content</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Lang</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Lecturer</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Location</Table.HeaderCell>
-                            {/*<Table.HeaderCell width={1}>Mof</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>Subj</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>CT</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>AP</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={2}>BC</Table.HeaderCell>*/}
-                        </Table.Row>
-                        {dgima_src === "search" ? "" :
-                        <Table.Row key={id} compact active>
-                            <Table.HeaderCell>{id}</Table.HeaderCell>
-                            <Table.HeaderCell>{date}</Table.HeaderCell>
-                            <Table.HeaderCell>{comments}</Table.HeaderCell>
-                            <Table.HeaderCell>{content_type}</Table.HeaderCell>
-                            <Table.HeaderCell>{language}</Table.HeaderCell>
-                            <Table.HeaderCell>{lecturer}</Table.HeaderCell>
-                            <Table.HeaderCell>{duration}</Table.HeaderCell>
-                            <Table.HeaderCell>{location}</Table.HeaderCell>
-                            {/*<Table.HeaderCell>{mof}</Table.HeaderCell>*/}
-                            {/*<Table.Cell>{subject}</Table.Cell>*/}
-                            {/*<Table.HeaderCell>{cassete_type}</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell>{archive_place}</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell>{bar_code}</Table.HeaderCell>*/}
-                        </Table.Row>}
-                    </Table.Header>
-
-                    <Table.Body>
-                        {capture_data}
-                    </Table.Body>
-                </Table>
             </Segment>
         );
     }

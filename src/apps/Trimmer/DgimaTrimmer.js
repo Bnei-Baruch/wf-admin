@@ -11,11 +11,8 @@ class DgimaTrimmer extends Component {
     state = {
         disabled: true,
         cassette: [],
-        congress: [],
-        insert: [],
         dgima: [],
         search: [],
-        trimmed: [],
         cassette_id: null,
         file_data: "",
         open: false,
@@ -33,18 +30,8 @@ class DgimaTrimmer extends Component {
     getCaptured = (date) => {
         getData(`capture/find?key=date&value=${date.slice(0, -3)}`, (data) => {
             let cassette = data.filter(m => m.capture_src.match(/^(sdirec1|sdirec2)$/) && m.wfstatus.capwf && (!m.wfstatus.locked || !m.wfstatus.buffer || !m.wfstatus.removed));
-            let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
-            let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
-            this.setState({cassette, congress, insert});
+            this.setState({cassette});
         });
-        getData(`trimmer/find?key=date&value=${date}`, (data) => {
-            let trimmed = data.filter(t => !t.wfstatus.locked);
-            this.setState({trimmed});
-        });
-        // If we want trim from dgima trimmed
-        // getData(`dgima/find?key=date&value=${date.slice(0, -3)}`, (data) => {
-        //     this.setState({dgima: data});
-        // });
     };
 
     getLabelsData = (skey, svalue) => {
@@ -141,17 +128,13 @@ class DgimaTrimmer extends Component {
 
         const options = [
             { key: 1, text: 'Cassete', value: 'cassette' },
-            { key: 2, text: 'Congress', value: 'congress' },
-            { key: 3, text: 'Dgima', value: 'insert' },
             { key: 4, text: 'Search', value: 'search' },
-            { key: 5, text: 'Trimmed', value: 'trimmed' },
         ];
 
         let trim_data = this.state[dgima_src].map((data) => {
             const {id} = data;
             let name = dgima_src !== "trimmed" ? data.stop_name : data.file_name;
             let icon = data.wfstatus.trimmed ? "cut" : "";
-            // let id = dgima_src === "insert" ? data.capture_id : data.trim_id;
             return ({ key: id, text: name, value: data, icon })
         });
 
@@ -172,11 +155,6 @@ class DgimaTrimmer extends Component {
                     <Table.Cell>{lecturer}</Table.Cell>
                     <Table.Cell>{duration}</Table.Cell>
                     <Table.Cell>{location}</Table.Cell>
-                    {/*<Table.Cell>{mof}</Table.Cell>*/}
-                    {/*<Table.Cell>{subject}</Table.Cell>*/}
-                    {/*<Table.Cell>{cassete_type}</Table.Cell>*/}
-                    {/*<Table.Cell>{archive_place}</Table.Cell>*/}
-                    {/*<Table.Cell>{bar_code}</Table.Cell>*/}
                 </Table.Row>
             )
         });
@@ -197,14 +175,6 @@ class DgimaTrimmer extends Component {
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
-                        {/*<DatePicker*/}
-                        {/*    className="datepickercs"*/}
-                        {/*    dateFormat="YYYY-MM-DD"*/}
-                        {/*    locale='he'*/}
-                        {/*    maxDate={moment()}*/}
-                        {/*    selected={startDate}*/}
-                        {/*    onChange={this.changeDate}*/}
-                        {/*/>*/}
                         <DatePicker
                             className="datepickercs"
                             dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
@@ -270,11 +240,6 @@ class DgimaTrimmer extends Component {
                             <Table.HeaderCell width={1}>Lecturer</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Location</Table.HeaderCell>
-                            {/*<Table.HeaderCell width={1}>Mof</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>Subj</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>CT</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={1}>AP</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={2}>BC</Table.HeaderCell>*/}
                         </Table.Row>
                         {dgima_src === "search" ? "" :
                         <Table.Row key={id} compact active>
@@ -286,11 +251,6 @@ class DgimaTrimmer extends Component {
                             <Table.HeaderCell>{lecturer}</Table.HeaderCell>
                             <Table.HeaderCell>{duration}</Table.HeaderCell>
                             <Table.HeaderCell>{location}</Table.HeaderCell>
-                            {/*<Table.HeaderCell>{mof}</Table.HeaderCell>*/}
-                            {/*<Table.Cell>{subject}</Table.Cell>*/}
-                            {/*<Table.HeaderCell>{cassete_type}</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell>{archive_place}</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell>{bar_code}</Table.HeaderCell>*/}
                         </Table.Row>}
                     </Table.Header>
 

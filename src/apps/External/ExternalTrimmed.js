@@ -10,7 +10,7 @@ import {
     WFDB_BACKEND,
     WFSRV_BACKEND
 } from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown, Checkbox, Confirm } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Checkbox, Confirm } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
@@ -46,7 +46,7 @@ class ExternalTrimmed extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('drim', (data) => {
+        let ival = setInterval(() => getData('drim/insert', (data) => {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             }), IVAL );
@@ -462,38 +462,6 @@ class ExternalTrimmed extends Component {
             } return true
         });
 
-        let cassette_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured,fixed} = data.wfstatus;
-            if(data.parent.source === "cassette") {
-                let id = data.dgima_id;
-                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-                let hide = hide_censored && censored && !checked;
-                if(hide || removed) return false;
-                let rowcolor = censored && !checked;
-                let active = actived === id ? 'active' : 'admin_raw';
-                return (
-                    <Table.Row
-                        negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
-                        className={active} key={id} onClick={() => this.selectFile(data)}>
-                        <Table.Cell>
-                            {secured ? s : ""}
-                            {censored ? c : ""}
-                            {fixed ? f : ""}
-                            {locked ? d : ""}
-                            {joined ? j : ""}
-                            {name}
-                        </Table.Cell>
-                        <Table.Cell>{time}</Table.Cell>
-                        <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
-                        <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                        <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
-                        <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
-                    </Table.Row>
-                )
-            } return true
-        });
-
         return (
             <Segment textAlign='center' color='brown' raised>
                 <Label  attached='top' className="trimmed_label" color={fix_mode ? 'orange' : ''}>
@@ -588,22 +556,6 @@ class ExternalTrimmed extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header' warning>
-                            <Table.HeaderCell  textAlign='center'><Icon name='file video outline' />Cassette</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>BA</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>KM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>ME</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {cassette_data}
-                    </Table.Body>
-                </Table>
-                <Table selectable compact='very' basic structured className="ingest_table">
-                    <Table.Header>
-                        <Table.Row className='table_header' warning>
                             <Table.HeaderCell  textAlign='center'><Icon name='download' />External</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BA</Table.HeaderCell>
@@ -618,25 +570,25 @@ class ExternalTrimmed extends Component {
                     </Table.Body>
                 </Table>
                 </Segment>
-                <Menu secondary>
-                    <Menu.Item>
-                        <Dropdown
-                            className="join_files_dropdown"
-                            placeholder="Select Files To Join:"
-                            selection
-                            multiple
-                            upward
-                            options={join_data}
-                            value={join_files}
-                            onChange={(e, {value}) => this.fileToJoin(value)} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Button primary disabled={join_files.length < 2}
-                                onClick={this.sendToJoin}>
-                            Join
-                        </Button>
-                    </Menu.Item>
-                </Menu>
+                {/*<Menu secondary>*/}
+                {/*    <Menu.Item>*/}
+                {/*        <Dropdown*/}
+                {/*            className="join_files_dropdown"*/}
+                {/*            placeholder="Select Files To Join:"*/}
+                {/*            selection*/}
+                {/*            multiple*/}
+                {/*            upward*/}
+                {/*            options={join_data}*/}
+                {/*            value={join_files}*/}
+                {/*            onChange={(e, {value}) => this.fileToJoin(value)} />*/}
+                {/*    </Menu.Item>*/}
+                {/*    <Menu.Item>*/}
+                {/*        <Button primary disabled={join_files.length < 2}*/}
+                {/*                onClick={this.sendToJoin}>*/}
+                {/*            Join*/}
+                {/*        </Button>*/}
+                {/*    </Menu.Item>*/}
+                {/*</Menu>*/}
             </Segment>
         );
     }
