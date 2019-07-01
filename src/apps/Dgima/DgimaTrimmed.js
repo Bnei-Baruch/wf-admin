@@ -197,7 +197,18 @@ class DgimaTrimmed extends Component {
     };
 
     openCit = () => {
-        this.setState({cit_open: true});
+        const {fix_mode,file_data} = this.state;
+        // Check if unit was created by workflow send or manually
+        if(!fix_mode) {
+            // Not FIX mode
+            this.setState({cit_open: true});
+        } else if(fix_mode && file_data.parent.insert_id) {
+            // FIX mode and unit was created manually
+            this.setState({cit_open: true});
+        } else {
+            // FIX mode and unit was created by workflow send
+            alert("Not impelemnted yet :(");
+        }
     };
 
     openInsert = () => {
@@ -368,12 +379,22 @@ class DgimaTrimmed extends Component {
         if(confirmed) {
             file_data.line.fix_unit_uid = fix_unit.line.uid;
             file_data.line.fix_trim_id = fix_unit.dgima_id;
-            this.insertMeta(file_data);
-            this.setState({file_data,confirm_open: false});
-            console.log(" :: Going to save fixed data: ",file_data);
-            putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
-                console.log(cb);
-            });
+            file_data.parent.fix_id = fix_unit.dgima_id;
+            // Check if unit was created by workflow send or manually
+            if(fix_unit.parent.insert_id) {
+                // Unit was created manually
+                this.insertMeta(file_data);
+                this.setState({file_data,confirm_open: false});
+                console.log(" :: Going to save fixed data: ",file_data);
+                putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
+                    console.log(cb);
+                });
+            } else {
+                // Unit was created by workflow send
+                alert("Not impelemnted yet :(");
+                this.setState({confirm_open: false});
+            }
+
         } else {
             console.log("Aur you sure?");
             this.setState({confirm_open: true});
