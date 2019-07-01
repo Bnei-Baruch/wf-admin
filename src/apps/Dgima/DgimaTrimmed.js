@@ -431,7 +431,7 @@ class DgimaTrimmed extends Component {
         let s = (<Icon color='red' name='key'/>);
 
         let cassette_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,youtube,checked,joined,secured,fixed} = data.wfstatus;
+            const {locked,trimmed,backup,kmedia,removed,wfsend,censored,checked,joined,secured,fixed} = data.wfstatus;
             if(data.parent.source === "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -455,8 +455,8 @@ class DgimaTrimmed extends Component {
                         <Table.Cell>{time}</Table.Cell>
                         <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                         <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                        <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
-                        <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
+                        {/*<Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>*/}
+                        {/*<Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>*/}
                     </Table.Row>
                 )
             } return true
@@ -482,7 +482,7 @@ class DgimaTrimmed extends Component {
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
                     <Segment textAlign='right' className='toggle'>
-                        <Checkbox toggle label='Fix Mode'
+                        <Checkbox toggle label='Fix Mode' disabled
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>
                     </Segment>
@@ -560,8 +560,8 @@ class DgimaTrimmed extends Component {
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BA</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>ME</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>YT</Table.HeaderCell>*/}
+                            {/*<Table.HeaderCell width={1}>ME</Table.HeaderCell>*/}
                         </Table.Row>
                     </Table.Header>
 
