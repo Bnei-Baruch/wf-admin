@@ -20,6 +20,7 @@ class DgimaTrimmed extends Component {
     state = {
         actived: null,
         fix_mode: false,
+        fix_button: false,
         confirm_open: false,
         cit_open: false,
         insert_open: false,
@@ -375,20 +376,12 @@ class DgimaTrimmed extends Component {
     };
 
     setFixData = (confirmed) => {
-        let {fix_unit,file_data} = this.state;
+        let {fix_unit} = this.state;
         if(confirmed) {
-            file_data.line.fix_unit_uid = fix_unit.line.uid;
-            file_data.line.fix_trim_id = fix_unit.dgima_id;
-            file_data.parent.fix_id = fix_unit.dgima_id;
             // Check if unit was created by workflow send or manually
             if(fix_unit.parent.insert_id) {
                 // Unit was created manually
-                this.insertMeta(file_data);
-                this.setState({file_data,confirm_open: false});
-                console.log(" :: Going to save fixed data: ",file_data);
-                putData(`${WFDB_BACKEND}/trimmer/${file_data.dgima_id}`, file_data, (cb) => {
-                    console.log(cb);
-                });
+                this.execUpdateFix();
             } else {
                 // Unit was created by workflow send
                 alert("Not impelemnted yet :(");
@@ -399,6 +392,83 @@ class DgimaTrimmed extends Component {
             console.log("Aur you sure?");
             this.setState({confirm_open: true});
         }
+    };
+
+    execUpdateFix = () => {
+        let {fix_unit,file_data} = this.state;
+        this.setState({ sending: true, fix_button: true });
+
+        // Put to dgima fix info
+        file_data.line = fix_unit.line;
+        file_data.line.fix_unit_uid = fix_unit.line.uid;
+        file_data.line.fix_trim_id = fix_unit.dgima_id;
+        file_data.parent.fix_id = fix_unit.dgima_id;
+        file_data.parent.insert_id = fix_unit.parent.insert_id;
+
+        // Get insert fix metadata
+        getData(`insert/${fix_unit.parent.insert_id}`, (data) => {
+            console.log(":: get fix insert metadata: ",data);
+            if(!data) {
+                alert("Name already exist!");
+                this.setState({sending: false, fix_button: false})
+                return false;
+            }
+
+            let insert_data = data;
+
+            // Prepare meta for rename
+            let newfile_name = fix_unit.file_name;
+            let oldfile_name = file_data.file_name;
+            let src = file_data.parent.source;
+            let ext = insert_data.extension;
+            let opath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}o.${ext}`;
+            let ppath = `/backup/trimmed/${src}/${newfile_name}_${file_data.dgima_id}p.${ext}`;
+            file_data.parent.file_name = oldfile_name;
+            file_data.original.format.filename = opath;
+            file_data.proxy.format.filename = ppath;
+            file_data.file_name = newfile_name;
+
+
+            console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
+            putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
+                console.log(":: Fix - rename respond: ",cb);
+                if(cb.status === "ok") {
+
+                    // Prepare meta for insert
+                    insert_data.insert_type = "2";
+                    insert_data.file_name = fix_unit.file_name;
+                    insert_data.insert_name = `${fix_unit.file_name}.${ext}`;
+                    insert_data.sha1 = file_data.original.format.sha1;
+                    insert_data.line.old_sha1 = fix_unit.original.format.sha1;
+                    insert_data.send_id = file_data.dgima_id;
+
+                    putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
+                        console.log(":: Insert respond: ",cb);
+                        if(cb.status === "ok") {
+                            // After that correct only throw fix workflow
+                            fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/wfsend?value=true`, { method: 'POST',});
+                            setTimeout(() => this.setState({sending: false, fix_button: false}), 2000);
+                            alert("Fix successful :)");
+
+                            if(file_data.parent.source === "cassette") {
+                                file_data.special = "cassette";
+                                putData(`${WFSRV_BACKEND}/workflow/send_dgima`, file_data, (cb) => {
+                                    console.log(":: Dgima - send respond: ",cb);
+                                    this.selectFile(file_data);
+                                });
+                            }
+                        } else {
+                            this.setState({sending: false, fix_button: false})
+                            alert("Something goes wrong!");
+                        }
+                    });
+                } else {
+                    this.setState({sending: false, fix_button: false});
+                    alert("Rename failed!");
+                }
+            });
+
+        });
     };
 
     render() {
@@ -476,13 +546,17 @@ class DgimaTrimmed extends Component {
                     <Segment>{this.state.fixReq ?
                         <Select comact placeholder='Options To Fix:' options={this.state.wfunits_options}
                                 onChange={(e, {value}) => this.selectFixData(value)} /> : ""}
-                        {this.state.fix_unit ? <Button color='orange' icon="configure" onClick={() => this.setFixData(false)} /> : ""}
+                        {this.state.fix_unit ? <Button color='orange'
+                                                       loading={this.state.sending}
+                                                       disabled={this.state.fix_button}
+                                                       icon="configure"
+                                                       onClick={() => this.setFixData(false)} /> : ""}
                         <Confirm mountNode={document.getElementById("ltr-modal-mount")}
                                  open={this.state.confirm_open}
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
                     <Segment textAlign='right' className='toggle'>
-                        <Checkbox toggle label='Fix Mode' disabled
+                        <Checkbox toggle label='Fix Mode'
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>
                     </Segment>
