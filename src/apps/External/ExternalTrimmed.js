@@ -441,6 +441,7 @@ class ExternalTrimmed extends Component {
                     insert_data.sha1 = file_data.original.format.sha1;
                     insert_data.line.old_sha1 = fix_unit.original.format.sha1;
                     insert_data.send_id = file_data.dgima_id;
+                    insert_data.size = parseInt(file_data.original.format.size, 10);
 
                     putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
                         console.log(":: Insert respond: ",cb);
