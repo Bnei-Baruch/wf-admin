@@ -53,7 +53,7 @@ class DgimaTrimmed extends Component {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             }), IVAL );
-        this.setState({ival});
+        this.setState({wf_admin,ival});
     };
 
     componentWillUnmount() {
