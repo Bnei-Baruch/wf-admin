@@ -43,10 +43,12 @@ class DgimaTrimmed extends Component {
         units: [],
         hide_censored: true,
         wfunits: [],
+        wf_admin: false,
 
     };
 
     componentDidMount() {
+        let wf_admin = !!this.props.user.roles.find(role => role === 'wf_admin');
         let ival = setInterval(() => getData('drim/cassette', (data) => {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
@@ -473,7 +475,7 @@ class DgimaTrimmed extends Component {
     };
 
     render() {
-        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored,fix_mode} = this.state;
+        const {actived,dgima,kmedia_option,file_data,source,renaming,rename_button,cit_open,filedata,metadata,join_files,hide_censored,fix_mode,wf_admin} = this.state;
 
         const send_options = [
             { key: 'buffer', text: 'Buffer', value: 'buffer' },
@@ -557,7 +559,7 @@ class DgimaTrimmed extends Component {
                                  onCancel={() => this.setState({confirm_open: false})}
                                  onConfirm={() => this.setFixData(true)} /></Segment>
                     <Segment textAlign='right' className='toggle'>
-                        <Checkbox toggle label='Fix Mode'
+                        <Checkbox toggle label='Fix Mode' disabled={!wf_admin}
                                   checked={fix_mode}
                                   onChange={this.toggleMode}/>
                     </Segment>
