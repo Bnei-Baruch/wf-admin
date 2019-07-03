@@ -34,6 +34,7 @@ class App extends Component {
         wf_insert: true,
         wf_external: true,
         wf_public: true,
+        wf_upload: true,
     };
 
     componentDidMount() {
@@ -51,8 +52,9 @@ class App extends Component {
         let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
         let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
+        let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload});
             setInterval(() => getState('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
@@ -70,7 +72,7 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,user} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,user} = this.state;
 
       let login = (<LoginPage user={user} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
@@ -96,17 +98,19 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><ExternalApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
               render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
-          { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_public },
+          { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_upload },
               render: () => <Tab.Pane attached={false} ><UploadApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
               render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin },
+          { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
               render: () => <Tab.Pane attached={false} ><WFDB user={user} /></Tab.Pane> },
       ];
 
+      const wf_panes = panes.filter(p => !p.menuItem.disabled);
+
     return (
 
-        <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={panes} />
+        <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
 
     );
   }
