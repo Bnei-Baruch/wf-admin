@@ -136,8 +136,9 @@ class ExternalTrimmed extends Component {
 
         // Check WFDB if name already exist
         getData(`dgima/find?key=file_name&value=${newfile_name}`, (data) => {
+            let chk = data.find(n => n.file_name === newfile_name);
             console.log(":: CheckName result: ",data);
-            if(data.length > 0) {
+            if(data.length > 0 && chk) {
                 alert("Name already exist!");
             } else {
                 this.renameFile(file_data,newline,fix_mode);
