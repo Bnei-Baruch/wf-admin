@@ -162,6 +162,7 @@ class CensorCheck extends Component {
     render() {
 
         const { activeIndex } = this.state;
+
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
         let f = (<Icon color='blue' name='configure'/>);
@@ -215,7 +216,7 @@ class CensorCheck extends Component {
                         <Table.Cell>{time}</Table.Cell>
                     </Table.Row>
                 )
-            } return true
+            }
         });
 
         let cassette_data = this.state.dgima.map((data) => {
@@ -241,8 +242,16 @@ class CensorCheck extends Component {
                         <Table.Cell>{time}</Table.Cell>
                     </Table.Row>
                 )
-            } return true
+            }
         });
+
+        const lt = trimmed.filter(n => n).length;
+        const lc = cassette_data.filter(n => n).length;
+        const ld = dgima_data.filter(n => n).length;
+
+        let ct = (<Label key='Carbon' circular size='mini' color='red'>{lt}</Label>);
+        let cc = (<Label key='Carbon' circular size='mini' color='red'>{lc}</Label>);
+        let cd = (<Label key='Carbon' circular size='mini' color='red'>{ld}</Label>);
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='red' raised>
@@ -298,7 +307,7 @@ class CensorCheck extends Component {
                     <Accordion styled fluid>
                         <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
                             <Icon name='dropdown' />
-                            Ingest
+                            Ingest {lt > 0 ? ct : ""}
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 0}>
                             <Table selectable compact='very' basic structured className="ingest_table">
@@ -310,7 +319,7 @@ class CensorCheck extends Component {
 
                         <Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleClick}>
                             <Icon name='dropdown' />
-                            Cassette
+                            Cassette {lc > 0 ? cc : ""}
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 1}>
                             <Table selectable compact='very' basic structured className="ingest_table">
@@ -322,7 +331,7 @@ class CensorCheck extends Component {
 
                         <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
                             <Icon name='dropdown' />
-                            External
+                            External {ld > 0 ? cd : ""}
                         </Accordion.Title>
                         <Accordion.Content active={activeIndex === 2}>
                             <Table selectable compact='very' basic structured className="ingest_table">
