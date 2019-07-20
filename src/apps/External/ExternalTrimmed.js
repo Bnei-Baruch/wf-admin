@@ -488,13 +488,6 @@ class ExternalTrimmed extends Component {
             { key: 'akladot', text: 'Akladot', value: 'akladot' },
         ];
 
-        const join_data = dgima
-            .filter(data => data.parent.source === "cassette" && !data.wfstatus.renamed)
-            .map(data => {
-            const {id, file_name} = data;
-            return ({key: id, text: file_name, value: data})
-        });
-
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);

@@ -10,7 +10,7 @@ import {
     WFDB_BACKEND,
     WFSRV_BACKEND, newTrimMeta
 } from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
+import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Accordion } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import TrimmerApp from "../Trimmer/TrimmerApp";
 
@@ -18,6 +18,7 @@ class CensorCheck extends Component {
 
     state = {
         active: null,
+        activeIndex: 0,
         disabled: true,
         open: false,
         trimmed: [],
@@ -150,8 +151,17 @@ class CensorCheck extends Component {
         this.setState({open: false, disabled: true, file_data: ""});
     };
 
+    handleClick = (e, titleProps) => {
+        const { index } = titleProps;
+        const { activeIndex } = this.state;
+        const newIndex = activeIndex === index ? -1 : index;
+
+        this.setState({ activeIndex: newIndex });
+    };
+
     render() {
 
+        const { activeIndex } = this.state;
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
         let f = (<Icon color='blue' name='configure'/>);
@@ -285,42 +295,46 @@ class CensorCheck extends Component {
                 </Menu>
                 </Message>
                 <Segment attached raised textAlign='center' className='censor_content'>
-                <Table selectable compact='very' basic structured className="ingest_table">
-                    <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell textAlign='center'><Icon name='record' />Ingest</Table.HeaderCell>
-                            <Table.HeaderCell width={2}></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
+                    <Accordion styled fluid>
+                        <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
+                            <Icon name='dropdown' />
+                            Ingest
+                        </Accordion.Title>
+                        <Accordion.Content active={activeIndex === 0}>
+                            <Table selectable compact='very' basic structured className="ingest_table">
+                                <Table.Body>
+                                    {trimmed}
+                                </Table.Body>
+                            </Table>
+                        </Accordion.Content>
 
-                    <Table.Body>
-                        {trimmed}
-                    </Table.Body>
-                </Table>
-                <Table selectable compact='very' basic structured className="ingest_table">
-                    <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell textAlign='center'><Icon name='file video outline' />Cassette</Table.HeaderCell>
-                            <Table.HeaderCell width={2}></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
+                        <Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleClick}>
+                            <Icon name='dropdown' />
+                            Cassette
+                        </Accordion.Title>
+                        <Accordion.Content active={activeIndex === 1}>
+                            <Table selectable compact='very' basic structured className="ingest_table">
+                                <Table.Body>
+                                    {cassette_data}
+                                </Table.Body>
+                            </Table>
+                        </Accordion.Content>
 
-                    <Table.Body>
-                        {cassette_data}
-                    </Table.Body>
-                </Table>
-                <Table selectable compact='very' basic structured className="ingest_table">
-                    <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell textAlign='center'><Icon name='download' />External</Table.HeaderCell>
-                            <Table.HeaderCell width={2}></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
+                        <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
+                            <Icon name='dropdown' />
+                            External
+                        </Accordion.Title>
+                        <Accordion.Content active={activeIndex === 2}>
+                            <Table selectable compact='very' basic structured className="ingest_table">
+                                <Table.Body>
+                                    {dgima_data}
+                                </Table.Body>
+                            </Table>
+                        </Accordion.Content>
+                    </Accordion>
 
-                    <Table.Body>
-                        {dgima_data}
-                    </Table.Body>
-                </Table>
+
+
                 </Segment>
             </Segment>
         );
