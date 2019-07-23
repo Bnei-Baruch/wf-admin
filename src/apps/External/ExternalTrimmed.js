@@ -49,10 +49,12 @@ class ExternalTrimmed extends Component {
 
     componentDidMount() {
         let wf_admin = !!this.props.user.roles.find(role => role === 'wf_admin');
-        let ival = setInterval(() => getData('drim/insert', (data) => {
-                if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
-                    this.setState({dgima: data})
-            }), IVAL );
+        let ival = setInterval(() => getData('drim/insert', (idata) => {
+            getData('drim/congress', (cdata) => {
+                let mdata = [...idata,...cdata];
+                this.setState({dgima: mdata})
+            })
+        }), IVAL );
         this.setState({wf_admin,ival});
     };
 
