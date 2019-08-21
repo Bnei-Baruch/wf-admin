@@ -90,6 +90,10 @@ body {
     color: #2C662D!important;
 }
 
+.preset_segment {
+    width: 1000px!important;
+}
+
 .scrolling.dimmable.dimmed>.dimmer {
     overflow: auto;
 }
