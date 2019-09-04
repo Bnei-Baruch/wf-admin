@@ -17,7 +17,7 @@ import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
 
-class ArichaAdmin extends Component {
+class ArichaJobs extends Component {
 
     state = {
         active: null,
@@ -25,7 +25,7 @@ class ArichaAdmin extends Component {
         insert_open: false,
         insert_button: true,
         inserting: false,
-        aricha: [],
+        jobs: [],
         file_data: {},
         filedata: {},
         kmedia_option: false,
@@ -41,9 +41,9 @@ class ArichaAdmin extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('bdika', (data) => {
-                if (JSON.stringify(this.state.aricha) !== JSON.stringify(data))
-                    this.setState({aricha: data})
+        let ival = setInterval(() => getData('jobs', (data) => {
+                if (JSON.stringify(this.state.jobs) !== JSON.stringify(data))
+                    this.setState({jobs: data})
             }), IVAL );
         this.setState({ival});
     };
@@ -52,8 +52,14 @@ class ArichaAdmin extends Component {
         clearInterval(this.state.ival);
     };
 
-    selectFile = (file_data) => {
-        console.log(":: ArichaApp - selected file: ", file_data);
+    selectJob = (file_data) => {
+        console.log(":: ArichaJobs - selected job: ", file_data);
+
+        if(!file_data.original.format) {
+            this.setState({file_data, active: file_data.job_id});
+            return
+        }
+
         const {wfsend} = file_data.wfstatus;
 
         // Build url for preview
@@ -191,7 +197,7 @@ class ArichaAdmin extends Component {
                 setTimeout(() => this.setState({file_data, inserting: false, send_button: false, kmedia_option: true}), 2000);
                 putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
                     console.log(":: PUT Respond: ",cb);
-                    this.selectFile(file_data);
+                    this.selectJob(file_data);
                 });
                 alert("Insert successful :)");
             } else {
@@ -224,7 +230,7 @@ class ArichaAdmin extends Component {
             console.log(":: Ingest - rename respond: ",cb);
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                this.selectFile(file_data);
+                this.selectJob(file_data);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }
@@ -252,7 +258,7 @@ class ArichaAdmin extends Component {
         putData(`${WFSRV_BACKEND}/workflow/send_aricha`, file_data, (cb) => {
             console.log(":: Aricha - send respond: ",cb);
             // While polling done it does not necessary
-            //this.selectFile(file_data);
+            //this.selectJob(file_data);
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
             } else {
@@ -266,7 +272,7 @@ class ArichaAdmin extends Component {
         let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/jobs/${file_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',})
     };
 
     render() {
@@ -288,14 +294,11 @@ class ArichaAdmin extends Component {
         let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
 
-        let aricha = this.state.aricha.map((data) => {
-            if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
-                return false;
-            }
+        let jobs = this.state.jobs.map((data) => {
             const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
-            let id = data.aricha_id;
+            let id = data.job_id;
             let ready = data.proxy;
-            let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let name = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
@@ -303,7 +306,7 @@ class ArichaAdmin extends Component {
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
-                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    className={active} key={id} onClick={() => this.selectJob(data)}>
                     <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
@@ -315,9 +318,9 @@ class ArichaAdmin extends Component {
         });
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='brown' raised>
+            <Segment textAlign='center' className="ingest_segment" color='teal' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {file_data.file_name ? file_data.file_name : "Aricha Done"}
+                    {file_data.job_name ? file_data.job_name : "Aricha Jobs"}
                 </Label>
                 <Message>
                     <Menu size='large' secondary >
@@ -393,7 +396,7 @@ class ArichaAdmin extends Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {aricha}
+                        {jobs}
                     </Table.Body>
                 </Table>
             </Segment>
@@ -401,4 +404,4 @@ class ArichaAdmin extends Component {
     }
 }
 
-export default ArichaAdmin;
+export default ArichaJobs;
