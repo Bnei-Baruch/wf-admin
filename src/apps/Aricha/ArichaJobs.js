@@ -10,9 +10,22 @@ import {
     getDCT,
     insertName,
     arichaName,
-    MDB_FINDSHA
+    MDB_FINDSHA, newJobMeta
 } from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
+import {
+    Menu,
+    Segment,
+    Label,
+    Icon,
+    Table,
+    Loader,
+    Button,
+    Modal,
+    Select,
+    Message,
+    Dropdown,
+    Input
+} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
@@ -25,6 +38,7 @@ class ArichaJobs extends Component {
         insert_open: false,
         insert_button: true,
         inserting: false,
+        job_name: "",
         jobs: [],
         file_data: {},
         filedata: {},
@@ -268,6 +282,19 @@ class ArichaJobs extends Component {
 
     };
 
+    setJobName = (job_name) => {
+        console.log(":: Job Name: ", job_name);
+        this.setState({job_name});
+    };
+
+    newJob = () => {
+        const {job_name} = this.state;
+        let job_meta = newJobMeta(job_name);
+        console.log(" :: New Meta: ", job_meta);
+        // TODO: Save to database
+        this.setState({job_name: ""});
+    };
+
     setRemoved = () => {
         let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
@@ -278,7 +305,7 @@ class ArichaJobs extends Component {
     render() {
 
         const {file_data, source, renaming, rename_button, cit_open, inserting, insert_button, insert_open,
-            filedata, metadata, special, send_button, sending} = this.state;
+            filedata, metadata, special, send_button, sending, job_name} = this.state;
 
         const send_options = [
             { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !insert_button },
@@ -322,6 +349,27 @@ class ArichaJobs extends Component {
                 <Label  attached='top' className="trimmed_label">
                     {file_data.job_name ? file_data.job_name : "Aricha Jobs"}
                 </Label>
+                <Menu secondary >
+                    <Menu.Item>
+                    </Menu.Item>
+                    <Menu.Item>
+                        {/*<Dropdown item text='Lines'>*/}
+                        {/*    <Dropdown.Menu>*/}
+                        {/*        {options}*/}
+                        {/*    </Dropdown.Menu>*/}
+                        {/*</Dropdown>*/}
+                        <Input className="job_input"
+                               placeholder="Job name.."
+                               onChange={e => this.setJobName(e.target.value)}
+                               value={job_name} />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button positive={true}
+                                disabled={job_name === ""}
+                                onClick={this.newJob}>New Job
+                        </Button>
+                    </Menu.Item>
+                </Menu>
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>

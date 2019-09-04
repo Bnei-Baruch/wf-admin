@@ -260,6 +260,22 @@ export const newInsertMeta = (file_data) => {
     return metadata;
 };
 
+export const newJobMeta = (job_name) => {
+    let metadata = {
+        file_name: null,
+        job_id: "j"+moment().format('X'),
+        job_name: job_name,
+        job_type: "video",
+        line: null,
+        original: null,
+        parent: null,
+        product: null,
+        proxy: null,
+        wfstatus: {removed: false}
+    };
+    return metadata;
+};
+
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
