@@ -1,9 +1,8 @@
 import React, {Component, Fragment} from 'react'
-import ArichaAdmin from "./ArichaAdmin";
-import ArichaUpload from "./ArichaUpload";
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
+import ProductJob from "./ProductJob";
 
-class ArichaApp extends Component {
+class JobsApp extends Component {
 
     state = {
         ival: null,
@@ -20,11 +19,10 @@ class ArichaApp extends Component {
 
         return (
             <Fragment>
-                <ArichaUpload onFileData={this.arichaWorkflow}/>
-                <ArichaAdmin user={this.props.user} />
+                <ProductJob />
             </Fragment>
         );
     }
 }
 
-export default ArichaApp;
+export default JobsApp;

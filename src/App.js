@@ -20,6 +20,7 @@ import {getState} from "./shared/tools";
 import UploadApp from "./apps/Upload/UploadApp";
 import MetusApp from "./apps/Metus/MetusApp";
 import ExternalApp from "./apps/External/ExternalApp";
+import JobsApp from "./apps/Jobs/JobsApp";
 
 class App extends Component {
 
@@ -29,6 +30,7 @@ class App extends Component {
         wf_ingest: true,
         wf_censor: true,
         wf_admin: true,
+        wf_jobs: true,
         wf_aricha: true,
         wf_dgima: true,
         wf_insert: true,
@@ -48,13 +50,14 @@ class App extends Component {
         let wf_ingest = user.roles.filter(role => role === 'wf_ingest').length === 0;
         let wf_censor = user.roles.filter(role => role === 'wf_censor').length === 0;
         let wf_admin = user.roles.filter(role => role === 'wf_admin').length === 0;
+        let wf_jobs = user.roles.filter(role => role === 'wf_jobs').length === 0;
         let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
         let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
         let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
         let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs});
             setInterval(() => getState('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
@@ -72,7 +75,7 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,user} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,user} = this.state;
 
       let login = (<LoginPage user={user} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
@@ -90,6 +93,8 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_public },
               render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
+          { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
+              render: () => <Tab.Pane attached={false} ><JobsApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
               render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },

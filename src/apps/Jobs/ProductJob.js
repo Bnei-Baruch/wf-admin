@@ -30,7 +30,7 @@ import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
 
-class ArichaJobs extends Component {
+class ProductJob extends Component {
 
     state = {
         active: null,
@@ -452,4 +452,4 @@ class ArichaJobs extends Component {
     }
 }
 
-export default ArichaJobs;
+export default ProductJob;
