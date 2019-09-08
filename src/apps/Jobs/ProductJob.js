@@ -299,7 +299,7 @@ class ProductJob extends Component {
         putData(`${WFDB_BACKEND}/jobs/${job_meta.job_id}`, job_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
-        this.setState({job_name: ""});
+        this.setState({job_name: "", doers: []});
     };
     
     removeJob = () => {
@@ -319,6 +319,14 @@ class ProductJob extends Component {
     addDoer = (doers) => {
         console.log(doers);
         this.setState({doers});
+    };
+
+    uploadMaster = () => {
+        this.props.masterUpload(this.state.job_data.job_id);
+    };
+
+    openJob = () => {
+        //TODO: Open modal with job files and options
     };
 
     render() {
@@ -371,7 +379,7 @@ class ProductJob extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='teal' raised>
-                <Label  attached='top' className="trimmed_label">
+                <Label  attached='top' className="trimmed_label" size='large'>
                     {job_data.job_name ? job_data.job_name : "Aricha Jobs"}
                 </Label>
                 <Menu secondary >
@@ -446,7 +454,16 @@ class ProductJob extends Component {
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' icon='close' onClick={this.setRemoved} />
+                                <Button color='orange' icon='upload' disabled={job_data.job_id === undefined}
+                                        onClick={this.uploadMaster} />
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button color='yellow' icon='folder' disabled={job_data.job_id === undefined}
+                                        onClick={this.openJob} />
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button color='red' icon='close' disabled={job_data.job_id === undefined}
+                                        onClick={this.setRemoved} />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>

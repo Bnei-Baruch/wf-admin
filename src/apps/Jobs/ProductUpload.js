@@ -21,7 +21,7 @@ class ProductUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/aricha/upload`,
+            action: `${WFSRV_BACKEND}/jobs/upload`,
             type: 'drag',
             accept: '.mp4',
             beforeUpload(file) {
@@ -37,19 +37,17 @@ class ProductUpload extends Component {
         };
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Message>
-                    <Upload
-                        {...this.props}
-                        {...props}
-                        className="aricha"
-                        onSuccess={this.uploadDone}
-                        onProgress={this.progress} >
-                        Drop file here or click me
-                    </Upload>
-                    <Progress label='' percent={this.state.percent} indicating progress='percent' />
-                </Message>
-            </Segment>
+            <Message>
+                <Upload
+                    {...this.props}
+                    {...props}
+                    className="aricha"
+                    onSuccess={this.uploadDone}
+                    onProgress={this.progress} >
+                    Drop file here or click me
+                </Upload>
+                <Progress label='' percent={this.state.percent} indicating progress='percent' />
+            </Message>
         );
     }
 }

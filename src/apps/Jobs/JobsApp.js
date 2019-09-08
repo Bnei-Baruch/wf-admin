@@ -7,21 +7,28 @@ class JobsApp extends Component {
 
     state = {
         ival: null,
+        job_id: false,
     };
 
     jobWorkflow = (filedata) => {
         console.log(":: JobsApp - got data: ", filedata);
-        // putData(`${WFSRV_BACKEND}/workflow/aricha`, filedata, (cb) => {
-        //     console.log(":: ArichaApp - workflow respond: ",cb);
-        // });
+        filedata.job_id = this.state.job_id;
+        putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
+            console.log(":: JobsApp - workflow respond: ",cb);
+            this.setState({job_id: null})
+        });
+    };
+
+    masterUpload = (job_id) => {
+        this.setState({job_id})
     };
 
     render() {
 
         return (
             <Fragment>
-                <ProductUpload onFileData={this.jobWorkflow} />
-                <ProductJob />
+                {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
+                <ProductJob masterUpload={this.masterUpload} />
             </Fragment>
         );
     }
