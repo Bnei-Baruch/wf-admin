@@ -268,10 +268,22 @@ export const newJobMeta = (job_name) => {
         job_type: "video",
         line: null,
         original: null,
-        parent: null,
+        parent: {doers: []},
         product: null,
         proxy: null,
-        wfstatus: {removed: false}
+        wfstatus: {
+            aricha: false,
+            buffer: false,
+            fix_req: false,
+            fixed: false,
+            renamed: false,
+            wfsend: false,
+            removed: false,
+            censored: false,
+            checked: false,
+            secured: false,
+            locked: false
+        }
     };
     return metadata;
 };
