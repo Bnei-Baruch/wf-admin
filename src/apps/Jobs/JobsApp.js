@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import ProductJob from "./ProductJob";
+import ProductUpload from "./ProductUpload";
 
 class JobsApp extends Component {
 
@@ -8,17 +9,18 @@ class JobsApp extends Component {
         ival: null,
     };
 
-    arichaWorkflow = (filedata) => {
-        console.log(":: ArichaApp - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/aricha`, filedata, (cb) => {
-            console.log(":: ArichaApp - workflow respond: ",cb);
-        });
+    jobWorkflow = (filedata) => {
+        console.log(":: JobsApp - got data: ", filedata);
+        // putData(`${WFSRV_BACKEND}/workflow/aricha`, filedata, (cb) => {
+        //     console.log(":: ArichaApp - workflow respond: ",cb);
+        // });
     };
 
     render() {
 
         return (
             <Fragment>
+                <ProductUpload onFileData={this.jobWorkflow} />
                 <ProductJob />
             </Fragment>
         );
