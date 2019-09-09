@@ -49,10 +49,10 @@ class ProductJob extends Component {
         input_id: "",
         ival: null,
         renaming: false,
-        rename_button: true,
+        rename_button: false,
         send_button: true,
         sending: false,
-        special: "backup",
+        special: "censored",
         source: null,
 
     };
@@ -144,7 +144,9 @@ class ProductJob extends Component {
     };
 
     openCit = () => {
-        this.setState({cit_open: true});
+        let {job_data} = this.state;
+        job_data.line = {manual_name: job_data.file_name};
+        this.setState({job_data, cit_open: true});
     };
 
     onCancel = () => {
@@ -161,16 +163,18 @@ class ProductJob extends Component {
         job_data.special = special;
         console.log(":: Going to send File: ", job_data + " : to: ", special);
         this.setState({ sending: true, send_button: true });
-        putData(`${WFSRV_BACKEND}/workflow/send_aricha`, job_data, (cb) => {
-            console.log(":: Aricha - send respond: ",cb);
-            // While polling done it does not necessary
-            //this.selectJob(job_data);
-            if(cb.status === "ok") {
-                setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
-            } else {
-                alert("Something goes wrong!");
-            }
-        });
+        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/${special}?value=true`, { method: 'POST',});
+        setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
+        // putData(`${WFSRV_BACKEND}/workflow/send_aricha`, job_data, (cb) => {
+        //     console.log(":: Aricha - send respond: ",cb);
+        //     // While polling done it does not necessary
+        //     //this.selectJob(job_data);
+        //     if(cb.status === "ok") {
+        //         setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
+        //     } else {
+        //         alert("Something goes wrong!");
+        //     }
+        // });
 
     };
 
@@ -227,10 +231,12 @@ class ProductJob extends Component {
             filedata, metadata, special, send_button, sending, job_name, doers} = this.state;
 
         const send_options = [
-            { key: 'kmedia', text: 'Kmedia', value: 'kmedia', disabled: !insert_button },
-            { key: 'youtube', text: 'Youtube', value: 'youtube' },
-            { key: 'metus', text: 'Metus', value: 'metus' },
-            { key: 'Backup', text: 'Backup', value: 'backup' },
+            {key: 'Censor', text: 'Censor', value: 'censored'},
+            {key: 'ToFix', text: 'ToFix', value: 'fix_req'},
+            {key: 'Fixed', text: 'Fixed', value: 'fixed'},
+            {key: 'Checked', text: 'Checked', value: 'checked'},
+            {key: 'Aricha', text: 'Aricha', value: 'aricha'},
+            {key: 'Buffer', text: 'Buffer', value: 'buffer'},
         ];
 
         let v = (<Icon name='checkmark'/>);
@@ -241,11 +247,11 @@ class ProductJob extends Component {
         let d = (<Icon color='blue' name='lock'/>);
 
         let jobs = this.state.jobs.map((data) => {
-            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
+            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,locked} = data.wfstatus;
             let id = data.job_id;
             let ready = true;
             let name = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'admin_raw';
@@ -254,11 +260,11 @@ class ProductJob extends Component {
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
                     className={active} key={id} onClick={() => this.selectJob(data)}>
                     <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
-                    <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
-                    <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
-                    <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
+                    <Table.Cell>{data.date}</Table.Cell>
+                    <Table.Cell negative={!checked}>{checked ? v : x}</Table.Cell>
+                    <Table.Cell negative={!fix_req}>{fix_req ? v : x}</Table.Cell>
+                    <Table.Cell negative={!fixed}>{fixed ? v : x}</Table.Cell>
+                    <Table.Cell negative={!aricha}>{aricha ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -316,8 +322,8 @@ class ProductJob extends Component {
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
                                                     loading={renaming}
-                                                    // disabled={rename_button}
-                                                    disabled={!source}
+                                                    disabled={rename_button}
+                                                    // disabled={!source}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
                                    open={cit_open}
@@ -359,7 +365,8 @@ class ProductJob extends Component {
                             </Menu.Item>
                             <Menu.Item>
                                 <Button positive icon="arrow right"
-                                        disabled={send_button}
+                                        //disabled={send_button}
+                                        disabled={job_data.job_id === undefined}
                                         onClick={this.sendFile} loading={sending} />
                             </Menu.Item>
                         </Menu.Menu>
@@ -369,11 +376,11 @@ class ProductJob extends Component {
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>BA</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>KM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>ME</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>ToFix</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Fixed</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Aricha</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
