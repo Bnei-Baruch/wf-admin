@@ -111,29 +111,36 @@ class ProductJob extends Component {
         let {job_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = job_data.file_name;
-        let opath = `/backup/aricha/${newfile_name}_${job_data.aricha_id}o.mp4`;
-        job_data.line = {...newline};
-        job_data.parent = {...{file_name: oldfile_name}};
-        //job_data.line.title = this.state.tags[newline.pattern] || "";
-        job_data.original.format.filename = opath;
+        if(job_data.original) {
+            let path = job_data.original.format.filename.split('/').slice(0,-1).join('/');
+            let opath = `${path}/${newfile_name}_${job_data.job_id}o.mp4`;
+            job_data.original.format.filename = opath;
+        }
+        if(job_data.proxy) {
+            let path = job_data.proxy.format.filename.split('/').slice(0,-1).join('/');
+            let ppath = `${path}/${newfile_name}_${job_data.job_id}p.mp4`;
+            job_data.proxy.format.filename = ppath;
+        }
+        job_data.line = newline;
+        job_data.parent.file_name = oldfile_name;
         job_data.file_name = newfile_name;
         job_data.wfstatus.renamed = true;
-
-        // If rename done after send we need to do insert
-        if(job_data.wfstatus.wfsend) {
-            job_data.wfstatus.wfsend = false;
+        this.setState({cit_open: false, renaming: true});
+        if(job_data.original) {
+            putData(`${WFSRV_BACKEND}/workflow/rename`, job_data, (cb) => {
+                console.log(":: Ingest - rename respond: ",cb);
+                if(cb.status === "ok") {
+                    setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
+                    this.selectJob(job_data);
+                } else {
+                    setTimeout(() => this.setState({renaming: false, disabled: job_data.wfstatus.wfsend}), 2000);
+                }
+            });
+        } else {
+            setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
+            this.selectJob(job_data);
         }
-        console.log(":: Old Meta: ", this.state.job_data+" :: New Meta: ",job_data);
-        this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
-        putData(`${WFSRV_BACKEND}/workflow/rename`, job_data, (cb) => {
-            console.log(":: Ingest - rename respond: ",cb);
-            if(cb.status === "ok") {
-                setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                this.selectJob(job_data);
-            } else {
-                setTimeout(() => this.setState({renaming: false, disabled: job_data.wfstatus.wfsend}), 2000);
-            }
-        });
+
     };
 
     openCit = () => {
