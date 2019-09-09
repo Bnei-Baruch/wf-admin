@@ -261,9 +261,11 @@ export const newInsertMeta = (file_data) => {
 };
 
 export const newJobMeta = (job_name) => {
+    let job_id = "j"+moment().format('X');
+    let date = moment.unix(job_id.substr(1)).format("YYYY-MM-DD");
     let metadata = {
+        job_id, date,
         file_name: null,
-        job_id: "j"+moment().format('X'),
         job_name: job_name,
         job_type: "video",
         line: null,

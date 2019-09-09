@@ -53,6 +53,7 @@ class ProductJob extends Component {
         send_button: true,
         sending: false,
         special: "backup",
+        source: null,
 
     };
 
@@ -73,155 +74,36 @@ class ProductJob extends Component {
 
         // Check if master file is added
         if(!job_data.original) {
-            this.setState({job_data, active: job_data.job_id});
+            this.setState({job_data, source: null, active: job_data.job_id});
             return
+        } else {
+            // Build url for preview
+            let path = job_data.original.format.filename;
+            let source = `${WFSRV_BACKEND}${path}`;
+            this.setState({job_data, source, active: job_data.job_id});
         }
-
-        const {wfsend} = job_data.wfstatus;
-
-        // Build url for preview
-        let path = job_data.original.format.filename;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({
-            job_data, source,
-            active: job_data.aricha_id,
-            rename_button: false,
-            send_button: !wfsend,
-            filedata: {filename: job_data.file_name},
-            insert_button: true
-            //kmedia_option: wfsend,
-        });
 
         // Check SHA1 in WFDB
         getData(`trimmer/sha1?value=${job_data.original.format.sha1}`, (trimmer) => {
             if(trimmer.length > 0) {
                 console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
                 alert("File did NOT changed from trimmer");
-                //this.setState({trimmer});
             } else {
-
                 // Check SHA1 in MDB
                 let sha1 = job_data.original.format.sha1;
                 let fetch_url = `${MDB_FINDSHA}/${sha1}`;
                 getUnits(fetch_url, (units) => {
                     if (units.total > 0) {
                         console.log("The SHA1 exist in MDB!", units);
-
-                        // Check SHA1 in Workflow
-                        insertName(sha1, "sha1", (data) => {
-                            if (data.length > 0 && job_data.file_name !== data[0].file_name) {
-                                job_data.line.old_name = data[0].file_name;
-                                job_data.line.fix_aricha_id = data[0].send_id;
-                                console.log("The SHA1 exist in WorkFlow!", data);
-                                console.log("-- Rename Insert mode --");
-                                this.newInsertData(job_data, data, "3");
-                            } else if (data.length > 0 && job_data.file_name === data[0].file_name) {
-                                console.log("-- Insert Done --");
-                            } else {
-                                console.log("The SHA1 exist in MDB but does NOT exist in WorkFlow!");
-                                alert("File already in MDB, but did pass WorkFlow!");
-                            }
-                        });
-                    } else {
-
-                        // Check filename in Workflow
-                        arichaName(job_data.file_name, (data) => {
-                            if(data.length > 1 && data[data.length-2].original.format.sha1 !== job_data.original.format.sha1) {
-                                job_data.line.old_sha1 = data[data.length-2].original.format.sha1;
-                                job_data.line.fix_aricha_id = data[data.length-2].aricha_id;
-                                job_data.line.fix_unit_uid = data[data.length-2].line.uid;
-                                console.log("The Filename already exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
-                                console.log("-- Update Insert mode --");
-                                this.newInsertData(job_data, data, "2");
-                            } else if(data.length > 1 && data[data.length-2].original.format.sha1 === job_data.original.format.sha1) {
-                                console.log("It's duplicate");
-                                alert("It's duplicate");
-                            } else {
-                                console.log("-- New Insert mode --");
-                                this.newInsertData(job_data, data, "1");
-                            }
-
-                        });
                     }
                 });
             }
         });
     };
 
-    newInsertData = (job_data, insert_old, insert_mode) => {
-        if (job_data.line.content_type) {
-
-            // Build data for insert app
-            let date = job_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-
-            // Make insert metadata
-            let insert_data = {};
-            insert_data.insert_id = insert_old.length > 0 ? insert_old[0].insert_id : "i"+moment().format('X');
-            insert_data.line = job_data.line;
-            insert_data.line.mime_type = "video/mp4";
-            insert_data.content_type = getDCT(job_data.line.content_type);
-            insert_data.date = date;
-            insert_data.file_name = job_data.file_name;
-            insert_data.extension = "mp4";
-            insert_data.insert_name = `${job_data.file_name}.${insert_data.extension}`;
-
-            // In InsertApp upload_filename use for filename gen in OldWF
-            insert_data.line.upload_filename = insert_data.insert_name;
-            insert_data.insert_type = insert_mode;
-            insert_data.language = job_data.line.language;
-            insert_data.send_id = job_data.aricha_id;
-            insert_data.send_uid = insert_mode === "3" ? insert_old[0].line.uid : "";
-            insert_data.upload_type = "aricha";
-            insert_data.sha1 = job_data.original.format.sha1;
-            insert_data.size = parseInt(job_data.original.format.size, 10);
-            this.setState({metadata:{...insert_data}, insert_button: false});
-        } else {
-            console.log("Content Type not known, rename must be done");
-        }
-    };
-
     getPlayer = (player) => {
         console.log(":: Trimmed - got player: ", player);
         //this.setState({player: player});
-    };
-
-    openInsert = () => {
-        this.setState({insert_open: true});
-    };
-
-    onInsert = (data) => {
-        console.log(":: Got insert data: ", data);
-        this.setState({insert_open: false});
-        this.setMeta(data);
-    };
-
-    setMeta = (insert_data) => {
-        let {job_data} = this.state;
-        job_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
-        job_data.line.uid = insert_data.line.uid;
-        job_data.line.mime_type = "video/mp4";
-        job_data.wfstatus.wfsend = true;
-        if(insert_data.insert_type !== "1") {
-            job_data.wfstatus.fixed = true;
-        }
-        this.setState({inserting: true, insert_button: true });
-        insert_data.send_id = job_data.aricha_id;
-
-        // Now we put metadata to mdb on backend
-        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
-            console.log(":: ArichaApp - workflow respond: ",cb);
-            if(cb.status === "ok") {
-                setTimeout(() => this.setState({job_data, inserting: false, send_button: false, kmedia_option: true}), 2000);
-                putData(`${WFDB_BACKEND}/aricha/${job_data.aricha_id}`, job_data, (cb) => {
-                    console.log(":: PUT Respond: ",cb);
-                    this.selectJob(job_data);
-                });
-                alert("Insert successful :)");
-            } else {
-                alert("Something gone wrong :(");
-                this.setState({ inserting: false, insert_button: false});
-            }
-        });
     };
 
     renameFile = (newline) => {
@@ -286,7 +168,6 @@ class ProductJob extends Component {
     };
 
     setJobName = (job_name) => {
-        console.log(":: Job Name: ", job_name);
         this.setState({job_name});
     };
 
@@ -327,6 +208,10 @@ class ProductJob extends Component {
 
     openJob = () => {
         //TODO: Open modal with job files and options
+    };
+
+    newUnit = () => {
+        //TODO: Make new unit
     };
 
     render() {
@@ -424,7 +309,8 @@ class ProductJob extends Component {
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
                                                     loading={renaming}
-                                                    disabled={rename_button}
+                                                    // disabled={rename_button}
+                                                    disabled={!source}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
                                    open={cit_open}
@@ -439,19 +325,10 @@ class ProductJob extends Component {
                         </Menu.Item>
                         <Menu.Menu position='left'>
                             <Menu.Item>
-                                <Modal { ...this.props }
-                                       trigger={<Button color='teal' icon='archive'
-                                                        loading={inserting}
-                                                        disabled={insert_button}
-                                                        onClick={this.openInsert} />}
-                                       closeOnDimmerClick={true}
-                                       closeIcon={true}
-                                       onClose={this.onCancel}
-                                       open={insert_open}
-                                       size="large"
-                                       mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} user={this.props.user} />
-                                </Modal>
+                                <Button color='teal' icon='archive'
+                                        loading={inserting}
+                                        disabled={insert_button}
+                                        onClick={this.newUnit} />
                             </Menu.Item>
                             <Menu.Item>
                                 <Button color='orange' icon='upload' disabled={job_data.job_id === undefined}
