@@ -77,8 +77,8 @@ class ProductJob extends Component {
             this.setState({job_data, source: null, active: job_data.job_id});
             return
         } else {
-            // Build url for preview
-            let path = job_data.original.format.filename;
+            // Build url for preview (take proxy if exist)
+            let path = job_data.proxy ? job_data.proxy.format.filename : job_data.original.format.filename;
             let source = `${WFSRV_BACKEND}${path}`;
             this.setState({job_data, source, active: job_data.job_id});
         }
@@ -277,7 +277,7 @@ class ProductJob extends Component {
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='teal' raised>
-                <Label  attached='top' className="trimmed_label" size='large'>
+                <Label  attached='top' className="trimmed_label">
                     {job_data.job_name ? job_data.job_name : "Aricha Jobs"}
                 </Label>
                 <Menu secondary >

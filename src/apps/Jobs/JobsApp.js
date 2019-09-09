@@ -20,6 +20,7 @@ class JobsApp extends Component {
     };
 
     masterUpload = (job_id) => {
+        job_id = job_id === this.state.job_id ? false : job_id;
         this.setState({job_id})
     };
 

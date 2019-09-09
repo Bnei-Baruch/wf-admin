@@ -84,11 +84,18 @@ body {
     color: #275b28 !important;
     font-weight: bold!important;
     text-decoration: underline;
+    text-decoration-color: red;
+    text-decoration-style: double;
     /*color: #287ab7!important;*/
 }
 
 .trimmed_label {
+    font-size: 14px!important;
     color: #2C662D!important;
+    ont-weight: bold!important;
+    /*text-decoration: underline;*/
+    /*text-decoration-color: red;*/
+    /*text-decoration-style: double;*/
 }
 
 .preset_segment {
