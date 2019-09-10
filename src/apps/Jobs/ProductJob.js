@@ -289,7 +289,7 @@ class ProductJob extends Component {
             });
             let id = data.job_id;
             let ready = true;
-            let name = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
+            let title = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
             //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
@@ -311,7 +311,8 @@ class ProductJob extends Component {
                                     onClick={() => this.addNote(data)} >Add note</Button>
                         </Popup>
                     </Table.Cell>
-                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{title}</Table.Cell>
+                    <Table.Cell>{data.file_name}</Table.Cell>
                     <Table.Cell>{data.date}</Table.Cell>
                     <Table.Cell negative={!checked}>{checked ? v : x}</Table.Cell>
                     <Table.Cell negative={!fix_req}>{fix_req ? v : x}</Table.Cell>
@@ -427,6 +428,7 @@ class ProductJob extends Component {
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={1}>Notes</Table.HeaderCell>
+                            <Table.HeaderCell>Title</Table.HeaderCell>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Censor</Table.HeaderCell>

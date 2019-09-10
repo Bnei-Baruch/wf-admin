@@ -1,5 +1,5 @@
 .wfdb_app .ui.basic.table {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .wfdb_app .monitor_tr {
@@ -30,7 +30,7 @@
 }
 
 .wfdb_app .ui[class*="very compact"].table td {
-    padding: .1em .3em;
+    padding: .1em .3em!important;
 }
 
 .wfdb_app .ui.table td.one.wide, .ui.table th.one.wide {

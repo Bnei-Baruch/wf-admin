@@ -291,6 +291,14 @@ body {
     margin-top: 0em!important;
 }
 
+.ui[class*="very compact"].table td {
+    padding: .2em .3em!important;
+}
+
+.ui.small.table td.one.wide, .ui.table th.one.wide {
+    width: 2.5%;
+}
+
 .trimmer_modal {
     min-width: 1120px!important;
     max-width: 1120px!important;
