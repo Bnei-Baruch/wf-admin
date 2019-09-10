@@ -29,7 +29,7 @@ class JobsApp extends Component {
         return (
             <Fragment>
                 {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
-                <ProductJob masterUpload={this.masterUpload} />
+                <ProductJob user={this.props.user} masterUpload={this.masterUpload} />
             </Fragment>
         );
     }

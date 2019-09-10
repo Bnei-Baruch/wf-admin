@@ -11,7 +11,7 @@ import {
     getDCT,
     insertName,
     arichaName,
-    MDB_FINDSHA, newJobMeta
+    MDB_FINDSHA, newJobMeta, postData
 } from '../../shared/tools';
 import {
     Menu,
@@ -25,6 +25,8 @@ import {
     Select,
     Message,
     Dropdown,
+    Popup,
+    TextArea,
     Input
 } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -54,6 +56,7 @@ class ProductJob extends Component {
         sending: false,
         special: "censored",
         source: null,
+        note_area: "",
 
     };
 
@@ -225,9 +228,22 @@ class ProductJob extends Component {
         //TODO: Make new unit
     };
 
+    addNote = () => {
+        const {note_area,job_data} = this.state;
+        const {name} = this.props.user;
+        const date = moment().format("YYYY-MM-DD HH:mm:ss");
+        let {product} = job_data;
+        product.notes.push({name,date,message: note_area});
+        postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/product`, product, (cb) => {
+            console.log(":: POST Line in WFDB: ",cb);
+            job_data.product = product;
+            this.setState({note_area: "", job_data})
+        });
+    };
+
     render() {
 
-        const {job_data, source, renaming, rename_button, cit_open, inserting, insert_button, insert_open,
+        const {job_data, source, renaming, rename_button, cit_open, inserting, insert_button, note_area,
             filedata, metadata, special, send_button, sending, job_name, doers} = this.state;
 
         const send_options = [
@@ -248,6 +264,16 @@ class ProductJob extends Component {
 
         let jobs = this.state.jobs.map((data) => {
             const {aricha,removed,wfsend,censored,checked,fixed,fix_req,locked} = data.wfstatus;
+            let notes = data.product ? data.product.notes : [];
+            let notes_list = notes.map(note => {
+                const {message,name,date} = note;
+                let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
+                return  (
+                    <Message className='note_message' attached icon='copyright'
+                             header={h}
+                             content={message} />
+                )
+            });
             let id = data.job_id;
             let ready = true;
             let name = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
@@ -259,6 +285,20 @@ class ProductJob extends Component {
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
                     className={active} key={id} onClick={() => this.selectJob(data)}>
+                    <Table.Cell>
+                        <Popup mountNode={document.getElementById("ltr-modal-mount")}
+                               trigger={<Label>Notes</Label>} flowing hoverable>
+                            {notes_list}
+                            <Message attached>
+                                <TextArea value={note_area} className='note_area'
+                                          attached rows={5} placeholder='Notes...'
+                                          onChange={(e,{value}) => this.setState({note_area: value})} />
+                            </Message>
+                            <Button attached='bottom' positive
+                                    disabled={job_data.job_id === undefined}
+                                    onClick={this.addNote} >Add note</Button>
+                        </Popup>
+                    </Table.Cell>
                     <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{data.date}</Table.Cell>
                     <Table.Cell negative={!checked}>{checked ? v : x}</Table.Cell>
@@ -375,6 +415,7 @@ class ProductJob extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
+                            <Table.HeaderCell width={1}>Notes</Table.HeaderCell>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
