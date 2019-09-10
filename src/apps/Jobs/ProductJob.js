@@ -228,16 +228,26 @@ class ProductJob extends Component {
         //TODO: Make new unit
     };
 
-    addNote = () => {
-        const {note_area,job_data} = this.state;
+    addNote = (job_data) => {
+        const {note_area} = this.state;
         const {name} = this.props.user;
         const date = moment().format("YYYY-MM-DD HH:mm:ss");
         let {product} = job_data;
         product.notes.push({name,date,message: note_area});
         postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/product`, product, (cb) => {
-            console.log(":: POST Line in WFDB: ",cb);
+            console.log(":: Post notes in WFDB: ",cb);
             job_data.product = product;
-            this.setState({note_area: "", job_data})
+            this.setState({note_area: "", job_data});
+        });
+    };
+
+    delNote = (job_data,i) => {
+        let {product} = job_data;
+        product.notes.splice(i, 1);
+        postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/product`, product, (cb) => {
+            console.log(":: Post notes in WFDB: ",cb);
+            job_data.product = product;
+            this.setState({job_data});
         });
     };
 
@@ -265,12 +275,12 @@ class ProductJob extends Component {
         let jobs = this.state.jobs.map((data) => {
             const {aricha,removed,wfsend,censored,checked,fixed,fix_req,locked} = data.wfstatus;
             let notes = data.product ? data.product.notes : [];
-            let notes_list = notes.map(note => {
+            let notes_list = notes.map((note,i) => {
                 const {message,name,date} = note;
                 let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
                 return  (
                     <Message className='note_message' attached icon='copyright'
-                             header={h}
+                             header={h} onDismiss={() => this.delNote(data,i)}
                              content={message} />
                 )
             });
@@ -287,7 +297,7 @@ class ProductJob extends Component {
                     className={active} key={id} onClick={() => this.selectJob(data)}>
                     <Table.Cell>
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
-                               trigger={<Label>Notes</Label>} flowing hoverable>
+                               trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
                             {notes_list}
                             <Message attached>
                                 <TextArea value={note_area} className='note_area'
@@ -295,8 +305,7 @@ class ProductJob extends Component {
                                           onChange={(e,{value}) => this.setState({note_area: value})} />
                             </Message>
                             <Button attached='bottom' positive
-                                    disabled={job_data.job_id === undefined}
-                                    onClick={this.addNote} >Add note</Button>
+                                    onClick={() => this.addNote(data)} >Add note</Button>
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
