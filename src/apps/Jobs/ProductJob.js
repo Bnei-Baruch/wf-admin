@@ -112,6 +112,7 @@ class ProductJob extends Component {
     renameFile = (newline) => {
         console.log(":: Cit callback: ", newline);
         let {job_data} = this.state;
+        job_data.line = newline;
         let newfile_name = newline.final_name;
         let oldfile_name = job_data.file_name;
         if(job_data.original) {
@@ -124,12 +125,11 @@ class ProductJob extends Component {
             let ppath = `${path}/${newfile_name}_${job_data.job_id}p.mp4`;
             job_data.proxy.format.filename = ppath;
         }
-        job_data.line = newline;
-        job_data.parent.file_name = oldfile_name;
-        job_data.file_name = newfile_name;
-        job_data.wfstatus.renamed = true;
         this.setState({cit_open: false, renaming: true});
         if(job_data.original) {
+            job_data.parent.file_name = oldfile_name;
+            job_data.file_name = newfile_name;
+            job_data.wfstatus.renamed = true;
             putData(`${WFSRV_BACKEND}/workflow/rename`, job_data, (cb) => {
                 console.log(":: Ingest - rename respond: ",cb);
                 if(cb.status === "ok") {
@@ -140,8 +140,11 @@ class ProductJob extends Component {
                 }
             });
         } else {
-            setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-            this.selectJob(job_data);
+            postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/line`, newline, (cb) => {
+                console.log(":: Post line in WFDB: ",cb);
+                setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
+                this.selectJob(job_data);
+            });
         }
 
     };
@@ -279,7 +282,7 @@ class ProductJob extends Component {
                 const {message,name,date} = note;
                 let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
                 return  (
-                    <Message className='note_message' attached icon='copyright'
+                    <Message warning className='note_message' attached icon='copyright'
                              header={h} onDismiss={() => this.delNote(data,i)}
                              content={message} />
                 )
@@ -299,7 +302,7 @@ class ProductJob extends Component {
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
                                trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
                             {notes_list}
-                            <Message attached>
+                            <Message warning attached>
                                 <TextArea value={note_area} className='note_area'
                                           attached rows={5} placeholder='Notes...'
                                           onChange={(e,{value}) => this.setState({note_area: value})} />
@@ -327,18 +330,18 @@ class ProductJob extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='teal' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {job_data.job_name ? job_data.job_name : "Aricha Jobs"}
+                    {job_data.job_name ? job_data.job_name : ""}
                 </Label>
                 <Menu secondary >
                     <Menu.Item>
                         <Button positive={true}
                                 disabled={job_name === ""}
-                                onClick={this.newJob}>New Job
+                                onClick={this.newJob}>New Product
                         </Button>
                     </Menu.Item>
                     <Menu.Item>
                         <Input className="job_input"
-                               placeholder="Job name.."
+                               placeholder="Product name.."
                                onChange={e => this.setJobName(e.target.value)}
                                value={job_name} />
                     </Menu.Item>
@@ -354,7 +357,7 @@ class ProductJob extends Component {
                     <Menu.Item>
                         <Button negative={true}
                                 disabled={job_data.job_id === undefined}
-                                onClick={this.removeJob}>Delete Job
+                                onClick={this.removeJob}>Delete Product
                         </Button>
                     </Menu.Item>
                 </Menu>
@@ -371,8 +374,7 @@ class ProductJob extends Component {
                             <Modal closeOnDimmerClick={false}
                                    trigger={<Button color='blue' icon='tags'
                                                     loading={renaming}
-                                                    disabled={rename_button}
-                                                    // disabled={!source}
+                                                    disabled={job_data.job_id === undefined}
                                                     onClick={this.openCit} />}
                                    onClose={this.onCancel}
                                    open={cit_open}
@@ -389,7 +391,7 @@ class ProductJob extends Component {
                             <Menu.Item>
                                 <Button color='teal' icon='archive'
                                         loading={inserting}
-                                        disabled={insert_button}
+                                        disabled={!source}
                                         onClick={this.newUnit} />
                             </Menu.Item>
                             <Menu.Item>
