@@ -15,7 +15,7 @@ const userManagerConfig = {
     scope: 'openid profile',
     post_logout_redirect_uri: `${BASE_URL}`,
     automaticSilentRenew: true,
-    silent_redirect_uri: `${BASE_URL}/silent_renew`,
+    silent_redirect_uri: `${BASE_URL}/silent_renew.html`,
     filterProtocolClaims: true,
     loadUserInfo: true,
 };
@@ -23,11 +23,12 @@ const userManagerConfig = {
 export const client = new UserManager(userManagerConfig);
 
 client.events.addAccessTokenExpiring(() => {
-    console.log("...TOKEN EXPIRING...");
+    console.log("...RENEW TOKEN...");
 });
 
 client.events.addAccessTokenExpired(() => {
     console.log("...!TOKEN EXPIRED!...");
+    client.signoutRedirect();
 });
 
 export const getUser = (cb) =>
