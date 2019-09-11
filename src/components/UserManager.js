@@ -36,11 +36,11 @@ export const getUser = (cb) =>
         if(user) {
             let at = KJUR.jws.JWS.parse(user.access_token);
             let roles = at.payloadObj.realm_access.roles;
-            user = {...user.profile, token: user.access_token, roles}
+            user = {...user.profile, token: user.access_token, roles};
         }
         cb(user)
     })
-    .catch(function(error) {
+    .catch((error) => {
         console.log("Error: ",error);
     });
 

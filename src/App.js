@@ -6,7 +6,7 @@ import './stylesheets/scoped_semantic_rtl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import LoginPage from './components/LoginPage';
-import {client, getUser} from "./components/UserManager";
+import {client} from "./components/UserManager";
 import MonitorApp from "./apps/Monitor/MonitorApp";
 import IngestApp from "./apps/Ingest/IngestApp";
 import CensorApp from "./apps/Censor/CensorApp";
@@ -40,9 +40,6 @@ class App extends Component {
     };
 
     componentDidMount() {
-        getUser(cb => {
-            if(cb) this.checkPermission(cb);
-        });
     };
 
     checkPermission = (user) => {
@@ -77,7 +74,7 @@ class App extends Component {
 
       const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,user} = this.state;
 
-      let login = (<LoginPage user={user} />);
+      let login = (<LoginPage user={user} checkPermission={this.checkPermission} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
 
       const panes = [

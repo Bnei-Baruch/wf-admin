@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {client,BASE_URL} from './UserManager';
+import {client,BASE_URL,getUser} from './UserManager';
 import { Container,Message,Button,Dropdown,Image } from 'semantic-ui-react';
 import logo from './KL_Tree_128.png';
 
@@ -12,19 +12,31 @@ class LoginPage extends Component {
 
     componentDidMount() {
         setTimeout(() => this.setState({disabled: false, loading: false}), 1000);
-        client.signinRedirectCallback().then(function(user) {
-            if(user.state) window.location = user.state;
-        }).catch(function(err)  {
-            //console.log("callback error",err);
+        this.appLogin();
+    };
+
+    appLogin = () => {
+        getUser(user => {
+            if(user) {
+                this.props.checkPermission(user);
+            } else {
+                client.signinRedirectCallback().then((user) => {
+                    if(user.state) window.location = user.state;
+                }).catch(() => {
+                    client.signinSilent().then(user => {
+                        if(user) this.appLogin();
+                    }).catch((error) => {
+                        console.log("SigninSilent error: ",error);
+                    });
+                });
+            }
         });
     };
 
-    getUser = () => {
+    userLogin = () => {
         this.setState({disabled: true, loading: true});
-        client.getUser().then(function(user) {
-            (user === null) ? client.signinRedirect({state: `${BASE_URL}`}) : console.log(":: What just happend?");
-        }).catch(function(error) {
-            console.log("Error: ",error);
+        getUser(cb => {
+            if(!cb) client.signinRedirect({state: `${BASE_URL}`});
         });
     };
 
@@ -32,7 +44,7 @@ class LoginPage extends Component {
 
         const {disabled, loading} = this.state;
 
-        let login = (<Button size='massive' primary onClick={this.getUser} disabled={disabled} loading={loading}>Login</Button>);
+        let login = (<Button size='massive' primary onClick={this.userLogin} disabled={disabled} loading={loading}>Login</Button>);
         let logout = (<Image src={logo} centered />);
         let profile = (
             <Dropdown inline text=''>
