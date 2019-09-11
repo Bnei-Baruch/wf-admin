@@ -5,16 +5,17 @@ const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 export const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_WF_URL : 'http://localhost:3000/';
 
 oidclog.logger = console;
-oidclog.level  = 0;
+oidclog.level  = 4;
 
 const userManagerConfig = {
     authority: AUTH_URL,
     client_id: 'wf-admin',
     redirect_uri: `${BASE_URL}`,
     response_type: 'token id_token',
-    scope: 'profile',
+    scope: 'openid profile',
     post_logout_redirect_uri: `${BASE_URL}`,
-    automaticSilentRenew: false,
+    automaticSilentRenew: true,
+    silent_redirect_uri: `${BASE_URL}/silent_renew`,
     filterProtocolClaims: true,
     loadUserInfo: true,
 };
@@ -23,10 +24,10 @@ export const client = new UserManager(userManagerConfig);
 
 export const getUser = (cb) =>
     client.getUser().then((user) => {
-        if(user){
+        if(user) {
             let at = KJUR.jws.JWS.parse(user.access_token);
             let roles = at.payloadObj.realm_access.roles;
-            user = {...user.profile, roles}
+            user = {...user.profile, token: user.access_token, roles}
         }
         cb(user)
     })

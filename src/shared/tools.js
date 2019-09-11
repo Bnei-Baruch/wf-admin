@@ -11,6 +11,7 @@ export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
+export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 //export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 //export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
 
@@ -33,6 +34,21 @@ export const randomString = (len, charSet) => {
     }
     return randomString;
 };
+
+export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {
+    method: 'POST',
+    headers: {
+        'Authorization': 'bearer ' + token,
+        'Content-Type': 'application/json'
+    },
+    body:  JSON.stringify(data)
+})
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(respond => cb(respond));
+        }
+    })
+    .catch(ex => console.log("Put Data error:", ex));
 
 export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     .then((response) => {
