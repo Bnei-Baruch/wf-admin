@@ -12,6 +12,7 @@ export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
+const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 //export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
 //export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
 
@@ -35,10 +36,16 @@ export const randomString = (len, charSet) => {
     return randomString;
 };
 
+const getToken = () => {
+    let jwt = sessionStorage.getItem(`oidc.user:${AUTH_URL}:wf-admin`);
+    let json = JSON.parse(jwt);
+    return json.access_token;
+};
+
 export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {
     method: 'POST',
     headers: {
-        'Authorization': 'bearer ' + token,
+        'Authorization': 'bearer ' + getToken(),
         'Content-Type': 'application/json'
     },
     body:  JSON.stringify(data)
