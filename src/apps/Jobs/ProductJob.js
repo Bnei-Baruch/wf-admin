@@ -268,21 +268,22 @@ class ProductJob extends Component {
             {key: 'Buffer', text: 'Buffer', value: 'buffer'},
         ];
 
-        let v = (<Icon name='checkmark'/>);
+        let v = (<Icon name='checkmark' color='green' />);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
         let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
+        let p = (<Icon color='blue' name='cogs'/>);
 
         let jobs = this.state.jobs.map((data) => {
-            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,locked} = data.wfstatus;
+            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = data.wfstatus;
             let notes = data.product ? data.product.notes : [];
             let notes_list = notes.map((note,i) => {
                 const {message,name,date} = note;
                 let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
                 return  (
-                    <Message warning className='note_message' attached icon='copyright'
+                    <Message key={i} warning className='note_message' attached icon='copyright'
                              header={h} onDismiss={() => this.delNote(data,i)}
                              content={message} />
                 )
@@ -304,19 +305,20 @@ class ProductJob extends Component {
                             {notes_list}
                             <Message warning attached>
                                 <TextArea value={note_area} className='note_area'
-                                          attached rows={5} placeholder='Notes...'
+                                          rows={5} placeholder='Notes...'
                                           onChange={(e,{value}) => this.setState({note_area: value})} />
                             </Message>
                             <Button attached='bottom' positive
                                     onClick={() => this.addNote(data)} >Add note</Button>
                         </Popup>
                     </Table.Cell>
-                    <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{title}</Table.Cell>
+                    <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
                     <Table.Cell>{data.file_name}</Table.Cell>
                     <Table.Cell>{data.date}</Table.Cell>
-                    <Table.Cell negative={!checked}>{checked ? v : x}</Table.Cell>
-                    <Table.Cell negative={!fix_req}>{fix_req ? v : x}</Table.Cell>
-                    <Table.Cell negative={!fixed}>{fixed ? v : x}</Table.Cell>
+                    <Table.Cell negative={!checked}>{censored && !checked ? p : checked ? v : x}</Table.Cell>
+                    <Table.Cell negative={!fixed}>{fix_req && !fixed ? p : fixed ? v : x}</Table.Cell>
+                    <Table.Cell negative={!posted}>{post_req && !posted ? p : posted ? v : x}</Table.Cell>
+                    <Table.Cell negative={!subed}>{sub_req && !subed ? p : subed ? v : x}</Table.Cell>
                     <Table.Cell negative={!aricha}>{aricha ? v : x}</Table.Cell>
                 </Table.Row>
             )
@@ -432,9 +434,10 @@ class ProductJob extends Component {
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>ToFix</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Fixed</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Aricha</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Fix</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Post</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Done</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
