@@ -22,6 +22,14 @@ const userManagerConfig = {
 
 export const client = new UserManager(userManagerConfig);
 
+client.events.addAccessTokenExpiring(() => {
+    console.log("...TOKEN EXPIRING...");
+});
+
+client.events.addAccessTokenExpired(() => {
+    console.log("...!TOKEN EXPIRED!...");
+});
+
 export const getUser = (cb) =>
     client.getUser().then((user) => {
         if(user) {
