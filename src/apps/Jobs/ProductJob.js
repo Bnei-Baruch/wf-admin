@@ -32,6 +32,7 @@ import {
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
+import JobFiles from "./JobFiles";
 
 class ProductJob extends Component {
 
@@ -402,8 +403,12 @@ class ProductJob extends Component {
                                         onClick={this.uploadMaster} />
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='yellow' icon='folder' disabled={job_data.job_id === undefined}
-                                        onClick={this.openJob} />
+                                <Modal trigger={<Button color='yellow' icon='folder'
+                                                        disabled={job_data.job_id === undefined}
+                                                        onClick={this.openJob} />}
+                                       mountNode={document.getElementById("ltr-modal-mount")}>
+                                    <JobFiles />
+                                </Modal>
                             </Menu.Item>
                             <Menu.Item>
                                 <Button color='red' icon='close' disabled={job_data.job_id === undefined}
