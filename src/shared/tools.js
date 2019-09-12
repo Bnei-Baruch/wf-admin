@@ -294,7 +294,7 @@ export const newJobMeta = (job_name) => {
         line: null,
         original: null,
         parent: {doers: []},
-        product: {notes: []},
+        product: {files: [], notes: []},
         proxy: null,
         wfstatus: {
             aricha: false,

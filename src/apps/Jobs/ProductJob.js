@@ -407,7 +407,7 @@ class ProductJob extends Component {
                                                         disabled={job_data.job_id === undefined}
                                                         onClick={this.openJob} />}
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <JobFiles />
+                                    <JobFiles {...this.state} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>

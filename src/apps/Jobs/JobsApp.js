@@ -11,6 +11,7 @@ class JobsApp extends Component {
     };
 
     jobWorkflow = (filedata) => {
+        filedata.archive_type = "product";
         console.log(":: JobsApp - got data: ", filedata);
         filedata.job_id = this.state.job_id;
         putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
