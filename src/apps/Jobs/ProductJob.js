@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import FileViewer from 'react-file-viewer';
 import moment from 'moment';
 import {
     getData,
@@ -280,6 +281,7 @@ class ProductJob extends Component {
         let jobs = this.state.jobs.map((data) => {
             const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = data.wfstatus;
             let notes = data.product ? data.product.notes : [];
+            let subtitles = data.product && data.product.subtitle ? data.product.subtitle.url : null;
             let notes_list = notes.map((note,i) => {
                 const {message,name,date} = note;
                 let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
@@ -312,6 +314,12 @@ class ProductJob extends Component {
                             <Button attached='bottom' positive
                                     onClick={() => this.addNote(data)} >Add note</Button>
                         </Popup>
+                    </Table.Cell>
+                    <Table.Cell>
+                        {subtitles ? <Modal trigger={<Icon name='file word' color={subtitles ? 'green' : 'grey'} />}
+                               mountNode={document.getElementById("ltr-modal-mount")} >
+                            <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />
+                        </Modal> : <Icon name='file word' color={subtitles ? 'green' : 'grey'} />}
                     </Table.Cell>
                     <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
                     <Table.Cell>{data.file_name}</Table.Cell>
@@ -431,12 +439,13 @@ class ProductJob extends Component {
                         </Menu.Menu>
                     </Menu>
                 </Message>
-                <Table selectable compact='very' basic structured className="ingest_table">
+                <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>Notes</Table.HeaderCell>
-                            <Table.HeaderCell>Title</Table.HeaderCell>
-                            <Table.HeaderCell>File Name</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Note</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Title</Table.HeaderCell>
+                            <Table.HeaderCell width={9}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Fix</Table.HeaderCell>

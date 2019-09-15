@@ -1,4 +1,5 @@
 import React, {Component, Fragment} from 'react'
+import moment from 'moment';
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import ProductJob from "./ProductJob";
 import ProductUpload from "./ProductUpload";
@@ -12,8 +13,9 @@ class JobsApp extends Component {
 
     jobWorkflow = (filedata) => {
         filedata.archive_type = "product";
-        console.log(":: JobsApp - got data: ", filedata);
         filedata.job_id = this.state.job_id;
+        filedata.timestamp = moment().format('x');
+        console.log(":: JobsApp - got data: ", filedata);
         putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
             console.log(":: JobsApp - workflow respond: ",cb);
             this.setState({job_id: null})

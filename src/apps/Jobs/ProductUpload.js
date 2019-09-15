@@ -23,7 +23,7 @@ class ProductUpload extends Component {
         const props = {
             action: `${WFSRV_BACKEND}/jobs/upload`,
             type: 'drag',
-            accept: '.mp4',
+            accept: '.mp4, .doc, .docx',
             beforeUpload(file) {
                 console.log('beforeUpload', file.name);
             },
