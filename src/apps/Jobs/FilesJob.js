@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Container,Message } from 'semantic-ui-react';
-import moment from 'moment';
-import FilesUpload from "./FilesUpload";
+import FilesUpload from "../Upload/FilesUpload";
 import {putData, WFSRV_BACKEND} from "../../shared/tools";
 
-class JobFiles extends Component {
+class FilesJob extends Component {
 
     state = {};
 
@@ -12,13 +11,11 @@ class JobFiles extends Component {
     };
 
     fileUploaded = (filedata) => {
-        filedata.archive_type = "job";
-        filedata.job_id = this.props.active;
-        filedata.timestamp = moment().format('x');
+        filedata.archive_type = "files";
+        filedata.send_id = this.props.active;
         console.log(":: JobFiles - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
-            console.log(":: JobsApp - workflow respond: ",cb);
-            this.setState({job_id: null})
+        putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
+            console.log(":: UploadApp - workflow respond: ",cb);
         });
     };
 
@@ -41,4 +38,4 @@ class JobFiles extends Component {
     }
 }
 
-export default JobFiles;
+export default FilesJob;

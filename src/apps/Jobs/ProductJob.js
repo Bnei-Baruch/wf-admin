@@ -33,7 +33,7 @@ import {
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertApp from "../Insert/InsertApp"
 import CIT from '../CIT/CIT';
-import JobFiles from "./JobFiles";
+import FilesJob from "./FilesJob";
 
 class ProductJob extends Component {
 
@@ -316,10 +316,10 @@ class ProductJob extends Component {
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>
-                        {subtitles ? <Modal trigger={<Icon name='file word' color={subtitles ? 'green' : 'grey'} />}
+                        {subtitles ? <Modal trigger={<Icon name='wordpress forms' color={subtitles ? 'green' : 'grey'} />}
                                mountNode={document.getElementById("ltr-modal-mount")} >
                             <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />
-                        </Modal> : <Icon name='file word' color={subtitles ? 'green' : 'grey'} />}
+                        </Modal> : <Icon name='file' color={subtitles ? 'green' : 'grey'} />}
                     </Table.Cell>
                     <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
                     <Table.Cell>{data.file_name}</Table.Cell>
@@ -415,7 +415,7 @@ class ProductJob extends Component {
                                                         disabled={job_data.job_id === undefined}
                                                         onClick={this.openJob} />}
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <JobFiles {...this.state} />
+                                    <FilesJob {...this.state} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
