@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getState, putData, WFDB_STATE} from '../../shared/tools';
+import {getData, getState, putData, WFDB_BACKEND} from '../../shared/tools';
 import { Menu, Dropdown, Button } from 'semantic-ui-react'
 
 class LangRestore extends Component {
@@ -16,7 +16,7 @@ class LangRestore extends Component {
     };
 
     getCarbon = (date) => {
-        getState(`state/carbon/${date}`, (data) => {
+        getData(`convert/find?key=date&value=${date}`, (data) => {
             let json = {};
             for (let k in data) {
                 let c = data[k];
@@ -42,7 +42,7 @@ class LangRestore extends Component {
         let id = langcheck.id;
         console.log(":: Restore Langs: ",langcheck);
         this.setState({ sending: true, disabled: true });
-        putData(`${WFDB_STATE}/state/langcheck/${id}`, langcheck, (cb) => {
+        putData(`${WFDB_BACKEND}/state/langcheck/${id}`, langcheck, (cb) => {
             console.log(":: LangCheck resore respond: ",cb);
             setTimeout(() => this.setState({sending: false, lang_data: ""} ), 3000);
         });

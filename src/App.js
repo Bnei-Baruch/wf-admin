@@ -16,7 +16,7 @@ import DgimaApp from "./apps/Dgima/DgimaApp";
 import MainPage from "./apps/Insert/MainPage";
 import WFDB from "./apps/WFDB/WFDB";
 import CarbonApp from "./apps/Carbon/CarbonApp";
-import {getState} from "./shared/tools";
+import {getData} from "./shared/tools";
 import UploadApp from "./apps/Upload/UploadApp";
 import MetusApp from "./apps/Metus/MetusApp";
 import ExternalApp from "./apps/External/ExternalApp";
@@ -55,7 +55,7 @@ class App extends Component {
         let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
         if(!wf_public) {
             this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs});
-            setInterval(() => getState('state/langcheck', (data) => {
+            setInterval(() => getData('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
                     this.setState({count})

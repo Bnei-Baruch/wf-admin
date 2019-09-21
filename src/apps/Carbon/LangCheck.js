@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getState, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Dropdown, Button, Label } from 'semantic-ui-react'
 import LangSelector from "../../components/LangSelector";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -19,9 +19,9 @@ class LangCheck extends Component {
     };
 
     getLangState = () => {
-        getState(`state/langcheck`, (langcheck) => {
+        getData(`state/langcheck`, (langcheck) => {
             this.setState({langcheck, newlangs: false});
-        });
+        })
     };
 
     selectState = (state) => {
@@ -70,7 +70,7 @@ class LangCheck extends Component {
 
         let langcheck_option = Object.keys(this.state.langcheck).map((id, i) => {
             let state = this.state.langcheck[id];
-            if(!state.finished) return false;
+            //if(!state.finished) return false;
             let name = state.file_name;
             return ({ key: id, text: name, value: state })
         });
