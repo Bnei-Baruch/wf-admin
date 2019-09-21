@@ -3,7 +3,7 @@ import { Segment, Table, Button, Checkbox } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import TrimmerControls from "./TrimmerControls";
 import InoutControls from "./InoutControls";
-import {getState, putData, WFDB_STATE, WFSRV_BACKEND} from "../../shared/tools";
+import {getData, putData, WFDB_BACKEND, WFSRV_BACKEND} from "../../shared/tools";
 
 export default class TrimmerApp extends Component {
 
@@ -46,7 +46,7 @@ export default class TrimmerApp extends Component {
     };
 
     getIopState = () => {
-        getState('state/trimmer/'+this.props.mode, (iop) => {
+        getData('state/trimmer/'+this.props.mode, (iop) => {
             if(iop.inpoints.length > 0)
                 this.InoutControls.restoreIop(iop)
         });
@@ -56,7 +56,7 @@ export default class TrimmerApp extends Component {
         const {inpoints, outpoints} = this.state.trim_meta;
         let iop = {inpoints, outpoints};
         console.log(":: setIopState", iop);
-        putData(`${WFDB_STATE}/state/trimmer/`+this.props.mode, iop, (cb) => {
+        putData(`${WFDB_BACKEND}/state/trimmer/`+this.props.mode, iop, (cb) => {
             console.log(":: setIopState respond: ",cb);
         });
     };
