@@ -14,6 +14,7 @@ import WFDBLabels from './WFDBLabels';
 import './WFDB.css';
 import moment from "moment/moment";
 import WFDBInsert from "./WFDBInsert";
+import WFDBConvert from "./WFDBConvert";
 class WFDB extends Component {
 
     state = {
@@ -32,14 +33,11 @@ class WFDB extends Component {
     componentDidMount() {
         let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length > 0;
         this.setState({ wf_root });
-        fetch(`${WFRP_STATE}`).then((response) => {
-            return response.json().then(data => console.log(data));
-        });
+        // fetch(`${WFRP_STATE}`).then((response) => {
+        //     return response.json().then(data => console.log(data));
+        // });
         getData(`states`, (states) => {
             console.log("State data: ", states);
-        });
-        getData(`convert`, (convert) => {
-            console.log("Convert data: ", convert);
         });
         putData(`${WFSRV_BACKEND}/workflow/lock`, {req: "get"}, (cb) => {
             console.log(":: WFDB - workflow lock respond: ",cb);
@@ -117,6 +115,8 @@ class WFDB extends Component {
                 render: () => <Tab.Pane attached={false} ><WFDBTrimmer {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'carbon', content: 'Carbon' },
                 render: () => <Tab.Pane attached={false} ><WFDBCarbon {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
+            { menuItem: { key: 'convert', content: 'Convert' },
+                render: () => <Tab.Pane attached={false} ><WFDBConvert {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'kmedia', content: 'Kmedia' },
                 render: () => <Tab.Pane attached={false} ><WFDBKmedia {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'archive', content: 'Archive' },

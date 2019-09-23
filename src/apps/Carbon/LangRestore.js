@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, getState, putData, WFDB_BACKEND} from '../../shared/tools';
+import {getData, putData, WFDB_BACKEND} from '../../shared/tools';
 import { Menu, Dropdown, Button } from 'semantic-ui-react'
 
 class LangRestore extends Component {
