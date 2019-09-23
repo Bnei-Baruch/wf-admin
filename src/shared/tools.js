@@ -131,7 +131,7 @@ export const removeData = (path, cb) => fetch(`${path}`, {
     })
     .catch(ex => console.log("Remove Data error:", ex));
 
-export const getState = (path, cb) => fetch(`${WFRP_STATE}/${path}`)
+export const getState = (path, cb) => fetch(`${WFDB_BACKEND}/${path}`)
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));

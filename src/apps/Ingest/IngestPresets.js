@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import {getData, putData, removeData, WFDB_STATE} from '../../shared/tools';
+import {getData, putData, WFDB_BACKEND} from '../../shared/tools';
 import { Icon, Button, Table, Segment, Label } from 'semantic-ui-react'
 import IngestNames from "./IngestNames";
 
@@ -29,12 +29,10 @@ class IngestPresets extends Component {
     addPreset = () => {
         const {date,presets,preset} = this.state;
         if(!presets[date]) presets[date] = [];
-        let new_preset = presets[date];
-        new_preset.push(preset);
-        console.log(":: Add preset: ",new_preset,presets);
-        putData(`${WFDB_STATE}/names/presets/${date}`, new_preset, (cb) => {
+        presets[date].push(preset);
+        console.log(":: Add preset: ",presets);
+        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
             console.log(":: Add preset: ",cb);
-            presets[date] = new_preset;
             this.setState({presets});
         });
     };
@@ -51,10 +49,10 @@ class IngestPresets extends Component {
 
     removeDate = (date) => {
         let {presets} = this.state;
+        delete presets[date];
         console.log(":: Remove Date: ",date);
-        removeData(`${WFDB_STATE}/names/presets/${date}`, (cb) => {
-            console.log(":: Remove Date: ",cb);
-            delete presets[date];
+        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
+            console.log(":: Add preset: ",cb);
             this.setState({presets});
         });
     };
@@ -64,10 +62,10 @@ class IngestPresets extends Component {
         console.log(":: Remove Name: ",date,name,i);
         let preset = presets[date];
         preset.splice(i, 1);
-        console.log(":: After Remove: ",preset);
-        putData(`${WFDB_STATE}/names/presets/${date}`, preset, (cb) => {
+        presets[date] = preset;
+        console.log(":: After Remove: ",presets);
+        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
             console.log(":: Names remove preset: ",cb);
-            presets[date] = preset;
             this.setState({preset: {id:"", name:""}, presets});
         });
     };
