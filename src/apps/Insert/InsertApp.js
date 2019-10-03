@@ -148,18 +148,28 @@ class InsertApp extends Component {
                         console.log(":: insert data - got: ",data);
                         if(data.length > 0) {
                             //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
-                            //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                             //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                            //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                            let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                            console.log(" :: Got sources for remux: ", remux_src);
-                            // We must get here 1 or 2 files and save their url
+                            // So we going to do stupid action to find files with original language
+                            let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                             if(remux_src.length === 0 || remux_src.length > 2) {
+                                remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                            } else if(remux_src.length === 0 || remux_src.length > 2) {
+                                remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                            } else if(remux_src.length === 0 || remux_src.length > 2) {
+                                remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+                            } else if(remux_src.length === 0 || remux_src.length > 2) {
+                                remux_src = published.filter(s => s.name.match("eng_o_") && s.mime_type === "video/mp4");
+                            } else if(remux_src.length === 0 || remux_src.length > 2) {
                                 alert("Fail to get valid sources for remux");
                                 this.setState({ isValidated: false });
                                 return;
-                                // It's mean we did not get HD here
-                            } else if(remux_src.length === 1) {
+                            }
+
+                            // We must get here 1 or 2 files and save their url
+                            console.log(" :: Got sources for remux: ", remux_src);
+
+                            // It's mean we did not get HD here
+                            if(remux_src.length === 1) {
                                 metadata.insert_id = data[0].insert_id;
                                 metadata.line.nHD = remux_src[0].properties.url;
                                 metadata.line.nHD_sha1 = remux_src[0].sha1;
@@ -197,19 +207,29 @@ class InsertApp extends Component {
                     this.setState({ isValidated: false });
                     return false;
                 } else {
-                    // Not in all files we got original_language property so we going to check string
-                    // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
+                    //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
                     //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                    //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                    let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                    console.log(" :: Got sources for remux: ", remux_src);
-                    // We must get here 1 or 2 files and save their url
+                    // So we going to do stupid action to find files with original language
+                    let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                     if(remux_src.length === 0 || remux_src.length > 2) {
+                        remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                    } else if(remux_src.length === 0 || remux_src.length > 2) {
+                        remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                    } else if(remux_src.length === 0 || remux_src.length > 2) {
+                        remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+                    } else if(remux_src.length === 0 || remux_src.length > 2) {
+                        remux_src = published.filter(s => s.name.match("eng_o_") && s.mime_type === "video/mp4");
+                    } else if(remux_src.length === 0 || remux_src.length > 2) {
                         alert("Fail to get valid sources for remux");
                         this.setState({ isValidated: false });
                         return;
-                        // It's mean we did not get HD here
-                    } else if(remux_src.length === 1) {
+                    }
+
+                    // We must get here 1 or 2 files and save their url
+                    console.log(" :: Got sources for remux: ", remux_src);
+
+                    // It's mean we did not get HD here
+                    if(remux_src.length === 1) {
                         metadata.line.nHD = remux_src[0].properties.url;
                         metadata.line.nHD_sha1 = remux_src[0].sha1;
                         metadata.line.HD = null;
