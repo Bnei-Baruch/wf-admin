@@ -21,6 +21,7 @@ import UploadApp from "./apps/Upload/UploadApp";
 import MetusApp from "./apps/Metus/MetusApp";
 import ExternalApp from "./apps/External/ExternalApp";
 import JobsApp from "./apps/Jobs/JobsApp";
+import SirtutimApp from "./apps/Sirtutim/SirtutimApp";
 
 class App extends Component {
 
@@ -37,6 +38,7 @@ class App extends Component {
         wf_external: true,
         wf_public: true,
         wf_upload: true,
+        wf_sirtutim: true,
     };
 
     componentDidMount() {
@@ -53,8 +55,9 @@ class App extends Component {
         let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
         let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
         let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
+        let wf_sirtutim = user.roles.filter(role => role === 'wf_sirtutim').length === 0;
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs});
+            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs,wf_sirtutim});
             setInterval(() => getData('state/langcheck', (data) => {
                 let count = Object.keys(data).length;
                 if (this.state.count !== count)
@@ -72,7 +75,7 @@ class App extends Component {
 
   render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,user} = this.state;
+      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
 
       let login = (<LoginPage user={user} checkPermission={this.checkPermission} />);
       let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
@@ -80,6 +83,8 @@ class App extends Component {
       const panes = [
           { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
               render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
+          { menuItem: { key: 'sirtutim', icon: 'pencil alternate', content: 'Sirtutim', disabled: wf_sirtutim },
+              render: () => <Tab.Pane attached={false} ><SirtutimApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={user} admin={wf_admin}/></Tab.Pane> },
           { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
