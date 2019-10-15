@@ -7,7 +7,8 @@ import {getData, SIRTUT_URL, WFRP_BACKEND} from "../../shared/tools";
 class SirtutimApp extends Component {
 
     state = {
-        src: `${SIRTUT_URL}`
+        captured: [1,2,3],
+        src: `${SIRTUT_URL}`,
     };
 
     componentDidMount() {
@@ -22,56 +23,78 @@ class SirtutimApp extends Component {
         , 1000 );
     };
 
+    captureSirtut = () => {
+        this.scrollToBottom();
+    };
+
+    removeAll = () => {
+        console.log("remove all sirtutim");
+        if(window.confirm(`Are you sure?`)) {
+            this.setState({captured: []});
+        }
+    };
+
+    uploadSirtut = () => {
+        console.log("upload sirut");
+    };
+
+    removeSirtut = () => {
+        console.log("remove sirut");
+    };
+
+    scrollToBottom = () => {
+        this.refs.end.scrollIntoView({ behavior: 'smooth' })
+    };
+
     render() {
-        const {src} = this.state;
+        const {src,captured} = this.state;
+
+        let sirtutim_list = captured.map(sirtut => {
+            return (
+                <Card>
+                    <Card.Content>
+                        <Image fluid src={`${SIRTUT_URL}`} />
+                    </Card.Content>
+                    <Card.Content extra>
+                        <div className='ui two buttons'>
+                            <Button basic color='green'
+                                    onClick={this.uploadSirtut} >
+                                Upload
+                            </Button>
+                            <Button basic color='red'
+                                    onClick={this.removeSirtut} >
+                                Remove
+                            </Button>
+                        </div>
+                    </Card.Content>
+                </Card>
+            );
+        });
+
         return (
-            <Segment textAlign='center' raised secondary>
-                <Table basic='very' fixed unstackable>
-                    <Table.Row>
-                        <Table.Cell>
-                            <Button attached='top' fluid color='grey' size='mini'>
+            <Table basic='very' unstackable>
+                <Table.Row>
+                    <Table.Cell>
+                        <Segment textAlign='center' className='sirtut_segment' raised secondary>
+                            <Button attached='top' fluid color='grey' size='mini'
+                                    onClick={this.removeAll} >
                                 Remove ALL
                             </Button>
                             <Image fluid src={src} />
-                            <Button attached='bottom' fluid color='green'>
+                            <Button attached='bottom' fluid color='green'
+                                    onClick={this.captureSirtut} >
                                 Capture
                             </Button>
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Card>
-                                <Card.Content>
-                                    <Image fluid src={`${SIRTUT_URL}`} />
-                                </Card.Content>
-                                <Card.Content extra>
-                                    <div className='ui two buttons'>
-                                        <Button basic color='green'>
-                                            Upload
-                                        </Button>
-                                        <Button basic color='red'>
-                                            Remove
-                                        </Button>
-                                    </div>
-                                </Card.Content>
-                            </Card>
-                            <Card>
-                                <Card.Content>
-                                    <Image fluid src={`${SIRTUT_URL}`} />
-                                </Card.Content>
-                                <Card.Content extra>
-                                    <div className='ui two buttons'>
-                                        <Button basic color='green'>
-                                            Upload
-                                        </Button>
-                                        <Button basic color='red'>
-                                            Remove
-                                        </Button>
-                                    </div>
-                                </Card.Content>
-                            </Card>
-                        </Table.Cell>
-                    </Table.Row>
-                </Table>
-            </Segment>
+                        </Segment>
+                    </Table.Cell>
+                    <Table.Cell>
+                        <Segment attached raised textAlign='center' className='sirtut_captured'>
+                            {sirtutim_list}
+                            <div ref='end' />
+                        </Segment>
+                    </Table.Cell>
+                </Table.Row>
+            </Table>
         );
     }
 }
