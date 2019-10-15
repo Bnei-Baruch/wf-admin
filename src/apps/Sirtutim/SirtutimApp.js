@@ -1,26 +1,27 @@
 import React, {Component} from 'react'
 import {Image,Segment,Table,Button,Card} from "semantic-ui-react";
 import {getData, SIRTUT_URL, WFRP_BACKEND} from "../../shared/tools";
-//import moment from 'moment';
+import moment from 'moment';
 //import {WFSRV_BACKEND, putData, WFRP_STATE, getData} from "../../shared/tools";
 
 class SirtutimApp extends Component {
 
     state = {
         captured: [1,2,3],
+        id: null,
         src: `${SIRTUT_URL}`,
     };
 
     componentDidMount() {
-        setInterval(() =>
-            fetch(`${SIRTUT_URL}`)
-                .then((response) => {
-                    if (response.ok) {
-                        this.setState({src: `${SIRTUT_URL}`})
-                    }
-                })
-                .catch(ex => console.log(`get Image`, ex))
-        , 1000 );
+        let ival = setInterval(() => {
+            let id = moment().format('x');
+            this.setState({id})
+        }, 1000 );
+        this.setState({ival});
+    };
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
     };
 
     captureSirtut = () => {
@@ -47,7 +48,7 @@ class SirtutimApp extends Component {
     };
 
     render() {
-        const {src,captured} = this.state;
+        const {src,captured,id} = this.state;
 
         let sirtutim_list = captured.map(sirtut => {
             return (
@@ -80,7 +81,7 @@ class SirtutimApp extends Component {
                                     onClick={this.removeAll} >
                                 Remove ALL
                             </Button>
-                            <Image fluid src={src} />
+                            <Image fluid src={src + '?' + id} />
                             <Button attached='bottom' fluid color='green'
                                     onClick={this.captureSirtut} >
                                 Capture
