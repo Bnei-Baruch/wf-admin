@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {putData, WFSRV_BACKEND, WFRP_STATE, getData} from '../../shared/tools';
+import {putData, WFSRV_BACKEND, getData} from '../../shared/tools';
 import DatePicker from 'react-datepicker';
 import { Tab, Segment, Input, Select, Button, Divider, Menu } from 'semantic-ui-react'
 import WFDBIngest from './WFDBIngest';
@@ -33,9 +33,6 @@ class WFDB extends Component {
     componentDidMount() {
         let wf_root = this.props.user.roles.filter(role => role === 'wf_root').length > 0;
         this.setState({ wf_root });
-        fetch(`${WFRP_STATE}`).then((response) => {
-            return response.json().then(data => console.log(data));
-        });
         getData(`states`, (states) => {
             console.log("State data: ", states);
         });

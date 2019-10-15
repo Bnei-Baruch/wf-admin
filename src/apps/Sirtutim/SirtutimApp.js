@@ -51,7 +51,7 @@ class SirtutimApp extends Component {
 
         let sirtutim_list = captured.map(sirtut => {
             return (
-                <Card>
+                <Card key={sirtut} >
                     <Card.Content>
                         <Image fluid src={`${SIRTUT_URL}`} />
                     </Card.Content>
@@ -72,9 +72,9 @@ class SirtutimApp extends Component {
         });
 
         return (
-            <Table basic='very' unstackable>
+            <Table basic='very' unstackable className='sirtut_table'>
                 <Table.Row>
-                    <Table.Cell>
+                    <Table.Cell textAlign='right'>
                         <Segment textAlign='center' className='sirtut_segment' raised secondary>
                             <Button attached='top' fluid color='grey' size='mini'
                                     onClick={this.removeAll} >
@@ -87,8 +87,8 @@ class SirtutimApp extends Component {
                             </Button>
                         </Segment>
                     </Table.Cell>
-                    <Table.Cell>
-                        <Segment attached raised textAlign='center' className='sirtut_captured'>
+                    <Table.Cell textAlign='left' >
+                        <Segment basic className='sirtut_captured'>
                             {sirtutim_list}
                             <div ref='end' />
                         </Segment>

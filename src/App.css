@@ -16,6 +16,10 @@ body {
     top: 10px;
 }
 
+.sirtut_table {
+    width: 1200px!important;
+}
+
 .sirtut_segment {
     width: 770px;
 }
