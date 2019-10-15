@@ -1,13 +1,14 @@
 import React, {Component} from 'react'
 import {Image,Segment,Table,Button,Card} from "semantic-ui-react";
-import {getData, SIRTUT_URL, WFRP_BACKEND} from "../../shared/tools";
+import {putData, SIRTUT_URL, WFSRV_BACKEND} from "../../shared/tools";
 import moment from 'moment';
-//import {WFSRV_BACKEND, putData, WFRP_STATE, getData} from "../../shared/tools";
 
 class SirtutimApp extends Component {
 
     state = {
-        captured: [1,2,3],
+        cap_loading: false,
+        cap_disabled: false,
+        captured: [],
         id: null,
         src: `${SIRTUT_URL}`,
     };
@@ -25,7 +26,18 @@ class SirtutimApp extends Component {
     };
 
     captureSirtut = () => {
-        this.scrollToBottom();
+        let {id, captured} = this.state;
+        this.setState({cap_loading: true, cap_disabled: true});
+        putData(`${WFSRV_BACKEND}/workflow/sirtutim`, {id}, (cb) => {
+            console.log(":: Sirtutim - workflow respond: ",cb);
+            captured.push(id);
+            setTimeout( () => {
+                this.setState({id, captured, cap_loading: false, cap_disabled: false}, () => {
+                    setTimeout( () => this.scrollToBottom(),500);
+                });
+            }, 1000);
+
+        });
     };
 
     removeAll = () => {
@@ -35,12 +47,15 @@ class SirtutimApp extends Component {
         }
     };
 
-    uploadSirtut = () => {
-        console.log("upload sirut");
+    uploadSirtut = (sid,i) => {
+        console.log("upload sirut: ",sid,i);
     };
 
-    removeSirtut = () => {
-        console.log("remove sirut");
+    removeSirtut = (sid,i) => {
+        console.log("remove sirut: ",sid,i);
+        let {captured} = this.state;
+        captured.splice(i, 1);
+        this.setState({captured});
     };
 
     scrollToBottom = () => {
@@ -48,22 +63,22 @@ class SirtutimApp extends Component {
     };
 
     render() {
-        const {src,captured,id} = this.state;
+        const {src,captured,id,cap_loading,cap_disabled} = this.state;
 
-        let sirtutim_list = captured.map(sirtut => {
+        let sirtutim_list = captured.map((sid,i) => {
             return (
-                <Card key={sirtut} >
+                <Card key={sid} >
                     <Card.Content>
-                        <Image fluid src={`${SIRTUT_URL}`} />
+                        <Image fluid src={`${WFSRV_BACKEND}/backup/captured/sirtutim/tmp/${sid}.jpg`} />
                     </Card.Content>
                     <Card.Content extra>
                         <div className='ui two buttons'>
                             <Button basic color='green'
-                                    onClick={this.uploadSirtut} >
+                                    onClick={() => this.uploadSirtut(sid,i)} >
                                 Upload
                             </Button>
                             <Button basic color='red'
-                                    onClick={this.removeSirtut} >
+                                    onClick={() => this.removeSirtut(sid,i)} >
                                 Remove
                             </Button>
                         </div>
@@ -83,6 +98,8 @@ class SirtutimApp extends Component {
                             </Button>
                             <Image fluid src={src + '?' + id} />
                             <Button attached='bottom' fluid color='green'
+                                    loading={cap_loading}
+                                    disabled={cap_disabled}
                                     onClick={this.captureSirtut} >
                                 Capture
                             </Button>
