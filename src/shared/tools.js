@@ -14,8 +14,6 @@ export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
-//export const QSV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_QSV_BACKEND : '/qsvapi';
-//export const WFSRV_URL = 'http://wfserver.bbdomain.org:8010';
 
 export const IVAL = 1000;
 

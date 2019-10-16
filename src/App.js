@@ -58,11 +58,13 @@ class App extends Component {
         let wf_sirtutim = user.roles.filter(role => role === 'wf_sirtutim').length === 0;
         if(!wf_public) {
             this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs,wf_sirtutim});
-            setInterval(() => getData('state/langcheck', (data) => {
-                let count = Object.keys(data).length;
-                if (this.state.count !== count)
-                    this.setState({count})
-            }), 10000 );
+            if(!wf_ingest) {
+                setInterval(() => getData('state/langcheck', (data) => {
+                    let count = Object.keys(data).length;
+                    if (this.state.count !== count)
+                        this.setState({count})
+                }), 10000 );
+            }
         } else {
             alert("Access denied!");
             client.signoutRedirect();
