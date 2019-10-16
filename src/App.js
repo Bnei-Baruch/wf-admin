@@ -95,7 +95,7 @@ class App extends Component {
               render: () => <Tab.Pane attached={false} ><CensorApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: wf_admin },
               render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_public },
+          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
               render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
           { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
               render: () => <Tab.Pane attached={false} ><JobsApp user={user} /></Tab.Pane> },
