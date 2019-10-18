@@ -91,6 +91,7 @@ class ArichaAdmin extends Component {
                                 file_data.line.fix_aricha_id = data[0].send_id;
                                 console.log("The SHA1 exist in WorkFlow!", data);
                                 console.log("-- Rename Insert mode --");
+                                alert("-- Rename Insert mode --");
                                 this.newInsertData(file_data, data, "3");
                             } else if (data.length > 0 && file_data.file_name === data[0].file_name) {
                                 console.log("-- Insert Done --");
@@ -109,6 +110,7 @@ class ArichaAdmin extends Component {
                                 file_data.line.fix_unit_uid = data[data.length-2].line.uid;
                                 console.log("The Filename already exist in WorkFlow but SHA1 does NOT exist in MDB: ",data);
                                 console.log("-- Update Insert mode --");
+                                alert("-- Update Insert mode --");
                                 this.newInsertData(file_data, data, "2");
                             } else if(data.length > 1 && data[data.length-2].original.format.sha1 === file_data.original.format.sha1) {
                                 console.log("It's duplicate");
