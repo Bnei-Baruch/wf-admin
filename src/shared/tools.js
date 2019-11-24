@@ -3,7 +3,7 @@ import moment from 'moment';
 
 export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
 export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
-export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
+//export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
 export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
@@ -12,6 +12,7 @@ export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
+export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 
@@ -85,7 +86,12 @@ export const getEndpoint = (id) => {
     if(id.match(/^i[\d]{10}$/)) return "insert";
 };
 
-export const getUnits = (path, cb) => fetch(`${path}`)
+export const getUnits = (path, cb) => fetch(`${path}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -316,7 +322,12 @@ export const newJobMeta = (job_name) => {
     return metadata;
 };
 
-export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
+export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -327,7 +338,12 @@ export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`)
 
 export const fetchPublishers = cb => Fetcher('publishers/', cb);
 
-export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`)
+export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -335,7 +351,12 @@ export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${pa
     })
     .catch(ex => console.log(`get ${path}`, ex));
 
-export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id}/persons/`)
+export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id}/persons/`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -375,7 +396,12 @@ export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?k
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
-export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`)
+export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));

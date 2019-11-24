@@ -4,11 +4,12 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "jsrsasign": "^8.0.12",
     "lodash": "^4.17.5",
     "mediaelement": "^4.2.9",
     "mediaelement-plugins": "^2.5.0",
     "moment": "^2.22.0",
-    "oidc-client": "^1.4.1",
+    "oidc-client": "^1.9.1",
     "rc-upload": "^2.4.4",
     "react": "16.8.6",
     "react-datepicker": "^1.4.1",
