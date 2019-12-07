@@ -36,7 +36,7 @@ export const randomString = (len, charSet) => {
     return randomString;
 };
 
-const getToken = () => {
+export const getToken = () => {
     let jwt = sessionStorage.getItem(`oidc.user:${AUTH_URL}:wf-admin`);
     let json = JSON.parse(jwt);
     return json.access_token;

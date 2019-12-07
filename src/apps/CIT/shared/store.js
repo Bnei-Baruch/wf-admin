@@ -1,11 +1,17 @@
 import { extractI18n } from './utils';
 import { CONTENT_TYPE_BY_ID, CT_VIDEO_PROGRAM, EVENT_CONTENT_TYPES, LECTURE_CONTENT_TYPES } from '../../../shared/consts';
+import {getToken} from "../../../shared/tools";
 
 const API_BACKEND = process.env.NODE_ENV !== 'production' ?
   process.env.REACT_APP_MDB_URL :
   '/mdbapi/';
 
-const Fetcher = (path, cb) => fetch(`${API_BACKEND}${path}`)
+const Fetcher = (path, cb) => fetch(`${API_BACKEND}${path}`, {
+  headers: {
+    'Authorization': 'bearer ' + getToken(),
+    'Content-Type': 'application/json'
+  }
+})
   .then((response) => {
     if (response.ok) {
       return response.json().then(data => cb(data));
