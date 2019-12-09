@@ -109,7 +109,7 @@ class ExternalTrimmed extends Component {
                 actived: file_data.dgima_id,
                 insert_button: !renamed || wfsend,
                 rename_button: fix_mode ? false : wfsend,
-                send_button: !renamed,
+                send_button: false,
                 kmedia_option: !wfsend || secured,
             });
         }
