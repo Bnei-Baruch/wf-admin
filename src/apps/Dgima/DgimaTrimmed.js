@@ -52,7 +52,7 @@ class DgimaTrimmed extends Component {
         let ival = setInterval(() => getData('drim/cassette', (data) => {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
-            }), IVAL );
+            }), 10000 );
         this.setState({wf_admin,ival});
     };
 
