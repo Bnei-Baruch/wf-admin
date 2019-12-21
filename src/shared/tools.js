@@ -16,7 +16,7 @@ export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 
-export const IVAL = 1000;
+export const IVAL = 10000;
 
 export const toHms = (totalSec) => {
     let hours = parseInt( totalSec / 3600 , 10) % 24;
