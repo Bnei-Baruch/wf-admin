@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, lazy, Suspense } from 'react';
 import { Tab, Label } from 'semantic-ui-react'
 import './stylesheets/sematic-reset.css';
 import './stylesheets/scoped_semantic_ltr.css';
@@ -7,21 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import LoginPage from './components/LoginPage';
 import {client} from "./components/UserManager";
-import MonitorApp from "./apps/Monitor/MonitorApp";
-import IngestApp from "./apps/Ingest/IngestApp";
-import CensorApp from "./apps/Censor/CensorApp";
-import AdminApp from "./apps/Admin/AdminApp";
-import ArichaApp from "./apps/Aricha/ArichaApp";
-import DgimaApp from "./apps/Dgima/DgimaApp";
-import MainPage from "./apps/Insert/MainPage";
-import WFDB from "./apps/WFDB/WFDB";
-import CarbonApp from "./apps/Carbon/CarbonApp";
 import {getData} from "./shared/tools";
-import UploadApp from "./apps/Upload/UploadApp";
-import MetusApp from "./apps/Metus/MetusApp";
-import ExternalApp from "./apps/External/ExternalApp";
-import JobsApp from "./apps/Jobs/JobsApp";
-import SirtutimApp from "./apps/Sirtutim/SirtutimApp";
 
 class App extends Component {
 
@@ -75,54 +61,69 @@ class App extends Component {
         this.setState({count});
     };
 
-  render() {
+    render() {
 
-      const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
+        const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
 
-      let login = (<LoginPage user={user} checkPermission={this.checkPermission} />);
-      let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+        let login = (<LoginPage user={user} checkPermission={this.checkPermission} />);
+        let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
 
-      const panes = [
-          { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
-              render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
-          { menuItem: { key: 'sirtutim', icon: 'pencil alternate', content: 'Sirtutim', disabled: wf_sirtutim },
-              render: () => <Tab.Pane attached={false} ><SirtutimApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'carbon', icon: 'settings', content: <Fragment>Carbon{count > 0 ? l : ""}</Fragment>, disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><CarbonApp onUpdate={this.setCount} user={user} admin={wf_admin}/></Tab.Pane> },
-          { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><IngestApp user={user} admin={wf_admin} /></Tab.Pane> },
-          { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
-              render: () => <Tab.Pane attached={false} ><CensorApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
-              render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
-              render: () => <Tab.Pane attached={false} ><JobsApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
-              render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
-              render: () => <Tab.Pane attached={false} ><DgimaApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
-              render: () => <Tab.Pane attached={false} ><ExternalApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
-              render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
-          { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_upload },
-              render: () => <Tab.Pane attached={false} ><UploadApp user={user} /></Tab.Pane> },
-          { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
-              render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
-          { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
-              render: () => <Tab.Pane attached={false} ><WFDB user={user} /></Tab.Pane> },
-      ];
+        const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
+        const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
+        const CensorApp = lazy(() => import("./apps/Censor/CensorApp"));
+        const AdminApp = lazy(() => import("./apps/Admin/AdminApp"));
+        const ArichaApp = lazy(() => import("./apps/Aricha/ArichaApp"));
+        const DgimaApp = lazy(() => import("./apps/Dgima/DgimaApp"));
+        const WFDB = lazy(() => import("./apps/WFDB/WFDB"));
+        const CarbonApp = lazy(() => import("./apps/Carbon/CarbonApp"));
+        const UploadApp = lazy(() => import("./apps/Upload/UploadApp"));
+        const MetusApp = lazy(() => import("./apps/Metus/MetusApp"));
+        const ExternalApp = lazy(() => import("./apps/External/ExternalApp"));
+        const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
+        const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
+        const MainPage = lazy(() => import("./apps/Insert/MainPage"));
 
-      const wf_panes = panes.filter(p => !p.menuItem.disabled);
+        const panes = [
+            { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
+                render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
+            { menuItem: { key: 'sirtutim', icon: 'pencil alternate', content: 'Sirtutim', disabled: wf_sirtutim },
+                render: () => <Tab.Pane attached={false} ><SirtutimApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'carbon', icon: 'settings', content: <div>Carbon{count > 0 ? l : ""}</div>, disabled: wf_ingest },
+                render: () => <Tab.Pane attached={false} ><CarbonApp user={user} admin={wf_admin}/></Tab.Pane> },
+            { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
+                render: () => <Tab.Pane attached={false} ><IngestApp user={user} admin={wf_admin} /></Tab.Pane> },
+            { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
+                render: () => <Tab.Pane attached={false} ><CensorApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: wf_admin },
+                render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
+                render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
+                render: () => <Tab.Pane attached={false} ><JobsApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
+                render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
+                render: () => <Tab.Pane attached={false} ><DgimaApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
+                render: () => <Tab.Pane attached={false} ><ExternalApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
+                render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
+            { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_upload },
+                render: () => <Tab.Pane attached={false} ><UploadApp user={user} /></Tab.Pane> },
+            { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
+                render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
+            { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
+                render: () => <Tab.Pane attached={false} ><WFDB user={user} /></Tab.Pane> },
+        ];
 
-    return (
+        const wf_panes = panes.filter(p => !p.menuItem.disabled);
 
-        <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
-
-    );
-  }
+        return (
+            <Suspense fallback={<div>Loading...</div>}>
+                <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
+            </Suspense>
+        );
+    }
 }
 
 export default App;
