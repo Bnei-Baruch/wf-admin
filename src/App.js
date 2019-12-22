@@ -1,5 +1,5 @@
 import React, { Component, lazy, Suspense } from 'react';
-import { Tab, Label } from 'semantic-ui-react'
+import { Tab, Label, Segment } from 'semantic-ui-react'
 import './stylesheets/sematic-reset.css';
 import './stylesheets/scoped_semantic_ltr.css';
 import './stylesheets/scoped_semantic_rtl.css';
@@ -57,16 +57,9 @@ class App extends Component {
         }
     };
 
-    setCount = (count) => {
-        this.setState({count});
-    };
-
     render() {
 
-        const {count,wf_public,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
-
-        let login = (<LoginPage user={user} checkPermission={this.checkPermission} />);
-        let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+        const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
 
         const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
         const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
@@ -83,45 +76,61 @@ class App extends Component {
         const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
         const MainPage = lazy(() => import("./apps/Insert/MainPage"));
 
+        let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+        let login = (<Suspense fallback={<Segment loading size='massive' />}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
+        let sirtutim = (<Suspense fallback={<Segment loading size='massive' />}><SirtutimApp user={user} /></Suspense>);
+        let carbon = (<Suspense fallback={<Segment loading size='massive' />}><CarbonApp user={user} admin={wf_admin}/></Suspense>);
+        let ingest = (<Suspense fallback={<Segment loading size='massive' />}><IngestApp user={user} admin={wf_admin} /></Suspense>);
+        let censor = (<Suspense fallback={<Segment loading size='massive' />}><CensorApp user={user} /></Suspense>);
+        let admin = (<Suspense fallback={<Segment loading size='massive' />}><AdminApp user={user} /></Suspense>);
+        let monitor = (<Suspense fallback={<Segment loading size='massive' />}><MonitorApp user={user} /></Suspense>);
+        let jsobs = (<Suspense fallback={<Segment loading size='massive' />}><JobsApp user={user} /></Suspense>);
+        let aricha = (<Suspense fallback={<Segment loading size='massive' />}><ArichaApp user={user} /></Suspense>);
+        let dgima= (<Suspense fallback={<Segment loading size='massive' />}><DgimaApp user={user} /></Suspense>);
+        let external = (<Suspense fallback={<Segment loading size='massive' />}><ExternalApp user={user} /></Suspense>);
+        let mainpage = (<Suspense fallback={<Segment loading size='massive' />}><MainPage user={user} /></Suspense>);
+        let upload = (<Suspense fallback={<Segment loading size='massive' />}><UploadApp user={user} /></Suspense>);
+        let metus = (<Suspense fallback={<Segment loading size='massive' />}><MetusApp user={user} /></Suspense>);
+        let wfdb = (<Suspense fallback={<Segment loading size='massive' />}><WFDB user={user} /></Suspense>);
+
+
         const panes = [
             { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
                 render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
             { menuItem: { key: 'sirtutim', icon: 'pencil alternate', content: 'Sirtutim', disabled: wf_sirtutim },
-                render: () => <Tab.Pane attached={false} ><SirtutimApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{sirtutim}</Tab.Pane> },
             { menuItem: { key: 'carbon', icon: 'settings', content: <div>Carbon{count > 0 ? l : ""}</div>, disabled: wf_ingest },
-                render: () => <Tab.Pane attached={false} ><CarbonApp user={user} admin={wf_admin}/></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{carbon}</Tab.Pane> },
             { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
-                render: () => <Tab.Pane attached={false} ><IngestApp user={user} admin={wf_admin} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{ingest}</Tab.Pane> },
             { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
-                render: () => <Tab.Pane attached={false} ><CensorApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{censor}</Tab.Pane> },
             { menuItem: { key: 'admin', icon: 'detective', content: 'Admin', disabled: wf_admin },
-                render: () => <Tab.Pane attached={false} ><AdminApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{admin}</Tab.Pane> },
             { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
-                render: () => <Tab.Pane attached={false} ><MonitorApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{monitor}</Tab.Pane> },
             { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
-                render: () => <Tab.Pane attached={false} ><JobsApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{jsobs}</Tab.Pane> },
             { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
-                render: () => <Tab.Pane attached={false} ><ArichaApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{aricha}</Tab.Pane> },
             { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
-                render: () => <Tab.Pane attached={false} ><DgimaApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{dgima}</Tab.Pane> },
             { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
-                render: () => <Tab.Pane attached={false} ><ExternalApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{external}</Tab.Pane> },
             { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
-                render: () => <Tab.Pane attached={false} ><MainPage user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{mainpage}</Tab.Pane> },
             { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_upload },
-                render: () => <Tab.Pane attached={false} ><UploadApp user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{upload}</Tab.Pane> },
             { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
-                render: () => <Tab.Pane attached={false} ><MetusApp user={this.state.user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{metus}</Tab.Pane> },
             { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
-                render: () => <Tab.Pane attached={false} ><WFDB user={user} /></Tab.Pane> },
+                render: () => <Tab.Pane attached={false} >{wfdb}</Tab.Pane> },
         ];
 
         const wf_panes = panes.filter(p => !p.menuItem.disabled);
 
         return (
-            <Suspense fallback={<div>Loading...</div>}>
-                <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
-            </Suspense>
+            <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
         );
     }
 }
