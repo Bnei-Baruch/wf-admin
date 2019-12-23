@@ -24,6 +24,7 @@ class App extends Component {
         wf_public: true,
         wf_upload: true,
         wf_sirtutim: true,
+        wf_ktaim: true,
     };
 
     componentDidMount() {
@@ -41,8 +42,9 @@ class App extends Component {
         let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
         let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
         let wf_sirtutim = user.roles.filter(role => role === 'wf_sirtutim').length === 0;
+        let wf_ktaim = user.roles.filter(role => role === 'wf_ktaim').length === 0;
         if(!wf_public) {
-            this.setState({user, wf_public, wf_admin, wf_censor, wf_ingest, wf_aricha, wf_dgima, wf_insert, wf_external,wf_upload,wf_jobs,wf_sirtutim});
+            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim});
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {
                     let count = Object.keys(data).length;
@@ -58,7 +60,7 @@ class App extends Component {
 
     render() {
 
-        const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,user} = this.state;
+        const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,user} = this.state;
 
         const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
         const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
@@ -74,11 +76,13 @@ class App extends Component {
         const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
         const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
         const MainPage = lazy(() => import("./apps/Insert/MainPage"));
+        const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
 
         let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
         let login = (<Suspense fallback={<Segment loading size='massive' />}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
         let sirtutim = (<Suspense fallback={<Segment loading size='massive' />}><SirtutimApp user={user} /></Suspense>);
         let carbon = (<Suspense fallback={<Segment loading size='massive' />}><CarbonApp user={user} admin={wf_admin}/></Suspense>);
+        let ktaim = (<Suspense fallback={<Segment loading size='massive' />}><KtaimApp user={user} /></Suspense>);
         let ingest = (<Suspense fallback={<Segment loading size='massive' />}><IngestApp user={user} admin={wf_admin} /></Suspense>);
         let censor = (<Suspense fallback={<Segment loading size='massive' />}><CensorApp user={user} /></Suspense>);
         let admin = (<Suspense fallback={<Segment loading size='massive' />}><AdminApp user={user} /></Suspense>);
@@ -96,10 +100,12 @@ class App extends Component {
         const panes = [
             { menuItem: { key: 'Home', icon: 'home', content: 'Home', disabled: false },
                 render: () => <Tab.Pane attached={true} >{login}</Tab.Pane> },
-            { menuItem: { key: 'sirtutim', icon: 'pencil alternate', content: 'Sirtutim', disabled: wf_sirtutim },
+            { menuItem: { key: 'sirtutim', icon: 'pencil', content: 'Sirtutim', disabled: wf_sirtutim },
                 render: () => <Tab.Pane attached={false} >{sirtutim}</Tab.Pane> },
             { menuItem: { key: 'carbon', icon: 'settings', content: <div>Carbon{count > 0 ? l : ""}</div>, disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{carbon}</Tab.Pane> },
+            { menuItem: { key: 'ktaim', icon: 'newspaper', content: 'Ktaim', disabled: wf_ktaim },
+                render: () => <Tab.Pane attached={false} >{ktaim}</Tab.Pane> },
             { menuItem: { key: 'ingest', icon: 'record', content: 'Ingest', disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{ingest}</Tab.Pane> },
             { menuItem: { key: 'censor', icon: 'copyright', content: 'Censor', disabled: wf_censor },
