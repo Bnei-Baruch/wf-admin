@@ -44,7 +44,7 @@ class CensorCheck extends Component {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             });
-        }, 10000 );
+        }, 5000 );
         this.setState({ival});
     };
 

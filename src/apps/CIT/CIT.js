@@ -22,7 +22,8 @@ import LessonForm from './forms/LessonForm';
 import TVShowForm from './forms/TVShowForm';
 import VirtualLessonForm from './forms/VirtualLessonForm';
 import EventPartForm from './forms/EventPartForm';
-
+import '../../stylesheets/sematic-reset.css';
+import '../../stylesheets/scoped_semantic_rtl.css';
 import './forms/forms.css';
 
 class CIT extends Component {

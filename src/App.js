@@ -2,7 +2,6 @@ import React, { Component, lazy, Suspense } from 'react';
 import { Tab, Label, Segment } from 'semantic-ui-react'
 import './stylesheets/sematic-reset.css';
 import './stylesheets/scoped_semantic_ltr.css';
-import './stylesheets/scoped_semantic_rtl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import LoginPage from './components/LoginPage';
