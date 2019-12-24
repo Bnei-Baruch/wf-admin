@@ -9,6 +9,7 @@ class KtaimTrimmer extends Component {
 
     state = {
         disabled: true,
+        mode: "ktaim",
         main: [],
         backup: [],
         file_data: "",
@@ -38,7 +39,7 @@ class KtaimTrimmer extends Component {
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.original.format.sha1;
         let source = `${WFSRV_BACKEND}${path}`;
-        let trim_meta = newTrimMeta(file_data, "ingest", this.state.trim_src);
+        let trim_meta = newTrimMeta(file_data, "ktaim", this.state.trim_src);
         this.setState({source, file_data, trim_meta, disabled: false});
         getUnits(`${MDB_FINDSHA}/${sha1}`, (units) => {
             console.log(":: Ingest - got units: ", units);
@@ -55,8 +56,7 @@ class KtaimTrimmer extends Component {
     };
 
     render() {
-
-        const trim_src = this.state.trim_src;
+        const {mode,trim_src,trim_meta,startDate,disabled,file_data,date,open,source} = this.state;
         const trim_files = this.state[trim_src];
 
         let trim_data = trim_files.map((data) => {
@@ -76,26 +76,26 @@ class KtaimTrimmer extends Component {
                             locale='he'
                             maxDate={moment()}
                             minDate={moment().add(-40, "days")}
-                            selected={this.state.startDate}
+                            selected={startDate}
                             onChange={this.changeDate}
                         />
                     </Menu.Item>
                     <Menu.Item>
                         <Dropdown
                             className="trim_files_dropdown"
-                            error={this.state.disabled}
+                            error={disabled}
                             scrolling={false}
                             placeholder="Select File To Trim:"
                             selection
-                            value={this.state.file_data}
+                            value={file_data}
                             options={trim_data}
                             onChange={(e,{value}) => this.selectFile(value)}
-                            onClick={() => this.getCaptured(this.state.date)}
+                            onClick={() => this.getCaptured(date)}
                              >
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
-                        <Button primary disabled={this.state.disabled} onClick={this.sendToTrim}>Open</Button>
+                        <Button primary disabled={disabled} onClick={this.sendToTrim}>Open</Button>
                     </Menu.Item>
                 </Menu>
                 <Modal
@@ -103,15 +103,15 @@ class KtaimTrimmer extends Component {
                        closeOnDimmerClick={false}
                        closeIcon={true}
                        onClose={this.onClose}
-                       open={this.state.open}
+                       open={open}
                        size="large"
                        mountNode={document.getElementById("ltr-modal-mount")}
                 >
                     <TrimmerApp
-                        source={this.state.source}
-                        trim_meta={this.state.trim_meta}
-                        source_meta={this.state.trim_src}
-                        mode="ingest"
+                        source={source}
+                        trim_meta={trim_meta}
+                        source_meta={trim_src}
+                        mode={mode}
                         closeModal={this.onClose}
                     />
                 </Modal>

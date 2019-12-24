@@ -8,6 +8,7 @@ import {getData, putData, WFDB_BACKEND, WFSRV_BACKEND} from "../../shared/tools"
 export default class TrimmerApp extends Component {
 
     state = {
+        ktaim: this.props.mode === "ktaim",
         lelomikud: false,
         player: null,
         trim_meta: {...this.props.trim_meta},
@@ -32,10 +33,10 @@ export default class TrimmerApp extends Component {
 
     postTrimMeta = () => {
         this.setIopState();
-        let {trim_meta} = this.state;
+        let {trim_meta,lelomikud,ktaim} = this.state;
         this.setState({ioValid: false, loading: true});
         setTimeout(() => { this.props.closeModal() }, 2000);
-        if(this.state.lelomikud) trim_meta.line.artifact_type = "LELO_MIKUD";
+        trim_meta.line.artifact_type = lelomikud ? "LELO_MIKUD" : ktaim ? "KTAIM_NIVCHARIM" : "main";
         let ep = trim_meta.parent.source === "custom" ? "drim" : "trim";
         putData(`${WFSRV_BACKEND}/workflow/${ep}`, trim_meta, (cb) => {
             console.log(":: Trimmer - trim respond: ",cb);
@@ -64,6 +65,9 @@ export default class TrimmerApp extends Component {
     toggleLelomikud = () => this.setState({ lelomikud: !this.state.lelomikud });
 
     render() {
+        const {mode,source} = this.props;
+        const {player,trim_meta,lelomikud,ioValid,loading} = this.state;
+
         return (
             <Table className='table_main'>
                 <Table.Body>
@@ -71,11 +75,11 @@ export default class TrimmerApp extends Component {
                         <Table.Cell width={5} className='table_media'>
                             <MediaPlayer
                                 player={this.getPlayer}
-                                source={this.props.source} type='video/mp4' />
+                                source={source} type='video/mp4' />
                         </Table.Cell>
                         <Table.Cell width={1} className='table_ctls'>
                             <TrimmerControls
-                                player={this.state.player} />
+                                player={player} />
                         </Table.Cell>
                         <Table.Cell width={3} className='table_inouts'>
                             <Button.Group attached='top' size='mini'>
@@ -85,25 +89,30 @@ export default class TrimmerApp extends Component {
                             <Segment attached raised textAlign='center' className='inout_content'>
                                 <InoutControls onRef={ref => (this.InoutControls = ref)}
                                     onSetPoints={this.getInouts}
-                                    player={this.state.player}
-                                    inpoints={this.state.trim_meta.inpoints}
-                                    outpoints={this.state.trim_meta.outpoints} />
+                                    player={player}
+                                    inpoints={trim_meta.inpoints}
+                                    outpoints={trim_meta.outpoints} />
                             </Segment>
                         </Table.Cell>
                     </Table.Row>
                     <Table.Row>
                         <Table.Cell>
                             <Segment color='blue' textAlign='center' raised >
-                                <b>{this.state.trim_meta.file_name}</b>
+                                <b>{trim_meta.file_name}</b>
                             </Segment>
                         </Table.Cell>
                         <Table.Cell>
-                            <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={this.state.lelomikud} />
+                            {
+                                mode === "ktaim" ?
+                                <Checkbox label='Ktaim' checked disabled />
+                                :
+                                <Checkbox label='LeloMikud' onClick={this.toggleLelomikud} checked={lelomikud} />
+                            }
                         </Table.Cell>
                         <Table.Cell textAlign='center'>
                             <Button size='big' color='red'
-                                    disabled={!this.state.ioValid}
-                                    loading={this.state.loading}
+                                    disabled={!ioValid}
+                                    loading={loading}
                                     onClick={this.postTrimMeta}>Trim
                             </Button>
                         </Table.Cell>

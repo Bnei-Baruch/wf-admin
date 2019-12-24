@@ -54,19 +54,21 @@ class KtaimTrimmed extends Component {
         this.setState({open: true});
     };
 
-    renameFile = (newline) => {
-        console.log(":: Cit callback: ", newline);
+    renameFile = () => {
         let {file_data} = this.state;
-        let newfile_name = newline.final_name;
-        let oldfile_name = file_data.file_name;
-        let opath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}o.mp4`;
-        let ppath = `/backup/trimmed/${file_data.date}/${newfile_name}_${file_data.trim_id}p.mp4`;
-        file_data.parent.file_name = oldfile_name;
-        file_data.line = newline;
-        file_data.line.title = this.state.tags[newline.pattern] || "";
+        let old_name = file_data.file_name;
+        let new_name = file_data.file_name.replace(/lesson/, 'ktaim-nivcharim');
+        new_name = new_name.replace(/_full/, '');
+        file_data.line.manual_name = new_name;
+        file_data.line.final_name = new_name;
+        file_data.line.pattern = "full_lesson";
+        let opath = `/backup/trimmed/${file_data.date}/${new_name}_${file_data.trim_id}o.mp4`;
+        let ppath = `/backup/trimmed/${file_data.date}/${new_name}_${file_data.trim_id}p.mp4`;
+        file_data.parent.file_name = old_name;
+        file_data.line.title = this.state.tags[file_data.line.pattern] || "";
         file_data.original.format.filename = opath;
         file_data.proxy.format.filename = ppath;
-        file_data.file_name = newfile_name;
+        file_data.file_name = new_name;
         file_data.wfstatus.renamed = true;
         // Build url for preview
         let path = file_data.proxy.format.filename;
@@ -76,7 +78,11 @@ class KtaimTrimmed extends Component {
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
             console.log(":: Ingest - rename respond: ",cb);
             if(cb.status === "ok") {
-                setTimeout(() => this.setState({file_data, source, renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
+                setTimeout(() => {
+                        this.setState({file_data, source, renaming: false, disabled: file_data.wfstatus.wfsend}, () => {
+                            this.sendFile(file_data);
+                        })
+                }, 2000);
             } else {
                 setTimeout(() => this.setState({renaming: false, disabled: file_data.wfstatus.wfsend}), 2000);
             }
@@ -88,8 +94,7 @@ class KtaimTrimmed extends Component {
         this.setState({open: false});
     };
 
-    sendFile = () => {
-        const {file_data} = this.state;
+    sendFile = (file_data) => {
         const {file_name, wfstatus, line} = file_data;
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
@@ -111,7 +116,7 @@ class KtaimTrimmed extends Component {
                 this.setState({ sending: false });
             } else {
                 console.log(":: Going to send :", file_data);
-                putData(`${WFSRV_BACKEND}/workflow/send_ingest`, file_data, (cb) => {
+                putData(`${WFSRV_BACKEND}/workflow/send_ktaim`, file_data, (cb) => {
                     console.log(":: Ingest - send respond: ",cb);
                     setTimeout(() => this.setState({ sending: false }), 2000);
                     // While polling done it does not necessary
@@ -133,7 +138,7 @@ class KtaimTrimmed extends Component {
         let s = (<Icon color='red' name='key'/>);
 
         let trimmed = this.state.trimmed.map((data) => {
-            const {trimmed,renamed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
+            const {trimmed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -146,7 +151,6 @@ class KtaimTrimmed extends Component {
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{secured ? s : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{renamed ? v : x}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
                 </Table.Row>
             )
@@ -169,7 +173,7 @@ class KtaimTrimmed extends Component {
                     <Menu.Menu position='right'>
                         <Menu.Item>
                             <Button positive disabled={this.state.disabled}
-                                    onClick={this.sendFile} loading={this.state.sending}>Send
+                                    onClick={this.renameFile} loading={this.state.sending}>Send
                             </Button>
                         </Menu.Item>
                     </Menu.Menu>
@@ -180,7 +184,7 @@ class KtaimTrimmed extends Component {
                         <Table.Row className='table_header'>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Rename</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>Rename</Table.HeaderCell>*/}
                             {/*<Table.HeaderCell width={1}>BUF</Table.HeaderCell>*/}
                             <Table.HeaderCell width={1}>Send</Table.HeaderCell>
                         </Table.Row>
