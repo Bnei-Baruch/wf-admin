@@ -8,6 +8,22 @@ import LoginPage from './components/LoginPage';
 import {client} from "./components/UserManager";
 import {getData} from "./shared/tools";
 
+const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
+const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
+const CensorApp = lazy(() => import("./apps/Censor/CensorApp"));
+const AdminApp = lazy(() => import("./apps/Admin/AdminApp"));
+const ArichaApp = lazy(() => import("./apps/Aricha/ArichaApp"));
+const DgimaApp = lazy(() => import("./apps/Dgima/DgimaApp"));
+const WFDB = lazy(() => import("./apps/WFDB/WFDB"));
+const CarbonApp = lazy(() => import("./apps/Carbon/CarbonApp"));
+const UploadApp = lazy(() => import("./apps/Upload/UploadApp"));
+const MetusApp = lazy(() => import("./apps/Metus/MetusApp"));
+const ExternalApp = lazy(() => import("./apps/External/ExternalApp"));
+const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
+const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
+const MainPage = lazy(() => import("./apps/Insert/MainPage"));
+const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
+
 class App extends Component {
 
     state = {
@@ -61,22 +77,6 @@ class App extends Component {
     render() {
 
         const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,user} = this.state;
-
-        const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
-        const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
-        const CensorApp = lazy(() => import("./apps/Censor/CensorApp"));
-        const AdminApp = lazy(() => import("./apps/Admin/AdminApp"));
-        const ArichaApp = lazy(() => import("./apps/Aricha/ArichaApp"));
-        const DgimaApp = lazy(() => import("./apps/Dgima/DgimaApp"));
-        const WFDB = lazy(() => import("./apps/WFDB/WFDB"));
-        const CarbonApp = lazy(() => import("./apps/Carbon/CarbonApp"));
-        const UploadApp = lazy(() => import("./apps/Upload/UploadApp"));
-        const MetusApp = lazy(() => import("./apps/Metus/MetusApp"));
-        const ExternalApp = lazy(() => import("./apps/External/ExternalApp"));
-        const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
-        const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
-        const MainPage = lazy(() => import("./apps/Insert/MainPage"));
-        const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
 
         let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
         let login = (<Suspense fallback={<Segment loading size='massive' />}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
