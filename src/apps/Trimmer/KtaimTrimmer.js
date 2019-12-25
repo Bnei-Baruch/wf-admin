@@ -24,7 +24,7 @@ class KtaimTrimmer extends Component {
 
     getCaptured = (date) => {
         getData(`ingest/find?key=date&value=${date}`, (data) => {
-            let backup = data.filter(b => b.capture_src.match(/^(mltbackup)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
+            let backup = data.filter(b => b.capture_src.match(/^(mltbackup)$/) && b.wfstatus.capwf && !b.wfstatus.locked && b.line.content_type === "FULL_LESSON");
             this.setState({backup});
         });
     };
