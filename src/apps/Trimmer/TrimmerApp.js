@@ -36,7 +36,8 @@ export default class TrimmerApp extends Component {
         let {trim_meta,lelomikud,ktaim} = this.state;
         this.setState({ioValid: false, loading: true});
         setTimeout(() => { this.props.closeModal() }, 2000);
-        trim_meta.line.artifact_type = lelomikud ? "LELO_MIKUD" : ktaim ? "KTAIM_NIVCHARIM" : "main";
+        if(trim_meta.line)
+            trim_meta.line.artifact_type = lelomikud ? "LELO_MIKUD" : ktaim ? "KTAIM_NIVCHARIM" : "main";
         let ep = trim_meta.parent.source === "custom" ? "drim" : "trim";
         putData(`${WFSRV_BACKEND}/workflow/${ep}`, trim_meta, (cb) => {
             console.log(":: Trimmer - trim respond: ",cb);
