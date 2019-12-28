@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import FilesWorkflow from "./FilesWorkflow";
+import '../WFDB/WFDB.css';
 
 class FilesApp extends Component {
 
