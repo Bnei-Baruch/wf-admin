@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
+import DatePicker from 'react-datepicker';
 import {getData, toHms, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import moment from "moment";
 
 class FilesWorkflow extends Component {
 
@@ -9,7 +11,10 @@ class FilesWorkflow extends Component {
         active: null,
         activeIndex: 0,
         disabled: true,
-        trimmed: [],
+        date: moment().format('YYYY-MM-DD'),
+        startDate: moment(),
+        ingest: [],
+        trimmer: [],
         file_data: {},
         ival: null,
         source: "",
@@ -17,16 +22,34 @@ class FilesWorkflow extends Component {
 
     componentDidMount() {
         let ival = setInterval(() => {
-            getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
-            });
-        }, 5000 );
+            this.getIngestData();
+            this.getTrimmerData();
+        }, 10000 );
         this.setState({ival});
     };
 
     componentWillUnmount() {
         clearInterval(this.state.ival);
+    };
+
+    changeDate = (data) => {
+        let date = data.format('YYYY-MM-DD');
+        this.setState({startDate: data, date, disabled: true, file_data: ""});
+    };
+
+    getIngestData = () => {
+        getData(`ingest/find?key=date&value=${this.state.date}`, (data) => {
+            let ingest = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
+            console.log(":: Ingest DB Data: ",ingest);
+            this.setState({ingest})
+        });
+    };
+
+    getTrimmerData = () => {
+        getData(`trimmer/find?key=date&value=${this.state.date}`, (trimmer) => {
+            console.log(":: Trimmer DB Data: ",trimmer);
+            this.setState({trimmer});
+        });
     };
 
     selectFile = (file_data) => {
@@ -60,7 +83,7 @@ class FilesWorkflow extends Component {
         let d = (<Icon color='blue' name='lock'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let trimmed = this.state.trimmed.map((data) => {
+        let trimmed = this.state.trimmer.map((data) => {
             const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -91,6 +114,17 @@ class FilesWorkflow extends Component {
                 </Label>
                 <Message size='large'>
                 <Menu size='large' secondary >
+                    <Menu.Item>
+                        <DatePicker
+                            className="datepickercs"
+                            dateFormat="YYYY-MM-DD"
+                            locale='he'
+                            maxDate={moment()}
+                            minDate={moment().add(-40, "days")}
+                            selected={this.state.startDate}
+                            onChange={this.changeDate}
+                        />
+                    </Menu.Item>
                     <Menu.Item>
                         <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
                                size='tiny'
