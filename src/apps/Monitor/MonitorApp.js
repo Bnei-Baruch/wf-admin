@@ -5,8 +5,8 @@ import MonitorTrimmer from './MonitorTrimmer';
 //import MonitorCarbon from './MonitorCarbon';
 import MonitorKmedia from './MonitorKmedia';
 import MonitorUpload from './MonitorUpload';
-import './MonitorApp.css';
 import MonitorConvert from "./MonitorConvert";
+import './MonitorApp.css';
 
 class MonitorApp extends Component {
 

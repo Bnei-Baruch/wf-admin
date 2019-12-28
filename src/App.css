@@ -91,7 +91,8 @@ body {
 
 .scoped-semantic-ltr .ui.table tr.positive, .scoped-semantic-ltr .ui.table td.positive {
     background: #e1e6d4 !important;
-    font-weight: normal!important;
+    font-weight: bolder!important;
+    /*font-weight: normal!important;*/
     /*color: #2C662D;*/
 }
 
