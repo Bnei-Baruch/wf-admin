@@ -1,12 +1,12 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Tab, Label, Segment } from 'semantic-ui-react'
+import {client} from "./components/UserManager";
+import {getData} from "./shared/tools";
+import LoginPage from './components/LoginPage';
 import './stylesheets/sematic-reset.css';
 import './stylesheets/scoped_semantic_ltr.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
-import LoginPage from './components/LoginPage';
-import {client} from "./components/UserManager";
-import {getData} from "./shared/tools";
 
 const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
 const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
@@ -41,9 +41,11 @@ class App extends Component {
         wf_upload: true,
         wf_sirtutim: true,
         wf_ktaim: true,
+        wf_panes: []
     };
 
     componentDidMount() {
+        this.loadApps();
     };
 
     checkPermission = (user) => {
@@ -60,7 +62,9 @@ class App extends Component {
         let wf_sirtutim = user.roles.filter(role => role === 'wf_sirtutim').length === 0;
         let wf_ktaim = user.roles.filter(role => role === 'wf_ktaim').length === 0;
         if(!wf_public) {
-            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim});
+            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim}, () => {
+                this.loadApps();
+            });
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {
                     let count = Object.keys(data).length;
@@ -74,8 +78,7 @@ class App extends Component {
         }
     };
 
-    render() {
-
+    loadApps = () => {
         const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,user} = this.state;
 
         let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
@@ -133,6 +136,11 @@ class App extends Component {
         ];
 
         const wf_panes = panes.filter(p => !p.menuItem.disabled);
+        this.setState({wf_panes})
+    };
+
+    render() {
+        const {wf_panes} = this.state;
 
         return (
             <Tab menu={{ secondary: true, pointing: true, color: "blue" }} panes={wf_panes} />
