@@ -115,6 +115,14 @@ body {
     /*text-decoration-style: double;*/
 }
 
+.files_label {
+    font-size: 14px!important;
+    color: #661418 !important;
+    ont-weight: bold!important;
+    background-color: #FFFAF3 !important;
+    text-decoration: underline;
+}
+
 .note_area {
     width: 495px;
 }

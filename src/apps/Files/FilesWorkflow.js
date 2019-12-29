@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import {getData, MDB_UNIT_URL, KMEDIA_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, MDB_ADMIN_URL, KMEDIA_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import moment from "moment";
@@ -21,8 +21,16 @@ class FilesWorkflow extends Component {
     };
 
     componentDidMount() {
-        this.getIngestData();
-        this.getTrimmerData();
+        this.getIngestData(moment().format('YYYY-MM-DD'));
+        this.getTrimmerData(moment().format('YYYY-MM-DD'));
+        this.runPolling();
+    };
+
+    componentWillUnmount() {
+        clearInterval(this.state.ival);
+    };
+
+    runPolling = () => {
         let ival = setInterval(() => {
             this.getIngestData(this.state.date);
             this.getTrimmerData(this.state.date);
@@ -30,12 +38,14 @@ class FilesWorkflow extends Component {
         this.setState({ival});
     };
 
-    componentWillUnmount() {
-        clearInterval(this.state.ival);
-    };
-
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
+        if(moment().format('YYYY-MM-DD') !== date) {
+            clearInterval(this.state.ival);
+            this.setState({ival: null});
+        } else if(this.state.ival === null) {
+            this.runPolling();
+        }
         this.setState({startDate: data, date, disabled: true, file_data: ""});
         this.getIngestData(date);
         this.getTrimmerData(date);
@@ -58,7 +68,9 @@ class FilesWorkflow extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
-        let id = file_data.trim_id;
+        let id = file_data.trim_id ? file_data.trim_id : file_data.capture_id;
+        if(file_data.capture_id && !file_data.proxy)
+            return;
         let path = file_data.proxy.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
         this.setState({source, active: id, file_data});
@@ -96,9 +108,10 @@ class FilesWorkflow extends Component {
             let name = data.stop_name || "recording...";
             let stop_name = (!capwf && name !== "recording...") ? <div><Loader size='mini' active inline></Loader>&nbsp;&nbsp;&nbsp;{name}</div> : name;
             let capture_src = data.capture_src;
+            let active = this.state.active === id ? 'active' : 'monitor_tr';
             return (
-                <Table.Row key={id} positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className="monitor_tr">
-                    <Table.Cell>{id}</Table.Cell>
+                <Table.Row key={id} positive={data.wfstatus.trimmed} warning={!data.wfstatus.capwf} className={active}
+                           onClick={() => this.selectFile(data)}>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{secured ? s : ""}{locked ? d : ""}{stop_name}</Table.Cell>
                     <Table.Cell>{capture_src}</Table.Cell>
@@ -112,48 +125,20 @@ class FilesWorkflow extends Component {
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
-            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
-            let rowcolor = censored && !checked;
-            return (
-                <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
-                    <Table.Cell>{id}</Table.Cell>
-                    <Table.Cell>{link}</Table.Cell>
-                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
-                    <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
-                    <Table.Cell warning={renamed}>{renamed ? v : x}</Table.Cell>
-                    <Table.Cell warning={fixed}>{fixed ? v : x}</Table.Cell>
-                    <Table.Cell warning={buffer}>{buffer ? v : x}</Table.Cell>
-                    <Table.Cell warning={backup}>{backup ? v : x}</Table.Cell>
-                    <Table.Cell warning={metus}>{metus ? v : x}</Table.Cell>
-                    <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
-                </Table.Row>
-            )
-        });
-
-        let files_data = this.state.trimmer.map((data) => {
-            let id = data.trim_id;
-            let capture = this.state.ingest.find(c => c.capture_id === data.parent.capture_id);
-            let ctime = capture ? capture.start_name.split("_")[1] : "";
-            let cname = capture ? capture.stop_name : "recording...";
-            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
-            let tname = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let ttime = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            //let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
+            let mhref = `${MDB_ADMIN_URL}/content_units/${data.line.unit_id}`;
+            let mdb_link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={mhref}>{data.line.uid}</a>) : "";
             let ctype = data.line.collection_type === "DAILY_LESSON" ? "lessons" : "programs";
-            let href = `${KMEDIA_URL}/${ctype}/cu/${data.line.uid}`;
-            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
+            let khref = `${KMEDIA_URL}/${ctype}/cu/${data.line.uid}`;
+            let km_link = kmedia ? (<a target="_blank" rel="noopener noreferrer" href={khref}>{v}</a>) : x;
             let rowcolor = censored && !checked;
+            let active = this.state.active === id ? 'active' : 'monitor_tr';
             return (
-                <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
-                    <Table.Cell>{ctime}</Table.Cell>
-                    <Table.Cell>{cname}</Table.Cell>
-                    <Table.Cell>{ttime}</Table.Cell>
-                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{tname}</Table.Cell>
-                    <Table.Cell>{link}</Table.Cell>
-                    <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
+                <Table.Row key={id} negative={rowcolor} positive={kmedia} warning={!trimmed} className={active}
+                           onClick={() => this.selectFile(data)}>
+                    <Table.Cell>{time}</Table.Cell>
+                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
+                    <Table.Cell>{mdb_link}</Table.Cell>
+                    <Table.Cell warning={kmedia}>{km_link}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -186,10 +171,10 @@ class FilesWorkflow extends Component {
                 </Menu>
                 </Message>
                 <Segment attached raised textAlign='center'>
+                    <Label attached='top' className="files_label">Captured</Label>
                     <Table compact='very' selectable basic size='small'>
                         <Table.Header>
                             <Table.Row className='table_header'>
-                                <Table.HeaderCell width={2}>ID</Table.HeaderCell>
                                 <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                                 <Table.HeaderCell>File Name</Table.HeaderCell>
                                 <Table.HeaderCell width={2}>Capsrc</Table.HeaderCell>
@@ -203,44 +188,19 @@ class FilesWorkflow extends Component {
                     </Table>
                 </Segment>
                 <Segment attached raised textAlign='center'>
+                    <Label attached='top' className="files_label">Trimmed</Label>
                     <Table selectable compact='very' basic size='small' structured>
                         <Table.Header>
                             <Table.Row className='table_header'>
-                                <Table.HeaderCell width={1}>ID</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>UID</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
                                 <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
-                                <Table.HeaderCell width={2}>Time</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>SND</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>FIX</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>BAK</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>MTS</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>SND</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
                         <Table.Body>
                             {trimmer_data}
-                        </Table.Body>
-                    </Table>
-                </Segment>
-                <Segment attached raised textAlign='center'>
-                    <Table selectable compact='very' basic size='small' structured>
-                        <Table.Header>
-                            <Table.Row className='table_header'>
-                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
-                                <Table.HeaderCell width={4}>Capture</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
-                                <Table.HeaderCell width={8}>Trim</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>Link</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>KMedia</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-
-                        <Table.Body>
-                            {files_data}
                         </Table.Body>
                     </Table>
                 </Segment>
