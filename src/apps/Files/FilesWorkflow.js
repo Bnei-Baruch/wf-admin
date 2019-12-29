@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import {getData, MDB_UNIT_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, MDB_UNIT_URL, KMEDIA_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import moment from "moment";
@@ -24,8 +24,8 @@ class FilesWorkflow extends Component {
         this.getIngestData();
         this.getTrimmerData();
         let ival = setInterval(() => {
-            this.getIngestData();
-            this.getTrimmerData();
+            this.getIngestData(this.state.date);
+            this.getTrimmerData(this.state.date);
         }, 10000 );
         this.setState({ival});
     };
@@ -37,18 +37,20 @@ class FilesWorkflow extends Component {
     changeDate = (data) => {
         let date = data.format('YYYY-MM-DD');
         this.setState({startDate: data, date, disabled: true, file_data: ""});
+        this.getIngestData(date);
+        this.getTrimmerData(date);
     };
 
-    getIngestData = () => {
-        getData(`ingest/find?key=date&value=${this.state.date}`, (ingest) => {
+    getIngestData = (date) => {
+        getData(`ingest/find?key=date&value=${date}`, (ingest) => {
             //let ingest = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
             console.log(":: Ingest DB Data: ",ingest);
             this.setState({ingest})
         });
     };
 
-    getTrimmerData = () => {
-        getData(`trimmer/find?key=date&value=${this.state.date}`, (trimmer) => {
+    getTrimmerData = (date) => {
+        getData(`trimmer/find?key=date&value=${date}`, (trimmer) => {
             console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
@@ -131,6 +133,31 @@ class FilesWorkflow extends Component {
             )
         });
 
+        let files_data = this.state.trimmer.map((data) => {
+            let id = data.trim_id;
+            let capture = this.state.ingest.find(c => c.capture_id === data.parent.capture_id);
+            let ctime = capture ? capture.start_name.split("_")[1] : "";
+            let cname = capture ? capture.stop_name : "recording...";
+            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
+            let tname = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let ttime = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            //let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
+            let ctype = data.line.collection_type === "DAILY_LESSON" ? "lessons" : "programs";
+            let href = `${KMEDIA_URL}/${ctype}/cu/${data.line.uid}`;
+            let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
+            let rowcolor = censored && !checked;
+            return (
+                <Table.Row key={id} negative={rowcolor} positive={wfsend} warning={!trimmed} className="monitor_tr">
+                    <Table.Cell>{ctime}</Table.Cell>
+                    <Table.Cell>{cname}</Table.Cell>
+                    <Table.Cell>{ttime}</Table.Cell>
+                    <Table.Cell>{secured ? s : ""}{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{tname}</Table.Cell>
+                    <Table.Cell>{link}</Table.Cell>
+                    <Table.Cell warning={kmedia}>{kmedia ? v : x}</Table.Cell>
+                </Table.Row>
+            )
+        });
+
         return (
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
                 <Label attached='top' className="trimmed_label">
@@ -183,8 +210,8 @@ class FilesWorkflow extends Component {
                                 <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                                 <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
                                 <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>RMV</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>RNM</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>SND</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>FIX</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>BUF</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>BAK</Table.HeaderCell>
@@ -196,6 +223,24 @@ class FilesWorkflow extends Component {
 
                         <Table.Body>
                             {trimmer_data}
+                        </Table.Body>
+                    </Table>
+                </Segment>
+                <Segment attached raised textAlign='center'>
+                    <Table selectable compact='very' basic size='small' structured>
+                        <Table.Header>
+                            <Table.Row className='table_header'>
+                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
+                                <Table.HeaderCell width={4}>Capture</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
+                                <Table.HeaderCell width={8}>Trim</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>Link</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>KMedia</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {files_data}
                         </Table.Body>
                     </Table>
                 </Segment>
