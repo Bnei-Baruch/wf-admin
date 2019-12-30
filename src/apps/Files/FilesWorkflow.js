@@ -133,7 +133,7 @@ class FilesWorkflow extends Component {
             let mdb_link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={mhref}>{data.line.uid}</a>) : "";
             let ctype = data.line.collection_type === "DAILY_LESSON" ? "lessons" : "programs";
             let khref = `${KMEDIA_URL}/${ctype}/cu/${data.line.uid}`;
-            let km_link = kmedia ? (<a target="_blank" rel="noopener noreferrer" href={khref}>Kmedia {a}</a>) : x;
+            let km_link = kmedia ? (<a target="_blank" rel="noopener noreferrer" href={khref}>KM {a}</a>) : x;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'monitor_tr';
             return (
@@ -184,7 +184,7 @@ class FilesWorkflow extends Component {
                         <Table.Header>
                             <Table.Row className='table_header'>
                                 <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                                <Table.HeaderCell>File Name</Table.HeaderCell>
+                                <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
                                 <Table.HeaderCell width={2}>Capsrc</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>Trim</Table.HeaderCell>
                             </Table.Row>
@@ -200,10 +200,10 @@ class FilesWorkflow extends Component {
                     <Table selectable compact='very' basic size='small' structured>
                         <Table.Header>
                             <Table.Row className='table_header'>
-                                <Table.HeaderCell width={1}>Time</Table.HeaderCell>
+                                <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                                 <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>UID</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>Ready</Table.HeaderCell>
+                                <Table.HeaderCell width={2}>UID</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>Archive</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
