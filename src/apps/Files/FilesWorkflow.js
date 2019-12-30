@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import {getData, MDB_ADMIN_URL, KMEDIA_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import moment from "moment";
@@ -15,8 +15,9 @@ class FilesWorkflow extends Component {
         startDate: moment(),
         ingest: [],
         trimmer: [],
-        file_data: {},
+        file_data: null,
         ival: null,
+        name: "",
         source: "",
     };
 
@@ -68,12 +69,14 @@ class FilesWorkflow extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
-        let id = file_data.trim_id ? file_data.trim_id : file_data.capture_id;
-        if(file_data.capture_id && !file_data.proxy)
+        const {trim_id,capture_id,file_name,stop_name,proxy,wfstatus} = file_data;
+        let id = trim_id ? trim_id : capture_id;
+        let name = trim_id ? file_name : stop_name;
+        if(capture_id && !proxy)
             return;
-        let path = file_data.proxy.format.filename;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: id, file_data});
+        let path = proxy.format.filename;
+        let source = capture_id || trim_id && wfstatus.kmedia ? `${WFSRV_BACKEND}${path}` : "";
+        this.setState({source, active: id, file_data, name});
     };
 
     getPlayer = (player) => {
@@ -91,17 +94,18 @@ class FilesWorkflow extends Component {
 
     render() {
 
-        const { activeIndex } = this.state;
+        const { ingest,trimmer,source,name } = this.state;
 
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
         let v = (<Icon name='checkmark'/>);
+        let a = (<Icon name='arrow alternate circle right'/>);
         let x = (<Icon name='close'/>);
         let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let ingest_data = this.state.ingest.map((data) => {
+        let ingest_data = ingest.map((data) => {
             const {capwf,trimmed,locked,secured} = data.wfstatus;
             let id = data.capture_id;
             let time = data.start_name.split("_")[1];
@@ -120,16 +124,16 @@ class FilesWorkflow extends Component {
             )
         });
 
-        let trimmer_data = this.state.trimmer.map((data) => {
+        let trimmer_data = trimmer.map((data) => {
             let id = data.trim_id;
-            const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
+            const {censored,checked,kmedia,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
             let mhref = `${MDB_ADMIN_URL}/content_units/${data.line.unit_id}`;
             let mdb_link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={mhref}>{data.line.uid}</a>) : "";
             let ctype = data.line.collection_type === "DAILY_LESSON" ? "lessons" : "programs";
             let khref = `${KMEDIA_URL}/${ctype}/cu/${data.line.uid}`;
-            let km_link = kmedia ? (<a target="_blank" rel="noopener noreferrer" href={khref}>{v}</a>) : x;
+            let km_link = kmedia ? (<a target="_blank" rel="noopener noreferrer" href={khref}>Kmedia {a}</a>) : x;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'monitor_tr';
             return (
@@ -145,9 +149,7 @@ class FilesWorkflow extends Component {
 
         return (
             <Segment textAlign='center' className="wfdb_app" color='blue' raised>
-                <Label attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : "WorkFlow Files"}
-                </Label>
+                <Label attached='top' className="filesapp_label">WorkFlow Files</Label>
                 <Message size='large'>
                 <Menu size='large' secondary >
                     <Menu.Item>
@@ -162,11 +164,17 @@ class FilesWorkflow extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item>
-                        <Modal trigger={<Button color='brown' icon='play' disabled={!this.state.source} />}
+                        <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
                                size='tiny'
                                mountNode={document.getElementById("ltr-modal-mount")}>
-                            <MediaPlayer player={this.getPlayer} source={this.state.source} type='video/mp4' />
+                            <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
                         </Modal>
+                    </Menu.Item>
+                    <Menu.Item position='right'>
+                        <Button color='teal' disabled={!source} >
+                            <Icon name='download'/>
+                            <a href={source} download={name}>{name}</a>
+                        </Button>
                     </Menu.Item>
                 </Menu>
                 </Message>
@@ -195,7 +203,7 @@ class FilesWorkflow extends Component {
                                 <Table.HeaderCell width={1}>Time</Table.HeaderCell>
                                 <Table.HeaderCell width={12}>File Name</Table.HeaderCell>
                                 <Table.HeaderCell width={1}>UID</Table.HeaderCell>
-                                <Table.HeaderCell width={1}>KMD</Table.HeaderCell>
+                                <Table.HeaderCell width={1}>Ready</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 

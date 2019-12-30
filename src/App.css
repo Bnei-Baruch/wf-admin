@@ -115,6 +115,15 @@ body {
     /*text-decoration-style: double;*/
 }
 
+.filesapp_label {
+    font-size: 14px!important;
+    color: #661418!important;
+    ont-weight: bold!important;
+    text-decoration: underline;
+    text-decoration-color: red;
+    /*text-decoration-style: double;*/
+}
+
 .files_label {
     font-size: 14px!important;
     color: #661418 !important;
@@ -415,6 +424,14 @@ body {
 
 .lang_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
     background: #e1e6d4!important;
+    color: #f98b8b!important;
+}
+
+.wfdb_app .ui[class*="very compact"].table td:hover {
+    color: #f98b8b!important;
+}
+
+.scoped-semantic-ltr .wfdb_app a:hover {
     color: #f98b8b!important;
 }
 
