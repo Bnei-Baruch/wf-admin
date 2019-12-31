@@ -71,8 +71,16 @@ class App extends Component {
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {
                     let count = Object.keys(data).length;
-                    if (this.state.count !== count)
-                        this.setState({count})
+                    if (this.state.count !== count) {
+                        let {wf_panes} = this.state;
+                        for(let i=0; i<wf_panes.length; i++) {
+                            if(wf_panes[i].menuItem.key === "carbon") {
+                                let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+                                wf_panes[i].menuItem.content = <div>Carbon{count > 0 ? l : ""}</div>;
+                                this.setState({wf_panes,count})
+                            }
+                        }
+                    }
                 }), 10000 );
             }
         } else {
@@ -82,9 +90,8 @@ class App extends Component {
     };
 
     loadApps = () => {
-        const {count,wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,user} = this.state;
+        const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,user} = this.state;
 
-        let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
         let login = (<Suspense fallback={<Segment loading size='massive' />}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
         let sirtutim = (<Suspense fallback={<Segment loading size='massive' />}><SirtutimApp user={user} /></Suspense>);
         let carbon = (<Suspense fallback={<Segment loading size='massive' />}><CarbonApp user={user} admin={wf_admin}/></Suspense>);
@@ -111,7 +118,7 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{files}</Tab.Pane> },
             { menuItem: { key: 'sirtutim', icon: 'pencil', content: 'Sirtutim', disabled: wf_sirtutim },
                 render: () => <Tab.Pane attached={false} >{sirtutim}</Tab.Pane> },
-            { menuItem: { key: 'carbon', icon: 'settings', content: <div>Carbon{count > 0 ? l : ""}</div>, disabled: wf_ingest },
+            { menuItem: { key: 'carbon', icon: 'settings', content: 'Carbon', disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{carbon}</Tab.Pane> },
             { menuItem: { key: 'ktaim', icon: 'newspaper', content: 'Ktaim', disabled: wf_ktaim },
                 render: () => <Tab.Pane attached={false} >{ktaim}</Tab.Pane> },
