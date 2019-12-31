@@ -10,6 +10,7 @@ class FilesWorkflow extends Component {
     state = {
         active: null,
         activeIndex: 0,
+        closed: false,
         disabled: true,
         date: moment().format('YYYY-MM-DD'),
         startDate: moment(),
@@ -22,6 +23,8 @@ class FilesWorkflow extends Component {
     };
 
     componentDidMount() {
+        let closed = this.props.user.roles.filter(role => role === 'wf_closed').length > 0;
+        this.setState({closed});
         this.getIngestData(moment().format('YYYY-MM-DD'));
         this.getTrimmerData(moment().format('YYYY-MM-DD'));
         this.runPolling();
@@ -69,13 +72,14 @@ class FilesWorkflow extends Component {
 
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
+        const {closed} = this.state;
         const {trim_id,capture_id,file_name,stop_name,proxy,wfstatus} = file_data;
         let id = trim_id ? trim_id : capture_id;
         let name = trim_id ? file_name : stop_name;
         if(capture_id && !proxy)
             return;
         let path = proxy.format.filename;
-        let source = capture_id || trim_id && wfstatus.kmedia ? `${WFSRV_BACKEND}${path}` : "";
+        let source = capture_id && closed || trim_id && wfstatus.kmedia ? `${WFSRV_BACKEND}${path}` : "";
         this.setState({source, active: id, file_data, name});
     };
 
