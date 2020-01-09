@@ -59,7 +59,12 @@ export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {
     })
     .catch(ex => console.log("Put Data error:", ex));
 
-export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
+export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -70,7 +75,12 @@ export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`)
     .catch(ex => console.log(`get ${path}`, ex));
 
 export const getDataByID = (id, cb) =>  {
-    fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`)
+    fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`,{
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        }
+    })
         .then((response) => {
             if (response.ok) {
                 return response.json().then(data => cb(data));
@@ -105,7 +115,10 @@ export const getUnits = (path, cb) => fetch(`${path}`, {
 
 export const putData = (path, data, cb) => fetch(`${path}`, {
     method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    },
     body:  JSON.stringify(data)
 })
     .then((response) => {
@@ -117,7 +130,10 @@ export const putData = (path, data, cb) => fetch(`${path}`, {
 
 export const postData = (path, data, cb) => fetch(`${path}`, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    },
     body:  JSON.stringify(data)
 })
     .then((response) => {
@@ -129,7 +145,10 @@ export const postData = (path, data, cb) => fetch(`${path}`, {
 
 export const removeData = (path, cb) => fetch(`${path}`, {
     method: 'DELETE',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    },
 })
     .then((response) => {
         if (response.ok) {
@@ -138,7 +157,12 @@ export const removeData = (path, cb) => fetch(`${path}`, {
     })
     .catch(ex => console.log("Remove Data error:", ex));
 
-export const getState = (path, cb) => fetch(`${WFDB_BACKEND}/${path}`)
+export const getState = (path, cb) => fetch(`${WFDB_BACKEND}/${path}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -151,7 +175,12 @@ export const getState = (path, cb) => fetch(`${WFDB_BACKEND}/${path}`)
 
 export const getStatus = (ep, cb) => {
     let url = ep === "convert" ? CNV_BACKEND : WFSRV_BACKEND;
-    fetch(`${url}/${ep}/status`)
+    fetch(`${url}/${ep}/status`, {
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        }
+    })
         .then((response) => {
             if (response.ok) {
                 return response.json().then(data => cb(data));
@@ -366,7 +395,12 @@ export const fetchPersons = (id, cb) => fetch(`${MDB_BACKEND}/content_units/${id
     })
     .catch(ex => console.log(`get ${id}`, ex));
 
-export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/find?key=${key}&value=${filename}`)
+export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/find?key=${key}&value=${filename}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -374,7 +408,12 @@ export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/f
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
-export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/line?key=${key}&value=${value}`)
+export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/line?key=${key}&value=${value}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -382,7 +421,12 @@ export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/line
     })
     .catch(ex => console.log(`get ${value}`, ex));
 
-export const getChildren = (value, key, cb) => fetch(`${WFDB_BACKEND}/dgima/parent?key=${key}&value=${value}`)
+export const getChildren = (value, key, cb) => fetch(`${WFDB_BACKEND}/dgima/parent?key=${key}&value=${value}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -390,7 +434,12 @@ export const getChildren = (value, key, cb) => fetch(`${WFDB_BACKEND}/dgima/pare
     })
     .catch(ex => console.log(`get ${value}`, ex));
 
-export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?key=file_name&value=${filename}`)
+export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?key=file_name&value=${filename}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
@@ -411,7 +460,12 @@ export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`,
     })
     .catch(ex => console.log(`get ${sha}`, ex));
 
-export const captureSha = (sha, cb) => fetch(`${WFDB_BACKEND}/capture/find?key=sha1&value=${sha}`)
+export const captureSha = (sha, cb) => fetch(`${WFDB_BACKEND}/capture/find?key=sha1&value=${sha}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
     .then((response) => {
         if (response.ok) {
             return response.json().then(data => cb(data));
