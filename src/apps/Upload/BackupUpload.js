@@ -34,7 +34,7 @@ class BackupUpload extends Component {
             });
 
         const props = {
-            action: `${WF_BACKEND}/backup/upload`,
+            action: `${WF_BACKEND}/gibuy/upload`,
             type: 'drag',
             accept: '',
             multiple: true,
