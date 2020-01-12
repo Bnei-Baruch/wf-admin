@@ -28,6 +28,14 @@ export const toHms = (totalSec) => {
     return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
 };
 
+export const kmHms = (totalSec) => {
+    let hours = parseInt( totalSec / 3600 , 10) % 24;
+    let minutes = parseInt( totalSec / 60 , 10) % 60;
+    let seconds = (totalSec % 60).toFixed(0);
+    if(seconds < 0) seconds = 0;
+    return (hours === 0 ? "" : hours + "h") + (minutes === 0 ? "" : minutes + "m") + seconds + "s";
+};
+
 export const randomString = (len, charSet) => {
     charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let randomString = '';

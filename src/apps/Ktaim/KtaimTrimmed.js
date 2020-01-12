@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {kmHms, getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
@@ -43,6 +43,14 @@ class KtaimTrimmed extends Component {
         const {wfsend,censored} = file_data.wfstatus;
         let disabled = wfsend || censored;
         this.setState({source, active, file_data, disabled});
+        let {inpoints,outpoints} = file_data;
+        let offset = inpoints[0];
+        for(let i=0; i<inpoints.length; i++) {
+            if(i > 0) offset = offset + (inpoints[i] - outpoints[i-1]);
+            let inp = kmHms(inpoints[i] - offset);
+            let oup = kmHms(outpoints[i] - offset);
+            console.log("IN: " + inp + " OUT: " + oup)
+        }
     };
 
     getPlayer = (player) => {
