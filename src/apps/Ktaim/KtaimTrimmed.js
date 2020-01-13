@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {kmHms, getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
-import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
+import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
 class KtaimTrimmed extends Component {
@@ -10,6 +10,7 @@ class KtaimTrimmed extends Component {
         active: null,
         disabled: true,
         open: false,
+        links: [],
         trimmed: [],
         file_data: {},
         ival: null,
@@ -43,14 +44,23 @@ class KtaimTrimmed extends Component {
         const {wfsend,censored} = file_data.wfstatus;
         let disabled = wfsend || censored;
         this.setState({source, active, file_data, disabled});
+    };
+
+    makeLinks = (file_data) => {
+        if(!file_data.wfstatus.wfsend)
+            return;
         let {inpoints,outpoints} = file_data;
+        let uid = file_data.line.uid;
+        let links = [];
         let offset = inpoints[0];
         for(let i=0; i<inpoints.length; i++) {
             if(i > 0) offset = offset + (inpoints[i] - outpoints[i-1]);
             let inp = kmHms(inpoints[i] - offset);
             let oup = kmHms(outpoints[i] - offset);
-            console.log("IN: " + inp + " OUT: " + oup)
+            let url = `https://kabbalahmedia.info/lessons/cu/${uid}?language=he&sstart=${inp}&send=${oup}&mediaType=video`;
+            links.push(url);
         }
+        this.setState({links})
     };
 
     getPlayer = (player) => {
@@ -138,12 +148,16 @@ class KtaimTrimmed extends Component {
     };
 
     render() {
-
+        let {links} = this.state;
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
         let d = (<Icon color='blue' name='lock'/>);
         let s = (<Icon color='red' name='key'/>);
+
+        let links_list = links.map((link,i) => {
+            return  (<p key={i} ><i style={{color: 'blue'}}>{link}</i></p>)
+        });
 
         let trimmed = this.state.trimmed.map((data) => {
             const {trimmed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
@@ -157,6 +171,16 @@ class KtaimTrimmed extends Component {
                 <Table.Row
                     positive={wfsend} warning={!trimmed} disabled={!trimmed || locked}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>
+                        <Modal trigger={<Icon name='linkify' color='blue' size='large'
+                                             disabled={!wfsend} onClick={() => this.makeLinks(data)} />}
+                               mountNode={document.getElementById("ltr-modal-mount")}
+                               onClose={() => this.setState({links: []})}>
+                            <Message warning attached>
+                                {links_list}
+                            </Message>
+                        </Modal>
+                    </Table.Cell>
                     <Table.Cell>{secured ? s : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!wfsend}>{wfsend ? v : x}</Table.Cell>
@@ -190,6 +214,7 @@ class KtaimTrimmed extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
+                            <Table.HeaderCell width={1}>Links</Table.HeaderCell>
                             <Table.HeaderCell>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             {/*<Table.HeaderCell width={1}>Rename</Table.HeaderCell>*/}
