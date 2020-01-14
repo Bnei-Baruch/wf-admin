@@ -58,7 +58,7 @@ class KtaimTrimmed extends Component {
             if(i > 0) offset = offset + (inpoints[i] - outpoints[i-1] - ding);
             let inp = kmHms(inpoints[i] - offset);
             let oup = kmHms(outpoints[i] - offset);
-            let url = `https://kabbalahmedia.info/lessons/cu/${uid}?language=he&sstart=${inp}&send=${oup}&mediaType=video`;
+            let url = `https://kabbalahmedia.info/lessons/cu/${uid}?sstart=${inp}&send=${oup}`;
             links.push(url);
         }
         this.setState({links})
