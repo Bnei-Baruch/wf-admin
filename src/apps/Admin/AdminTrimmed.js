@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {
-    getData,
+    getData, getToken,
     getUnits,
     IVAL,
     MDB_FINDSHA,
@@ -170,7 +170,7 @@ class AdminTrimmed extends Component {
         let {file_data} = this.state;
         console.log(":: Admin - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/trimmer/${file_data.trim_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     render() {

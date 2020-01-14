@@ -10,7 +10,7 @@ import {
     getDCT,
     insertName,
     arichaName,
-    MDB_FINDSHA
+    MDB_FINDSHA, getToken
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -268,7 +268,7 @@ class ArichaAdmin extends Component {
         let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     render() {

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import moment from 'moment';
-import {getData, MDB_UNIT_URL, WFDB_BACKEND} from '../../shared/tools';
+import {getData, getToken, MDB_UNIT_URL, WFDB_BACKEND} from '../../shared/tools';
 import { Icon, Table, Loader, Popup, Checkbox } from 'semantic-ui-react'
 
 class WFDBAricha extends Component {
@@ -44,7 +44,7 @@ class WFDBAricha extends Component {
         console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
         let wfstatus = this.state.wfstatus;
         wfstatus[data] = !this.state.wfstatus[data];
-        fetch(`${WFDB_BACKEND}/aricha/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
+        fetch(`${WFDB_BACKEND}/aricha/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
         this.setState({wfstatus: {...wfstatus}});
     };
 

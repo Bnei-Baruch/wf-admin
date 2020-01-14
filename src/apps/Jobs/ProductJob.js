@@ -12,7 +12,7 @@ import {
     getDCT,
     insertName,
     arichaName,
-    MDB_FINDSHA, newJobMeta, postData
+    MDB_FINDSHA, newJobMeta, postData, getToken
 } from '../../shared/tools';
 import {
     Menu,
@@ -171,7 +171,7 @@ class ProductJob extends Component {
         job_data.special = special;
         console.log(":: Going to send File: ", job_data + " : to: ", special);
         this.setState({ sending: true, send_button: true });
-        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/${special}?value=true`, { method: 'POST',});
+        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/${special}?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
         setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
         // putData(`${WFSRV_BACKEND}/workflow/send_aricha`, job_data, (cb) => {
         //     console.log(":: Aricha - send respond: ",cb);
@@ -213,7 +213,7 @@ class ProductJob extends Component {
         let {job_data} = this.state;
         console.log(":: Censor - set removed: ", job_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     addDoer = (doers) => {

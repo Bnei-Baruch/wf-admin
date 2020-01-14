@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import moment from 'moment';
-import {getData, postData, WFDB_BACKEND, MDB_UNIT_URL} from '../../shared/tools';
+import {getData, postData, WFDB_BACKEND, MDB_UNIT_URL, getToken} from '../../shared/tools';
 import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class Trimmer extends Component {
@@ -60,7 +60,7 @@ class Trimmer extends Component {
         console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
         let wfstatus = this.state.wfstatus;
         wfstatus[data] = !this.state.wfstatus[data];
-        fetch(`${WFDB_BACKEND}/trimmer/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
+        fetch(`${WFDB_BACKEND}/trimmer/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
         this.setState({wfstatus: {...wfstatus}});
     };
 

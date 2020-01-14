@@ -8,7 +8,7 @@ import {
     putData,
     toHms,
     WFDB_BACKEND,
-    WFSRV_BACKEND, newTrimMeta
+    WFSRV_BACKEND, newTrimMeta, getToken
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message, Accordion } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -128,7 +128,7 @@ class CensorCheck extends Component {
         let ep = getEndpoint(active);
         console.log(":: Censor - set removed: ", file_data);
         this.setState({ disabled: true });
-        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     setSecured = () => {
@@ -137,7 +137,7 @@ class CensorCheck extends Component {
         let ep = getEndpoint(active);
         console.log(":: Censor - set secured: ", file_data);
         this.setState({ disabled: true });
-        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=${status}`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=${status}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     sendToTrim = () => {
@@ -147,7 +147,7 @@ class CensorCheck extends Component {
     onClose = () => {
         let {active} = this.state;
         let ep = getEndpoint(active);
-        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({open: false, disabled: true, file_data: ""});
     };
 

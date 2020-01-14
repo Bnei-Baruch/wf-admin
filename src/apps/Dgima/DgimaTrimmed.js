@@ -8,7 +8,7 @@ import {
     newInsertMeta,
     putData,
     WFDB_BACKEND,
-    WFSRV_BACKEND
+    WFSRV_BACKEND, getToken
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message, Dropdown, Checkbox, Confirm } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -326,7 +326,7 @@ class DgimaTrimmed extends Component {
         const {file_data} = this.state;
         console.log(":: Dgima - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/removed?value=true`, { method: 'POST',})
+        fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     fileToJoin = (join_files) => {
@@ -450,7 +450,7 @@ class DgimaTrimmed extends Component {
                         console.log(":: Insert respond: ",cb);
                         if(cb.status === "ok") {
                             // After that correct only throw fix workflow
-                            fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/wfsend?value=true`, { method: 'POST',});
+                            fetch(`${WFDB_BACKEND}/dgima/${file_data.dgima_id}/wfstatus/wfsend?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
                             setTimeout(() => this.setState({sending: false, fix_button: false}), 2000);
                             alert("Fix successful :)");
 

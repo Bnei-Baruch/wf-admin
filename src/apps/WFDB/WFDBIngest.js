@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {getData, postData, WFDB_BACKEND} from '../../shared/tools';
+import {getData, getToken, postData, WFDB_BACKEND} from '../../shared/tools';
 import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
 class WFDBIngest extends Component {
@@ -59,7 +59,7 @@ class WFDBIngest extends Component {
         console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
         let wfstatus = this.state.wfstatus;
         wfstatus[data] = !this.state.wfstatus[data];
-        fetch(`${WFDB_BACKEND}/ingest/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',});
+        fetch(`${WFDB_BACKEND}/ingest/${this.state.id}/wfstatus/${data}?value=${wfstatus[data]}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
         this.setState({wfstatus: {...wfstatus}});
     };
 
