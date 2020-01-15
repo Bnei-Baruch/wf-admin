@@ -207,18 +207,18 @@ export const getDCT = (val) => {
 };
 
 export const getName = (metadata) => {
-
+    //console.log(":: GetName - got metadata: ",metadata);
     let name = [];
     const {line,language,upload_type} = metadata;
 
     // Language
     name[0] = language;
     // Original
-    name[1] = name[0] === line.original_language || language === "mlt" ? "o" : "t";
+    name[1] = name[0] === line.original_language ? "o" : "t";
     // Lecturer
     name[2] = line.lecturer;
     // Date
-    name[3] = line.capture_date || line.film_date;
+    name[3] = line.capture_date && line.capture_date !== "0001-01-01" ? line.capture_date : line.film_date;
     // Type
     name[4] = CONTENT_TYPES_MAPPINGS[line.content_type].pattern;
     // Description
@@ -229,6 +229,7 @@ export const getName = (metadata) => {
     } else if(upload_type === "tamlil") {
         name[4] = line.send_name.split("_").slice(4).join("_").replace(/([^-_a-zA-Z0-9]+)/g, '').toLowerCase();
         name.splice(-1,1);
+    //FIXME: It's was in wf-admin only
     } else if(line.collection_type === "CONGRESS") {
         return line.upload_filename;
     } else if(upload_type === "kitei-makor") {
@@ -251,6 +252,11 @@ export const getName = (metadata) => {
         name[2] = "rav";
         name[4] = "pub";
         name[5] =  line.upload_filename.split("_").slice(5)[0].replace(/([^-a-zA-Z0-9]+)/g, '').toLowerCase() + "_" + line.publisher;
+    } else if(upload_type === "declamation") {
+        name[1] = "o";
+        name[2] = "rav";
+        name[4] = "declamation";
+        name[5] =  "blog-rav_full";
     }
 
     return name.join("_") + '.' + mime_list[line.mime_type];

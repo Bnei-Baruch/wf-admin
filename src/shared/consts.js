@@ -4,13 +4,13 @@ export const EMPTY_OBJECT = Object.freeze({});
 
 export const content_options = [
     { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
-    //{ value: 'FRIENDS_GATHERING', text: ' ‏חברים', icon: 'users' },
     { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
     { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
     { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },
     { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
     { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
     { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
+    { value: 'BLOG_POST', text: 'Blog-Post', icon: 'blogger' },
     //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
 ];
 
@@ -25,6 +25,7 @@ export const upload_extensions = {
     "dgima": ["mp4","mp3"],
     "article": ["doc","docx","pdf"],
     "publication": ["zip"],
+    "declamation": ["mp3"],
 };
 
 export const DCT_OPTS = {
@@ -35,6 +36,7 @@ export const DCT_OPTS = {
     MEALS: ['MEAL'],
     OTHER: ['LECTURE','FRIENDS_GATHERING','EVENT_PART','TRAINING'],
     ARTICLES: ['ARTICLE'],
+    BLOG_POST: ['BLOG_POST'],
 };
 
 export const mime_list = {
@@ -43,11 +45,13 @@ export const mime_list = {
     "image/jpeg": "jpg",
     "image/png": "png",
     "audio/wav": "wav",
+    "audio/mpeg": "mp3",
     "audio/mp3": "mp3",
     "video/mp4": "mp4",
     "application/pdf": "pdf",
     "video/mpeg": "mpg",
-    "application/zip": "zip"
+    "application/zip": "zip",
+    "application/x-zip-compressed": "zip"
 };
 
 export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn","amh","hin","per"];
@@ -194,6 +198,7 @@ export const CT_KITEI_MAKOR           = 'KITEI_MAKOR';
 export const CT_PUBLICATION           = 'PUBLICATION';
 export const CT_LELO_MIKUD            = 'LELO_MIKUD';
 export const CT_RESEARCH_MATERIAL     = 'RESEARCH_MATERIAL';
+export const CT_BLOG_POST             = 'BLOG_POST';
 
 export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY];
 export const LECTURE_CONTENT_TYPES = [CT_LECTURE_SERIES, CT_CHILDREN_LESSONS, CT_WOMEN_LESSONS, CT_VIRTUAL_LESSONS];
@@ -205,73 +210,75 @@ export const ARTIFACT_TYPES = [
 ];
 
 export const CONTENT_TYPE_BY_ID = {
-  1: CT_DAILY_LESSON,
-  2: CT_SPECIAL_LESSON,
-  3: CT_FRIENDS_GATHERINGS,
-  4: CT_CONGRESS,
-  5: CT_VIDEO_PROGRAM,
-  6: CT_LECTURE_SERIES,
-  7: CT_MEALS,
-  8: CT_HOLIDAY,
-  9: CT_PICNIC,
-  10: CT_UNITY_DAY,
-  11: CT_LESSON_PART,
-  12: CT_LECTURE,
-  13: CT_CHILDREN_LESSON,
-  14: CT_WOMEN_LESSON,
-  16: CT_VIRTUAL_LESSON,
-  18: CT_FRIENDS_GATHERING,
-  19: CT_MEAL,
-  20: CT_VIDEO_PROGRAM_CHAPTER,
-  21: CT_FULL_LESSON,
-  22: CT_ARTICLE,
-  27: CT_UNKNOWN,
-  28: CT_EVENT_PART,
-  29: CT_CLIP,
-  30: CT_TRAINING,
-  31: CT_KITEI_MAKOR,
-  32: CT_VIRTUAL_LESSONS,
-  33: CT_CHILDREN_LESSONS,
-  34: CT_WOMEN_LESSONS,
-  35: CT_CLIPS,
-  36: CT_PUBLICATION,
-  37: CT_ARTICLES,
-  38: CT_LELO_MIKUD,
+    1: CT_DAILY_LESSON,
+    2: CT_SPECIAL_LESSON,
+    3: CT_FRIENDS_GATHERINGS,
+    4: CT_CONGRESS,
+    5: CT_VIDEO_PROGRAM,
+    6: CT_LECTURE_SERIES,
+    7: CT_MEALS,
+    8: CT_HOLIDAY,
+    9: CT_PICNIC,
+    10: CT_UNITY_DAY,
+    11: CT_LESSON_PART,
+    12: CT_LECTURE,
+    13: CT_CHILDREN_LESSON,
+    14: CT_WOMEN_LESSON,
+    16: CT_VIRTUAL_LESSON,
+    18: CT_FRIENDS_GATHERING,
+    19: CT_MEAL,
+    20: CT_VIDEO_PROGRAM_CHAPTER,
+    21: CT_FULL_LESSON,
+    22: CT_ARTICLE,
+    27: CT_UNKNOWN,
+    28: CT_EVENT_PART,
+    29: CT_CLIP,
+    30: CT_TRAINING,
+    31: CT_KITEI_MAKOR,
+    32: CT_VIRTUAL_LESSONS,
+    33: CT_CHILDREN_LESSONS,
+    34: CT_WOMEN_LESSONS,
+    35: CT_CLIPS,
+    36: CT_PUBLICATION,
+    37: CT_ARTICLES,
+    38: CT_LELO_MIKUD,
+    44: CT_BLOG_POST,
     45: CT_RESEARCH_MATERIAL,
 };
 
 export const CONTENT_TYPES_MAPPINGS = {
-  [CT_LESSON_PART]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
-  [CT_FULL_LESSON]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
-  [CT_KITEI_MAKOR]: { collection_type: null, pattern: 'kitei-makor' },
-  [CT_LELO_MIKUD]: { collection_type: null, pattern: 'lelo-mikud' },
-  [CT_VIDEO_PROGRAM_CHAPTER]: { collection_type: CT_VIDEO_PROGRAM, pattern: 'program' },
-  [CT_FRIENDS_GATHERING]: { collection_type: CT_FRIENDS_GATHERINGS, pattern: 'yeshivat-haverim' },
-  [CT_MEAL]: { collection_type: CT_MEALS, pattern: 'seuda' },
-  [CT_LECTURE]: { collection_type: CT_LECTURE_SERIES, pattern: 'lecture' },
-  [CT_TRAINING]: { collection_type: null, pattern: 'training' },
-  [CT_CLIP]: { collection_type: null, pattern: 'clip' },
-  [CT_CHILDREN_LESSON]: { collection_type: CT_CHILDREN_LESSONS, pattern: 'children-lesson' },
-  [CT_WOMEN_LESSON]: { collection_type: CT_WOMEN_LESSONS, pattern: 'women-lesson' },
-  [CT_VIRTUAL_LESSON]: { collection_type: CT_VIRTUAL_LESSONS, pattern: 'vl' },
-  [CT_EVENT_PART]: { collection_type: null, pattern: 'event-part' },
+    [CT_LESSON_PART]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
+    [CT_FULL_LESSON]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
+    [CT_KITEI_MAKOR]: { collection_type: null, pattern: 'kitei-makor' },
+    [CT_LELO_MIKUD]: { collection_type: null, pattern: 'lelo-mikud' },
+    [CT_VIDEO_PROGRAM_CHAPTER]: { collection_type: CT_VIDEO_PROGRAM, pattern: 'program' },
+    [CT_FRIENDS_GATHERING]: { collection_type: CT_FRIENDS_GATHERINGS, pattern: 'yeshivat-haverim' },
+    [CT_MEAL]: { collection_type: CT_MEALS, pattern: 'seuda' },
+    [CT_LECTURE]: { collection_type: CT_LECTURE_SERIES, pattern: 'lecture' },
+    [CT_TRAINING]: { collection_type: null, pattern: 'training' },
+    [CT_CLIP]: { collection_type: null, pattern: 'clip' },
+    [CT_CHILDREN_LESSON]: { collection_type: CT_CHILDREN_LESSONS, pattern: 'children-lesson' },
+    [CT_WOMEN_LESSON]: { collection_type: CT_WOMEN_LESSONS, pattern: 'women-lesson' },
+    [CT_VIRTUAL_LESSON]: { collection_type: CT_VIRTUAL_LESSONS, pattern: 'vl' },
+    [CT_EVENT_PART]: { collection_type: null, pattern: 'event-part' },
     [CT_ARTICLE]: { collection_type: null, pattern: 'art' },
     [CT_PUBLICATION]: { collection_type: null, pattern: 'pub' },
+    [CT_BLOG_POST]: { collection_type: null, pattern: 'declamation' },
     [CT_RESEARCH_MATERIAL]: { collection_type: null, pattern: 'research-material' },
 };
 
 export const EVENT_PART_TYPES = [
-  { text: 'שיעור', content_type: CT_LESSON_PART, pattern: 'lesson' },
-  { text: 'ישיבת חברים', content_type: CT_FRIENDS_GATHERING, pattern: 'yeshivat-haverim' },
-  { text: 'סעודה', content_type: CT_MEAL, pattern: 'seuda' },
-  { text: 'טקס פתיחה', content_type: CT_EVENT_PART, pattern: 'tekes-ptiha' },
-  { text: 'טקס סיום', content_type: CT_EVENT_PART, pattern: 'tekes-siyum' },
-  { text: 'ערב פתוח', content_type: CT_EVENT_PART, pattern: 'erev-patuah' },
-  { text: 'ערב תרבות', content_type: CT_EVENT_PART, pattern: 'erev-tarbut' },
-  { text: 'הצגת פרויקט', content_type: CT_EVENT_PART, pattern: 'atzagat-proekt' },
-  { text: 'הענקת תעודות', content_type: CT_EVENT_PART, pattern: 'haanakat-teudot' },
-  { text: 'חתימת ספרים', content_type: CT_EVENT_PART, pattern: 'hatimat-sfarim' },
-  { text: 'אחר', content_type: CT_EVENT_PART, pattern: 'event' },
+    { text: 'שיעור', content_type: CT_LESSON_PART, pattern: 'lesson' },
+    { text: 'ישיבת חברים', content_type: CT_FRIENDS_GATHERING, pattern: 'yeshivat-haverim' },
+    { text: 'סעודה', content_type: CT_MEAL, pattern: 'seuda' },
+    { text: 'טקס פתיחה', content_type: CT_EVENT_PART, pattern: 'tekes-ptiha' },
+    { text: 'טקס סיום', content_type: CT_EVENT_PART, pattern: 'tekes-siyum' },
+    { text: 'ערב פתוח', content_type: CT_EVENT_PART, pattern: 'erev-patuah' },
+    { text: 'ערב תרבות', content_type: CT_EVENT_PART, pattern: 'erev-tarbut' },
+    { text: 'הצגת פרויקט', content_type: CT_EVENT_PART, pattern: 'atzagat-proekt' },
+    { text: 'הענקת תעודות', content_type: CT_EVENT_PART, pattern: 'haanakat-teudot' },
+    { text: 'חתימת ספרים', content_type: CT_EVENT_PART, pattern: 'hatimat-sfarim' },
+    { text: 'אחר', content_type: CT_EVENT_PART, pattern: 'event' },
 ];
 
 export const LESSON_PARTS_OPTIONS = [{ text: 'הכנה', value: 0 }]
