@@ -21,7 +21,7 @@ const MetusApp = lazy(() => import("./apps/Metus/MetusApp"));
 const ExternalApp = lazy(() => import("./apps/External/ExternalApp"));
 const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
 const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
-const MainPage = lazy(() => import("./apps/Insert/MainPage"));
+const InsertApp = lazy(() => import("./apps/Insert/InsertApp"));
 const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
 const FilesApp = lazy(() => import("./apps/Files/FilesApp"));
 
@@ -105,7 +105,7 @@ class App extends Component {
         let aricha = (<Suspense fallback={<Segment loading size='massive' />}><ArichaApp user={user} /></Suspense>);
         let dgima= (<Suspense fallback={<Segment loading size='massive' />}><DgimaApp user={user} /></Suspense>);
         let external = (<Suspense fallback={<Segment loading size='massive' />}><ExternalApp user={user} /></Suspense>);
-        let mainpage = (<Suspense fallback={<Segment loading size='massive' />}><MainPage user={user} /></Suspense>);
+        let mainpage = (<Suspense fallback={<Segment loading size='massive' />}><InsertApp user={user} /></Suspense>);
         let upload = (<Suspense fallback={<Segment loading size='massive' />}><UploadApp user={user} /></Suspense>);
         let metus = (<Suspense fallback={<Segment loading size='massive' />}><MetusApp user={user} /></Suspense>);
         let wfdb = (<Suspense fallback={<Segment loading size='massive' />}><WFDB user={user} /></Suspense>);

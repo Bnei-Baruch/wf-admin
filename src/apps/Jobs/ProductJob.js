@@ -31,7 +31,7 @@ import {
     Input
 } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import InsertApp from "../Insert/InsertApp"
+import InsertModal from "../Insert/InsertModal"
 import CIT from '../CIT/CIT';
 import FilesJob from "./FilesJob";
 

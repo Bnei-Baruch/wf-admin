@@ -3,7 +3,7 @@ import moment from 'moment';
 import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import InsertApp from "../Insert/InsertApp"
+import InsertModal from "../Insert/InsertModal"
 
 class MetusDB extends Component {
 
@@ -239,7 +239,7 @@ class MetusDB extends Component {
                                        open={this.state.insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
+                                    <InsertModal filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
                         </Menu.Menu>

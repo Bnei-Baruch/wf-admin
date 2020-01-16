@@ -14,7 +14,7 @@ import {
 } from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import InsertApp from "../Insert/InsertApp"
+import InsertModal from "../Insert/InsertModal"
 import CIT from '../CIT/CIT';
 
 class ArichaAdmin extends Component {
@@ -360,7 +360,7 @@ class ArichaAdmin extends Component {
                                        open={insert_open}
                                        size="large"
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertApp filedata={filedata} metadata={metadata} onComplete={this.onInsert} user={this.props.user} />
+                                    <InsertModal filedata={filedata} metadata={metadata} onComplete={this.onInsert} user={this.props.user} />
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>

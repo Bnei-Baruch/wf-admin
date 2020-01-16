@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
-import { Progress,Container,Message } from 'semantic-ui-react';
+import { Progress,Container } from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {WFSRV_BACKEND} from "../../shared/tools";
 class UploadFile extends Component {
 
-    state = { percent: 0 }
+    state = { percent: 0 };
 
     progress = (step, file) => {
         let count = Math.round(step.percent);
-        //console.log('onProgress', step, file.name);
         this.setState({percent: count});
     };
 
     uploadDone = (file) => {
-        //console.log(':: upload done: ', file);
         this.props.onFileData(file);
         this.setState({percent: 0})
     };
@@ -23,13 +21,6 @@ class UploadFile extends Component {
         const props = {
             action: `${WFSRV_BACKEND}/insert/upload`,
             type: 'drag',
-            //accept: '.zip;.mp3',
-            beforeUpload(file) {
-                //console.log('beforeUpload', file.name);
-            },
-            onStart(file) {
-                //console.log('onStart', file.name);
-            },
             onError(err) {
                 console.log('onError', err);
             },
@@ -38,17 +29,14 @@ class UploadFile extends Component {
 
         return (
             <Container textAlign='center'>
-                <Message>
-                    <Upload
-                        {...this.props}
-                        {...props}
-                        className={this.props.mode === "1" ? "insert" : "update"}
-                        onSuccess={this.uploadDone}
-                        onProgress={this.progress} >
-                        Drop file here or click me
-                    </Upload>
-                    <Progress label='' percent={this.state.percent} indicating progress='percent' />
-                </Message>
+                <Upload
+                    {...props}
+                    className={this.props.mode === "1" ? "insert" : "update"}
+                    onSuccess={this.uploadDone}
+                    onProgress={this.progress} >
+                    Drop file here or click me
+                </Upload>
+                <Progress label='' percent={this.state.percent} indicating progress='percent' />
             </Container>
         );
     }
