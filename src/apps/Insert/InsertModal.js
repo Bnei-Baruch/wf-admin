@@ -59,7 +59,7 @@ class InsertModal extends Component {
 
     selectContentType = (content_type) => {
         let {metadata} = this.state;
-        const {upload_type} = this.props.metadata;
+        let upload_type = content_type === "BLOG_POST" ? 'declamation' : this.props.metadata.upload_type;
         this.setState({metadata: {...metadata, content_type, upload_type}});
     };
 
@@ -121,6 +121,25 @@ class InsertModal extends Component {
             this.setState({ isValidated: true });
         }
 
+        // Declamation that does not has unit
+        if(!unit) {
+            console.log(" - Declamation without unit -");
+            type_id = 44;
+            metadata.line.content_type = "BLOG_POST";
+            metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
+            metadata.line.lecturer = "rav";
+            metadata.line.has_translation = false;
+            metadata.line.film_date = metadata.date;
+            metadata.line.language = metadata.language;
+            metadata.line.original_language = metadata.language;
+            metadata.send_id = null;
+            metadata.line.uid = null;
+            metadata.insert_name = getName(metadata);
+            metadata.line.final_name = metadata.insert_name.split('.')[0];
+            this.checkMeta(metadata);
+            return
+        }
+
         // Meta from unit properties going to line
         metadata.line.uid = uid;
         metadata.line.unit_id = id;
@@ -148,28 +167,18 @@ class InsertModal extends Component {
                         console.log(":: insert data - got: ",data);
                         if(data.length > 0) {
                             //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
+                            //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                             //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                            // So we going to do stupid action to find files with original language
-                            let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
+                            //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                            let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                            console.log(" :: Got sources for remux: ", remux_src);
+                            // We must get here 1 or 2 files and save their url
                             if(remux_src.length === 0 || remux_src.length > 2) {
-                                remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                            } else if(remux_src.length === 0 || remux_src.length > 2) {
-                                remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                            } else if(remux_src.length === 0 || remux_src.length > 2) {
-                                remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
-                            } else if(remux_src.length === 0 || remux_src.length > 2) {
-                                remux_src = published.filter(s => s.name.match("eng_o_") && s.mime_type === "video/mp4");
-                            } else if(remux_src.length === 0 || remux_src.length > 2) {
                                 alert("Fail to get valid sources for remux");
                                 this.setState({ isValidated: false });
                                 return;
-                            }
-
-                            // We must get here 1 or 2 files and save their url
-                            console.log(" :: Got sources for remux: ", remux_src);
-
-                            // It's mean we did not get HD here
-                            if(remux_src.length === 1) {
+                                // It's mean we did not get HD here
+                            } else if(remux_src.length === 1) {
                                 metadata.insert_id = data[0].insert_id;
                                 metadata.line.nHD = remux_src[0].properties.url;
                                 metadata.line.nHD_sha1 = remux_src[0].sha1;
@@ -207,29 +216,19 @@ class InsertModal extends Component {
                     this.setState({ isValidated: false });
                     return false;
                 } else {
-                    //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
+                    // Not in all files we got original_language property so we going to check string
+                    // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                     //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                    // So we going to do stupid action to find files with original language
-                    let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
+                    //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                    let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                    console.log(" :: Got sources for remux: ", remux_src);
+                    // We must get here 1 or 2 files and save their url
                     if(remux_src.length === 0 || remux_src.length > 2) {
-                        remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                    } else if(remux_src.length === 0 || remux_src.length > 2) {
-                        remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                    } else if(remux_src.length === 0 || remux_src.length > 2) {
-                        remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
-                    } else if(remux_src.length === 0 || remux_src.length > 2) {
-                        remux_src = published.filter(s => s.name.match("eng_o_") && s.mime_type === "video/mp4");
-                    } else if(remux_src.length === 0 || remux_src.length > 2) {
                         alert("Fail to get valid sources for remux");
                         this.setState({ isValidated: false });
                         return;
-                    }
-
-                    // We must get here 1 or 2 files and save their url
-                    console.log(" :: Got sources for remux: ", remux_src);
-
-                    // It's mean we did not get HD here
-                    if(remux_src.length === 1) {
+                        // It's mean we did not get HD here
+                    } else if(remux_src.length === 1) {
                         metadata.line.nHD = remux_src[0].properties.url;
                         metadata.line.nHD_sha1 = remux_src[0].sha1;
                         metadata.line.HD = null;
@@ -259,25 +258,6 @@ class InsertModal extends Component {
             const wfid = metadata.send_id;
             wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
         }
-
-        // Declamation that does not has unit
-        if(!unit) {
-            console.log(" - Declamation without unit -");
-            type_id = 44;
-            metadata.line.content_type = "BLOG_POST";
-            metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
-            metadata.line.lecturer = "rav";
-            metadata.line.has_translation = false;
-            metadata.line.film_date = metadata.date;
-            metadata.line.language = metadata.language;
-            metadata.line.original_language = metadata.language;
-            metadata.send_id = null;
-            metadata.line.uid = null;
-            metadata.insert_name = getName(metadata);
-            metadata.line.final_name = metadata.insert_name.split('.')[0];
-            this.checkMeta(metadata);
-            return
-        }
     };
 
     newUnitWF = (metadata, wfid) => {
@@ -293,7 +273,7 @@ class InsertModal extends Component {
                 console.log(":: Metadata insert_name: \n%c" + metadata.insert_name, "color:Green");
                 this.checkMeta(metadata);
             } else {
-                alert("Something goes wrong :(");
+                alert("Something wrong happend :(");
                 this.setState({ isValidated: false });
             }
         });
@@ -315,19 +295,27 @@ class InsertModal extends Component {
     checkMeta = (metadata) => {
         console.log(":: checkMeta - metadata: ", metadata);
         const {insert_type, insert_name, upload_type} = metadata;
+
+        // Check valid filename string
+        if(metadata.insert_name === null) {
+            alert("Upload file name is worng");
+            this.setState({ isValidated: false });
+            return
+        }
+
         [metadata.file_name, metadata.extension] = metadata.insert_name.split('.');
+
+        // Check valid string
+        if(insert_name.length < 30) {
+            alert("Something wrong in file name building");
+            this.setState({ isValidated: false });
+            return
+        }
 
         // Check upload type extension
         let ext = upload_extensions[upload_type].filter(ext => ext === metadata.extension);
         if (ext.length === 0) {
             alert("Extension: " + metadata.extension + " - is NOT valid for upload type - " + upload_type);
-            this.setState({ isValidated: false });
-            return
-        }
-
-        // Check valid string
-        if(insert_name.length < 30) {
-            alert("Something wrong in file name building");
             this.setState({ isValidated: false });
             return
         }
@@ -371,13 +359,11 @@ class InsertModal extends Component {
     onComplete = () => {
         this.setState({ isValidated: false, loading: true });
         let {metadata} = this.state;
+        const {name,email} = this.props.user;
+        metadata.line.name = name;
+        metadata.line.email = email;
         delete metadata.send_uid;
         delete metadata.content_type;
-        if(this.props.user) {
-            const {name,email} = this.props.user;
-            metadata.line.name = name;
-            metadata.line.email = email;
-        }
         console.log(" ::: onComplete metadata ::: ", metadata);
         this.props.onComplete(metadata);
     };
@@ -385,8 +371,12 @@ class InsertModal extends Component {
     render() {
 
         const {filename} = this.props.filedata;
+        const {roles} = this.props.user;
         const {metadata, isValidated, loading, locale, unit} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
+
+        //let archive_uploader = roles.find(r => r === "archive_uploader");
+        let archive_typist = roles.find(r => r === "archive_typist");
 
         let date_picker = (
             <DatePicker
@@ -416,24 +406,24 @@ class InsertModal extends Component {
             />
         );
 
-        let update_style = (<style>{'.ui.clearing.segment { background-color: #f9e7db; }'}</style>);
-        let rename_style = (<style>{'.ui.clearing.segment { background-color: #e6aaaa; }'}</style>);
+        let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
+        let rename_style = (<style>{'.ui.segment { background-color: #e2c2ae; }'}</style>);
 
         const upload_options = [
-            { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: content_type === "ARTICLES" },
-            { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: content_type === "ARTICLES" },
-            { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: content_type === "ARTICLES" },
-            { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: content_type === "ARTICLES" },
-            { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: content_type === "ARTICLES" },
-            { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: content_type === "ARTICLES" },
+            { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
+            { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: (archive_typist || content_type === "ARTICLES") },
             { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
-            { value: 'dgima', text: ' דגימה', icon: 'download', disabled: true},
-            { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: content_type !== "ARTICLES" },
-            { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: content_type !== "ARTICLES" },
+            { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
+            { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
+            { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
         ];
 
         return (
-            <Container className="insert_app">
+            <Container className="ui modal fullscreen visible transition">
                 <Segment clearing>
                     {insert_type === "2" ? update_style : ""}
                     {insert_type === "3" ? rename_style : ""}
@@ -462,7 +452,7 @@ class InsertModal extends Component {
                         <Dropdown
                             className="large"
                             error={!upload_type}
-                            disabled={this.props.metadata.upload_type !== "" || content_type === ""}
+                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST"}
                             placeholder="Upload Type:"
                             selection
                             options={upload_options}
@@ -474,43 +464,43 @@ class InsertModal extends Component {
                     <Header floated='right'>
                         {uid_input}
                     </Header>
-                        {date_picker}
+                    {date_picker}
                 </Segment>
                 <Segment clearing secondary color='blue'>
-                <Modal.Content className="tabContent">
-                    <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
-                </Modal.Content>
+                    <Modal.Content className="tabContent">
+                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
+                    </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
-                <Modal.Actions>
-                    <Grid columns='equal'>
-                        <Grid.Column width={12}>
-                            <Input
-                                disabled
-                                fluid
-                                icon='file'
-                                iconPosition='left'
-                                focus={true}
-                                value={filename}
-                            />
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Button
-                                fluid
-                                color='green'
-                                disabled={!isValidated}
-                                loading={loading}
-                                onClick={this.onComplete} >Send
-                            </Button>
-                        </Grid.Column>
-                    </Grid>
-                    <NestedModal
-                        upload_type={upload_type}
-                        publishers={this.state.store.publishers}
-                        onUidSelect={this.onGetUID}
-                        onPubSelect={this.setPublisher}
-                    />
-                </Modal.Actions>
+                    <Modal.Actions>
+                        <Grid columns='equal'>
+                            <Grid.Column width={12}>
+                                <Input
+                                    disabled
+                                    fluid
+                                    icon='file'
+                                    iconPosition='left'
+                                    focus={true}
+                                    value={filename}
+                                />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button
+                                    fluid
+                                    color='green'
+                                    disabled={!isValidated}
+                                    loading={loading}
+                                    onClick={this.onComplete} >Send
+                                </Button>
+                            </Grid.Column>
+                        </Grid>
+                        <NestedModal
+                            upload_type={upload_type}
+                            publishers={this.state.store.publishers}
+                            onUidSelect={this.onGetUID}
+                            onPubSelect={this.setPublisher}
+                        />
+                    </Modal.Actions>
                 </Segment>
             </Container>
         );
