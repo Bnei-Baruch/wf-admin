@@ -130,16 +130,16 @@ class InsertApp extends Component {
         return (
             <Fragment>
                 <Container textAlign='center' >
-                <Message size='massive'>
-                    <Message.Header>
-                    </Message.Header>
-                    <p>Service for inserting new materials into the bb archive.</p>
-                    <Button.Group size='massive' >
-                        <Button positive value='1' onClick={(e,{value}) => this.setInserMode(value)}>&nbsp;&nbsp;Insert&nbsp;</Button>
-                        <Button.Or />
-                        <Button value='2' onClick={(e,{value}) => this.setInserMode(value)} color='orange'>Update</Button>
-                    </Button.Group>
-                </Message>
+                    <Message size='massive'>
+                        <Message.Header>
+                        </Message.Header>
+                        <p>Service for inserting new materials into the bb archive.</p>
+                        <Button.Group size='massive' >
+                            <Button positive value='1' onClick={(e,{value}) => this.setInserMode(value)}>&nbsp;&nbsp;Insert&nbsp;</Button>
+                            <Button.Or />
+                            <Button value='2' onClick={(e,{value}) => this.setInserMode(value)} color='orange'>Update</Button>
+                        </Button.Group>
+                    </Message>
                 </Container>
                 {this.state.insert === null ? "" : upload}
                 <Modal { ...this.props }

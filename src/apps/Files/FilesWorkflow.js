@@ -58,14 +58,14 @@ class FilesWorkflow extends Component {
     getIngestData = (date) => {
         getData(`ingest/find?key=date&value=${date}`, (ingest) => {
             //let ingest = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
-            console.log(":: Ingest DB Data: ",ingest);
+            //console.log(":: Ingest DB Data: ",ingest);
             this.setState({ingest})
         });
     };
 
     getTrimmerData = (date) => {
         getData(`trimmer/find?key=date&value=${date}`, (trimmer) => {
-            console.log(":: Trimmer DB Data: ",trimmer);
+            //console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
     };

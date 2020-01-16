@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Progress,Container } from 'semantic-ui-react';
+import {Progress, Container, Divider} from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {WFSRV_BACKEND} from "../../shared/tools";
 class UploadFile extends Component {
@@ -29,6 +29,7 @@ class UploadFile extends Component {
 
         return (
             <Container textAlign='center'>
+                <Divider hidden />
                 <Upload
                     {...props}
                     className={this.props.mode === "1" ? "insert" : "update"}
