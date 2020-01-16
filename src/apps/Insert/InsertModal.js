@@ -423,7 +423,7 @@ class InsertModal extends Component {
         ];
 
         return (
-            <Container className="ui modal fullscreen visible transition">
+            <Container className="insert_app">
                 <Segment clearing>
                     {insert_type === "2" ? update_style : ""}
                     {insert_type === "3" ? rename_style : ""}
