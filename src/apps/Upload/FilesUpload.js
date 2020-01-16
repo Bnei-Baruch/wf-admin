@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WF_BACKEND} from "../../shared/tools";
+import {getToken, WF_BACKEND} from "../../shared/tools";
 
 class FilesUpload extends Component {
 
@@ -35,6 +35,7 @@ class FilesUpload extends Component {
 
         const props = {
             action: `${WF_BACKEND}/backup/upload`,
+            headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '',
             multiple: true,

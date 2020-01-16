@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Progress, Container, Divider} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 class UploadFile extends Component {
 
     state = { percent: 0 };
@@ -20,6 +20,7 @@ class UploadFile extends Component {
 
         const props = {
             action: `${WFSRV_BACKEND}/insert/upload`,
+            headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             onError(err) {
                 console.log('onError', err);

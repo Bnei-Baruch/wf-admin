@@ -15,6 +15,7 @@ export const KMEDIA_URL = 'https://kabbalahmedia.info/he';
 export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
+export const MDB_API = 'https://kabbalahmedia.info/mdb-api';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
 
@@ -461,7 +462,7 @@ export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?k
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
-export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`, {
+export const insertSha = (sha, cb) => fetch(`${MDB_API}/files/?sha1=${sha}`, {
     headers: {
         'Authorization': 'bearer ' + getToken(),
         'Content-Type': 'application/json'

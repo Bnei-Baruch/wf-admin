@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Label,Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 
 class AkladaUpload extends Component {
 
@@ -22,6 +22,7 @@ class AkladaUpload extends Component {
 
         const props = {
             action: `${WFSRV_BACKEND}/aklada/upload`,
+            headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '.mp4, .mp3',
             beforeUpload(file) {
