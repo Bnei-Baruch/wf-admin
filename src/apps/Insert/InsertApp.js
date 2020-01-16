@@ -39,22 +39,23 @@ class InsertApp extends Component {
     };
 
     setMetaData = (filedata) => {
-        filedata.filename = filedata.file_name;
         console.log(":: Setting metadata from:", filedata);
-        const {sha1,size,filename,type,url} = filedata;
-        let line = {content_type: null, upload_filename: filename, mime_type: type,
+        const {sha1,size,file_name,type,url} = filedata;
+        const {roles} = this.props.user;
+        let archive_typist = roles.find(r => r === "archive_typist");
+        let line = {content_type: null, upload_filename: file_name, mime_type: type,
             url: window.location.href + `${WFSRV_BACKEND}${url}`};
         let metadata = {sha1, size, line, content_type: "", language: null,
-            send_uid: "", upload_type: "", insert_type: this.state.insert};
+            send_uid: "", upload_type: (archive_typist ? "akladot": ""), insert_type: this.state.insert};
 
-        // Extract and validate UID from filename
-        let uid = filename.split(".")[0].split("_").pop();
-        if(uid.match(/^([a-zA-Z0-9]{8})$/) && (/[_]/).test(filename))
+        // Extract and validate UID from file_name
+        let uid = file_name.split(".")[0].split("_").pop();
+        if(uid.match(/^([a-zA-Z0-9]{8})$/) && (/[_]/).test(file_name))
             metadata.send_uid = uid;
 
-        // Extract and validate date from filename
-        if((/\d{4}-\d{2}-\d{2}/).test(filedata.filename)) {
-            let string_date = filedata.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
+        // Extract and validate date from file_name
+        if((/\d{4}-\d{2}-\d{2}/).test(filedata.file_name)) {
+            let string_date = filedata.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
             let test_date = moment(string_date);
             let date = test_date.isValid() ? string_date : moment().format('YYYY-MM-DD');
             metadata.date = date;
@@ -81,6 +82,23 @@ class InsertApp extends Component {
                     return false;
                 }
             });
+        } else if(this.state.insert === "4") {
+            metadata.line.film_date = metadata.date;
+            // Clean string
+            metadata.insert_name = metadata.line.upload_filename.replace(/([^-_a-zA-Z0-9\\.]+)/g, '').toLowerCase();
+            metadata.language = metadata.insert_name.slice(0, 3);
+            //FIXME: Here will detection content_type from file_name string
+            metadata.line.content_type = "BLOG_POST";
+            metadata.line.lecturer = "rav";
+            metadata.line.source = "upload";
+            metadata.line.language = metadata.language;
+            metadata.line.original_language = metadata.language;
+            [metadata.file_name, metadata.extension] = metadata.insert_name.split('.');
+            metadata.upload_type = "dgima";
+            metadata.send_id = null;
+            delete metadata.send_uid;
+            delete metadata.content_type;
+            this.onComplete(metadata);
         } else {
             this.setState({filedata, metadata, open: true});
         }
