@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {client,BASE_URL,getUser} from './UserManager';
+import {client,getUser} from './UserManager';
 import { Container,Message,Button,Dropdown,Image } from 'semantic-ui-react';
 import logo from './KL_Tree_128.png';
 
@@ -36,7 +36,7 @@ class LoginPage extends Component {
     userLogin = () => {
         this.setState({disabled: true, loading: true});
         getUser(cb => {
-            if(!cb) client.signinRedirect({state: `${BASE_URL}`});
+            if(!cb) client.signinRedirect({state: window.location.href});
         });
     };
 
