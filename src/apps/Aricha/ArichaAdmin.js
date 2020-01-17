@@ -64,7 +64,7 @@ class ArichaAdmin extends Component {
             active: file_data.aricha_id,
             rename_button: false,
             send_button: !wfsend,
-            filedata: {filename: file_data.file_name},
+            filedata: {file_name: file_data.file_name},
             insert_button: true
             //kmedia_option: wfsend,
         });

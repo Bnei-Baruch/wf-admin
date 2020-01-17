@@ -121,7 +121,7 @@ class ExternalTrimmed extends Component {
         if (file_data.line && file_data.line.content_type) {
             metadata = newInsertMeta(file_data);
             // filedata needed for insert app
-            filedata = file_data.file_name;
+            filedata.file_name = file_data.file_name;
             this.setState({filedata, metadata});
         }
     };

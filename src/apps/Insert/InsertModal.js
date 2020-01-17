@@ -296,7 +296,7 @@ class InsertModal extends Component {
         console.log(":: checkMeta - metadata: ", metadata);
         const {insert_type, insert_name, upload_type} = metadata;
 
-        // Check valid filename string
+        // Check valid file_name string
         if(metadata.insert_name === null) {
             alert("Upload file name is worng");
             this.setState({ isValidated: false });
@@ -370,7 +370,7 @@ class InsertModal extends Component {
 
     render() {
 
-        const {filename} = this.props.filedata;
+        const {file_name} = this.props.filedata;
         const {roles} = this.props.user;
         const {metadata, isValidated, loading, locale, unit} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
@@ -481,7 +481,7 @@ class InsertModal extends Component {
                                     icon='file'
                                     iconPosition='left'
                                     focus={true}
-                                    value={filename}
+                                    value={file_name}
                                 />
                             </Grid.Column>
                             <Grid.Column>
