@@ -92,23 +92,25 @@ class App extends Component {
     loadApps = () => {
         const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,user} = this.state;
 
-        let login = (<Suspense fallback={<Segment loading size='massive' />}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
-        let sirtutim = (<Suspense fallback={<Segment loading size='massive' />}><SirtutimApp user={user} /></Suspense>);
-        let carbon = (<Suspense fallback={<Segment loading size='massive' />}><CarbonApp user={user} admin={wf_admin}/></Suspense>);
-        let ktaim = (<Suspense fallback={<Segment loading size='massive' />}><KtaimApp user={user} /></Suspense>);
-        let files = (<Suspense fallback={<Segment loading size='massive' />}><FilesApp user={user} /></Suspense>);
-        let ingest = (<Suspense fallback={<Segment loading size='massive' />}><IngestApp user={user} admin={wf_admin} /></Suspense>);
-        let censor = (<Suspense fallback={<Segment loading size='massive' />}><CensorApp user={user} /></Suspense>);
-        let admin = (<Suspense fallback={<Segment loading size='massive' />}><AdminApp user={user} /></Suspense>);
-        let monitor = (<Suspense fallback={<Segment loading size='massive' />}><MonitorApp user={user} /></Suspense>);
-        let jsobs = (<Suspense fallback={<Segment loading size='massive' />}><JobsApp user={user} /></Suspense>);
-        let aricha = (<Suspense fallback={<Segment loading size='massive' />}><ArichaApp user={user} /></Suspense>);
-        let dgima= (<Suspense fallback={<Segment loading size='massive' />}><DgimaApp user={user} /></Suspense>);
-        let external = (<Suspense fallback={<Segment loading size='massive' />}><ExternalApp user={user} /></Suspense>);
-        let mainpage = (<Suspense fallback={<Segment loading size='massive' />}><InsertApp user={user} /></Suspense>);
-        let upload = (<Suspense fallback={<Segment loading size='massive' />}><UploadApp user={user} /></Suspense>);
-        let metus = (<Suspense fallback={<Segment loading size='massive' />}><MetusApp user={user} /></Suspense>);
-        let wfdb = (<Suspense fallback={<Segment loading size='massive' />}><WFDB user={user} /></Suspense>);
+        const loading = (<Tab.Pane loading />);
+
+        let login = (<Suspense fallback={loading}><LoginPage user={user} checkPermission={this.checkPermission} /></Suspense>);
+        let sirtutim = (<Suspense fallback={loading}><SirtutimApp user={user} /></Suspense>);
+        let carbon = (<Suspense fallback={loading}><CarbonApp user={user} admin={wf_admin}/></Suspense>);
+        let ktaim = (<Suspense fallback={loading}><KtaimApp user={user} /></Suspense>);
+        let files = (<Suspense fallback={loading}><FilesApp user={user} /></Suspense>);
+        let ingest = (<Suspense fallback={loading}><IngestApp user={user} admin={wf_admin} /></Suspense>);
+        let censor = (<Suspense fallback={loading}><CensorApp user={user} /></Suspense>);
+        let admin = (<Suspense fallback={loading}><AdminApp user={user} /></Suspense>);
+        let monitor = (<Suspense fallback={loading}><MonitorApp user={user} /></Suspense>);
+        let jsobs = (<Suspense fallback={loading}><JobsApp user={user} /></Suspense>);
+        let aricha = (<Suspense fallback={loading}><ArichaApp user={user} /></Suspense>);
+        let dgima= (<Suspense fallback={loading}><DgimaApp user={user} /></Suspense>);
+        let external = (<Suspense fallback={loading}><ExternalApp user={user} /></Suspense>);
+        let mainpage = (<Suspense fallback={loading}><InsertApp user={user} /></Suspense>);
+        let upload = (<Suspense fallback={loading}><UploadApp user={user} /></Suspense>);
+        let metus = (<Suspense fallback={loading}><MetusApp user={user} /></Suspense>);
+        let wfdb = (<Suspense fallback={loading}><WFDB user={user} /></Suspense>);
 
 
         const panes = [
