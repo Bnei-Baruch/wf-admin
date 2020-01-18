@@ -90,7 +90,8 @@ class InsertModal extends Component {
                 let unit = data.data[0];
                 console.log(":: Got UNIT: ", data);
                 metadata.content_type = getDCT(CONTENT_TYPE_BY_ID[unit.type_id]);
-                metadata.date = unit.properties.capture_date || unit.properties.film_date;
+                const {capture_date,film_date} = unit.properties;
+                metadata.date = capture_date && capture_date !== "0001-01-01" ? capture_date : film_date;
                 this.setState({metadata: {...metadata, send_uid}, isValidated: false, unit});
             })
         }
@@ -141,11 +142,12 @@ class InsertModal extends Component {
         }
 
         // Meta from unit properties going to line
+        const {capture_date,film_date} = properties;
         metadata.line.uid = uid;
         metadata.line.unit_id = id;
         metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
-        metadata.line.capture_date = properties.capture_date;
-        metadata.line.film_date = properties.film_date;
+        metadata.line.capture_date = capture_date && capture_date !== "0001-01-01" ? capture_date : film_date;
+        metadata.line.film_date = film_date;
         metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
         metadata.send_id = properties.workflow_id || null;
 
