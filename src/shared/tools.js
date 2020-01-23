@@ -1,8 +1,8 @@
 import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
 import moment from 'moment';
 
-export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
-export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
+//export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
+//export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
 export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
 export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
@@ -12,7 +12,7 @@ export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const MDB_ADMIN_URL = 'https://kabbalahmedia.info/admin';
 export const KMEDIA_URL = 'https://kabbalahmedia.info/he';
-export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
+//export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
 //export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
 //export const MDB_BACKEND = 'https://kabbalahmedia.info/mdb-api';
