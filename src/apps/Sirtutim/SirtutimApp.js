@@ -124,7 +124,7 @@ class SirtutimApp extends Component {
                             <Button.Or text='<>' />
                             <Button disabled={event === "program"} onClick={() => this.setEvent("program")}>Program</Button>
                             <Button.Or text='<>' />
-                            <Button disabled={event === "congress"} onClick={() => this.setEvent("congress")}>Congress</Button>
+                            <Button disabled={event === "congress"} onClick={() => this.setEvent("congress")}>Stream</Button>
                         </Button.Group>
                         <Segment attached textAlign='center' className='sirtut_segment' raised secondary>
                             <Button attached='top' fluid color='grey' size='mini'
@@ -133,7 +133,7 @@ class SirtutimApp extends Component {
                                     onClick={this.removeAll} >
                                 Remove ALL
                             </Button>
-                            <Image fluid src={src + '?' + id} />
+                            <Image className='sirtut' fluid src={src + '?' + id} />
                             <Button attached='bottom' fluid color='green'
                                     loading={capl}
                                     disabled={capd}

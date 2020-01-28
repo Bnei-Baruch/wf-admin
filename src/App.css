@@ -4,6 +4,11 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.sirtut {
+    width:820px!important;
+    height:460px!important;
+}
+
 .scoped-semantic-ltr .ui.selection.dropdown.error {
     border-color: #e00b0b;
 }
