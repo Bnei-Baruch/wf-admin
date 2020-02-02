@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Image,Segment,Table,Button,Card} from "semantic-ui-react";
-import {putData, SIRTUT_URL, WFSRV_BACKEND} from "../../shared/tools";
+import {putData, WFSRV_BACKEND} from "../../shared/tools";
 import moment from 'moment';
 
 class SirtutimApp extends Component {
@@ -12,17 +12,18 @@ class SirtutimApp extends Component {
         upd: false,
         reml: false,
         remd: false,
+        event: "lesson",
         captured: [],
         uploaded: [],
         id: null,
-        src: `${SIRTUT_URL}`,
+        src: "lesson/sirtut.jpg",
     };
 
     componentDidMount() {
         let ival = setInterval(() => {
             let id = moment().format('x');
             this.setState({id})
-        }, 1000 );
+        }, 2000 );
         this.setState({ival});
     };
 
@@ -31,9 +32,9 @@ class SirtutimApp extends Component {
     };
 
     captureSirtut = () => {
-        let {id, captured} = this.state;
+        let {id, event, captured} = this.state;
         this.setState({capl: true, capd: true});
-        let data = {id, req: "capture"};
+        let data = {id, event, req: "capture"};
         putData(`${WFSRV_BACKEND}/workflow/sirtutim`, data, (cb) => {
             captured.push(id);
             setTimeout( () => {
@@ -71,6 +72,11 @@ class SirtutimApp extends Component {
         });
     };
 
+    setEvent = (event) => {
+        let src = event + "/sirtut.jpg";
+        this.setState({event,src});
+    };
+
     removeSirtut = (sid,i) => {
         let {captured} = this.state;
         captured.splice(i, 1);
@@ -82,7 +88,7 @@ class SirtutimApp extends Component {
     };
 
     render() {
-        const {src,captured,uploaded,id,capl,capd,reml,remd,upl,upd} = this.state;
+        const {event,src,captured,uploaded,id,capl,capd,reml,remd,upl,upd} = this.state;
 
         let sirtutim_list = captured.map((sid,i) => {
             let up = uploaded.filter(u => u === sid).length > 0;
@@ -113,14 +119,21 @@ class SirtutimApp extends Component {
             <Table basic='very' unstackable className='sirtut_table'>
                 <Table.Row>
                     <Table.Cell textAlign='right'>
-                        <Segment textAlign='center' className='sirtut_segment' raised secondary>
+                        <Button.Group attached='top' size='small' color='blue'>
+                            <Button disabled={event === "lesson"} onClick={() => this.setEvent("lesson")}>Lesson</Button>
+                            <Button.Or text='<>' />
+                            <Button disabled={event === "program"} onClick={() => this.setEvent("program")}>Program</Button>
+                            <Button.Or text='<>' />
+                            <Button disabled={event === "congress"} onClick={() => this.setEvent("congress")}>Stream</Button>
+                        </Button.Group>
+                        <Segment attached textAlign='center' className='sirtut_segment' raised secondary>
                             <Button attached='top' fluid color='grey' size='mini'
                                     loading={reml}
                                     disabled={remd}
                                     onClick={this.removeAll} >
                                 Remove ALL
                             </Button>
-                            <Image fluid src={src + '?' + id} />
+                            <Image className='sirtut' fluid src={src + '?' + id} />
                             <Button attached='bottom' fluid color='green'
                                     loading={capl}
                                     disabled={capd}
