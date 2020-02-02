@@ -9,14 +9,14 @@
     "mediaelement": "^4.2.9",
     "mediaelement-plugins": "^2.5.0",
     "moment": "^2.22.0",
-    "oidc-client": "^1.9.1",
+    "oidc-client": "^1.10.1",
     "rc-upload": "^2.4.4",
     "react": "16.8.6",
     "react-datepicker": "^1.4.1",
     "react-day-picker": "^7.1.4",
     "react-dom": "16.8.6",
     "react-file-viewer": "^1.1.0",
-    "react-scripts": "3.3.0",
+    "react-scripts": "3.3.1",
     "semantic-ui-react": "0.79.1"
   },
   "scripts": {
