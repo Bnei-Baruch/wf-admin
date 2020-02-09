@@ -487,7 +487,7 @@ class ExternalTrimmed extends Component {
             // { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
-            { key: 'akladot', text: 'Akladot', value: 'akladot' },
+            // { key: 'akladot', text: 'Akladot', value: 'akladot' },
         ];
 
         let v = (<Icon name='checkmark'/>);
