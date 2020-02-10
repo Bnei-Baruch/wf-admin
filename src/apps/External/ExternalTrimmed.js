@@ -65,7 +65,7 @@ class ExternalTrimmed extends Component {
     selectFile = (file_data) => {
         console.log(":: DgimaApp - selected file: ", file_data);
         const {fix_mode} = this.state;
-        const {renamed,wfsend,secured,checked} = file_data.wfstatus;
+        const {renamed,wfsend,secured,checked,kmedia} = file_data.wfstatus;
 
         if(!wfsend && fix_mode) {
             // Find files with units
@@ -110,7 +110,7 @@ class ExternalTrimmed extends Component {
                 insert_button: !renamed || wfsend,
                 rename_button: fix_mode ? false : wfsend,
                 send_button: false,
-                kmedia_option: !checked || !wfsend || secured,
+                kmedia_option: kmedia || !checked || !wfsend || secured,
             });
         }
     };
