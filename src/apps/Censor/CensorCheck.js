@@ -61,7 +61,7 @@ class CensorCheck extends Component {
         console.log(":: Trimmed - selected file: ",file_data);
         let id = file_data.trim_id || file_data.dgima_id;
         const {wfsend,fixed,kmedia} = file_data.wfstatus;
-        let path = file_data.proxy.format.filename;
+        let path = file_data.proxy.format.format_name === "mp3" ? file_data.original.format.filename : file_data.proxy.format.filename;
         let sha1 = file_data.parent.original_sha1;
         let parent_src = file_data.parent.source;
         let source = `${WFSRV_BACKEND}${path}`;
@@ -290,6 +290,9 @@ class CensorCheck extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button color='teal' icon='download' disabled={this.state.disabled} href={this.state.source} download />
                     </Menu.Item>
                     {/*<Menu.Item>*/}
                     {/*    <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />*/}
