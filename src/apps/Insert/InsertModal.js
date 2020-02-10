@@ -19,7 +19,7 @@ import {
     getDataByID,
     fetchUnits,
     getDCT,
-    insertData
+    insertData, insertLine
 } from '../../shared/tools';
 import {content_options, language_options, upload_extensions, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
 
@@ -110,7 +110,6 @@ class InsertModal extends Component {
         console.log(":: Selected unit: ", unit);
         this.setState({unit});
         let {metadata} = this.state;
-        let {properties, uid, type_id, id} = unit || {};
 
         // Check if all Required meta is selected
         const {content_type, language, upload_type} = metadata;
@@ -118,38 +117,36 @@ class InsertModal extends Component {
             console.log(":: Required meta not selected! ::");
             this.setState({ isValidated: false });
             return
-        } else {
-            this.setState({ isValidated: true });
         }
 
-        // Declamation that does not has unit
-        if(!unit) {
-            console.log(" - Declamation without unit -");
-            type_id = 44;
-            metadata.line.content_type = "BLOG_POST";
-            metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
-            metadata.line.lecturer = "rav";
-            metadata.line.has_translation = false;
-            metadata.line.film_date = metadata.date;
-            metadata.line.language = metadata.language;
-            metadata.line.original_language = metadata.language;
-            metadata.send_id = null;
-            metadata.line.uid = null;
-            metadata.insert_name = getName(metadata);
-            metadata.line.final_name = metadata.insert_name.split('.')[0];
+        // Take info from unit properties
+        metadata = insertLine(metadata,unit);
+
+        // Declamation - that does not has unit
+        if(upload_type === "declamation") {
             this.checkMeta(metadata);
             return
         }
 
-        // Meta from unit properties going to line
-        const {capture_date,film_date} = properties;
-        metadata.line.uid = uid;
-        metadata.line.unit_id = id;
-        metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
-        metadata.line.capture_date = capture_date && capture_date !== "0001-01-01" ? capture_date : metadata.date;
-        metadata.line.film_date = film_date;
-        metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
-        metadata.send_id = properties.workflow_id || null;
+        let {uid, id} = unit;
+
+        // Dgima - Check if name already exist in MDB
+        if(upload_type === "dgima") {
+            fetchUnits(`${metadata.line.unit_id}/files/`, (data) => {
+                console.log(":: Fetch file for dgima: ",data);
+                let published = data.filter(p => p.published && p.removed_at === null);
+                console.log(" :: Published: ", published);
+                let mdb_name = published.filter(s => s.name.match(metadata.insert_name));
+                if(mdb_name.length > 0) {
+                    alert("File with name: "+metadata.insert_name+" - exist in MDB");
+                    this.setState({ isValidated: false });
+                } else {
+                    const wfid = metadata.send_id;
+                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+                }
+            });
+            return
+        }
 
         // Dibuv - check and got needed data for remux
         if(upload_type === "dibuv") {
@@ -163,7 +160,6 @@ class InsertModal extends Component {
                 if(lchk && metadata.insert_type === "1") {
                     alert("Selected language already exist");
                     this.setState({ isValidated: false });
-                    return;
                 } else if(lchk && metadata.insert_type === "2") {
                     insertData(uid, "uid", (data) => {
                         console.log(":: insert data - got: ",data);
@@ -178,7 +174,6 @@ class InsertModal extends Component {
                             if(remux_src.length === 0 || remux_src.length > 2) {
                                 alert("Fail to get valid sources for remux");
                                 this.setState({ isValidated: false });
-                                return;
                                 // It's mean we did not get HD here
                             } else if(remux_src.length === 1) {
                                 metadata.insert_id = data[0].insert_id;
@@ -190,7 +185,6 @@ class InsertModal extends Component {
                                 metadata.insert_name = language + "_t_" +remux_src[0].name.split("_").slice(2).join("_").split(".")[0]+".wav";
                                 const wfid = metadata.send_id;
                                 wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                                return
                                 // It's mean we get HD and nHD here
                             } else {
                                 for(let i=0;i<remux_src.length;i++) {
@@ -203,20 +197,17 @@ class InsertModal extends Component {
                                 metadata.insert_id = data[0].insert_id;
                                 const wfid = metadata.send_id;
                                 wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                                return
                             }
                         } else {
                             console.log("Not found insert we going to fix");
                             alert("Not found insert we going to fix");
                             this.setState({ isValidated: false });
-                            return false;
                         }
                     });
                 } else if(lchk && metadata.insert_type === "3") {
                     //TODO: Rename mode
                     alert("Not ready yet");
                     this.setState({ isValidated: false });
-                    return false;
                 } else {
                     // Not in all files we got original_language property so we going to check string
                     // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
@@ -228,7 +219,6 @@ class InsertModal extends Component {
                     if(remux_src.length === 0 || remux_src.length > 2) {
                         alert("Fail to get valid sources for remux");
                         this.setState({ isValidated: false });
-                        return;
                         // It's mean we did not get HD here
                     } else if(remux_src.length === 1) {
                         metadata.line.nHD = remux_src[0].properties.url;
@@ -239,7 +229,6 @@ class InsertModal extends Component {
                         metadata.insert_name = language + "_t_" +remux_src[0].name.split("_").slice(2).join("_").split(".")[0]+".wav";
                         const wfid = metadata.send_id;
                         wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                        return
                         // It's mean we get HD and nHD here
                     } else {
                         for(let i=0;i<remux_src.length;i++) {
@@ -251,15 +240,15 @@ class InsertModal extends Component {
                         metadata.insert_type = "4";
                         const wfid = metadata.send_id;
                         wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                        return
                     }
                 }
             });
-        } else {
-            // Check if unit was imported from old KM
-            const wfid = metadata.send_id;
-            wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+            return
         }
+
+        // Check if unit was imported from old KM
+        const wfid = metadata.send_id;
+        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
     };
 
     newUnitWF = (metadata, wfid) => {
@@ -322,20 +311,6 @@ class InsertModal extends Component {
             return
         }
 
-        // Check if name already exist in MDB
-        if(metadata.upload_type === "dgima") {
-            fetchUnits(`${metadata.line.unit_id}/files/`, (data) => {
-                console.log(":: Fetch file for dgima: ",data);
-                let published = data.filter(p => p.published && p.removed_at === null);
-                console.log(" :: Published: ", published);
-                let mdb_name = published.filter(s => s.name.match(metadata.insert_name));
-                if(mdb_name.length > 0) {
-                    alert("File with name: "+metadata.insert_name+" - exist in MDB");
-                    this.setState({ isValidated: false });
-                }
-            });
-        }
-
         // Check if name already exist in WFDB
         insertName(insert_name, "insert_name", (data) => {
             console.log(":: insertName - got: ",data);
@@ -353,7 +328,7 @@ class InsertModal extends Component {
                 alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 this.setState({ isValidated: false });
             } else {
-                this.setState({metadata: { ...metadata }});
+                this.setState({metadata, isValidated: true});
             }
         });
     };

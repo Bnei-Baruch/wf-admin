@@ -1,4 +1,4 @@
-import { mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS} from './consts';
+import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID} from './consts';
 import moment from 'moment';
 
 //export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
@@ -261,6 +261,35 @@ export const getName = (metadata) => {
     }
 
     return name.join("_") + '.' + mime_list[line.mime_type];
+};
+
+export const insertLine = (metadata,unit) => {
+    if(!unit) {
+        let type_id = 44;
+        metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
+        metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
+        metadata.line.lecturer = "rav";
+        metadata.line.has_translation = false;
+        metadata.line.film_date = metadata.date;
+        metadata.line.language = metadata.language;
+        metadata.line.original_language = metadata.language;
+        metadata.send_id = null;
+        metadata.line.uid = null;
+        metadata.insert_name = getName(metadata);
+        metadata.line.final_name = metadata.insert_name.split('.')[0];
+        return metadata;
+    } else {
+        let {properties, uid, type_id, id} = unit;
+        const {capture_date,film_date} = properties;
+        metadata.line.uid = uid;
+        metadata.line.unit_id = id;
+        metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
+        metadata.line.capture_date = capture_date && capture_date !== "0001-01-01" ? capture_date : metadata.date;
+        metadata.line.film_date = film_date;
+        metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
+        metadata.send_id = properties.workflow_id || null;
+        return metadata;
+    }
 };
 
 export const newTrimMeta = (data, mode, source) => {
