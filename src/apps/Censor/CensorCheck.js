@@ -21,6 +21,7 @@ class CensorCheck extends Component {
         activeIndex: 0,
         disabled: true,
         open: false,
+        cassette: [],
         trimmed: [],
         dgima: [],
         file_data: {},
@@ -44,7 +45,11 @@ class CensorCheck extends Component {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             });
-        }, 5000 );
+            // getData('cassette', (data) => {
+            //     if (JSON.stringify(this.state.cassette) !== JSON.stringify(data))
+            //         this.setState({cassette: data})
+            // });
+        }, 1000 );
         this.setState({ival});
     };
 
@@ -194,55 +199,51 @@ class CensorCheck extends Component {
         });
 
         let dgima_data = this.state.dgima.map((data) => {
-            if(data.parent.source !== "cassette") {
-                const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
-                let id = data.dgima_id;
-                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
-                if (!censored || buffer)
-                    return false;
-                let rowcolor = secured && !checked;
-                let active = this.state.active === id ? 'active' : '';
-                return (
-                    <Table.Row
-                        negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
-                        className={active} key={id} onClick={() => this.selectFile(data)}>
-                        <Table.Cell>
-                            {secured ? s : ""}
-                            {censored && trimmed ? c : ""}
-                            {fixed ? f : ""}
-                            {locked ? d : ""}
-                            {name}</Table.Cell>
-                        <Table.Cell>{time}</Table.Cell>
-                    </Table.Row>
-                )
-            }
+            const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+            let id = data.dgima_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
+            if (!censored || buffer)
+                return false;
+            let rowcolor = secured && !checked;
+            let active = this.state.active === id ? 'active' : '';
+            return (
+                <Table.Row
+                    negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored && trimmed ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {name}</Table.Cell>
+                    <Table.Cell>{time}</Table.Cell>
+                </Table.Row>
+            )
         });
 
-        let cassette_data = this.state.dgima.map((data) => {
-            if(data.parent.source === "cassette") {
-                const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
-                let id = data.dgima_id;
-                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
-                if (!censored || buffer)
-                    return false;
-                let rowcolor = secured && !checked;
-                let active = this.state.active === id ? 'active' : '';
-                return (
-                    <Table.Row
-                        negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
-                        className={active} key={id} onClick={() => this.selectFile(data)}>
-                        <Table.Cell>
-                            {secured ? s : ""}
-                            {censored && trimmed ? c : ""}
-                            {fixed ? f : ""}
-                            {locked ? d : ""}
-                            {name}</Table.Cell>
-                        <Table.Cell>{time}</Table.Cell>
-                    </Table.Row>
-                )
-            }
+        let cassette_data = this.state.cassette.map((data) => {
+            const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+            let id = data.dgima_id;
+            let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = data.proxy ? toHms(data.proxy.format.duration).split('.')[0] : "";
+            if (!censored || buffer)
+                return false;
+            let rowcolor = secured && !checked;
+            let active = this.state.active === id ? 'active' : '';
+            return (
+                <Table.Row
+                    negative={rowcolor} positive={checked} warning={!wfsend} disabled={!trimmed || locked}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored && trimmed ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {name}</Table.Cell>
+                    <Table.Cell>{time}</Table.Cell>
+                </Table.Row>
+            )
         });
 
         const lt = trimmed.filter(n => n).length;
