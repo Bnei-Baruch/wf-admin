@@ -47,13 +47,21 @@ export default class InoutControls extends Component {
             outpoints[i] = currentTime;
         }
         console.log(":: Set OUT: ",currentTime);
-        this.setState({outpoints});
+        this.setState({outpoints}, () => {
+            if(i === null) {
+                this.scrollToBottom();
+            }
+        });
         this.props.onSetPoints(inpoints, outpoints);
     };
 
     jumpPoint = (point) => {
         point ? this.props.player.setCurrentTime(point) :
             this.props.player.setCurrentTime(this.state.inpoints[this.state.inpoints.length - 1]);
+    };
+
+    scrollToBottom = () => {
+        this.refs.end.scrollIntoView({ behavior: 'smooth' })
     };
 
     render() {
@@ -97,6 +105,7 @@ export default class InoutControls extends Component {
                     </Label>
                     <Button icon color='grey' className="inout_btn" onClick={() => this.setOut(null)} />
                 </Button>
+                <div ref='end' />
             </Fragment>
         );
     }
