@@ -55,7 +55,7 @@ class CensorCheck extends Component {
     selectFile = (file_data) => {
         console.log(":: Trimmed - selected file: ",file_data);
         let id = file_data.trim_id || file_data.dgima_id;
-        const {wfsend,fixed} = file_data.wfstatus;
+        const {wfsend,fixed,kmedia} = file_data.wfstatus;
         let path = file_data.proxy.format.filename;
         let sha1 = file_data.parent.original_sha1;
         let parent_src = file_data.parent.source;
@@ -74,11 +74,11 @@ class CensorCheck extends Component {
                 let units_options = units.data.map((unit) => {
                     return ({ key: unit.uid, text: unit.i18n.he.name, value: unit.uid })
                 });
-                this.setState({units: units, fixReq: true, disabled: true, units_options });
+                this.setState({units: units, fixReq: true, disabled: kmedia, units_options });
             } else if(wfsend && fixed) {
                 // Maybe we need indicate somehow about fixed unit
                 console.log(":: Fix already done - ", units);
-                this.setState({units: units, fixReq: false, disabled: false });
+                this.setState({units: units, fixReq: false, disabled: kmedia });
             } else if(wfsend && !fixed) {
                 console.log(":: File was normally sent - ", units);
                 this.setState({ units: units, fixReq: false, disabled: !wfsend});

@@ -136,6 +136,12 @@ class ExternalTrimmed extends Component {
         let {file_data,fix_mode} = this.state;
         let newfile_name = newline.final_name;
 
+        // Clip can not be audio
+        if(file_data.original.format.format_name === "mp3" && newline.content_type === "CLIP") {
+            alert("Clip can not be audio!");
+            return
+        }
+
         // Check WFDB if name already exist
         getData(`dgima/find?key=file_name&value=${newfile_name}`, (data) => {
             let chk = data.find(n => n.file_name === newfile_name);
