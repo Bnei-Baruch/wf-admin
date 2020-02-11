@@ -264,7 +264,7 @@ class InsertModal extends Component {
                 console.log(":: Metadata insert_name: \n%c" + metadata.insert_name, "color:Green");
                 this.checkMeta(metadata);
             } else {
-                alert("Something wrong happend :(");
+                alert("Unit does NOT exist in workflow");
                 this.setState({ isValidated: false });
             }
         });
