@@ -2,6 +2,22 @@
 export const EMPTY_ARRAY  = Object.freeze([]);
 export const EMPTY_OBJECT = Object.freeze({});
 
+export const getUploadOptions = (roles, content_type) => {
+    let archive_typist = roles.find(r => r === "archive_typist");
+    return [
+        { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
+        { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
+        { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
+        { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
+        { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
+    ]
+};
+
 export const content_options = [
     { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
     { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
@@ -10,7 +26,7 @@ export const content_options = [
     { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
     { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
     { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
-    { value: 'BLOG_POST', text: 'Blog-Post', icon: 'blogger' },
+    { value: 'BLOG_POST', text: 'Blog-Post', icon: 'unmute' },
     //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
 ];
 

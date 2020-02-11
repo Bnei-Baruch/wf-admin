@@ -38,8 +38,10 @@ class MdbData extends Component {
                     // In insert mode we creating new unit for blogpost
                     // so we does not show nothing to choose
                     if(content_type === "BLOG_POST" && insert_type === "1") {
+                        this.setState({units: []});
                         this.props.onUidSelect(null);
                     } else if(content_type === "BLOG_POST" && insert_type !== "1") {
+                        this.setState({units: []});
                         //TODO: find unit to fix
                     } else {
                         this.setState({units: data.data, active: null});

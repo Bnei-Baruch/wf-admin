@@ -10,18 +10,8 @@ import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
 import { Grid, Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import {
-    fetchPublishers,
-    fetchPersons,
-    insertName,
-    getName,
-    getLang,
-    getDataByID,
-    fetchUnits,
-    getDCT,
-    insertData, insertLine
-} from '../../shared/tools';
-import {content_options, language_options, upload_extensions, MDB_LANGUAGES, CONTENT_TYPE_BY_ID} from '../../shared/consts';
+import {fetchPublishers, fetchPersons, insertName, getName, getLang, getDataByID, fetchUnits, getDCT, insertLine, remuxLine} from '../../shared/tools';
+import {content_options, language_options, upload_extensions, CONTENT_TYPE_BY_ID, getUploadOptions} from '../../shared/consts';
 
 import MdbData from './MdbData';
 import NestedModal from './NestedModal';
@@ -114,7 +104,6 @@ class InsertModal extends Component {
         // Check if all Required meta is selected
         const {content_type, language, upload_type} = metadata;
         if (!content_type || !language || !upload_type) {
-            console.log(":: Required meta not selected! ::");
             this.setState({ isValidated: false });
             return
         }
@@ -128,21 +117,17 @@ class InsertModal extends Component {
             return
         }
 
-        let {uid, id} = unit;
-
         // Dgima - Check if name already exist in MDB
         if(upload_type === "dgima") {
             fetchUnits(`${metadata.line.unit_id}/files/`, (data) => {
-                console.log(":: Fetch file for dgima: ",data);
                 let published = data.filter(p => p.published && p.removed_at === null);
-                console.log(" :: Published: ", published);
                 let mdb_name = published.filter(s => s.name.match(metadata.insert_name));
                 if(mdb_name.length > 0) {
                     alert("File with name: "+metadata.insert_name+" - exist in MDB");
                     this.setState({ isValidated: false });
                 } else {
                     const wfid = metadata.send_id;
-                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
                 }
             });
             return
@@ -150,105 +135,21 @@ class InsertModal extends Component {
 
         // Dibuv - check and got needed data for remux
         if(upload_type === "dibuv") {
-            fetchUnits(`${id}/files/`, (data) => {
-                console.log(" :: Fetch files: ", data);
-                let published = data.filter(p => p.published && p.removed_at === null);
-                console.log(" :: Published: ", published);
-                let lchk = published.find(l => l.name.match(language+"_"));
-                console.log(" :: Check: ", lchk);
-                // Check if uploaded language already exist
-                if(lchk && metadata.insert_type === "1") {
-                    alert("Selected language already exist");
-                    this.setState({ isValidated: false });
-                } else if(lchk && metadata.insert_type === "2") {
-                    insertData(uid, "uid", (data) => {
-                        console.log(":: insert data - got: ",data);
-                        if(data.length > 0) {
-                            //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
-                            //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
-                            //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                            //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                            let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                            console.log(" :: Got sources for remux: ", remux_src);
-                            // We must get here 1 or 2 files and save their url
-                            if(remux_src.length === 0 || remux_src.length > 2) {
-                                alert("Fail to get valid sources for remux");
-                                this.setState({ isValidated: false });
-                                // It's mean we did not get HD here
-                            } else if(remux_src.length === 1) {
-                                metadata.insert_id = data[0].insert_id;
-                                metadata.line.nHD = remux_src[0].properties.url;
-                                metadata.line.nHD_sha1 = remux_src[0].sha1;
-                                metadata.line.HD = null;
-                                metadata.line.HD_sha1 = null;
-                                metadata.insert_type = "5";
-                                metadata.insert_name = language + "_t_" +remux_src[0].name.split("_").slice(2).join("_").split(".")[0]+".wav";
-                                const wfid = metadata.send_id;
-                                wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                                // It's mean we get HD and nHD here
-                            } else {
-                                for(let i=0;i<remux_src.length;i++) {
-                                    metadata.line[remux_src[i].properties.video_size] = remux_src[i].properties.url;
-                                    metadata.line[remux_src[i].properties.video_size + "_sha1"] = remux_src[i].sha1;
-                                    if(remux_src[i].properties.video_size === "nHD")
-                                        metadata.insert_name = language + "_t_" +remux_src[i].name.split("_").slice(2).join("_").split(".")[0]+".wav";
-                                }
-                                metadata.insert_type = "5";
-                                metadata.insert_id = data[0].insert_id;
-                                const wfid = metadata.send_id;
-                                wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                            }
-                        } else {
-                            console.log("Not found insert we going to fix");
-                            alert("Not found insert we going to fix");
-                            this.setState({ isValidated: false });
-                        }
-                    });
-                } else if(lchk && metadata.insert_type === "3") {
-                    //TODO: Rename mode
-                    alert("Not ready yet");
+            remuxLine(unit, metadata, data => {
+                if(data === null) {
                     this.setState({ isValidated: false });
                 } else {
-                    // Not in all files we got original_language property so we going to check string
-                    // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
-                    //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                    //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
-                    let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-                    console.log(" :: Got sources for remux: ", remux_src);
-                    // We must get here 1 or 2 files and save their url
-                    if(remux_src.length === 0 || remux_src.length > 2) {
-                        alert("Fail to get valid sources for remux");
-                        this.setState({ isValidated: false });
-                        // It's mean we did not get HD here
-                    } else if(remux_src.length === 1) {
-                        metadata.line.nHD = remux_src[0].properties.url;
-                        metadata.line.nHD_sha1 = remux_src[0].sha1;
-                        metadata.line.HD = null;
-                        metadata.line.HD_sha1 = null;
-                        metadata.insert_type = "4";
-                        metadata.insert_name = language + "_t_" +remux_src[0].name.split("_").slice(2).join("_").split(".")[0]+".wav";
-                        const wfid = metadata.send_id;
-                        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                        // It's mean we get HD and nHD here
-                    } else {
-                        for(let i=0;i<remux_src.length;i++) {
-                            metadata.line[remux_src[i].properties.video_size] = remux_src[i].properties.url;
-                            metadata.line[remux_src[i].properties.video_size + "_sha1"] = remux_src[i].sha1;
-                            if(remux_src[i].properties.video_size === "nHD")
-                                metadata.insert_name = language + "_t_" +remux_src[i].name.split("_").slice(2).join("_").split(".")[0]+".wav";
-                        }
-                        metadata.insert_type = "4";
-                        const wfid = metadata.send_id;
-                        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
-                    }
+                    metadata = data;
+                    const wfid = metadata.send_id;
+                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
                 }
             });
-            return
+            return;
         }
 
         // Check if unit was imported from old KM
         const wfid = metadata.send_id;
-        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, id);
+        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
     };
 
     newUnitWF = (metadata, wfid) => {
@@ -315,16 +216,13 @@ class InsertModal extends Component {
         insertName(insert_name, "insert_name", (data) => {
             console.log(":: insertName - got: ",data);
             if(data.length > 0 && insert_type === "1") {
-                console.log(":: File with name: "+insert_name+" - already exist!");
                 alert("File with name: "+insert_name+" - already exist!");
                 this.setState({ isValidated: false });
             } else if(data.length === 0 && insert_type === "2") {
-                console.log(":: File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 this.setState({ isValidated: false });
             } else if(data.length === 0 && insert_type === "5") {
                 // This validation to check that we update inserted dibuv and NOT translation from ingest
-                console.log(":: File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 alert("File with name: "+insert_name+" - does NOT exist! In current mode the operation must be update only");
                 this.setState({ isValidated: false });
             } else {
@@ -352,8 +250,9 @@ class InsertModal extends Component {
         const {metadata, isValidated, loading, locale, unit} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
-        //let archive_uploader = roles.find(r => r === "archive_uploader");
-        let archive_typist = roles.find(r => r === "archive_typist");
+        const upload_options = getUploadOptions(roles, content_type);
+        let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
+        let rename_style = (<style>{'.ui.segment { background-color: #e2c2ae; }'}</style>);
 
         let date_picker = (
             <DatePicker
@@ -382,22 +281,6 @@ class InsertModal extends Component {
                 onChange={(e,{value}) => this.inputUid(value)}
             />
         );
-
-        let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
-        let rename_style = (<style>{'.ui.segment { background-color: #e2c2ae; }'}</style>);
-
-        const upload_options = [
-            { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
-            { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
-            { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
-            { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
-            { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
-            { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: (archive_typist || content_type === "ARTICLES") },
-            { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
-            { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
-            { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
-            { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
-        ];
 
         return (
             <Container className="insert_app">
