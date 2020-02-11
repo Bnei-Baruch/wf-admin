@@ -96,7 +96,7 @@ class InsertModal extends Component {
         this.setState({metadata: {...metadata}});
     };
 
-    onGetUID = (unit) => {
+    setUnitID = (unit) => {
         console.log(":: Selected unit: ", unit);
         this.setState({unit});
         let {metadata} = this.state;
@@ -126,8 +126,7 @@ class InsertModal extends Component {
                     alert("File with name: "+metadata.insert_name+" - exist in MDB");
                     this.setState({ isValidated: false });
                 } else {
-                    const wfid = metadata.send_id;
-                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
+                    this.setPerson(metadata, unit);
                 }
             });
             return
@@ -140,48 +139,47 @@ class InsertModal extends Component {
                     this.setState({ isValidated: false });
                 } else {
                     metadata = data;
-                    const wfid = metadata.send_id;
-                    wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
+                    this.setPerson(metadata, unit);
                 }
             });
             return;
         }
 
-        // Check if unit was imported from old KM
-        const wfid = metadata.send_id;
-        wfid ? this.newUnitWF(metadata, wfid) : this.oldUnitWF(metadata, unit.id);
+        this.setPerson(metadata, unit);
     };
 
-    newUnitWF = (metadata, wfid) => {
-        console.log(":::: New Workflow UNIT :::: ");
-        console.log(":: Workflow ID: ", wfid);
-        getDataByID(wfid, (wfdata) => {
-            if(wfdata) {
-                console.log(":: Got Workflow Data: ", wfdata);
-                metadata.line.send_name = wfdata.file_name;
-                metadata.line.lecturer = wfdata.line.lecturer;
+    setPerson = (metadata,unit) => {
+        if(metadata.send_id) {
+            const wfid = metadata.send_id;
+            console.log(":::: New Workflow UNIT :::: ");
+            console.log(":: Workflow ID: ", wfid);
+            getDataByID(wfid, (wfdata) => {
+                if(wfdata) {
+                    console.log(":: Got Workflow Data: ", wfdata);
+                    metadata.line.send_name = wfdata.file_name;
+                    metadata.line.lecturer = wfdata.line.lecturer;
+                    if(metadata.upload_type !== "aricha" && metadata.upload_type !== "dibuv")
+                        metadata.insert_name = getName(metadata);
+                    console.log(":: Metadata insert_name: \n%c" + metadata.insert_name, "color:Green");
+                    this.checkMeta(metadata);
+                } else {
+                    alert("Unit does NOT exist in workflow");
+                    this.setState({ isValidated: false });
+                }
+            });
+        } else {
+            const id = unit.id;
+            console.log(":::: Old Workflow UNIT :::: ");
+            metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
+            fetchPersons(id, (data) => {
+                console.log(":: Got Persons: ",data);
+                metadata.line.lecturer = (data.length > 0 && data[0].person.uid === "abcdefgh") ? "rav" : "norav";
                 if(metadata.upload_type !== "aricha" && metadata.upload_type !== "dibuv")
                     metadata.insert_name = getName(metadata);
-                console.log(":: Metadata insert_name: \n%c" + metadata.insert_name, "color:Green");
+                console.log(":: Metadata insert_name: \n%c"+metadata.insert_name,"color:Green");
                 this.checkMeta(metadata);
-            } else {
-                alert("Unit does NOT exist in workflow");
-                this.setState({ isValidated: false });
-            }
-        });
-    };
-
-    oldUnitWF = (metadata, id) => {
-        console.log(":::: Old Workflow UNIT :::: ");
-        metadata.line.send_name = metadata.line.upload_filename.split('.')[0];
-        fetchPersons(id, (data) => {
-            console.log(":: Got Persons: ",data);
-            metadata.line.lecturer = (data.length > 0 && data[0].person.uid === "abcdefgh") ? "rav" : "norav";
-            if(metadata.upload_type !== "aricha" && metadata.upload_type !== "dibuv")
-                metadata.insert_name = getName(metadata);
-            console.log(":: Metadata insert_name: \n%c"+metadata.insert_name,"color:Green");
-            this.checkMeta(metadata);
-        });
+            });
+        }
     };
 
     checkMeta = (metadata) => {
@@ -357,7 +355,7 @@ class InsertModal extends Component {
                         <NestedModal
                             upload_type={upload_type}
                             publishers={this.state.store.publishers}
-                            onUidSelect={this.onGetUID}
+                            onUidSelect={this.setUnitID}
                             onPubSelect={this.setPublisher}
                         />
                     </Modal.Actions>
