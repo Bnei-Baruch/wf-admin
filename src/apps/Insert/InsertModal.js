@@ -326,7 +326,7 @@ class InsertModal extends Component {
                 </Segment>
                 <Segment clearing secondary color='blue'>
                     <Modal.Content className="tabContent">
-                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.onGetUID} />
+                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.setUnitID} />
                     </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
