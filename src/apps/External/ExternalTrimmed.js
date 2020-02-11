@@ -110,7 +110,7 @@ class ExternalTrimmed extends Component {
                 insert_button: !renamed || wfsend,
                 rename_button: fix_mode ? false : wfsend,
                 send_button: false,
-                kmedia_option: kmedia || !checked || !wfsend || secured,
+                kmedia_option: kmedia || !wfsend || secured,
             });
         }
     };
