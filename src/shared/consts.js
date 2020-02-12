@@ -10,7 +10,7 @@ export const getUploadOptions = (roles, content_type) => {
         { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
         { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
         { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'research-material', text: 'נספחים', icon: 'paperclip', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'research-material', text: 'נספחים', icon: 'copy', disabled: (archive_typist || content_type === "ARTICLES") },
         { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
         { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
         { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
