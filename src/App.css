@@ -76,6 +76,14 @@ body {
     background: palegreen;
 }
 
+.update_mode {
+    background-color: #decdc1 !important;
+}
+
+.insert_mode {
+    background-color: #21ba4454 !important;
+}
+
 .update {
     display: inline-block;
     margin: auto;

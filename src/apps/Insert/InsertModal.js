@@ -244,46 +244,14 @@ class InsertModal extends Component {
 
         const {file_name} = this.props.filedata;
         const {roles} = this.props.user;
-        const {metadata, isValidated, loading, locale, unit} = this.state;
+        const {metadata, isValidated, loading, locale} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         const upload_options = getUploadOptions(roles, content_type);
-        let update_style = (<style>{'.ui.segment { background-color: #f9e7db; }'}</style>);
-        let rename_style = (<style>{'.ui.segment { background-color: #e2c2ae; }'}</style>);
-
-        let date_picker = (
-            <DatePicker
-                className="datepickercs"
-                locale={locale}
-                dateFormat="YYYY-MM-DD"
-                showYearDropdown
-                showMonthDropdown
-                scrollableYearDropdown
-                maxDate={moment()}
-                openToDate={moment(date)}
-                selected={moment(date)}
-                onChange={this.selectDate}
-            />
-        );
-
-        let uid_input = (
-            <Input
-                error={false}
-                className="input_uid"
-                size="mini"
-                icon='barcode'
-                placeholder="UID"
-                iconPosition='left'
-                value={send_uid}
-                onChange={(e,{value}) => this.inputUid(value)}
-            />
-        );
 
         return (
             <Container className="insert_app">
-                <Segment clearing>
-                    {insert_type === "2" ? update_style : ""}
-                    {insert_type === "3" ? rename_style : ""}
+                <Segment className={insert_type !== "1" ? "update_mode" : "insert_mode"} clearing >
                     <Header floated='left' >
                         <Dropdown
                             error={!content_type}
@@ -319,9 +287,29 @@ class InsertModal extends Component {
                         />
                     </Header>
                     <Header floated='right'>
-                        {uid_input}
+                        <Input
+                            error={send_uid.length > 0 && send_uid.length !== 8}
+                            className="input_uid"
+                            size="mini"
+                            icon='barcode'
+                            placeholder="UID"
+                            iconPosition='left'
+                            value={send_uid}
+                            onChange={(e,{value}) => this.inputUid(value)}
+                        />
                     </Header>
-                    {date_picker}
+                    <DatePicker
+                        className="datepickercs"
+                        locale={locale}
+                        dateFormat="YYYY-MM-DD"
+                        showYearDropdown
+                        showMonthDropdown
+                        scrollableYearDropdown
+                        maxDate={moment()}
+                        openToDate={moment(date)}
+                        selected={moment(date)}
+                        onChange={this.selectDate}
+                    />
                 </Segment>
                 <Segment clearing secondary color='blue'>
                     <Modal.Content className="tabContent">
@@ -344,7 +332,7 @@ class InsertModal extends Component {
                             <Grid.Column>
                                 <Button
                                     fluid
-                                    color='green'
+                                    color={insert_type === "1" ? "green" : "orange"}
                                     disabled={!isValidated}
                                     loading={loading}
                                     onClick={this.onComplete} >Send
