@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Popup, Icon } from 'semantic-ui-react'
-import { fetchUnits, toHms, getLang } from '../../shared/tools';
+import {fetchUnits, toHms, getLang} from '../../shared/tools';
 import NameHelper from './NameHelper';
 import {DCT_OPTS} from '../../shared/consts';
 
@@ -16,18 +16,38 @@ class MdbData extends Component {
         let path = ['page_size=1000', `start_date=${date}`, `end_date=${date}`, `query=${send_uid}`];
         if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
         fetchUnits('?' + path.join('&'), (data) => {
-            this.setState({units: data.data, active: null})
+            this.setState({units: data.data, active: null});
+            if(send_uid.length === 8) {
+                let unit = data.data[0];
+                this.props.autoSetData(unit);
+            }
         });
     };
 
     componentDidUpdate(prevProps) {
         const {content_type, date, send_uid, insert_type} = this.props.metadata;
-        if(send_uid && send_uid.length < 8) {
-            return
-        }
         if (JSON.stringify(prevProps.metadata) !== JSON.stringify(this.props.metadata)) {
-            if(this.props.units[0] && send_uid.length === 8) {
-                this.setState({units: this.props.units, active: null});
+            if(send_uid.length > 0 && send_uid.length !== 8) {
+                this.setState({units: []});
+                return
+            }
+            if(send_uid.length === 8) {
+                fetchUnits(`?query=${send_uid}`, (data) => {
+                    console.log(":: Got UNIT: ", data);
+                    if(data.total > 0) {
+                        this.setState({units: data.data, active: null});
+                        let unit = data.data[0];
+                        this.props.autoSetData(unit);
+                    } else {
+                        this.setState({units: []});
+                    }
+                })
+            }
+            // In insert mode we creating new unit for blogpost
+            // so we does not show nothing to choose
+            if(content_type === "BLOG_POST" && insert_type === "1") {
+                this.setState({units: []});
+                this.props.onUidSelect(null);
                 return
             }
             if(send_uid.length === 0) {
@@ -35,17 +55,7 @@ class MdbData extends Component {
                 if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
                 fetchUnits('?' + path.join('&'), (data) => {
                     console.log(" :: Fetch units: ", data);
-                    // In insert mode we creating new unit for blogpost
-                    // so we does not show nothing to choose
-                    if(content_type === "BLOG_POST" && insert_type === "1") {
-                        this.setState({units: []});
-                        this.props.onUidSelect(null);
-                    } else if(content_type === "BLOG_POST" && insert_type !== "1") {
-                        this.setState({units: []});
-                        //TODO: find unit to fix
-                    } else {
-                        this.setState({units: data.data, active: null});
-                    }
+                    this.setState({units: data.data, active: null});
                 });
             }
         }

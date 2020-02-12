@@ -75,16 +75,6 @@ class InsertModal extends Component {
     inputUid = (send_uid) => {
         let {metadata} = this.state;
         this.setState({metadata: {...metadata, send_uid}, isValidated: false});
-        if(send_uid.length === 8) {
-            fetchUnits(`?query=${send_uid}`, (data) => {
-                let unit = data.data[0];
-                console.log(":: Got UNIT: ", data);
-                metadata.content_type = getDCT(CONTENT_TYPE_BY_ID[unit.type_id]);
-                const {capture_date} = unit.properties;
-                metadata.date = capture_date && capture_date !== "0001-01-01" ? capture_date : metadata.date;
-                this.setState({metadata: {...metadata, send_uid}, isValidated: false, unit});
-            })
-        }
     };
 
     setPublisher = (publisher) => {
@@ -94,6 +84,15 @@ class InsertModal extends Component {
         metadata.line.publisher = pattern;
         console.log(":: Set Publisher: ", publisher);
         this.setState({metadata: {...metadata}});
+    };
+
+    autoSetData = (unit) => {
+        let {metadata} = this.state;
+        metadata.content_type = getDCT(CONTENT_TYPE_BY_ID[unit.type_id]);
+        const {capture_date} = unit.properties;
+        metadata.date = capture_date && capture_date !== "0001-01-01" ? capture_date : metadata.date;
+        this.setState({metadata});
+        console.log("Auto Set Data:", metadata)
     };
 
     setUnitID = (unit) => {
@@ -326,7 +325,7 @@ class InsertModal extends Component {
                 </Segment>
                 <Segment clearing secondary color='blue'>
                     <Modal.Content className="tabContent">
-                        <MdbData metadata={metadata} units={[unit]} onUidSelect={this.setUnitID} />
+                        <MdbData metadata={metadata} autoSetData={this.autoSetData} onUidSelect={this.setUnitID} />
                     </Modal.Content>
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
