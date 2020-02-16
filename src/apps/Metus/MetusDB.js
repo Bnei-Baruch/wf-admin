@@ -242,6 +242,9 @@ class MetusDB extends Component {
                                     <InsertModal filedata={this.state.filedata} metadata={this.state.metadata} onComplete={this.onInsert} />
                                 </Modal>
                             </Menu.Item>
+                            <Menu.Item>
+                                <Button color='teal' icon='download' disabled={!this.state.source} href={this.state.source} download />
+                            </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
