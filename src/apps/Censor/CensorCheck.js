@@ -292,7 +292,7 @@ class CensorCheck extends Component {
                         <Button color='orange' icon='key' disabled={this.state.disabled} onClick={this.setSecured} />
                     </Menu.Item>
                     <Menu.Item>
-                        <Button color='teal' icon='download' disabled={this.state.disabled} href={this.state.source} download />
+                        <Button color='teal' icon='download' disabled={this.state.disabled} href={this.state.source + '?token=' + getToken()} download />
                     </Menu.Item>
                     {/*<Menu.Item>*/}
                     {/*    <Button color='red' icon='close' disabled={this.state.disabled} onClick={this.setRemoved} />*/}

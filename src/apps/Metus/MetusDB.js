@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment';
-import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getDCT, getToken, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertModal from "../Insert/InsertModal"
@@ -243,7 +243,7 @@ class MetusDB extends Component {
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='teal' icon='download' disabled={!this.state.source} href={this.state.source} download />
+                                <Button color='teal' icon='download' disabled={!this.state.source} href={this.state.source + '?token=' + getToken()} download />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position='right'>
