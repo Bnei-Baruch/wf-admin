@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import MediaElement from './MediaElement';
-import {getToken} from "../../shared/tools";
 
 export default class MediaPlayer extends Component {
 
     render() {
         const
             sources = [
-                {src: this.props.source + '?token=' + getToken(), type: this.props.type},
+                {src: this.props.source, type: this.props.type},
             ],
 
             config = {

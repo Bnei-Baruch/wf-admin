@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND, getToken} from '../../shared/tools';
+import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import moment from "moment";
@@ -177,7 +177,7 @@ class FilesWorkflow extends Component {
                     <Menu.Item position='right'>
                         <Button color='teal' disabled={!source} >
                             <Icon name='download'/>
-                            <a href={source + '?token=' + getToken()} download={name}>{name}</a>
+                            <a href={source} download={name}>{name}</a>
                         </Button>
                     </Menu.Item>
                 </Menu>
