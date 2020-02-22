@@ -24,8 +24,7 @@ export const client = new UserManager(userManagerConfig);
 client.events.addAccessTokenExpiring(() => {
     console.log("...RENEW TOKEN...");
     client.signinSilent().then(user => {
-        console.log(user);
-        if(user) document.cookie = user.access_token;
+        if(user) document.cookie = `token=${user.access_token};`;
     }).catch((error) => {
         console.log("SigninSilent error: ",error);
     });
@@ -39,7 +38,7 @@ client.events.addAccessTokenExpired(() => {
 export const getUser = (cb) =>
     client.getUser().then((user) => {
         if(user) {
-            document.cookie = user.access_token;
+            document.cookie = `token=${user.access_token};`;
             let at = KJUR.jws.JWS.parse(user.access_token);
             let roles = at.payloadObj.realm_access.roles;
             user = {...user.profile, token: user.access_token, roles};
