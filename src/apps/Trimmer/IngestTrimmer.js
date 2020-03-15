@@ -11,6 +11,7 @@ class IngestTrimmer extends Component {
         disabled: true,
         main: [],
         backup: [],
+        rroom: [],
         file_data: "",
         open: false,
         trim_src: "main",
@@ -25,7 +26,8 @@ class IngestTrimmer extends Component {
         getData(`ingest/find?key=date&value=${date}`, (data) => {
             let main = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
             let backup = data.filter(b => b.capture_src.match(/^(mltbackup|backupcap)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
-            this.setState({main, backup});
+            let rroom = data.filter(b => b.capture_src.match(/^(rroom)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
+            this.setState({main, backup, rroom});
         });
     };
 
@@ -67,6 +69,7 @@ class IngestTrimmer extends Component {
         const options = [
             { key: 1, text: 'Main', value: 'main' },
             { key: 2, text: 'Backup', value: 'backup' },
+            { key: 3, text: 'Rroom', value: 'rroom' },
         ];
 
         let trim_data = trim_files.map((data) => {
