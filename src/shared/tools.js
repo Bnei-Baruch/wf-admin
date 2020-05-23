@@ -1,5 +1,6 @@
 import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID} from './consts';
 import moment from 'moment';
+import kc from "../components/UserManager";
 
 //export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
 //export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
@@ -48,9 +49,7 @@ export const randomString = (len, charSet) => {
 };
 
 export const getToken = () => {
-    let jwt = sessionStorage.getItem(`oidc.user:${AUTH_URL}:wf-admin`);
-    let json = JSON.parse(jwt);
-    return json.access_token;
+    return kc.token;
 };
 
 export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {

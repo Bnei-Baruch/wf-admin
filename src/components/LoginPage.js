@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {client,getUser} from './UserManager';
+import {kc,getUser} from './UserManager';
 import { Container,Message,Button,Dropdown,Image } from 'semantic-ui-react';
 import logo from './KL_Tree_128.png';
 
@@ -15,35 +15,19 @@ class LoginPage extends Component {
     };
 
     appLogin = () => {
-        getUser(user => {
+        getUser((user) => {
             if(user) {
-                client.querySessionStatus().then(() => {
-                    this.props.checkPermission(user);
-                }).catch((error) => {
-                    console.log("querySessionStatus: ", error);
-                    alert("We detect wrong browser cookies settings");
-                    client.signoutRedirect();
-                });
+                this.setState({loading: false});
+                this.props.checkPermission(user);
             } else {
-                client.signinRedirectCallback().then((user) => {
-                    if(user.state) window.location = user.state;
-                }).catch(() => {
-                    client.signinSilent().then(user => {
-                        if(user) this.appLogin();
-                    }).catch((error) => {
-                        console.log("SigninSilent error: ",error);
-                        this.setState({disabled: false, loading: false});
-                    });
-                });
+                this.setState({disabled: false, loading: false});
             }
         });
     };
 
     userLogin = () => {
         this.setState({disabled: true, loading: true});
-        getUser(cb => {
-            if(!cb) client.signinRedirect({state: window.location.href});
-        });
+        kc.login({redirectUri: window.location.href});
     };
 
     render() {
@@ -57,7 +41,7 @@ class LoginPage extends Component {
                 <Dropdown.Menu>
                     <Dropdown.Item content='Profile:' disabled />
                     <Dropdown.Item text='My Account' onClick={() => window.open("https://accounts.kbb1.com/auth/realms/main/account", "_blank")} />
-                    <Dropdown.Item text='Sign Out' onClick={() => client.signoutRedirect()} />
+                    <Dropdown.Item text='Sign Out' onClick={() => kc.logout()} />
                 </Dropdown.Menu>
             </Dropdown>);
 
