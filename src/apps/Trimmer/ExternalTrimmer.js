@@ -30,7 +30,7 @@ class ExternalTrimmer extends Component {
     };
 
     getCaptured = (date) => {
-        getData(`capture/find?key=date&value=${date.slice(0, -3)}`, (data) => {
+        getData(`capture/find?key=date&value=${date}`, (data) => {
             let insert = data.filter(b => b.capture_src.match(/^(insert)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             let congress = data.filter(b => b.capture_src.match(/^(congress)$/) && b.wfstatus.capwf && !b.wfstatus.locked);
             this.setState({congress, insert});

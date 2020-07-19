@@ -311,8 +311,11 @@ export const remuxLine = (unit, metadata, cb) => {
                     //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
                     //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                     //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                    //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                    // So we going to check filename string for heb and rus order
                     let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                    if(remux_src.length === 0) {
+                        remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+                    }
                     console.log(" :: Got sources for remux: ", remux_src);
                     // We must get here 1 or 2 files and save their url
                     if(remux_src.length === 0 || remux_src.length > 2) {
@@ -351,11 +354,14 @@ export const remuxLine = (unit, metadata, cb) => {
             alert("Not ready yet");
             cb(null);
         } else {
-            // Not in all files we got original_language property so we going to check string
+            //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
             // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
             //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-            //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+            // So we going to check filename string for heb and rus order
             let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+            if(remux_src.length === 0) {
+                remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+            }
             console.log(" :: Got sources for remux: ", remux_src);
             // We must get here 1 or 2 files and save their url
             if(remux_src.length === 0 || remux_src.length > 2) {
