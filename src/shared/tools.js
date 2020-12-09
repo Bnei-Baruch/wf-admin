@@ -18,7 +18,7 @@ export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.R
 //export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
 //export const MDB_BACKEND = 'https://kabbalahmedia.info/mdb-api';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
-const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
+const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
 
 export const IVAL = 1000;
 
