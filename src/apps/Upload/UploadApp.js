@@ -33,7 +33,7 @@ class UploadApp extends Component {
 
         return (
             <Fragment>
-                {this.props.user.preferred_username.match(/^(amnonbb@gmail\.com|natashazh57@gmail\.com)$/) ? <BackupUpload onFileData={this.backupWorkflow} /> : ""}
+                <BackupUpload onFileData={this.backupWorkflow} />
                 <AkladaUpload onFileData={this.akladaWorkflow}/>
             </Fragment>
         );
