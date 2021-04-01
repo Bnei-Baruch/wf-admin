@@ -70,7 +70,7 @@ class App extends Component {
             });
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {
-                    let count = Object.keys(data).length;
+                    let count = Object.values(data[0] === true).length;
                     if (this.state.count !== count) {
                         let {wf_panes} = this.state;
                         for(let i=0; i<wf_panes.length; i++) {

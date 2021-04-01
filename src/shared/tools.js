@@ -1,4 +1,4 @@
-import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID} from './consts';
+import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID, langs_bb} from './consts';
 import moment from 'moment';
 import kc from "../components/UserManager";
 
@@ -616,5 +616,8 @@ export const captureSha = (sha, cb) => fetch(`${WFDB_BACKEND}/capture/find?key=s
     })
     .catch(ex => console.log(`get ${sha}`, ex));
 
-
-
+export const newLanguages = () => {
+    let languages = {};
+    langs_bb.map((lang) => languages[lang] = false);
+    return languages;
+}

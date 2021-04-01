@@ -26,6 +26,7 @@ class LangCheck extends Component {
 
     selectState = (state) => {
         console.log(state);
+        if(!state.carbon) return
         const {languages, file_name} = state;
         this.setState({languages, file_name, disabled: false, lang_data: state});
         this.LangSelector.updateLangs(state);
