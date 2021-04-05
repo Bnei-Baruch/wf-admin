@@ -9,6 +9,7 @@
     "mediaelement": "^4.2.9",
     "mediaelement-plugins": "^2.5.0",
     "moment": "^2.22.0",
+    "mqtt": "^4.2.6",
     "rc-upload": "^2.4.4",
     "react": "^17.0.1",
     "react-datepicker": "^1.4.1",

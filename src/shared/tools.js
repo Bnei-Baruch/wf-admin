@@ -19,6 +19,8 @@ export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.R
 //export const MDB_BACKEND = 'https://kabbalahmedia.info/mdb-api';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
+export const MQTT_LCL_URL = process.env.REACT_APP_MQTT_LCL_URL;
+export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
 
 export const IVAL = 1000;
 
@@ -428,6 +430,7 @@ export const newTrimMeta = (data, mode, source) => {
             wfsend: false,
             removed: false,
             kmedia: false,
+            langcheck: !!original.languages,
             backup: false,
             metus: false,
             censored: censored,
