@@ -3,7 +3,7 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {getData, newLanguages, putData, WFDB_BACKEND, toHms} from "../../shared/tools";
+import {newLanguages, putData, WFDB_BACKEND, toHms} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
 import {Label, Segment, Button, Divider} from "semantic-ui-react";
@@ -12,6 +12,7 @@ class IngestApp extends Component {
 
     state = {
         capture: {},
+        captures: {},
         ival: null,
         languages: {},
         langcheck: {languages: {}},
@@ -20,23 +21,22 @@ class IngestApp extends Component {
     componentDidMount() {
         this.initMQTT();
         this.newCheck();
-        let ival = setInterval(() =>
-            getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-                const capture = data.find(c => !c.wfstatus.capwf && c.capture_src === "mltcap");
-                const current = Object.assign({}, this.state.capture);
-                if(current?.capture_id !== capture?.capture_id) {
-                    this.setState({capture})
-                }
-                if(current?.line?.final_name !== capture?.line?.final_name) {
-                    this.newCheck();
-                    this.setState({capture})
-                }
-            }), 10000);
-        this.setState({ival: ival});
+        // let ival = setInterval(() =>
+        //     getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
+        //         const capture = data.find(c => !c.wfstatus.capwf && c.capture_src === "mltcap");
+        //         const current = Object.assign({}, this.state.capture);
+        //         if(current?.capture_id !== capture?.capture_id) {
+        //             this.setState({capture})
+        //         }
+        //         if(current?.line?.final_name !== capture?.line?.final_name) {
+        //             this.newCheck();
+        //             this.setState({capture})
+        //         }
+        //     }), 10000);
+        // this.setState({ival: ival});
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
         mqtt.exit('workflow/state/capture/#')
         mqtt.exit('exec/service/data/#')
     };
@@ -59,23 +59,25 @@ class IngestApp extends Component {
         if(services) {
             for(let i=0; i<services.length; i++) {
                 if(src === "mltcap") {
-                    let main_online = services[i].alive;
-                    let main_timer = main_online ? toHms(services[i].runtime) : "00:00:00";
-                    this.setState({main_timer, main_online});
+                    let multi_online = services[i].alive;
+                    let multi_timer = multi_online ? toHms(services[i].runtime) : "00:00:00";
+                    this.setState({multi_timer, multi_online});
                 }
                 if(src === "maincap") {
-                    let backup_online = services[i].alive;
-                    let backup_timer = backup_online ? toHms(services[i].runtime) : "00:00:00";
-                    this.setState({backup_timer, backup_online});
+                    let single_online = services[i].alive;
+                    let single_timer = single_online ? toHms(services[i].runtime) : "00:00:00";
+                    this.setState({single_timer, single_online});
                 }
             }
         }
     };
 
     onMqttState = () => {
-        mqtt.mq.on('state', data => {
-            console.log("[capture] Got state: ", data);
-            this.setState({jsonst: data});
+        mqtt.mq.on('state', (data, source) => {
+            const {captures} = this.state;
+            console.log("[capture] Got state: " + data + " | from: " + source);
+            captures[source] = data;
+            this.setState({captures});
         });
     };
 
@@ -117,18 +119,18 @@ class IngestApp extends Component {
     }
 
     render() {
-        const {capture, langcheck, languages} = this.state;
+        const {capture, langcheck, languages, captures} = this.state;
         const capture_title = capture ? capture.stop_name || capture.line?.final_name || capture.start_name : "";
         const save_disable = JSON.stringify(languages) === JSON.stringify(langcheck.languages);
 
         return (
             <Fragment>
-                {capture?.capture_id ?
+                {captures?.multi ?
                 <Segment textAlign='center' className="ingest_segment" color='red' raised>
                     <Label attached='top' className="capture_label" icon='record' content={capture_title} />
                     <Divider />
-                    {capture.line?.final_name !== "" ? <LangSelector onRef={ref => (this.lang = ref)} onGetLang={this.setLangs}/> : null}
-                    {capture.line?.final_name !== "" ? <Button fluid positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button> : null}
+                    {captures?.multi?.line ? <LangSelector onRef={ref => (this.lang = ref)} onGetLang={this.setLangs}/> : null}
+                    {captures?.multi?.line ? <Button fluid positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button> : null}
                 </Segment> : null}
                 <IngestTrimmer />
                 <IngestTrimmed />

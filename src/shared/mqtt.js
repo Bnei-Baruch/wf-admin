@@ -81,7 +81,8 @@ class MqttMsg {
         this.mq.on('message',  (topic, data, packet) => {
             if (/state/.test(topic)) {
                 console.debug("[mqtt] State from topic: ", topic);
-                this.mq.emit('state', JSON.parse(data.toString()));
+                const src = topic.split("/")[3]
+                this.mq.emit('state', JSON.parse(data.toString()), src);
             } else {
                 let message = stat ? data.toString() : JSON.parse(data.toString());
                 if(message.action !== "status")
