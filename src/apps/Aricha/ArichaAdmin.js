@@ -16,6 +16,7 @@ import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Select, Messa
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertModal from "../Insert/InsertModal"
 import CIT from '../CIT/CIT';
+import kc from "../../components/UserManager";
 
 class ArichaAdmin extends Component {
 
@@ -319,69 +320,72 @@ class ArichaAdmin extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">
-                    {file_data.file_name ? file_data.file_name : "Aricha Done"}
+                    {file_data.file_name ? file_data.file_name : "Aricha Status"}
                 </Label>
-                <Message>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Modal closeOnDimmerClick={false}
-                                   trigger={<Button color='blue' icon='tags'
-                                                    loading={renaming}
-                                                    disabled={rename_button}
-                                                    onClick={this.openCit} />}
-                                   onClose={this.onCancel}
-                                   open={cit_open}
-                                   closeIcon="close"
-                                   mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={file_data.line}
-                                         onCancel={this.onCancel}
-                                         onComplete={(x) => this.renameFile(x)}/>
-                                </Modal.Content>
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Menu position='left'>
+                {kc.hasRealmRole("wf_aricha_admin") ?
+                    <Message>
+                        <Menu size='large' secondary>
                             <Menu.Item>
-                                <Modal { ...this.props }
-                                       trigger={<Button color='teal' icon='archive'
-                                                        loading={inserting}
-                                                        disabled={insert_button}
-                                                        onClick={this.openInsert} />}
-                                       closeOnDimmerClick={true}
-                                       closeIcon={true}
-                                       onClose={this.onCancel}
-                                       open={insert_open}
-                                       size="large"
+                                <Modal trigger={<Button color='brown' icon='play' disabled={!source}/>}
+                                       size='tiny'
                                        mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <InsertModal filedata={filedata} metadata={metadata} onComplete={this.onInsert} user={this.props.user} />
+                                    <MediaPlayer player={this.getPlayer} source={source} type='video/mp4'/>
                                 </Modal>
                             </Menu.Item>
                             <Menu.Item>
-                                <Button color='red' icon='close' onClick={this.setRemoved} />
+                                <Modal closeOnDimmerClick={false}
+                                       trigger={<Button color='blue' icon='tags'
+                                                        loading={renaming}
+                                                        disabled={rename_button}
+                                                        onClick={this.openCit}/>}
+                                       onClose={this.onCancel}
+                                       open={cit_open}
+                                       closeIcon="close"
+                                       mountNode={document.getElementById("cit-modal-mount")}>
+                                    <Modal.Content>
+                                        <CIT metadata={file_data.line}
+                                             onCancel={this.onCancel}
+                                             onComplete={(x) => this.renameFile(x)}/>
+                                    </Modal.Content>
+                                </Modal>
                             </Menu.Item>
-                        </Menu.Menu>
-                        <Menu.Menu position='right'>
-                            <Menu.Item>
+                            <Menu.Menu position='left'>
+                                <Menu.Item>
+                                    <Modal {...this.props}
+                                           trigger={<Button color='teal' icon='archive'
+                                                            loading={inserting}
+                                                            disabled={insert_button}
+                                                            onClick={this.openInsert}/>}
+                                           closeOnDimmerClick={true}
+                                           closeIcon={true}
+                                           onClose={this.onCancel}
+                                           open={insert_open}
+                                           size="large"
+                                           mountNode={document.getElementById("ltr-modal-mount")}>
+                                        <InsertModal filedata={filedata} metadata={metadata} onComplete={this.onInsert}
+                                                     user={this.props.user}/>
+                                    </Modal>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Button color='red' icon='close' onClick={this.setRemoved}/>
+                                </Menu.Item>
+                            </Menu.Menu>
+                            <Menu.Menu position='right'>
+                                <Menu.Item>
                                     <Select compact options={send_options}
                                             defaultValue={special}
                                             placeholder='Send options'
-                                            onChange={(e, {value}) => this.setSpecial(value)} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button positive icon="arrow right"
-                                        disabled={send_button}
-                                        onClick={this.sendFile} loading={sending} />
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu>
-                </Message>
+                                            onChange={(e, {value}) => this.setSpecial(value)}/>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Button positive icon="arrow right"
+                                            disabled={send_button}
+                                            onClick={this.sendFile} loading={sending}/>
+                                </Menu.Item>
+                            </Menu.Menu>
+                        </Menu>
+                    </Message> : null
+                }
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>

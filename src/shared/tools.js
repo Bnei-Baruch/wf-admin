@@ -1,5 +1,6 @@
-import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID} from './consts';
+import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID, langs_bb} from './consts';
 import moment from 'moment';
+import kc from "../components/UserManager";
 
 //export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
 //export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
@@ -17,7 +18,9 @@ export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.R
 //export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
 //export const MDB_BACKEND = 'https://kabbalahmedia.info/mdb-api';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
-const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
+const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
+export const MQTT_LCL_URL = process.env.REACT_APP_MQTT_LCL_URL;
+export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
 
 export const IVAL = 1000;
 
@@ -48,9 +51,7 @@ export const randomString = (len, charSet) => {
 };
 
 export const getToken = () => {
-    let jwt = sessionStorage.getItem(`oidc.user:${AUTH_URL}:wf-admin`);
-    let json = JSON.parse(jwt);
-    return json.access_token;
+    return kc.token;
 };
 
 export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {
@@ -312,8 +313,11 @@ export const remuxLine = (unit, metadata, cb) => {
                     //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
                     //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
                     //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-                    //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+                    // So we going to check filename string for heb and rus order
                     let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+                    if(remux_src.length === 0) {
+                        remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+                    }
                     console.log(" :: Got sources for remux: ", remux_src);
                     // We must get here 1 or 2 files and save their url
                     if(remux_src.length === 0 || remux_src.length > 2) {
@@ -352,11 +356,14 @@ export const remuxLine = (unit, metadata, cb) => {
             alert("Not ready yet");
             cb(null);
         } else {
-            // Not in all files we got original_language property so we going to check string
+            //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
             // let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
             //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
-            //let remux_src = published.filter(s => s.name.match("_o_") && s.mime_type === "video/mp4");
+            // So we going to check filename string for heb and rus order
             let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+            if(remux_src.length === 0) {
+                remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+            }
             console.log(" :: Got sources for remux: ", remux_src);
             // We must get here 1 or 2 files and save their url
             if(remux_src.length === 0 || remux_src.length > 2) {
@@ -423,6 +430,7 @@ export const newTrimMeta = (data, mode, source) => {
             wfsend: false,
             removed: false,
             kmedia: false,
+            langcheck: !!original.languages,
             backup: false,
             metus: false,
             censored: censored,
@@ -611,5 +619,8 @@ export const captureSha = (sha, cb) => fetch(`${WFDB_BACKEND}/capture/find?key=s
     })
     .catch(ex => console.log(`get ${sha}`, ex));
 
-
-
+export const newLanguages = () => {
+    let languages = {};
+    langs_bb.map((lang) => languages[lang] = false);
+    return languages;
+}

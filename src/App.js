@@ -1,6 +1,7 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Tab, Label, Segment } from 'semantic-ui-react'
-import {client} from "./components/UserManager";
+import {kc} from "./components/UserManager";
+import mqtt from "./shared/mqtt";
 import {getData} from "./shared/tools";
 import LoginPage from './components/LoginPage';
 import './stylesheets/sematic-reset.css';
@@ -51,26 +52,29 @@ class App extends Component {
     };
 
     checkPermission = (user) => {
-        let wf_public = user.roles.filter(role => role === 'bb_user').length === 0;
-        let wf_ingest = user.roles.filter(role => role === 'wf_ingest').length === 0;
-        let wf_censor = user.roles.filter(role => role === 'wf_censor').length === 0;
-        let wf_admin = user.roles.filter(role => role === 'wf_admin').length === 0;
-        let wf_jobs = user.roles.filter(role => role === 'wf_jobs').length === 0;
-        let wf_aricha = user.roles.filter(role => role === 'wf_aricha').length === 0;
-        let wf_insert = user.roles.filter(role => role === 'wf_insert').length === 0;
-        let wf_dgima = user.roles.filter(role => role === 'wf_dgima').length === 0;
-        let wf_external = user.roles.filter(role => role === 'wf_external').length === 0;
-        let wf_upload = user.roles.filter(role => role === 'wf_upload').length === 0;
-        let wf_sirtutim = user.roles.filter(role => role === 'wf_sirtutim').length === 0;
-        let wf_ktaim = user.roles.filter(role => role === 'wf_ktaim').length === 0;
-        let wf_files = user.roles.filter(role => role === 'wf_files').length === 0;
+        let wf_public = !kc.hasRealmRole("bb_user");
+        let wf_ingest = !kc.hasRealmRole("wf_ingest");
+        let wf_censor = !kc.hasRealmRole("wf_censor");
+        let wf_admin = !kc.hasRealmRole("wf_admin");
+        let wf_jobs = !kc.hasRealmRole("wf_jobs");
+        let wf_aricha = !kc.hasRealmRole("wf_aricha");
+        let wf_insert = !kc.hasRealmRole("wf_insert");
+        let wf_dgima = !kc.hasRealmRole("wf_dgima");
+        let wf_external = !kc.hasRealmRole("wf_external");
+        let wf_upload = !kc.hasRealmRole("wf_upload");
+        let wf_sirtutim = !kc.hasRealmRole("wf_sirtutim");
+        let wf_ktaim = !kc.hasRealmRole("wf_ktaim");
+        let wf_files = !kc.hasRealmRole("wf_files");
         if(!wf_public) {
             this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files}, () => {
                 this.loadApps();
+                mqtt.init(user, (data) => {
+                    console.log("[mqtt] init: ", data);
+                })
             });
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {
-                    let count = Object.keys(data).length;
+                    const count = Object.keys(data).filter(d => /t/.test(d)).length
                     if (this.state.count !== count) {
                         let {wf_panes} = this.state;
                         for(let i=0; i<wf_panes.length; i++) {
@@ -85,7 +89,7 @@ class App extends Component {
             }
         } else {
             alert("Access denied!");
-            client.signoutRedirect();
+            kc.logout();
         }
     };
 

@@ -128,6 +128,15 @@ body {
     /*text-decoration-style: double;*/
 }
 
+.capture_label {
+    font-size: 16px!important;
+    color: #9f061e !important;
+    ont-weight: bold!important;
+    /*text-decoration: underline;*/
+    /*text-decoration-color: red;*/
+    /*text-decoration-style: double;*/
+}
+
 .filesapp_label {
     font-size: 14px!important;
     color: #661418!important;

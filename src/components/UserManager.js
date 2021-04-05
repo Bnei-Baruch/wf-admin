@@ -1,52 +1,64 @@
-import { Log as oidclog, UserManager } from 'oidc-client';
-import {KJUR} from 'jsrsasign';
-
-const AUTH_URL = 'https://accounts.kbb1.com/auth/realms/main';
-
-oidclog.logger = console;
-oidclog.level  = 0;
+import Keycloak from 'keycloak-js';
 
 const userManagerConfig = {
-    authority: AUTH_URL,
-    client_id: 'wf-admin',
-    redirect_uri: window.location.href,
-    response_type: 'token id_token',
-    scope: 'openid profile',
-    post_logout_redirect_uri: window.location.href,
-    automaticSilentRenew: false,
-    silent_redirect_uri: window.location.href + "silent_renew.html",
-    filterProtocolClaims: true,
-    loadUserInfo: true,
+    url: 'https://accounts.kab.info/auth',
+    realm: 'main',
+    clientId: 'wf-admin',
+    scope: 'profile',
+    enableLogging: true,
 };
 
-export const client = new UserManager(userManagerConfig);
+export const kc = new Keycloak(userManagerConfig);
 
-client.events.addAccessTokenExpiring(() => {
-    console.log("...RENEW TOKEN...");
-    client.signinSilent().then(user => {
-        if(user) document.cookie = `token=${user.access_token};`;
-    }).catch((error) => {
-        console.log("SigninSilent error: ",error);
-    });
-});
+kc.onTokenExpired = () => {
+    console.debug(" -- Renew token -- ");
+    renewToken(0);
+};
 
-client.events.addAccessTokenExpired(() => {
-    console.log("...!TOKEN EXPIRED!...");
-    client.signoutRedirect();
-});
+kc.onAuthLogout = () => {
+    console.debug("-- Detect clearToken --");
+    kc.logout();
+}
 
-export const getUser = (cb) =>
-    client.getUser().then((user) => {
-        if(user) {
-            document.cookie = `token=${user.access_token};`;
-            let at = KJUR.jws.JWS.parse(user.access_token);
-            let roles = at.payloadObj.realm_access.roles;
-            user = {...user.profile, token: user.access_token, roles};
-        }
-        cb(user)
-    })
-    .catch((error) => {
-        console.log("Error: ",error);
-    });
+const renewToken = (retry) => {
+    kc.updateToken(70)
+        .then(refreshed => {
+            if(refreshed) {
+                document.cookie = `token=${kc.token};`;
+                console.debug("-- Refreshed --");
+            } else {
+                console.warn('Token is still valid?..');
+            }
+        })
+        .catch(err => {
+            retry++;
+            if(retry > 5) {
+                console.error("Refresh retry: failed");
+                console.debug("-- Refresh Failed --");
+                kc.clearToken();
+            } else {
+                setTimeout(() => {
+                    console.error("Refresh retry: " + retry);
+                    renewToken(retry);
+                }, 10000);
+            }
+        });
+}
 
-export default client;
+
+
+export const getUser = (callback) => {
+    kc.init({onLoad: 'check-sso', checkLoginIframe: false, flow: 'standard', pkceMethod: 'S256'})
+        .then(authenticated => {
+            if(authenticated) {
+                document.cookie = `token=${kc.token};`;
+                const {realm_access: {roles}} = kc.tokenParsed;
+                let user = {...kc.tokenParsed, token: kc.token, roles};
+                callback(user)
+            } else {
+                callback(null)
+            }
+        }).catch((err) => console.log(err));
+};
+
+export default kc;
