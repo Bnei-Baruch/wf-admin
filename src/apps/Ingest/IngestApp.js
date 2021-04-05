@@ -3,8 +3,9 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {getData, newLanguages, putData, WFDB_BACKEND} from "../../shared/tools";
+import {getData, newLanguages, putData, WFDB_BACKEND, toHms} from "../../shared/tools";
 import moment from "moment";
+import mqtt from "../../shared/mqtt";
 import {Label, Segment, Button, Divider} from "semantic-ui-react";
 
 class IngestApp extends Component {
@@ -17,6 +18,7 @@ class IngestApp extends Component {
     };
 
     componentDidMount() {
+        this.initMQTT();
         this.newCheck();
         let ival = setInterval(() =>
             getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
@@ -35,6 +37,46 @@ class IngestApp extends Component {
 
     componentWillUnmount() {
         clearInterval(this.state.ival);
+        mqtt.exit('workflow/state/capture/#')
+        mqtt.exit('exec/service/data/#')
+    };
+
+    initMQTT = () => {
+        const watch = 'exec/service/data/#';
+        const local = window.location.hostname !== "shidur.kli.one";
+        const topic = local ? watch : 'bb/' + watch;
+        mqtt.join(topic);
+        mqtt.join('workflow/state/capture/#');
+        mqtt.watch((message, topic) => {
+            this.onMqttMessage(message, topic);
+        }, false)
+        this.onMqttState();
+    };
+
+    onMqttMessage = (message, topic) => {
+        const src = topic.split("/")[3]
+        let services = message.data;
+        if(services) {
+            for(let i=0; i<services.length; i++) {
+                if(src === "mltcap") {
+                    let main_online = services[i].alive;
+                    let main_timer = main_online ? toHms(services[i].runtime) : "00:00:00";
+                    this.setState({main_timer, main_online});
+                }
+                if(src === "maincap") {
+                    let backup_online = services[i].alive;
+                    let backup_timer = backup_online ? toHms(services[i].runtime) : "00:00:00";
+                    this.setState({backup_timer, backup_online});
+                }
+            }
+        }
+    };
+
+    onMqttState = () => {
+        mqtt.mq.on('state', data => {
+            console.log("[capture] Got state: ", data);
+            this.setState({jsonst: data});
+        });
     };
 
     newCheck = () => {

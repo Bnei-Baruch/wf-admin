@@ -1,6 +1,7 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Tab, Label, Segment } from 'semantic-ui-react'
 import {kc} from "./components/UserManager";
+import mqtt from "./shared/mqtt";
 import {getData} from "./shared/tools";
 import LoginPage from './components/LoginPage';
 import './stylesheets/sematic-reset.css';
@@ -67,6 +68,9 @@ class App extends Component {
         if(!wf_public) {
             this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files}, () => {
                 this.loadApps();
+                mqtt.init(user, (data) => {
+                    console.log("[mqtt] init: ", data);
+                })
             });
             if(!wf_ingest) {
                 setInterval(() => getData('state/langcheck', (data) => {

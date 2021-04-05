@@ -12,6 +12,11 @@ class MqttMsg {
     }
 
     init = (user, callback) => {
+
+        if(this.connected) {
+            callback(true);
+        }
+
         this.user = user;
 
         const transformUrl = (url, options, client) => {
