@@ -6,7 +6,7 @@ import LangSelector from "../../components/LangSelector";
 import {newLanguages, putData, WFDB_BACKEND, toHms} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
-import {Label, Segment, Button, Divider} from "semantic-ui-react";
+import {Label, Segment, Button, Divider, Message} from "semantic-ui-react";
 
 class IngestApp extends Component {
 
@@ -16,24 +16,13 @@ class IngestApp extends Component {
         ival: null,
         languages: {},
         langcheck: {languages: {}},
+        multi_online: false,
+        multi_timer: "00:00:00"
     };
 
     componentDidMount() {
         this.initMQTT();
         this.newCheck();
-        // let ival = setInterval(() =>
-        //     getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
-        //         const capture = data.find(c => !c.wfstatus.capwf && c.capture_src === "mltcap");
-        //         const current = Object.assign({}, this.state.capture);
-        //         if(current?.capture_id !== capture?.capture_id) {
-        //             this.setState({capture})
-        //         }
-        //         if(current?.line?.final_name !== capture?.line?.final_name) {
-        //             this.newCheck();
-        //             this.setState({capture})
-        //         }
-        //     }), 10000);
-        // this.setState({ival: ival});
     };
 
     componentWillUnmount() {
@@ -47,23 +36,27 @@ class IngestApp extends Component {
         const topic = local ? watch : 'bb/' + watch;
         mqtt.join(topic);
         mqtt.join('workflow/state/capture/#');
-        mqtt.watch((message, topic) => {
-            this.onMqttMessage(message, topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
         }, false)
-        this.onMqttState();
+        //this.onMqttState();
     };
 
-    onMqttMessage = (message, topic) => {
-        const src = topic.split("/")[3]
-        let services = message.data;
-        if(services) {
+    onMqttMessage = (message, type, source) => {
+        if(type === "capture") {
+            const {captures} = this.state;
+            console.log("[capture] Got state: ", message + " | from: " + source);
+            captures[source] = message;
+            this.setState({captures});
+        } else {
+            let services = message.data;
             for(let i=0; i<services.length; i++) {
-                if(src === "mltcap") {
+                if(source === "mltcap") {
                     let multi_online = services[i].alive;
                     let multi_timer = multi_online ? toHms(services[i].runtime) : "00:00:00";
                     this.setState({multi_timer, multi_online});
                 }
-                if(src === "maincap") {
+                if(source === "maincap") {
                     let single_online = services[i].alive;
                     let single_timer = single_online ? toHms(services[i].runtime) : "00:00:00";
                     this.setState({single_timer, single_online});
@@ -119,15 +112,21 @@ class IngestApp extends Component {
     }
 
     render() {
-        const {capture, langcheck, languages, captures} = this.state;
-        const capture_title = capture ? capture.stop_name || capture.line?.final_name || capture.start_name : "";
+        const {langcheck, languages, captures, multi_timer, multi_online} = this.state;
+        const {multi} = captures;
+        const capture_title = multi ? multi.stop_name || multi.start_name : "";
         const save_disable = JSON.stringify(languages) === JSON.stringify(langcheck.languages);
 
         return (
             <Fragment>
-                {captures?.multi ?
+                {multi?.isRec ?
                 <Segment textAlign='center' className="ingest_segment" color='red' raised>
-                    <Label attached='top' className="capture_label" icon='record' content={capture_title} />
+                    <Label attached='top' className="capture_label" icon='record' content={capture_title} >
+                        <Message compact
+                                 negative={!multi_online}
+                                 positive={multi_online}
+                                 className='main_timer' >{multi_timer}</Message>
+                    </Label>
                     <Divider />
                     {captures?.multi?.line ? <LangSelector onRef={ref => (this.lang = ref)} onGetLang={this.setLangs}/> : null}
                     {captures?.multi?.line ? <Button fluid positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button> : null}

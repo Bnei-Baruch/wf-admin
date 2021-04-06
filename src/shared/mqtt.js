@@ -1,5 +1,6 @@
 import mqtt from 'mqtt';
 import {MQTT_LCL_URL, MQTT_EXT_URL, randomString} from "./tools";
+import events from "events";
 
 class MqttMsg {
 
@@ -42,7 +43,7 @@ class MqttMsg {
 
         this.mq.on('connect', (data) => {
             if(data && !this.connected) {
-                console.log("[mqtt] Connected to server: ", data);
+                console.log("[mqtt] Connected to server: ", data, this.mq);
                 this.connected = true;
                 callback(data)
             }
@@ -62,7 +63,8 @@ class MqttMsg {
 
     exit = (topic) => {
         let options = {}
-        console.debug("[mqtt] Unsubscribe from: ", topic)
+        console.debug("[mqtt] Unsubscribe from: ", topic);
+        this.mq.removeAllListeners('message');
         this.mq.unsubscribe(topic, {...options} ,(err) => {
             err && console.error('[mqtt] Error: ',err);
         })
@@ -77,18 +79,13 @@ class MqttMsg {
         })
     }
 
-    watch = (callback, stat) => {
+    watch = (callback) => {
         this.mq.on('message',  (topic, data, packet) => {
-            if (/state/.test(topic)) {
-                console.debug("[mqtt] State from topic: ", topic);
-                const src = topic.split("/")[3]
-                this.mq.emit('state', JSON.parse(data.toString()), src);
-            } else {
-                let message = stat ? data.toString() : JSON.parse(data.toString());
-                if(message.action !== "status")
-                    console.debug("[mqtt] message: ", message, ", on topic: ", topic);
-                callback(message, topic)
-            }
+            const type = topic.split("/")[2]
+            const source = topic.split("/")[3]
+            const message = JSON.parse(data.toString());
+            //console.debug("[mqtt] message: ", message, ", on topic: ", topic, ", source: ", source);
+            callback(message, type, source)
         })
     }
 
