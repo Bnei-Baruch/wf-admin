@@ -3,17 +3,17 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {newLanguages, putData, WFDB_BACKEND, toHms} from "../../shared/tools";
+import {newLanguages, putData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
-import {Label, Segment, Button, Divider, Message} from "semantic-ui-react";
+import {Label, Segment, Button, Divider, Message, ButtonGroup} from "semantic-ui-react";
 
 class IngestApp extends Component {
 
     state = {
         capture: {},
         captures: {},
-        ival: null,
+        ingest: {},
         languages: {},
         langcheck: {languages: {}},
         multi_online: false,
@@ -45,12 +45,12 @@ class IngestApp extends Component {
     onMqttMessage = (message, type, source) => {
         if(type === "capture") {
             const {captures} = this.state;
-            console.log("[capture] Got state: ", message + " | from: " + source);
+            console.log("[capture] Got state: ", message, " | from: " + source);
             captures[source] = message;
             this.setState({captures});
         } else {
             let services = message.data;
-            for(let i=0; i<services.length; i++) {
+            for(let i=0; i<services?.length; i++) {
                 if(source === "mltcap") {
                     let multi_online = services[i].alive;
                     let multi_timer = multi_online ? toHms(services[i].runtime) : "00:00:00";
@@ -109,7 +109,24 @@ class IngestApp extends Component {
             console.log(":: Add preset: ",cb);
             this.setState({langcheck});
         });
-    }
+    };
+
+    addLang = () => {
+        const {langcheck, multi_timer, ingest, captures} = this.state;
+        const languages = Object.assign({}, this.state.languages);
+        const io = toSeconds(multi_timer);
+        const li = captures.multi.capture_id;
+        const lngs = {[io]: languages}
+        if(!ingest[li]) {
+            ingest[li] = []
+        }
+        ingest[li].push(lngs);
+        console.log(":: Add langcheck: ",ingest);
+        putData(`${WFDB_BACKEND}/state/ingest`, ingest, (cb) => {
+            console.log(":: Add preset: ",cb);
+            this.setState({langcheck, ingest});
+        });
+    };
 
     render() {
         const {langcheck, languages, captures, multi_timer, multi_online} = this.state;
@@ -120,16 +137,15 @@ class IngestApp extends Component {
         return (
             <Fragment>
                 {multi?.isRec ?
-                <Segment textAlign='center' className="ingest_segment" color='red' raised>
-                    <Label attached='top' className="capture_label" icon='record' content={capture_title} >
-                        <Message compact
-                                 negative={!multi_online}
-                                 positive={multi_online}
-                                 className='main_timer' >{multi_timer}</Message>
-                    </Label>
-                    <Divider />
+                <Segment textAlign='center' className="ingest_segment" color='green' raised>
+                    <Message color='black' className='main_timer' >{multi_timer} - {capture_title}</Message>
                     {captures?.multi?.line ? <LangSelector onRef={ref => (this.lang = ref)} onGetLang={this.setLangs}/> : null}
-                    {captures?.multi?.line ? <Button fluid positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button> : null}
+                    {captures?.multi?.line ?
+                        <ButtonGroup fluid>
+                            <Button positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button>
+                            <Button positive disabled={save_disable} onClick={this.addLang}>Add Languages</Button>
+                        </ButtonGroup>
+                        : null}
                 </Segment> : null}
                 <IngestTrimmer />
                 <IngestTrimmed />

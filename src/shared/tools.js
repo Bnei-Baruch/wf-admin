@@ -24,6 +24,11 @@ export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
 
 export const IVAL = 1000;
 
+export const toSeconds = (time) => {
+    let parts = time.split(':');
+    return parseInt(parts[0] * 3600 + parts[1] * 60 + parts[2], 10);
+};
+
 export const toHms = (totalSec) => {
     let hours = parseInt( totalSec / 3600 , 10) % 24;
     let minutes = parseInt( totalSec / 60 , 10) % 60;
