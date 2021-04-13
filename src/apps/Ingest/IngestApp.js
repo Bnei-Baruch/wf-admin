@@ -3,7 +3,7 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {newLanguages, putData, postData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
+import {newLanguages, putData, getData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
 import {Label, Segment, Button, Divider, Message, ButtonGroup} from "semantic-ui-react";
@@ -13,7 +13,8 @@ class IngestApp extends Component {
     state = {
         capture: {},
         captures: {},
-        ingest: {},
+        check_count: 0,
+        langstate: {},
         languages: {},
         langcheck: {languages: {}},
         multi_online: false,
@@ -39,7 +40,6 @@ class IngestApp extends Component {
         mqtt.watch((message, type, source) => {
             this.onMqttMessage(message, type, source);
         }, false)
-        //this.onMqttState();
     };
 
     onMqttMessage = (message, type, source) => {
@@ -48,6 +48,17 @@ class IngestApp extends Component {
             console.log("[capture] Got state: ", message, " | from: " + source);
             captures[source] = message;
             this.setState({captures});
+            // We using multi and main capture to set langcheck and recovering from db
+            // if admin was closed during recording
+            if(source === "multi" && captures[source].isRec) {
+                getData(`state/${captures[source].capture_id}`, langstate => {
+                    if(langstate) {
+                        console.log(":: Got langs state : ",langstate);
+                        const check_count = langstate[captures[source].capture_id].length;
+                        this.setState({langstate, check_count});
+                    }
+                });
+            }
         } else {
             let services = message.data;
             for(let i=0; i<services?.length; i++) {
@@ -63,15 +74,6 @@ class IngestApp extends Component {
                 }
             }
         }
-    };
-
-    onMqttState = () => {
-        mqtt.mq.on('state', (data, source) => {
-            const {captures} = this.state;
-            console.log("[capture] Got state: " + data + " | from: " + source);
-            captures[source] = data;
-            this.setState({captures});
-        });
     };
 
     newCheck = () => {
@@ -112,24 +114,25 @@ class IngestApp extends Component {
     };
 
     addLang = () => {
-        const {langcheck, multi_timer, ingest, captures} = this.state;
+        let {langcheck, multi_timer, langstate, captures, check_count} = this.state;
         const languages = Object.assign({}, this.state.languages);
         const io = toSeconds(multi_timer);
         const li = captures.multi.capture_id;
         const lngs = {[io]: languages}
-        // if(!ingest[li]) {
-        //     ingest[li] = []
-        // }
-        // ingest[li].push(lngs);
-        console.log(":: Add langcheck: ",ingest);
-        putData(`${WFDB_BACKEND}/state/ingest/${li}`, lngs, (cb) => {
+        if(!langstate[li]) {
+            langstate[li] = []
+        }
+        langstate[li].push(lngs);
+        console.log(":: Add langcheck: ",langstate);
+        putData(`${WFDB_BACKEND}/state/${li}`, langstate, (cb) => {
             console.log(":: Add preset: ",cb);
-            this.setState({langcheck, ingest});
+            check_count++
+            this.setState({langcheck, langstate, check_count});
         });
     };
 
     render() {
-        const {langcheck, languages, captures, multi_timer, multi_online} = this.state;
+        const {langcheck, languages, captures, multi_timer, check_count} = this.state;
         const {multi} = captures;
         const capture_title = multi ? multi.stop_name || multi.start_name : "";
         const save_disable = JSON.stringify(languages) === JSON.stringify(langcheck.languages);
@@ -138,7 +141,10 @@ class IngestApp extends Component {
             <Fragment>
                 {multi?.isRec ?
                 <Segment textAlign='center' className="ingest_segment" color='green' raised>
-                    <Message color='black' className='main_timer' >{multi_timer} - {capture_title}</Message>
+                    <Message color='black' className='main_timer' >
+                        <Label color={check_count === 0 ? 'red' : 'green'} attached="top left">{check_count}</Label>
+                        {multi_timer} - {capture_title}
+                    </Message>
                     {captures?.multi?.line ? <LangSelector onRef={ref => (this.lang = ref)} onGetLang={this.setLangs}/> : null}
                     {captures?.multi?.line ?
                         <ButtonGroup fluid>
