@@ -3,7 +3,7 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {newLanguages, putData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
+import {newLanguages, putData, postData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
 import {Label, Segment, Button, Divider, Message, ButtonGroup} from "semantic-ui-react";
@@ -53,12 +53,12 @@ class IngestApp extends Component {
             for(let i=0; i<services?.length; i++) {
                 if(source === "mltcap") {
                     let multi_online = services[i].alive;
-                    let multi_timer = multi_online ? toHms(services[i].runtime) : "00:00:00";
+                    let multi_timer = multi_online ? toHms(services[i].runtime).split(".")[0] : "00:00:00";
                     this.setState({multi_timer, multi_online});
                 }
                 if(source === "maincap") {
                     let single_online = services[i].alive;
-                    let single_timer = single_online ? toHms(services[i].runtime) : "00:00:00";
+                    let single_timer = single_online ? toHms(services[i].runtime).split(".")[0] : "00:00:00";
                     this.setState({single_timer, single_online});
                 }
             }
@@ -117,12 +117,12 @@ class IngestApp extends Component {
         const io = toSeconds(multi_timer);
         const li = captures.multi.capture_id;
         const lngs = {[io]: languages}
-        if(!ingest[li]) {
-            ingest[li] = []
-        }
-        ingest[li].push(lngs);
+        // if(!ingest[li]) {
+        //     ingest[li] = []
+        // }
+        // ingest[li].push(lngs);
         console.log(":: Add langcheck: ",ingest);
-        putData(`${WFDB_BACKEND}/state/ingest`, ingest, (cb) => {
+        putData(`${WFDB_BACKEND}/state/ingest/${li}`, lngs, (cb) => {
             console.log(":: Add preset: ",cb);
             this.setState({langcheck, ingest});
         });

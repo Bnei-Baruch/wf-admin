@@ -26,7 +26,7 @@ export const IVAL = 1000;
 
 export const toSeconds = (time) => {
     let parts = time.split(':');
-    return parseInt(parts[0] * 3600 + parts[1] * 60 + parts[2], 10);
+    return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10);
 };
 
 export const toHms = (totalSec) => {
