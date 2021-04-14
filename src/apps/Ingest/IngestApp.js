@@ -149,7 +149,7 @@ class IngestApp extends Component {
                     {captures?.multi?.line ?
                         <ButtonGroup fluid>
                             <Button positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button>
-                            <Button positive disabled={save_disable} onClick={this.addLang}>Add Languages</Button>
+                            {/*<Button positive disabled={save_disable} onClick={this.addLang}>Add Languages</Button>*/}
                         </ButtonGroup>
                         : null}
                 </Segment> : null}

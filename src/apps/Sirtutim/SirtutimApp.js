@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {Image,Segment,Table,Button,Card} from "semantic-ui-react";
 import {putData, WFSRV_BACKEND} from "../../shared/tools";
 import moment from 'moment';
+import mqtt from "../../shared/mqtt";
 
 class SirtutimApp extends Component {
 
@@ -13,6 +14,7 @@ class SirtutimApp extends Component {
         reml: false,
         remd: false,
         event: "lesson",
+        capture: null,
         captured: [],
         uploaded: [],
         id: null,
@@ -20,6 +22,7 @@ class SirtutimApp extends Component {
     };
 
     componentDidMount() {
+        this.initMQTT();
         let ival = setInterval(() => {
             let id = moment().format('x');
             this.setState({id})
@@ -28,7 +31,18 @@ class SirtutimApp extends Component {
     };
 
     componentWillUnmount() {
+        mqtt.exit('workflow/state/capture/multi')
         clearInterval(this.state.ival);
+    };
+
+    initMQTT = () => {
+        mqtt.join('workflow/state/capture/multi');
+        mqtt.watch((message, type, source) => {
+            if(type === "capture") {
+                console.log("[capture] Got state: ", message, " | from: " + source);
+                this.setState({capture: message});
+            }
+        }, false)
     };
 
     captureSirtut = () => {
@@ -60,9 +74,9 @@ class SirtutimApp extends Component {
     };
 
     uploadSirtut = (sid,i) => {
-        let {uploaded} = this.state;
+        let {uploaded, capture: {capture_id}} = this.state;
         this.setState({upl: true, upd: true});
-        let data = {id: sid, req: "upload"};
+        let data = {capture_id, id: sid, req: "upload"};
         putData(`${WFSRV_BACKEND}/workflow/sirtutim`, data, (cb) => {
             uploaded.push(sid);
             setTimeout( () => {
