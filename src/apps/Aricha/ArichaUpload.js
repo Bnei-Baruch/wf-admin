@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 
 class ArichaUpload extends Component {
 
@@ -22,6 +22,7 @@ class ArichaUpload extends Component {
 
         const props = {
             action: `${WFSRV_BACKEND}/aricha/upload`,
+            headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '.mp4',
             beforeUpload(file) {
