@@ -1,4 +1,5 @@
 import Keycloak from 'keycloak-js';
+import mqtt from "../shared/mqtt";
 
 const userManagerConfig = {
     url: 'https://accounts.kab.info/auth',
@@ -17,6 +18,7 @@ kc.onTokenExpired = () => {
 
 kc.onAuthLogout = () => {
     console.debug("-- Detect clearToken --");
+    mqtt.setToken(null);
     kc.logout();
 }
 
@@ -26,6 +28,7 @@ const renewToken = (retry) => {
             if(refreshed) {
                 document.cookie = `token=${kc.token};`;
                 console.debug("-- Refreshed --");
+                mqtt.setToken(kc.token);
             } else {
                 console.warn('Token is still valid?..');
             }
@@ -54,6 +57,7 @@ export const getUser = (callback) => {
                 document.cookie = `token=${kc.token};`;
                 const {realm_access: {roles}} = kc.tokenParsed;
                 let user = {...kc.tokenParsed, token: kc.token, roles};
+                mqtt.setToken(kc.token);
                 callback(user)
             } else {
                 callback(null)

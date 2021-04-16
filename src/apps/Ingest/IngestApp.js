@@ -17,7 +17,9 @@ class IngestApp extends Component {
         languages: {},
         langcheck: {languages: {}},
         multi_online: false,
-        multi_timer: "00:00:00"
+        multi_timer: "00:00:00",
+        out: null,
+        wfst: null,
     };
 
     componentDidMount() {
@@ -26,30 +28,34 @@ class IngestApp extends Component {
     };
 
     componentWillUnmount() {
-        mqtt.exit('workflow/state/capture/#')
-        mqtt.exit('exec/service/data/#')
+        const {out, wfst} = this.state;
+        mqtt.exit(out)
+        mqtt.exit(wfst)
     };
 
     initMQTT = () => {
-        const watch = 'exec/service/data/#';
-        const local = window.location.hostname !== "shidur.kli.one";
-        const topic = local ? watch : 'bb/' + watch;
-        mqtt.join(topic);
-        mqtt.join('workflow/state/capture/#');
+        const data = 'exec/service/data/#';
+        const state = 'workflow/state/capture/#';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const out = local ? data : 'bb/' + data;
+        const wfst = local ? state : 'bb/' + state;
+        this.setState({out, wfst})
+        mqtt.join(out);
+        mqtt.join(wfst);
         mqtt.watch((message, type, source) => {
             this.onMqttMessage(message, type, source);
-        }, false)
-        //this.onMqttState();
+        }, local)
     };
 
     onMqttMessage = (message, type, source) => {
         if(type === "capture") {
             const {captures} = this.state;
-            console.log("[capture] Got state: ", message + " | from: " + source);
+            console.log("[capture] Got state: ", message, " | from: " + source);
             captures[source] = message;
             this.setState({captures});
         } else {
             let services = message.data;
+            if(!services) return
             for(let i=0; i<services.length; i++) {
                 if(source === "mltcap") {
                     let multi_online = services[i].alive;
@@ -63,15 +69,6 @@ class IngestApp extends Component {
                 }
             }
         }
-    };
-
-    onMqttState = () => {
-        mqtt.mq.on('state', (data, source) => {
-            const {captures} = this.state;
-            console.log("[capture] Got state: " + data + " | from: " + source);
-            captures[source] = data;
-            this.setState({captures});
-        });
     };
 
     newCheck = () => {
