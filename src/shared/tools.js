@@ -291,7 +291,7 @@ export const insertLine = (metadata,unit) => {
         metadata.line.unit_id = id;
         metadata.line.content_type = CONTENT_TYPE_BY_ID[type_id];
         metadata.line.capture_date = capture_date && capture_date !== "0001-01-01" ? capture_date : metadata.date;
-        metadata.line.film_date = film_date;
+        metadata.line.film_date = film_date.split('T')[0];
         metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
         metadata.send_id = properties.workflow_id || null;
         return metadata;

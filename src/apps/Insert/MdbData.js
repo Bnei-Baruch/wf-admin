@@ -79,7 +79,7 @@ class MdbData extends Component {
             let n = number || "-";
             let p = part === -1 ? "full" : part !== undefined ? part : "";
             let np = n !== "-" && content_type === "LESSONS" ? '( n: ' + n + ' p: ' + p + ' )' : "";
-            let date = capture_date || film_date;
+            let date = capture_date || film_date.split('T')[0];
             let d = upload_type.match(/^(article|publication)$/) ? "" : toHms(duration);
             let rtlclass = lang === "he" || !lang ? "rtl-dir" : "";
             return (
