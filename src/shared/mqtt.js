@@ -1,6 +1,5 @@
 import mqtt from 'mqtt';
 import {MQTT_LCL_URL, MQTT_EXT_URL, randomString} from "./tools";
-import events from "events";
 
 class MqttMsg {
 
@@ -8,7 +7,6 @@ class MqttMsg {
         this.user = null;
         this.mq = null;
         this.connected = false;
-        this.room = null;
         this.token = null;
     }
 
@@ -28,7 +26,7 @@ class MqttMsg {
         let options = {
             keepalive: 10,
             connectTimeout: 10 * 1000,
-            clientId: user.id + "-" + randomString(5)  ,
+            clientId: user.sub + "-" + randomString(5)  ,
             protocolId: 'MQTT',
             protocolVersion: 4,
             clean: true,
@@ -37,7 +35,7 @@ class MqttMsg {
             transformWsUrl: transformUrl,
         };
 
-        const local = true;
+        const local = window.location.hostname !== "wfsrv.kli.one";
         const url = local ? MQTT_LCL_URL : MQTT_EXT_URL;
         this.mq = mqtt.connect(`wss://${url}`, options);
 
@@ -55,7 +53,7 @@ class MqttMsg {
 
     join = (topic) => {
         console.debug("[mqtt] Subscribe to: ", topic)
-        let options = {qos: 2, nl: false}
+        let options = {qos: 1, nl: false}
         this.mq.subscribe(topic, {...options}, (err) => {
             err && console.error('[mqtt] Error: ', err);
         })
@@ -79,10 +77,11 @@ class MqttMsg {
         })
     }
 
-    watch = (callback) => {
+    watch = (callback, local) => {
+        let i = local ? 0 : 1;
         this.mq.on('message',  (topic, data, packet) => {
-            const type = topic.split("/")[2]
-            const source = topic.split("/")[3]
+            const type = topic.split("/")[2+i]
+            const source = topic.split("/")[3+i]
             const message = JSON.parse(data.toString());
             //console.debug("[mqtt] message: ", message, ", on topic: ", topic, ", source: ", source);
             callback(message, type, source)
