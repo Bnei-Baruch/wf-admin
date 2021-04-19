@@ -50,6 +50,10 @@ class MdbData extends Component {
                 this.props.onUidSelect(null);
                 return
             }
+            if(content_type === "SOURCES") {
+                this.setState({units: []});
+                return
+            }
             if(send_uid.length === 0) {
                 let path = ['page_size=1000', `start_date=${date}`, `end_date=${date}`];
                 if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
@@ -79,7 +83,7 @@ class MdbData extends Component {
             let n = number || "-";
             let p = part === -1 ? "full" : part !== undefined ? part : "";
             let np = n !== "-" && content_type === "LESSONS" ? '( n: ' + n + ' p: ' + p + ' )' : "";
-            let date = capture_date || film_date.split('T')[0];
+            let date = capture_date || film_date?.split('T')[0];
             let d = upload_type.match(/^(article|publication)$/) ? "" : toHms(duration);
             let rtlclass = lang === "he" || !lang ? "rtl-dir" : "";
             return (

@@ -9,12 +9,25 @@ import 'moment/locale/it';
 import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
-import { Grid, Button, Header, Modal, Dropdown, Container, Segment, Input } from 'semantic-ui-react';
-import {fetchPublishers, fetchPersons, insertName, getName, getLang, getDataByID, fetchUnits, getDCT, insertLine, remuxLine} from '../../shared/tools';
+import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input} from 'semantic-ui-react';
+import {
+    fetchPublishers,
+    fetchPersons,
+    insertName,
+    getName,
+    getLang,
+    getDataByID,
+    fetchUnits,
+    getDCT,
+    insertLine,
+    remuxLine,
+} from '../../shared/tools';
 import {content_options, language_options, upload_extensions, CONTENT_TYPE_BY_ID, getUploadOptions} from '../../shared/consts';
+import { fetchSources } from '../CIT/shared/store';
 
 import MdbData from './MdbData';
 import NestedModal from './NestedModal';
+import SourceSelector from "../CIT/components/SourceSelector";
 
 class InsertModal extends Component {
 
@@ -40,6 +53,7 @@ class InsertModal extends Component {
         moment.updateLocale('fr', { week: {dow: 0,},});
         moment.updateLocale('en', { week: {dow: 0,},});
         fetchPublishers(publishers => this.setState({ store: { ...this.state.store, publishers: publishers.data } }));
+        fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
     };
 
     componentDidUpdate(prevProps, prevState) {
@@ -240,11 +254,15 @@ class InsertModal extends Component {
         this.props.onComplete(metadata);
     };
 
+    selectSource = (source) => {
+        console.log(source)
+    };
+
     render() {
 
         const {file_name} = this.props.filedata;
         const {roles} = this.props.user;
-        const {metadata, isValidated, loading, locale} = this.state;
+        const {metadata, isValidated, loading, locale, store} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         const upload_options = getUploadOptions(roles, content_type);
@@ -312,9 +330,15 @@ class InsertModal extends Component {
                     />
                 </Segment>
                 <Segment clearing secondary color='blue'>
-                    <Modal.Content className="tabContent">
-                        <MdbData metadata={metadata} autoSetData={this.autoSetData} onUidSelect={this.setUnitID} />
-                    </Modal.Content>
+                    {content_type === "SOURCES" ?
+                        <div>
+                            <SourceSelector tree={store.sources} onSelect={this.selectSource} />
+                        </div>
+                        :
+                        <Modal.Content className="tabContent">
+                            <MdbData metadata={metadata} autoSetData={this.autoSetData} onUidSelect={this.setUnitID} />
+                        </Modal.Content>
+                    }
                 </Segment>
                 <Segment clearing tertiary color='yellow'>
                     <Modal.Actions>

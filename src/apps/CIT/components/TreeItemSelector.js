@@ -70,7 +70,7 @@ class TreeItemSelector extends Component {
     const crumbs = [];
     let level    = tree;
 
-    for (let i = 0; i < selection.length; i++) {
+    for (let i = 0; i < selection?.length; i++) {
       const selectedChild = level[selection[i]];
       const nextLevel     = selectedChild.children || [];
       const nlHasChildren = nextLevel.length > 0;
@@ -84,7 +84,7 @@ class TreeItemSelector extends Component {
       level = nextLevel;
     }
 
-    if (level.length > 0) {
+    if (level?.length > 0) {
       crumbs.push((<Breadcrumb.Section key={selection.length} active>
         {this.renderLevelDropdown(level, selection.length + 1, 'בחר מהרשימה')}
       </Breadcrumb.Section>));
@@ -94,7 +94,7 @@ class TreeItemSelector extends Component {
       <div>
         <Breadcrumb>{crumbs}</Breadcrumb>
         {
-          (selection.length > 0) ?
+          (selection?.length > 0) ?
             <Button
               content="הוסף"
               size="mini"
