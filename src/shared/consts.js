@@ -43,6 +43,7 @@ export const upload_extensions = {
     "article": ["doc","docx","pdf"],
     "publication": ["zip"],
     "declamation": ["mp3"],
+    "source": ["doc","docx","pdf"],
 };
 
 export const DCT_OPTS = {

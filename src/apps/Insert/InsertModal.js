@@ -65,6 +65,8 @@ class InsertModal extends Component {
     selectContentType = (content_type) => {
         let {metadata} = this.state;
         let upload_type = content_type === "BLOG_POST" ? 'declamation' : this.props.metadata.upload_type;
+        if(content_type === "SOURCES")
+            upload_type = "source";
         this.setState({metadata: {...metadata, content_type, upload_type}});
     };
 
@@ -124,6 +126,12 @@ class InsertModal extends Component {
 
         // Take info from unit properties
         metadata = insertLine(metadata,unit);
+
+        // Declamation - that does not has unit
+        if(upload_type === "source") {
+            this.checkMeta(metadata);
+            return
+        }
 
         // Declamation - that does not has unit
         if(upload_type === "declamation") {
@@ -210,7 +218,7 @@ class InsertModal extends Component {
         [metadata.file_name, metadata.extension] = metadata.insert_name.split('.');
 
         // Check valid string
-        if(insert_name.length < 30) {
+        if(insert_name.length < 30 && upload_type !== "source") {
             alert("Something wrong in file name building");
             this.setState({ isValidated: false });
             return
@@ -257,9 +265,10 @@ class InsertModal extends Component {
 
     selectSource = (data) => {
         console.log(data)
-        const source = data.filter(s => s.type === "ARTICLE")[0]
+        const source = data.filter(s => (s.children || []).length === 0)[0]
         if(source?.name) {
-            this.setState({source})
+            this.setState({source});
+            this.setUnitID(source);
         }
     };
 
@@ -300,7 +309,7 @@ class InsertModal extends Component {
                         <Dropdown
                             className="large"
                             error={!upload_type}
-                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST"}
+                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCES"}
                             placeholder="Upload Type:"
                             selection
                             options={upload_options}

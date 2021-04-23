@@ -284,6 +284,16 @@ export const insertLine = (metadata,unit) => {
         metadata.insert_name = getName(metadata);
         metadata.line.final_name = metadata.insert_name.split('.')[0];
         return metadata;
+    } else if(metadata.content_type === "SOURCES") {
+        let {uid, id} = unit;
+        metadata.line.uid = uid;
+        metadata.line.unit_id = id;
+        metadata.line.content_type = "SOURCES";
+        metadata.line.capture_date = metadata.date;
+        metadata.line.original_language = metadata.language;
+        metadata.send_id = null;
+        metadata.insert_name = metadata.line.upload_filename;
+        return metadata;
     } else {
         let {properties, uid, type_id, id} = unit;
         const {capture_date,film_date} = properties;
