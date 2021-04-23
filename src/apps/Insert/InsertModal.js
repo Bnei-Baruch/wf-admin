@@ -320,7 +320,7 @@ class InsertModal extends Component {
                     </Header>
                     <Header floated='right'>
                         <Input
-                            error={send_uid.length > 0 && send_uid.length !== 8}
+                            error={send_uid?.length > 0 && send_uid?.length !== 8}
                             className="input_uid"
                             size="mini"
                             icon='barcode'

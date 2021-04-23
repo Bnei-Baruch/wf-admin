@@ -17,7 +17,7 @@ class MdbData extends Component {
         if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
         fetchUnits('?' + path.join('&'), (data) => {
             this.setState({units: data.data, active: null});
-            if(send_uid.length === 8) {
+            if(send_uid?.length === 8) {
                 let unit = data.data[0];
                 this.props.autoSetData(unit);
             }
@@ -27,11 +27,11 @@ class MdbData extends Component {
     componentDidUpdate(prevProps) {
         const {content_type, date, send_uid, insert_type} = this.props.metadata;
         if (JSON.stringify(prevProps.metadata) !== JSON.stringify(this.props.metadata)) {
-            if(send_uid.length > 0 && send_uid.length !== 8) {
+            if(send_uid?.length > 0 && send_uid?.length !== 8) {
                 this.setState({units: []});
                 return
             }
-            if(send_uid.length === 8) {
+            if(send_uid?.length === 8) {
                 fetchUnits(`?query=${send_uid}`, (data) => {
                     console.log(":: Got UNIT: ", data);
                     if(data.total > 0) {
@@ -54,7 +54,7 @@ class MdbData extends Component {
                 this.setState({units: []});
                 return
             }
-            if(send_uid.length === 0) {
+            if(send_uid?.length === 0) {
                 let path = ['page_size=1000', `start_date=${date}`, `end_date=${date}`];
                 if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
                 fetchUnits('?' + path.join('&'), (data) => {
