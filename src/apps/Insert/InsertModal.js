@@ -9,7 +9,7 @@ import 'moment/locale/it';
 import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import './InsertApp.css';
-import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input} from 'semantic-ui-react';
+import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input, Icon} from 'semantic-ui-react';
 import {
     fetchPublishers,
     fetchPersons,
@@ -39,6 +39,7 @@ class InsertModal extends Component {
         loading: false,
         locale: "he",
         isValidated: false,
+        source: "",
     };
 
 
@@ -254,15 +255,19 @@ class InsertModal extends Component {
         this.props.onComplete(metadata);
     };
 
-    selectSource = (source) => {
-        console.log(source)
+    selectSource = (data) => {
+        console.log(data)
+        const source = data.filter(s => s.type === "ARTICLE")[0]
+        if(source?.name) {
+            this.setState({source})
+        }
     };
 
     render() {
 
         const {file_name} = this.props.filedata;
         const {roles} = this.props.user;
-        const {metadata, isValidated, loading, locale, store} = this.state;
+        const {metadata, isValidated, loading, locale, store, source} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         const upload_options = getUploadOptions(roles, content_type);
@@ -333,6 +338,13 @@ class InsertModal extends Component {
                     {content_type === "SOURCES" ?
                         <div>
                             <SourceSelector tree={store.sources} onSelect={this.selectSource} />
+                            <Header as='h2' textAlign='center'>
+                                <Icon name='sitemap' />
+                                <Header.Content>
+                                    {source.name}
+                                    <Header.Subheader>{source ? "" : "Use search or selection menu"}</Header.Subheader>
+                                </Header.Content>
+                            </Header>
                         </div>
                         :
                         <Modal.Content className="tabContent">
