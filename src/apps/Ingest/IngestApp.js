@@ -3,15 +3,15 @@ import IngestTrimmed from "./IngestTrimmed";
 import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
-import {newLanguages, putData, getData, WFDB_BACKEND, toHms, toSeconds} from "../../shared/tools";
+import {getData, newLanguages, putData, toHms, toSeconds, WFDB_BACKEND} from "../../shared/tools";
 import moment from "moment";
 import mqtt from "../../shared/mqtt";
-import {Label, Segment, Button, Divider, Message, ButtonGroup} from "semantic-ui-react";
+import {Button, ButtonGroup, Label, Message, Segment} from "semantic-ui-react";
 
 class IngestApp extends Component {
 
     state = {
-        capture: {},
+        capture: false,
         captures: {},
         check_count: 0,
         langstate: {},
@@ -26,6 +26,9 @@ class IngestApp extends Component {
     componentDidMount() {
         this.initMQTT();
         this.newCheck();
+        setTimeout(() => {
+            this.setState({capture: true});
+        },3000)
     };
 
     componentWillUnmount() {
@@ -50,13 +53,13 @@ class IngestApp extends Component {
 
     onMqttMessage = (message, type, source) => {
         if(type === "capture") {
-            const {captures} = this.state;
+            const {captures, capture} = this.state;
             console.log("[capture] Got state: ", message, " | from: " + source);
             captures[source] = message;
             this.setState({captures});
             // We using multi and main capture to set langcheck and recovering from db
             // if admin was closed during recording
-            if(source === "multi" && captures[source].isRec) {
+            if(source === "multi" && captures[source].isRec && !capture) {
                 getData(`state/${captures[source].capture_id}`, langstate => {
                     if(langstate) {
                         console.log(":: Got langs state : ",langstate);
@@ -64,6 +67,9 @@ class IngestApp extends Component {
                         this.setState({langstate, check_count});
                     }
                 });
+            }
+            if(source === "multi" && !captures[source].isRec) {
+                this.newCheck();
             }
         } else {
             let services = message.data;
@@ -95,7 +101,7 @@ class IngestApp extends Component {
             languages: newLanguages(),
             trimmed: false
         };
-        this.setState({languages, langcheck})
+        this.setState({languages, langcheck, langstate: {}, check_count: 0})
     };
 
     setLangs = (lang, status) => {
@@ -103,20 +109,6 @@ class IngestApp extends Component {
         console.log(":: Got langs: ",lang, status);
         languages[lang] = status;
         this.setState({languages})
-    };
-
-    saveLang = () => {
-        const {langcheck, capture} = this.state;
-        const languages = Object.assign({}, this.state.languages);
-        langcheck.languages = languages;
-        langcheck.id = capture.capture_id;
-        langcheck.file_name = capture.line?.final_name;
-        langcheck.language = capture.line.language;
-        console.log(":: Save langcheck: ",langcheck);
-        putData(`${WFDB_BACKEND}/state/langcheck/${capture.capture_id}`, langcheck, (cb) => {
-            console.log(":: Add preset: ",cb);
-            this.setState({langcheck});
-        });
     };
 
     addLang = () => {
