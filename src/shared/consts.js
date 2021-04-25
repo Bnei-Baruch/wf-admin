@@ -20,7 +20,7 @@ export const getUploadOptions = (roles, content_type) => {
 
 export const content_options = [
     { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
-    { value: 'SOURCES', text: ' ‏מקורות', icon: 'sitemap' },
+    { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap' },
     { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
     { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
     { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },

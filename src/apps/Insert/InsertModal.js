@@ -65,7 +65,7 @@ class InsertModal extends Component {
     selectContentType = (content_type) => {
         let {metadata} = this.state;
         let upload_type = content_type === "BLOG_POST" ? 'declamation' : this.props.metadata.upload_type;
-        if(content_type === "SOURCES")
+        if(content_type === "SOURCE")
             upload_type = "source";
         this.setState({metadata: {...metadata, content_type, upload_type}});
     };
@@ -309,7 +309,7 @@ class InsertModal extends Component {
                         <Dropdown
                             className="large"
                             error={!upload_type}
-                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCES"}
+                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCE"}
                             placeholder="Upload Type:"
                             selection
                             options={upload_options}
@@ -344,7 +344,7 @@ class InsertModal extends Component {
                     />
                 </Segment>
                 <Segment clearing secondary color='blue'>
-                    {content_type === "SOURCES" ?
+                    {content_type === "SOURCE" ?
                         <div>
                             <SourceSelector tree={store.sources} onSelect={this.selectSource} />
                             <Header as='h2' textAlign='center'>

@@ -50,7 +50,7 @@ class MdbData extends Component {
                 this.props.onUidSelect(null);
                 return
             }
-            if(content_type === "SOURCES") {
+            if(content_type === "SOURCE") {
                 this.setState({units: []});
                 return
             }

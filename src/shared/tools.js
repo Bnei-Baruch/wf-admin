@@ -284,11 +284,11 @@ export const insertLine = (metadata,unit) => {
         metadata.insert_name = getName(metadata);
         metadata.line.final_name = metadata.insert_name.split('.')[0];
         return metadata;
-    } else if(metadata.content_type === "SOURCES") {
+    } else if(metadata.content_type === "SOURCE") {
         let {uid, id} = unit;
         metadata.line.uid = uid;
         metadata.line.unit_id = id;
-        metadata.line.content_type = "SOURCES";
+        metadata.line.content_type = "SOURCE";
         metadata.line.capture_date = metadata.date;
         metadata.line.original_language = metadata.language;
         metadata.send_id = null;
