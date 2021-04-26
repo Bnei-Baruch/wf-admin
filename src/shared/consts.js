@@ -15,6 +15,7 @@ export const getUploadOptions = (roles, content_type) => {
         { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
         { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
         { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
+        { value: 'media', text: 'Media', icon: 'file video outline', disabled: (archive_typist || content_type === "ARTICLES") },
     ]
 };
 
@@ -44,6 +45,7 @@ export const upload_extensions = {
     "publication": ["zip"],
     "declamation": ["mp3"],
     "source": ["doc","docx","pdf"],
+    "media": ["mp4","mp3"],
 };
 
 export const DCT_OPTS = {
