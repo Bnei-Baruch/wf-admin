@@ -4,6 +4,7 @@ export const EMPTY_OBJECT = Object.freeze({});
 
 export const getUploadOptions = (roles, content_type) => {
     let archive_typist = roles.find(r => r === "archive_typist");
+    let archive_uploader = roles.find(r => r === "archive_uploader");
     return [
         { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
         { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
@@ -15,7 +16,7 @@ export const getUploadOptions = (roles, content_type) => {
         { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
         { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
         { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
-        { value: 'media', text: 'Media', icon: 'file video outline', disabled: (archive_typist || content_type === "ARTICLES") },
+        { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_uploader },
     ]
 };
 
