@@ -15,6 +15,7 @@ import './WFDB.css';
 import moment from "moment/moment";
 import WFDBInsert from "./WFDBInsert";
 import WFDBConvert from "./WFDBConvert";
+import WFDBSources from "./WFDBSources";
 class WFDB extends Component {
 
     state = {
@@ -110,6 +111,8 @@ class WFDB extends Component {
                 render: () => <Tab.Pane attached={true} ><WFDBIngest {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'trimmer', content: 'Trimmer' },
                 render: () => <Tab.Pane attached={false} ><WFDBTrimmer {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
+            { menuItem: { key: 'source', content: 'Sources' },
+                render: () => <Tab.Pane attached={false} ><WFDBSources {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'carbon', content: 'Carbon' },
                 render: () => <Tab.Pane attached={false} ><WFDBCarbon {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'convert', content: 'Convert' },
