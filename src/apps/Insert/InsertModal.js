@@ -22,7 +22,7 @@ import {
     insertLine,
     remuxLine,
 } from '../../shared/tools';
-import {content_options, language_options, upload_extensions, CONTENT_TYPE_BY_ID, getUploadOptions} from '../../shared/consts';
+import {language_options, upload_extensions, CONTENT_TYPE_BY_ID, getContentOptions, getUploadOptions} from '../../shared/consts';
 import { fetchSources } from '../CIT/shared/store';
 
 import MdbData from './MdbData';
@@ -280,6 +280,7 @@ class InsertModal extends Component {
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         const upload_options = getUploadOptions(roles, content_type);
+        const content_options = getContentOptions(roles);
 
         return (
             <Container className="insert_app">

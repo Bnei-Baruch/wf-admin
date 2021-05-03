@@ -4,7 +4,7 @@ export const EMPTY_OBJECT = Object.freeze({});
 
 export const getUploadOptions = (roles, content_type) => {
     let archive_typist = roles.find(r => r === "archive_typist");
-    let archive_uploader = roles.find(r => r === "archive_uploader");
+    let archive_media = roles.find(r => r === "archive_media");
     return [
         { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
         { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
@@ -16,22 +16,25 @@ export const getUploadOptions = (roles, content_type) => {
         { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
         { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
         { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
-        { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_uploader },
+        { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_media },
     ]
 };
 
-export const content_options = [
-    { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
-    { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap' },
-    { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
-    { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
-    { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },
-    { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
-    { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
-    { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
-    { value: 'BLOG_POST', text: 'Blog-Post', icon: 'unmute' },
-    //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
-];
+export const getContentOptions = (roles) => {
+    let archive_mekorot = roles.find(r => r === "archive_mekorot");
+    return [
+        { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
+        { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap', disabled: !archive_mekorot },
+        { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
+        { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
+        { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },
+        { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
+        { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
+        { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
+        { value: 'BLOG_POST', text: 'Blog-Post', icon: 'unmute' },
+        //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
+    ];
+};
 
 export const upload_extensions = {
     "akladot": ["doc","docx"],
