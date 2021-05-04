@@ -105,7 +105,7 @@ class Sources extends Component {
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            let href = `${MDB_UNIT_URL}/${data.line.unit_id}`;
+            let href = `${MDB_UNIT_URL}/${data.line?.unit_id}`;
             let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
             let rowcolor = censored && !checked;
             return (
