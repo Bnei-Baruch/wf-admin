@@ -22,7 +22,7 @@ class ProductFiles extends Component {
         delete filedata.type;
         delete filedata.url;
         console.log(":: JobFiles - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
+        putData(`${WFSRV_BACKEND}/product/upload`, filedata, (cb) => {
             console.log(":: UploadApp - workflow respond: ",cb);
         });
     };

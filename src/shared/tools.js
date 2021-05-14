@@ -514,6 +514,35 @@ export const newJobMeta = (job_name) => {
     return metadata;
 };
 
+export const newProductMeta = (product_name, language) => {
+    let product_id = "p"+moment().format('X');
+    let date = moment.unix(product_id.substr(1)).format("YYYY-MM-DD");
+    let metadata = {
+        product_id, date, product_name, language,
+        original_language: null,
+        product_type: "media",
+        pattern: null,
+        wfstatus: {
+            aricha: false,
+            buffer: false,
+            fix_req: false,
+            fixed: false,
+            post_req: false,
+            posted: false,
+            sub_req: false,
+            subed: false,
+            renamed: false,
+            wfsend: false,
+            removed: false,
+            censored: false,
+            checked: false,
+            secured: false,
+            locked: false
+        }
+    };
+    return metadata;
+};
+
 export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`, {
     headers: {
         'Authorization': 'bearer ' + getToken(),

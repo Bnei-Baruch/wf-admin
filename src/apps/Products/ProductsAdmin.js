@@ -173,11 +173,11 @@ class ProductsAdmin extends Component {
         this.setState({product_name});
     };
 
-    newPoduct = () => {
+    newProduct = () => {
         const {product_name,doers} = this.state;
-        let product_meta = newproductMeta(product_name);
-        if(doers)
-            product_meta.parent.doers = doers;
+        let product_meta = newProductMeta(product_name);
+        // if(doers)
+        //     product_meta.parent.doers = doers;
         console.log(" :: New Meta: ", product_meta);
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -284,7 +284,7 @@ class ProductsAdmin extends Component {
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
-                    className={active} key={id} onClick={() => this.selectproduct(data)}>
+                    className={active} key={id} onClick={() => this.selectProduct(data)}>
                     <Table.Cell>
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
                                trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
