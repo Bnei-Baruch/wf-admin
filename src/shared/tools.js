@@ -514,12 +514,11 @@ export const newJobMeta = (job_name) => {
     return metadata;
 };
 
-export const newProductMeta = (product_name, language) => {
+export const newProductMeta = (product_name, language, original_language) => {
     let product_id = "p"+moment().format('X');
     let date = moment.unix(product_id.substr(1)).format("YYYY-MM-DD");
     let metadata = {
-        product_id, date, product_name, language,
-        original_language: null,
+        product_id, date, product_name, language, original_language,
         product_type: "media",
         pattern: null,
         wfstatus: {

@@ -34,7 +34,7 @@ class FilesUpload extends Component {
             });
 
         const props = {
-            action: `${WF_BACKEND}/backup/upload`,
+            action: `${WF_BACKEND}/products/upload`,
             headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '',

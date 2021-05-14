@@ -49,6 +49,8 @@ class ProductsAdmin extends Component {
         product_data: {},
         filedata: {},
         kmedia_option: false,
+        language: "heb",
+        original_language: "heb",
         metadata: {},
         input_id: "",
         ival: null,
@@ -174,8 +176,8 @@ class ProductsAdmin extends Component {
     };
 
     newProduct = () => {
-        const {product_name,doers} = this.state;
-        let product_meta = newProductMeta(product_name);
+        const {product_name, language, original_language} = this.state;
+        let product_meta = newProductMeta(product_name, language, original_language);
         // if(doers)
         //     product_meta.parent.doers = doers;
         console.log(" :: New Meta: ", product_meta);

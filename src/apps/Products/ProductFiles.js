@@ -14,22 +14,22 @@ class ProductFiles extends Component {
     };
 
     fileUploaded = (filedata) => {
-        filedata.file_type = "files";
-        filedata.archive_type = "files";
-        filedata.send_id = this.props.active;
-        filedata.line = {};
-        filedata.line.mime_type = filedata.type;
+        const {active, language} = this.props;
+        filedata.file_type = "1";
+        filedata.product_id = active;
+        filedata.language = language;
+        filedata.mime_type = filedata.type;
         delete filedata.type;
         delete filedata.url;
-        console.log(":: JobFiles - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/product/upload`, filedata, (cb) => {
+        console.log(":: ProductFiles - got data: ", filedata);
+        putData(`${WFSRV_BACKEND}/workflow/products`, filedata, (cb) => {
             console.log(":: UploadApp - workflow respond: ",cb);
         });
     };
 
     getFilesJob = () => {
-        getData(`files/find?key=send_id&value=${this.props.active}`, (files) => {
-            console.log(":: Files DB Data: ",files);
+        getData(`files/find?key=product_id&value=${this.props.active}`, (files) => {
+            console.log(":: Files DB Data: ", files);
             this.setState({files});
         });
     };
