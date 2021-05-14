@@ -20,7 +20,8 @@ const CarbonApp = lazy(() => import("./apps/Carbon/CarbonApp"));
 const UploadApp = lazy(() => import("./apps/Upload/UploadApp"));
 const MetusApp = lazy(() => import("./apps/Metus/MetusApp"));
 const ExternalApp = lazy(() => import("./apps/External/ExternalApp"));
-// const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
+const JobsApp = lazy(() => import("./apps/Jobs/JobsApp"));
+const ProductsApp = lazy(() => import("./apps/Products/ProductsApp"));
 const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
 const InsertApp = lazy(() => import("./apps/Insert/InsertApp"));
 const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
@@ -44,6 +45,7 @@ class App extends Component {
         wf_sirtutim: true,
         wf_ktaim: true,
         wf_files: true,
+        wf_products:true,
         wf_panes: []
     };
 
@@ -65,8 +67,9 @@ class App extends Component {
         let wf_sirtutim = !kc.hasRealmRole("wf_sirtutim");
         let wf_ktaim = !kc.hasRealmRole("wf_ktaim");
         let wf_files = !kc.hasRealmRole("wf_files");
+        let wf_products = !kc.hasRealmRole("wf_products");
         if(!wf_public) {
-            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files}, () => {
+            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products}, () => {
                 this.loadApps();
                 mqtt.init(user, (data) => {
                     console.log("[mqtt] init: ", data);
@@ -94,7 +97,7 @@ class App extends Component {
     };
 
     loadApps = () => {
-        const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,user} = this.state;
+        const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products,user} = this.state;
 
         const loading = (<Tab.Pane loading />);
 
@@ -107,7 +110,8 @@ class App extends Component {
         let censor = (<Suspense fallback={loading}><CensorApp user={user} /></Suspense>);
         let admin = (<Suspense fallback={loading}><AdminApp user={user} /></Suspense>);
         let monitor = (<Suspense fallback={loading}><MonitorApp user={user} /></Suspense>);
-        // let jsobs = (<Suspense fallback={loading}><JobsApp user={user} /></Suspense>);
+        let jsobs = (<Suspense fallback={loading}><JobsApp user={user} /></Suspense>);
+        let products = (<Suspense fallback={loading}><ProductsApp user={user} /></Suspense>);
         let aricha = (<Suspense fallback={loading}><ArichaApp user={user} /></Suspense>);
         // let dgima= (<Suspense fallback={loading}><DgimaApp user={user} /></Suspense>);
         let external = (<Suspense fallback={loading}><ExternalApp user={user} /></Suspense>);
@@ -136,8 +140,10 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{admin}</Tab.Pane> },
             { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{monitor}</Tab.Pane> },
-            // { menuItem: { key: 'products', icon: 'shopping cart', content: 'Product', disabled: wf_jobs },
+            // { menuItem: { key: 'jobs', icon: 'shopping cart', content: 'Jobs', disabled: wf_jobs },
             //     render: () => <Tab.Pane attached={false} >{jsobs}</Tab.Pane> },
+            { menuItem: { key: 'products', icon: 'shopping cart', content: 'Products', disabled: wf_products },
+                render: () => <Tab.Pane attached={false} >{products}</Tab.Pane> },
             { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
                 render: () => <Tab.Pane attached={false} >{aricha}</Tab.Pane> },
             // { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
