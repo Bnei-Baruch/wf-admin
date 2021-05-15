@@ -78,6 +78,7 @@ class ProductsAdmin extends Component {
 
     selectProduct = (product_data) => {
         console.log(":: ProductsAdmin - selected product: ", product_data);
+        this.props.setProduct(product_data.product_id);
 
         // Check if master file is added
         if(!product_data.original) {
@@ -343,13 +344,13 @@ class ProductsAdmin extends Component {
                                value={product_name} />
                     </Menu.Item>
                     <Menu.Item>
-                        <Dropdown
-                            placeholder="Add doer.."
-                            selection
-                            multiple
-                            options={doers_list}
-                            value={doers}
-                            onChange={(e, {value}) => this.addDoer(value)} />
+                        {/*<Dropdown*/}
+                        {/*    placeholder="Add doer.."*/}
+                        {/*    selection*/}
+                        {/*    multiple*/}
+                        {/*    options={doers_list}*/}
+                        {/*    value={doers}*/}
+                        {/*    onChange={(e, {value}) => this.addDoer(value)} />*/}
                     </Menu.Item>
                     <Menu.Item>
                         <Button negative={true}
@@ -358,72 +359,72 @@ class ProductsAdmin extends Component {
                         </Button>
                     </Menu.Item>
                 </Menu>
-                <Message>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Modal closeOnDimmerClick={false}
-                                   trigger={<Button color='blue' icon='tags'
-                                                    loading={renaming}
-                                                    disabled={product_data.product_id === undefined}
-                                                    onClick={this.openCit} />}
-                                   onClose={this.onCancel}
-                                   open={cit_open}
-                                   closeIcon="close"
-                                   mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={product_data.line}
-                                         onCancel={this.onCancel}
-                                         onComplete={(x) => this.renameFile(x)}/>
-                                </Modal.Content>
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Menu position='left'>
-                            <Menu.Item>
-                                <Button color='teal' icon='archive'
-                                        loading={inserting}
-                                        disabled={!source}
-                                        onClick={this.newUnit} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}
-                                        onClick={this.uploadMaster} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Modal trigger={<Button color='yellow' icon='folder'
-                                                        disabled={product_data.product_id === undefined}
-                                                        onClick={this.openProduct} />}
-                                       mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <ProductFiles {...this.state} />
-                                </Modal>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='red' icon='close' disabled={product_data.product_id === undefined}
-                                        onClick={this.setRemoved} />
-                            </Menu.Item>
-                        </Menu.Menu>
-                        <Menu.Menu position='right'>
-                            <Menu.Item>
-                                    <Select compact options={send_options}
-                                            defaultValue={special}
-                                            placeholder='Send options'
-                                            onChange={(e, {value}) => this.setSpecial(value)} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button positive icon="arrow right"
-                                        //disabled={send_button}
-                                        disabled={product_data.product_id === undefined}
-                                        onClick={this.sendFile} loading={sending} />
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu>
-                </Message>
+                {/*<Message>*/}
+                {/*    <Menu size='large' secondary >*/}
+                {/*        <Menu.Item>*/}
+                {/*            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}*/}
+                {/*                   size='tiny'*/}
+                {/*                   mountNode={document.getElementById("ltr-modal-mount")}>*/}
+                {/*                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />*/}
+                {/*            </Modal>*/}
+                {/*        </Menu.Item>*/}
+                {/*        <Menu.Item>*/}
+                {/*            <Modal closeOnDimmerClick={false}*/}
+                {/*                   trigger={<Button color='blue' icon='tags'*/}
+                {/*                                    loading={renaming}*/}
+                {/*                                    disabled={product_data.product_id === undefined}*/}
+                {/*                                    onClick={this.openCit} />}*/}
+                {/*                   onClose={this.onCancel}*/}
+                {/*                   open={cit_open}*/}
+                {/*                   closeIcon="close"*/}
+                {/*                   mountNode={document.getElementById("cit-modal-mount")}>*/}
+                {/*                <Modal.Content>*/}
+                {/*                    <CIT metadata={product_data.line}*/}
+                {/*                         onCancel={this.onCancel}*/}
+                {/*                         onComplete={(x) => this.renameFile(x)}/>*/}
+                {/*                </Modal.Content>*/}
+                {/*            </Modal>*/}
+                {/*        </Menu.Item>*/}
+                {/*        <Menu.Menu position='left'>*/}
+                {/*            <Menu.Item>*/}
+                {/*                <Button color='teal' icon='archive'*/}
+                {/*                        loading={inserting}*/}
+                {/*                        disabled={!source}*/}
+                {/*                        onClick={this.newUnit} />*/}
+                {/*            </Menu.Item>*/}
+                {/*            <Menu.Item>*/}
+                {/*                <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}*/}
+                {/*                        onClick={this.uploadMaster} />*/}
+                {/*            </Menu.Item>*/}
+                {/*            <Menu.Item>*/}
+                {/*                <Modal trigger={<Button color='yellow' icon='folder'*/}
+                {/*                                        disabled={product_data.product_id === undefined}*/}
+                {/*                                        onClick={this.openProduct} />}*/}
+                {/*                       mountNode={document.getElementById("ltr-modal-mount")}>*/}
+                {/*                    <ProductFiles {...this.state} />*/}
+                {/*                </Modal>*/}
+                {/*            </Menu.Item>*/}
+                {/*            <Menu.Item>*/}
+                {/*                <Button color='red' icon='close' disabled={product_data.product_id === undefined}*/}
+                {/*                        onClick={this.setRemoved} />*/}
+                {/*            </Menu.Item>*/}
+                {/*        </Menu.Menu>*/}
+                {/*        <Menu.Menu position='right'>*/}
+                {/*            <Menu.Item>*/}
+                {/*                    <Select compact options={send_options}*/}
+                {/*                            defaultValue={special}*/}
+                {/*                            placeholder='Send options'*/}
+                {/*                            onChange={(e, {value}) => this.setSpecial(value)} />*/}
+                {/*            </Menu.Item>*/}
+                {/*            <Menu.Item>*/}
+                {/*                <Button positive icon="arrow right"*/}
+                {/*                        //disabled={send_button}*/}
+                {/*                        disabled={product_data.product_id === undefined}*/}
+                {/*                        onClick={this.sendFile} loading={sending} />*/}
+                {/*            </Menu.Item>*/}
+                {/*        </Menu.Menu>*/}
+                {/*    </Menu>*/}
+                {/*</Message>*/}
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>

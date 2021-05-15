@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, lazy} from 'react';
 import PropTypes from 'prop-types';
 import noop from 'lodash/noop';
 
@@ -22,8 +22,9 @@ import LessonForm from './forms/LessonForm';
 import TVShowForm from './forms/TVShowForm';
 import VirtualLessonForm from './forms/VirtualLessonForm';
 import EventPartForm from './forms/EventPartForm';
-import '../../stylesheets/sematic-reset.css';
-import '../../stylesheets/scoped_semantic_rtl.css';
+// import '../../stylesheets/sematic-reset.css';
+// import '../../stylesheets/scoped_semantic_rtl.css';
+// import 'semantic-ui-css/semantic.rtl.min.css';
 import './forms/forms.css';
 
 class CIT extends Component {

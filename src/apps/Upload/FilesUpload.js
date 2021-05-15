@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getToken, WF_BACKEND} from "../../shared/tools";
+import {getToken, putData, WF_BACKEND, WFSRV_BACKEND} from "../../shared/tools";
 
 class FilesUpload extends Component {
 
@@ -16,11 +16,21 @@ class FilesUpload extends Component {
         this.setState({progress});
     };
 
-    uploadDone = (file) => {
+    uploadDone = (filedata) => {
         let {progress} = this.state;
-        this.props.onFileData(file);
-        console.log("Upload done", file);
-        delete progress[file.file_name];
+        const {product_id, language} = this.props;
+        filedata.file_type = "1";
+        filedata.product_id = product_id;
+        filedata.language = language;
+        filedata.mime_type = filedata.type;
+        delete filedata.type;
+        delete filedata.url;
+        console.log(":: ProductFiles - got data: ", filedata);
+        putData(`${WFSRV_BACKEND}/workflow/products`, filedata, (cb) => {
+            console.log(":: UploadApp - workflow respond: ",cb);
+        });
+        console.log("Upload done", filedata);
+        delete progress[filedata.file_name];
         this.setState({progress})
     };
 

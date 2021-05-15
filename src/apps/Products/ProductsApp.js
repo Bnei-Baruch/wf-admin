@@ -3,12 +3,13 @@ import moment from 'moment';
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import ProductsAdmin from "./ProductsAdmin";
 import ProductUpload from "./ProductUpload";
+import ProductFiles from "./ProductFiles";
 
 class ProductsApp extends Component {
 
     state = {
         ival: null,
-        job_id: false,
+        product_id: null,
     };
 
     jobWorkflow = (filedata) => {
@@ -24,15 +25,21 @@ class ProductsApp extends Component {
 
     masterUpload = (job_id) => {
         job_id = job_id === this.state.job_id ? false : job_id;
-        this.setState({job_id})
+        this.setState({job_id});
     };
+
+    setProduct = (product_id) => {
+        this.setState({product_id});
+        this.refs.files.getProductFiles(product_id);
+    }
 
     render() {
 
         return (
             <Fragment>
                 {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
-                <ProductsAdmin user={this.props.user} masterUpload={this.masterUpload} />
+                <ProductsAdmin user={this.props.user} setProduct={this.setProduct} />
+                <ProductFiles user={this.props.user} product_id={this.state.product_id} ref="files" />
             </Fragment>
         );
     }

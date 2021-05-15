@@ -4,8 +4,9 @@ import {kc} from "./components/UserManager";
 import mqtt from "./shared/mqtt";
 import {getData} from "./shared/tools";
 import LoginPage from './components/LoginPage';
-import './stylesheets/sematic-reset.css';
-import './stylesheets/scoped_semantic_ltr.css';
+// import './stylesheets/sematic-reset.css';
+// import './stylesheets/scoped_semantic_ltr.css';
+import 'semantic-ui-css/semantic.min.css'
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 

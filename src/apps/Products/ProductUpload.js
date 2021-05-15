@@ -1,52 +1,39 @@
 import React, { Component } from 'react';
-import { Progress,Message,Segment } from 'semantic-ui-react';
-import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import { Container,Message } from 'semantic-ui-react';
+import FilesUpload from "../Upload/FilesUpload";
+import {getData, putData, WFSRV_BACKEND} from "../../shared/tools";
 
 class ProductUpload extends Component {
 
-    state = { percent: 0 };
-
-    progress = (step, file) => {
-        let count = Math.round(step.percent);
-        //console.log('onProgress', step, file.name);
-        this.setState({percent: count});
+    state = {
+        files: [],
     };
 
-    uploadDone = (file) => {
-        this.props.onFileData(file);
-        this.setState({percent: 0})
+    componentDidMount() {
     };
+
+    fileUploaded = (filedata) => {
+        const {active, language} = this.props;
+        filedata.file_type = "1";
+        filedata.product_id = active;
+        filedata.language = language;
+        filedata.mime_type = filedata.type;
+        delete filedata.type;
+        delete filedata.url;
+        console.log(":: ProductFiles - got data: ", filedata);
+        putData(`${WFSRV_BACKEND}/workflow/products`, filedata, (cb) => {
+            console.log(":: UploadApp - workflow respond: ",cb);
+        });
+    };
+
 
     render() {
 
-        const props = {
-            action: `${WFSRV_BACKEND}/products/upload`,
-            type: 'drag',
-            accept: 'mp3, .mp4, .doc, .docx',
-            beforeUpload(file) {
-                console.log('beforeUpload', file.name);
-            },
-            onStart(file) {
-                console.log('onStart', file.name);
-            },
-            onError(err) {
-                console.log('onError', err);
-            },
-
-        };
+        const {files} = this.state;
 
         return (
             <Message>
-                <Upload
-                    {...this.props}
-                    {...props}
-                    className="aricha"
-                    onSuccess={this.uploadDone}
-                    onProgress={this.progress} >
-                    Drop file here or click me
-                </Upload>
-                <Progress label='' percent={this.state.percent} indicating progress='percent' />
+                <FilesUpload onFileData={this.fileUploaded} />
             </Message>
         );
     }
