@@ -382,13 +382,16 @@ class ProductFiles extends Component {
                                 </Modal.Content>
                             </Modal>
                         </Menu.Item>
+                        <Menu.Item>
+                            <Button color='teal' icon='download' disabled={!source} href={this.state.source} download />
+                        </Menu.Item>
                         <Menu.Menu position='left'>
-                            <Menu.Item>
-                                <Button color='teal' icon='archive'
-                                        loading={inserting}
-                                        disabled={!source}
-                                        onClick={this.newUnit} />
-                            </Menu.Item>
+                            {/*<Menu.Item>*/}
+                            {/*    <Button color='teal' icon='archive'*/}
+                            {/*            loading={inserting}*/}
+                            {/*            disabled={!source}*/}
+                            {/*            onClick={this.newUnit} />*/}
+                            {/*</Menu.Item>*/}
                             {/*<Menu.Item>*/}
                             {/*    <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}*/}
                             {/*            onClick={this.uploadMaster} />*/}
