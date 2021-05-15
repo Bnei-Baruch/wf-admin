@@ -1,19 +1,6 @@
 import React, {Component} from 'react'
-import FileViewer from 'react-file-viewer';
 import moment from 'moment';
-import {
-    getData,
-    putData,
-    removeData,
-    getUnits,
-    IVAL,
-    WFDB_BACKEND,
-    WFSRV_BACKEND,
-    getDCT,
-    insertName,
-    arichaName,
-    MDB_FINDSHA, newProductMeta, postData, getToken
-} from '../../shared/tools';
+import {getData, putData, removeData, IVAL, WFDB_BACKEND, WFSRV_BACKEND, newProductMeta, postData, getToken} from '../../shared/tools';
 import {
     Menu,
     Segment,
@@ -23,23 +10,21 @@ import {
     Loader,
     Button,
     Modal,
-    Select,
     Message,
-    Dropdown,
     Popup,
     TextArea,
-    Input
+    Input,
+    Dropdown
 } from 'semantic-ui-react'
-import MediaPlayer from "../../components/Media/MediaPlayer";
-import InsertModal from "../Insert/InsertModal"
-import CIT from '../CIT/CIT';
-import ProductFiles from "./ProductFiles";
+import {dep_options} from "../../shared/consts";
+import DatePicker from "react-datepicker";
 
 class ProductsAdmin extends Component {
 
     state = {
         active: null,
         cit_open: false,
+        date: moment().format('YYYY-MM-DD'),
         doers: [],
         insert_open: false,
         insert_button: true,
@@ -50,6 +35,7 @@ class ProductsAdmin extends Component {
         filedata: {},
         kmedia_option: false,
         language: "heb",
+        locale: "he",
         original_language: "heb",
         metadata: {},
         input_id: "",
@@ -61,19 +47,30 @@ class ProductsAdmin extends Component {
         special: "censored",
         source: null,
         note_area: "",
-
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('products', (data) => {
-                if (JSON.stringify(this.state.products) !== JSON.stringify(data))
-                    this.setState({products: data})
-            }), IVAL );
-        this.setState({ival});
+        // let ival = setInterval(() => getData('products', (data) => {
+        //         if (JSON.stringify(this.state.products) !== JSON.stringify(data))
+        //             this.setState({products: data})
+        //     }), IVAL );
+        // this.setState({ival});
+        this.getProducts();
     };
 
     componentWillUnmount() {
         clearInterval(this.state.ival);
+    };
+
+    getProducts = () => {
+        getData('products', products => {
+            console.log(products)
+            this.setState({products: products})
+        });
+    };
+
+    selectDate = (date) => {
+        this.setState({date: date.format('YYYY-MM-DD')});
     };
 
     selectProduct = (product_data) => {
@@ -244,8 +241,7 @@ class ProductsAdmin extends Component {
 
     render() {
 
-        const {product_data, source, renaming, rename_button, cit_open, inserting, insert_button, note_area,
-            filedata, metadata, special, send_button, sending, product_name, doers} = this.state;
+        const {date, product_data, products, locale, product_name, language} = this.state;
 
         const send_options = [
             {key: 'Censor', text: 'Censor', value: 'censored'},
@@ -264,60 +260,12 @@ class ProductsAdmin extends Component {
         let d = (<Icon color='blue' name='lock'/>);
         let p = (<Icon color='blue' name='cogs'/>);
 
-        let products = this.state.products.map((data) => {
-            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = data.wfstatus;
-            let notes = data.product ? data.product.notes : [];
-            let subtitles = data.product && data.product.subtitle ? data.product.subtitle.url : null;
-            let notes_list = notes.map((note,i) => {
-                const {message,name,date} = note;
-                let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
-                return  (
-                    <Message key={i} warning className='note_message' attached icon='copyright'
-                             header={h} onDismiss={() => this.delNote(data,i)}
-                             content={message} />
-                )
-            });
-            let id = data.product_id;
-            let ready = true;
-            let title = ready ? data.product_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.product_name}</div>;
-            //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(removed) return false;
-            let rowcolor = censored && !checked;
-            let active = this.state.active === id ? 'active' : 'admin_raw';
-            return (
-                <Table.Row
-                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
-                    className={active} key={id} onClick={() => this.selectProduct(data)}>
-                    <Table.Cell>
-                        <Popup mountNode={document.getElementById("ltr-modal-mount")}
-                               trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
-                            {notes_list}
-                            <Message warning attached>
-                                <TextArea value={note_area} className='note_area'
-                                          rows={5} placeholder='Notes...'
-                                          onChange={(e,{value}) => this.setState({note_area: value})} />
-                            </Message>
-                            <Button attached='bottom' positive
-                                    onClick={() => this.addNote(data)} >Add note</Button>
-                        </Popup>
-                    </Table.Cell>
-                    <Table.Cell>
-                        {subtitles ? <Modal trigger={<Icon name='wordpress forms' color={subtitles ? 'green' : 'grey'} />}
-                               mountNode={document.getElementById("ltr-modal-mount")} >
-                            <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />
-                        </Modal> : <Icon name='file' color={subtitles ? 'green' : 'grey'} />}
-                    </Table.Cell>
-                    <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
-                    <Table.Cell>{data.file_name}</Table.Cell>
-                    <Table.Cell>{data.date}</Table.Cell>
-                    <Table.Cell negative={!checked}>{censored && !checked ? p : checked ? v : x}</Table.Cell>
-                    <Table.Cell negative={!fixed}>{fix_req && !fixed ? p : fixed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!posted}>{post_req && !posted ? p : posted ? v : x}</Table.Cell>
-                    <Table.Cell negative={!subed}>{sub_req && !subed ? p : subed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!aricha}>{aricha ? v : x}</Table.Cell>
-                </Table.Row>
-            )
-        });
+
+        const products_options = products.map(data => {
+            const {product_name, product_id} = data;
+            return ({key: product_id, text: product_name, value: data})
+            }
+        );
 
         const doers_list = [
             {key: 0, text: "Michael Waintraub", value: "Michael Waintraub"},
@@ -332,119 +280,71 @@ class ProductsAdmin extends Component {
                 </Label>
                 <Menu secondary >
                     <Menu.Item>
+                        <Dropdown
+                            error={!language}
+                            placeholder="Language:"
+                            selection
+                            options={dep_options}
+                            language={language}
+                            onChange={(e,{value}) => this.setState({language: value})}
+                            value={language} >
+                        </Dropdown>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Input size='large'
+                               placeholder="Product name.."
+                               onChange={e => this.setProductName(e.target.value)}
+                               value={product_name} />
+                    </Menu.Item>
+                    <Menu.Menu position='right'>
+                    <Menu.Item>
                         <Button positive={true}
                                 disabled={product_name === ""}
                                 onClick={this.newProduct}>New Product
                         </Button>
                     </Menu.Item>
-                    <Menu.Item>
-                        <Input className="product_input"
-                               placeholder="Product name.."
-                               onChange={e => this.setProductName(e.target.value)}
-                               value={product_name} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        {/*<Dropdown*/}
-                        {/*    placeholder="Add doer.."*/}
-                        {/*    selection*/}
-                        {/*    multiple*/}
-                        {/*    options={doers_list}*/}
-                        {/*    value={doers}*/}
-                        {/*    onChange={(e, {value}) => this.addDoer(value)} />*/}
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Button negative={true}
-                                disabled={product_data.product_id === undefined}
-                                onClick={this.removeProduct}>Delete Product
-                        </Button>
-                    </Menu.Item>
+                    </Menu.Menu>
                 </Menu>
-                {/*<Message>*/}
-                {/*    <Menu size='large' secondary >*/}
-                {/*        <Menu.Item>*/}
-                {/*            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}*/}
-                {/*                   size='tiny'*/}
-                {/*                   mountNode={document.getElementById("ltr-modal-mount")}>*/}
-                {/*                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />*/}
-                {/*            </Modal>*/}
-                {/*        </Menu.Item>*/}
-                {/*        <Menu.Item>*/}
-                {/*            <Modal closeOnDimmerClick={false}*/}
-                {/*                   trigger={<Button color='blue' icon='tags'*/}
-                {/*                                    loading={renaming}*/}
-                {/*                                    disabled={product_data.product_id === undefined}*/}
-                {/*                                    onClick={this.openCit} />}*/}
-                {/*                   onClose={this.onCancel}*/}
-                {/*                   open={cit_open}*/}
-                {/*                   closeIcon="close"*/}
-                {/*                   mountNode={document.getElementById("cit-modal-mount")}>*/}
-                {/*                <Modal.Content>*/}
-                {/*                    <CIT metadata={product_data.line}*/}
-                {/*                         onCancel={this.onCancel}*/}
-                {/*                         onComplete={(x) => this.renameFile(x)}/>*/}
-                {/*                </Modal.Content>*/}
-                {/*            </Modal>*/}
-                {/*        </Menu.Item>*/}
-                {/*        <Menu.Menu position='left'>*/}
-                {/*            <Menu.Item>*/}
-                {/*                <Button color='teal' icon='archive'*/}
-                {/*                        loading={inserting}*/}
-                {/*                        disabled={!source}*/}
-                {/*                        onClick={this.newUnit} />*/}
-                {/*            </Menu.Item>*/}
-                {/*            <Menu.Item>*/}
-                {/*                <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}*/}
-                {/*                        onClick={this.uploadMaster} />*/}
-                {/*            </Menu.Item>*/}
-                {/*            <Menu.Item>*/}
-                {/*                <Modal trigger={<Button color='yellow' icon='folder'*/}
-                {/*                                        disabled={product_data.product_id === undefined}*/}
-                {/*                                        onClick={this.openProduct} />}*/}
-                {/*                       mountNode={document.getElementById("ltr-modal-mount")}>*/}
-                {/*                    <ProductFiles {...this.state} />*/}
-                {/*                </Modal>*/}
-                {/*            </Menu.Item>*/}
-                {/*            <Menu.Item>*/}
-                {/*                <Button color='red' icon='close' disabled={product_data.product_id === undefined}*/}
-                {/*                        onClick={this.setRemoved} />*/}
-                {/*            </Menu.Item>*/}
-                {/*        </Menu.Menu>*/}
-                {/*        <Menu.Menu position='right'>*/}
-                {/*            <Menu.Item>*/}
-                {/*                    <Select compact options={send_options}*/}
-                {/*                            defaultValue={special}*/}
-                {/*                            placeholder='Send options'*/}
-                {/*                            onChange={(e, {value}) => this.setSpecial(value)} />*/}
-                {/*            </Menu.Item>*/}
-                {/*            <Menu.Item>*/}
-                {/*                <Button positive icon="arrow right"*/}
-                {/*                        //disabled={send_button}*/}
-                {/*                        disabled={product_data.product_id === undefined}*/}
-                {/*                        onClick={this.sendFile} loading={sending} />*/}
-                {/*            </Menu.Item>*/}
-                {/*        </Menu.Menu>*/}
-                {/*    </Menu>*/}
-                {/*</Message>*/}
-                <Table selectable compact='very' basic structured className="ingest_table" fixed>
-                    <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>Note</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Title</Table.HeaderCell>
-                            <Table.HeaderCell width={9}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Fix</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Post</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Done</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {products}
-                    </Table.Body>
-                </Table>
+                <Message>
+                    <Menu secondary >
+                        <Menu.Item>
+                            <DatePicker
+                                className="datepickercs"
+                                locale={locale}
+                                dateFormat="YYYY-MM-DD"
+                                showYearDropdown
+                                showMonthDropdown
+                                scrollableYearDropdown
+                                maxDate={moment()}
+                                openToDate={moment(date)}
+                                selected={moment(date)}
+                                onChange={this.selectDate}
+                            />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                fluid
+                                search
+                                selection
+                                options={products_options}
+                                placeholder='Select Product...'
+                                onChange={(e,{value}) => this.selectProduct(value)}
+                            />
+                        </Menu.Item>
+                        <Menu.Menu position='right'>
+                            <Menu.Item>
+                            </Menu.Item>
+                            <Menu.Item>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Button negative={true}
+                                        disabled={product_data.product_id === undefined}
+                                        onClick={this.removeProduct}>Delete Product
+                                </Button>
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
+                </Message>
             </Segment>
         );
     }

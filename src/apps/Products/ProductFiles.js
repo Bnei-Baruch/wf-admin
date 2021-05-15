@@ -80,19 +80,11 @@ class ProductFiles extends Component {
         });
     };
 
-    selectProduct = (product_data) => {
-        console.log(":: ProductsAdmin - selected product: ", product_data);
-
-        // Check if master file is added
-        if(!product_data.original) {
-            this.setState({product_data, source: null, active: product_data.product_id});
-            return
-        } else {
-            // Build url for preview (take proxy if exist)
-            let path = product_data.proxy ? product_data.proxy.format.filename : product_data.original.format.filename;
-            let source = `${WFSRV_BACKEND}${path}`;
-            this.setState({product_data, source, active: product_data.product_id});
-        }
+    selectProduct = (data) => {
+        console.log(":: ProductFiles - selected file: ", data);
+        let path = data.properties.url;
+        let source = `${WFSRV_BACKEND}${path}`;
+        this.setState({product_data: data, source, active: data.file_id});
     };
 
     getPlayer = (player) => {
@@ -281,7 +273,7 @@ class ProductFiles extends Component {
                              content={message} />
                 )
             });
-            let id = data.product_id;
+            let id = data.file_id;
             let ready = true;
             let title = ready ? data.product_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.product_name}</div>;
             //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
@@ -330,10 +322,10 @@ class ProductFiles extends Component {
             ];
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='blue' raised>
-                <Label  attached='top' className="trimmed_label">
-                    {product_data.product_name ? product_data.product_name : ""}
-                </Label>
+            <Segment textAlign='center' className="ingest_segment" >
+                {/*<Label  attached='top' className="trimmed_label">*/}
+                {/*    {product_data.product_name ? product_data.product_name : ""}*/}
+                {/*</Label>*/}
                 <FilesUpload product_id={this.props.product_id} language={language} />
                 {/*<Menu secondary >*/}
                 {/*    <Menu.Item>*/}
@@ -397,22 +389,22 @@ class ProductFiles extends Component {
                                         disabled={!source}
                                         onClick={this.newUnit} />
                             </Menu.Item>
-                            <Menu.Item>
-                                <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}
-                                        onClick={this.uploadMaster} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Modal trigger={<Button color='yellow' icon='folder'
-                                                        disabled={product_data.product_id === undefined}
-                                                        onClick={this.openProduct} />}
-                                       mountNode={document.getElementById("ltr-modal-mount")}>
-                                    <ProductFiles {...this.state} />
-                                </Modal>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='red' icon='close' disabled={product_data.product_id === undefined}
-                                        onClick={this.setRemoved} />
-                            </Menu.Item>
+                            {/*<Menu.Item>*/}
+                            {/*    <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}*/}
+                            {/*            onClick={this.uploadMaster} />*/}
+                            {/*</Menu.Item>*/}
+                            {/*<Menu.Item>*/}
+                            {/*    <Modal trigger={<Button color='yellow' icon='folder'*/}
+                            {/*                            disabled={product_data.product_id === undefined}*/}
+                            {/*                            onClick={this.openProduct} />}*/}
+                            {/*           mountNode={document.getElementById("ltr-modal-mount")}>*/}
+                            {/*        <ProductFiles {...this.state} />*/}
+                            {/*    </Modal>*/}
+                            {/*</Menu.Item>*/}
+                            {/*<Menu.Item>*/}
+                            {/*    <Button color='red' icon='close' disabled={product_data.product_id === undefined}*/}
+                            {/*            onClick={this.setRemoved} />*/}
+                            {/*</Menu.Item>*/}
                         </Menu.Menu>
                         <Menu.Menu position='right'>
                             <Menu.Item>
@@ -433,7 +425,7 @@ class ProductFiles extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>Note</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>N</Table.HeaderCell>
                             {/*<Table.HeaderCell width={1}>Sub</Table.HeaderCell>*/}
                             {/*<Table.HeaderCell width={2}>Title</Table.HeaderCell>*/}
                             <Table.HeaderCell width={9}>File Name</Table.HeaderCell>

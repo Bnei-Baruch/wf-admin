@@ -111,6 +111,12 @@ export const language_options = [
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
+export const dep_options = [
+    { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
+    { key: 'ru', value: 'rus', flag: 'ru', text: 'Russian' },
+    { key: 'en', value: 'eng', flag: 'us', text: 'English' },
+];
+
 export const LANGUAGES = [
   { text: 'עברית', value: 'heb' },
   { text: 'אנגלית', value: 'eng' },
