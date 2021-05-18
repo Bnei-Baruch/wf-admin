@@ -6,7 +6,7 @@ import {
     Segment,
     Label,
     Icon,
-    Table,
+    Card,
     Loader,
     Button,
     Modal,
@@ -14,10 +14,11 @@ import {
     Popup,
     TextArea,
     Input,
-    Dropdown
+    Dropdown, Accordion
 } from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
+import ProductFiles from "./ProductFiles";
 
 class ProductsAdmin extends Component {
 
@@ -31,6 +32,7 @@ class ProductsAdmin extends Component {
         inserting: false,
         product_name: "",
         products: [],
+        files: [],
         product_data: {},
         filedata: {},
         kmedia_option: false,
@@ -66,6 +68,13 @@ class ProductsAdmin extends Component {
         getData('products', products => {
             console.log(products)
             this.setState({products: products})
+        });
+    };
+
+    getProductFiles = (product_id) => {
+        getData(`files/find?key=product_id&value=${product_id}`, (files) => {
+            console.log(":: Files DB Data: ", files);
+            this.setState({files});
         });
     };
 
@@ -239,43 +248,46 @@ class ProductsAdmin extends Component {
         });
     };
 
+    setProduct = (product_id) => {
+        console.log(product_id)
+        this.setState({product_id});
+        this.getProductFiles(product_id)
+        // this.refs.files.getProductFiles(product_id);
+    }
+
     render() {
 
-        const {date, product_data, products, locale, product_name, language} = this.state;
-
-        const send_options = [
-            {key: 'Censor', text: 'Censor', value: 'censored'},
-            {key: 'ToFix', text: 'ToFix', value: 'fix_req'},
-            {key: 'Fixed', text: 'Fixed', value: 'fixed'},
-            {key: 'Checked', text: 'Checked', value: 'checked'},
-            {key: 'Aricha', text: 'Aricha', value: 'aricha'},
-            {key: 'Buffer', text: 'Buffer', value: 'buffer'},
-        ];
-
-        let v = (<Icon name='checkmark' color='green' />);
-        let x = (<Icon name='close'/>);
-        let l = (<Loader size='mini' active inline />);
-        let c = (<Icon name='copyright'/>);
-        let f = (<Icon color='blue' name='configure'/>);
-        let d = (<Icon color='blue' name='lock'/>);
-        let p = (<Icon color='blue' name='cogs'/>);
+        const {date, product_data, products, locale, product_name, language, files} = this.state;
 
 
-        const products_options = products.map(data => {
-            const {product_name, product_id} = data;
-            return ({key: product_id, text: product_name, value: data})
+        const panels = products.map(data => {
+                const {product_name, product_id} = data;
+                return ({key: product_id,
+                    title: {
+                        content:
+                            // <Card color={product_id === this.state.product_id ? 'green' : ''}
+                            //       content={product_name} onClick={() => this.setProduct(product_id)}>
+                            //     <Card.Content header={product_name} />
+                            // </Card>,
+                            <Label size='big' horizontal basic fluid
+                            color={product_id === this.state.product_id ? 'green' : ''}
+                            content={product_name} onClick={() => this.setProduct(product_id)} />,
+                        icon: 'shopping cart',
+                    },
+                    content: {
+                        content: (
+                            <ProductFiles user={this.props.user} files={files} ref="files" />
+                        ),
+                    },
+                    text: product_name, value: data
+                })
             }
         );
 
-        const doers_list = [
-            {key: 0, text: "Michael Waintraub", value: "Michael Waintraub"},
-            {key: 1, text: "Tanya Jdanova", value: "Tanya Jdanova"},
-            {key: 2, text: "Hava Talal", value: "Hava Talal"},
-            ];
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='teal' raised>
-                <Label  attached='top' className="trimmed_label">
+            <Segment textAlign='left' className="ingest_segment" color='teal' raised>
+                <Label attached='top' className="trimmed_label">
                     {product_data.product_name ? product_data.product_name : ""}
                 </Label>
                 <Menu secondary >
@@ -322,14 +334,14 @@ class ProductsAdmin extends Component {
                             />
                         </Menu.Item>
                         <Menu.Item>
-                            <Dropdown
-                                fluid
-                                search
-                                selection
-                                options={products_options}
-                                placeholder='Select Product...'
-                                onChange={(e,{value}) => this.selectProduct(value)}
-                            />
+                            {/*<Dropdown*/}
+                            {/*    fluid*/}
+                            {/*    search*/}
+                            {/*    selection*/}
+                            {/*    options={products_options}*/}
+                            {/*    placeholder='Select Product...'*/}
+                            {/*    onChange={(e,{value}) => this.selectProduct(value)}*/}
+                            {/*/>*/}
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Menu.Item>
@@ -345,6 +357,7 @@ class ProductsAdmin extends Component {
                         </Menu.Menu>
                     </Menu>
                 </Message>
+                <Accordion defaultActiveIndex={0} panels={panels} />
             </Segment>
         );
     }

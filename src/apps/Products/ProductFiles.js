@@ -62,11 +62,12 @@ class ProductFiles extends Component {
         special: "censored",
         source: null,
         note_area: "",
+        upload: false,
 
     };
 
     componentDidMount() {
-        this.getProductFiles();
+        //this.getProductFiles();
     };
 
     componentWillUnmount() {
@@ -74,13 +75,13 @@ class ProductFiles extends Component {
     };
 
     getProductFiles = (product_id) => {
-        getData(`files/find?key=product_id&value=${product_id}`, (files) => {
+        getData(`files/find?key=product_id&value=${this.props.product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({files});
         });
     };
 
-    selectProduct = (data) => {
+    selectFile = (data) => {
         console.log(":: ProductFiles - selected file: ", data);
         let path = data.properties.url;
         let source = `${WFSRV_BACKEND}${path}`;
@@ -259,7 +260,7 @@ class ProductFiles extends Component {
         let d = (<Icon color='blue' name='lock'/>);
         let p = (<Icon color='blue' name='cogs'/>);
 
-        let products = this.state.files.map((data) => {
+        let products = this.props.files.map((data) => {
             let youtube = false; let facebook = false; let removed = false; let locked = false
             //const {wfstatus:{youtube, facebook, removed, locked}} = data.properties;
             let notes = data.product ? data.product.notes : [];
@@ -277,13 +278,13 @@ class ProductFiles extends Component {
             let ready = true;
             let title = ready ? data.product_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.product_name}</div>;
             //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
-            if(removed) return false;
+            //if(removed) return false;
             let rowcolor = false;
             let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
                     negative={rowcolor} disabled={locked}
-                    className={active} key={id} onClick={() => this.selectProduct(data)}>
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
                                trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
@@ -326,7 +327,7 @@ class ProductFiles extends Component {
                 {/*<Label  attached='top' className="trimmed_label">*/}
                 {/*    {product_data.product_name ? product_data.product_name : ""}*/}
                 {/*</Label>*/}
-                <FilesUpload product_id={this.props.product_id} language={language} />
+                {this.state.upload ? <FilesUpload product_id={this.props.product_id} language={language} /> : ''}
                 {/*<Menu secondary >*/}
                 {/*    <Menu.Item>*/}
                 {/*        <Button positive={true}*/}
@@ -356,6 +357,8 @@ class ProductFiles extends Component {
                 {/*        </Button>*/}
                 {/*    </Menu.Item>*/}
                 {/*</Menu>*/}
+
+                { this.state.active ?
                 <Message>
                     <Menu size='large' secondary >
                         <Menu.Item>
@@ -392,10 +395,10 @@ class ProductFiles extends Component {
                             {/*            disabled={!source}*/}
                             {/*            onClick={this.newUnit} />*/}
                             {/*</Menu.Item>*/}
-                            {/*<Menu.Item>*/}
-                            {/*    <Button color='orange' icon='upload' disabled={product_data.product_id === undefined}*/}
-                            {/*            onClick={this.uploadMaster} />*/}
-                            {/*</Menu.Item>*/}
+                            <Menu.Item>
+                                <Button color='orange' icon='upload'
+                                        onClick={() => this.setState({upload: !this.state.upload})} />
+                            </Menu.Item>
                             {/*<Menu.Item>*/}
                             {/*    <Modal trigger={<Button color='yellow' icon='folder'*/}
                             {/*                            disabled={product_data.product_id === undefined}*/}
@@ -424,7 +427,7 @@ class ProductFiles extends Component {
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>
-                </Message>
+                </Message> : null}
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>
