@@ -3,7 +3,7 @@ import moment from 'moment';
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import ProductsAdmin from "./ProductsAdmin";
 import ProductUpload from "./ProductUpload";
-import ProductFiles from "./ProductFiles";
+import ProductsManager from "./ProductsManager";
 
 class ProductsApp extends Component {
 
@@ -39,7 +39,7 @@ class ProductsApp extends Component {
             <Fragment>
                 {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
                 <ProductsAdmin user={this.props.user} setProduct={this.setProduct} />
-                {/*<ProductFiles user={this.props.user} product_id={this.state.product_id} ref="files" />*/}
+                <ProductsManager user={this.props.user} />
             </Fragment>
         );
     }

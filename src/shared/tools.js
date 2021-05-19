@@ -519,17 +519,11 @@ export const newProductMeta = (product_name, language, original_language) => {
     let date = moment.unix(product_id.substr(1)).format("YYYY-MM-DD");
     let metadata = {
         product_id, date, product_name, language, original_language,
-        product_type: "media",
+        product_type: "media", line: {}, parent: {},
         pattern: null,
         wfstatus: {
-            aricha: false,
             buffer: false,
-            fix_req: false,
             fixed: false,
-            post_req: false,
-            posted: false,
-            sub_req: false,
-            subed: false,
             renamed: false,
             wfsend: false,
             removed: false,
