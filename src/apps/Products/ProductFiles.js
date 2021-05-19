@@ -323,7 +323,7 @@ class ProductFiles extends Component {
             ];
 
         return (
-            <Segment textAlign='center' className="ingest_segment" >
+            <div textAlign='center' className="ingest_segment" >
                 {/*<Label  attached='top' className="trimmed_label">*/}
                 {/*    {product_data.product_name ? product_data.product_name : ""}*/}
                 {/*</Label>*/}
@@ -368,23 +368,23 @@ class ProductFiles extends Component {
                                 <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
                             </Modal>
                         </Menu.Item>
-                        <Menu.Item>
-                            <Modal closeOnDimmerClick={false}
-                                   trigger={<Button color='blue' icon='tags'
-                                                    loading={renaming}
-                                                    disabled={product_data.product_id === undefined}
-                                                    onClick={this.openCit} />}
-                                   onClose={this.onCancel}
-                                   open={cit_open}
-                                   closeIcon="close"
-                                   mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={product_data.line}
-                                         onCancel={this.onCancel}
-                                         onComplete={(x) => this.renameFile(x)}/>
-                                </Modal.Content>
-                            </Modal>
-                        </Menu.Item>
+                        {/*<Menu.Item>*/}
+                        {/*    <Modal closeOnDimmerClick={false}*/}
+                        {/*           trigger={<Button color='blue' icon='tags'*/}
+                        {/*                            loading={renaming}*/}
+                        {/*                            disabled={product_data.product_id === undefined}*/}
+                        {/*                            onClick={this.openCit} />}*/}
+                        {/*           onClose={this.onCancel}*/}
+                        {/*           open={cit_open}*/}
+                        {/*           closeIcon="close"*/}
+                        {/*           mountNode={document.getElementById("cit-modal-mount")}>*/}
+                        {/*        <Modal.Content>*/}
+                        {/*            <CIT metadata={product_data.line}*/}
+                        {/*                 onCancel={this.onCancel}*/}
+                        {/*                 onComplete={(x) => this.renameFile(x)}/>*/}
+                        {/*        </Modal.Content>*/}
+                        {/*    </Modal>*/}
+                        {/*</Menu.Item>*/}
                         <Menu.Item>
                             <Button color='teal' icon='download' disabled={!source} href={this.state.source} download />
                         </Menu.Item>
@@ -431,16 +431,13 @@ class ProductFiles extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>N</Table.HeaderCell>
-                            {/*<Table.HeaderCell width={1}>Sub</Table.HeaderCell>*/}
-                            {/*<Table.HeaderCell width={2}>Title</Table.HeaderCell>*/}
-                            <Table.HeaderCell width={9}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            {/*<Table.HeaderCell width={1}>C</Table.HeaderCell>*/}
-                            <Table.HeaderCell width={1}>F</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>P</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>S</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>D</Table.HeaderCell>
+                            <Table.HeaderCell width={1}></Table.HeaderCell>
+                            <Table.HeaderCell width={9}></Table.HeaderCell>
+                            <Table.HeaderCell width={2}></Table.HeaderCell>
+                            <Table.HeaderCell width={1}></Table.HeaderCell>
+                            <Table.HeaderCell width={1}></Table.HeaderCell>
+                            <Table.HeaderCell width={1}></Table.HeaderCell>
+                            <Table.HeaderCell width={1}></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -448,7 +445,7 @@ class ProductFiles extends Component {
                         {products}
                     </Table.Body>
                 </Table>
-            </Segment>
+            </div>
         );
     }
 }

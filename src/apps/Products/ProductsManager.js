@@ -51,7 +51,7 @@ class ProductsManager extends Component {
     };
 
     getProducts = (language) => {
-        getData(`products/${language}`, products => {
+        getData(`products`, products => {
             console.log(products)
             this.setState({products: products})
         });
@@ -240,14 +240,10 @@ class ProductsManager extends Component {
                 return ({key: product_id,
                     title: {
                         content:
-                            // <Card color={product_id === this.state.product_id ? 'green' : ''}
-                            //       content={product_name} onClick={() => this.setProduct(product_id)}>
-                            //     <Card.Content header={product_name} />
-                            // </Card>,
-                            <Label size='big' horizontal basic fluid
+                            <Label className='product_label' size='big' basic
                             color={product_id === this.state.product_id ? 'green' : ''}
-                            content={product_name} onClick={() => this.setProduct(product_id)} />,
-                        icon: 'shopping cart',
+                                   content={product_name} onClick={() => this.setProduct(product_id)} />,
+                        // icon: 'shopping cart',
                     },
                     content: {
                         content: (
@@ -261,12 +257,13 @@ class ProductsManager extends Component {
 
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='teal' raised>
-                <Label attached='top' className="trimmed_label">
-                    {product_data.product_name ? product_data.product_name : ""}
-                </Label>
-                <Message>
-                    <Menu secondary >
+            <Segment textAlign='left' className="ingest_segment" color='green' raised>
+                {/*<Label attached='top' className="trimmed_label">*/}
+                {/*    {product_data.product_name ? product_data.product_name : ""}*/}
+                {/*</Label>*/}
+                <Message floating
+                    icon='shopping cart'
+                    content={<Menu secondary >
                         <Menu.Item>
                             <Dropdown
                                 error={!language}
@@ -314,9 +311,9 @@ class ProductsManager extends Component {
                                 </Button>
                             </Menu.Item>
                         </Menu.Menu>
-                    </Menu>
-                </Message>
-                <Accordion defaultActiveIndex={0} panels={panels} />
+                    </Menu>}
+                />
+                <Accordion  defaultActiveIndex={0} panels={panels} fluid />
             </Segment>
         );
     }
