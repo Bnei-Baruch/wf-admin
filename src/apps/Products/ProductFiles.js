@@ -28,7 +28,7 @@ import {
     Dropdown,
     Popup,
     TextArea,
-    Input
+    Input, List
 } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertModal from "../Insert/InsertModal"
@@ -316,6 +316,19 @@ class ProductFiles extends Component {
             )
         });
 
+        const files_list = this.props.files.map(data => {
+                const {product_name, file_id} = data;
+                return (
+                    <List.Item active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(data)}>
+                        <List.Icon name='file' />
+                        <List.Content>
+                            <List.Header>{data.file_name}</List.Header>
+                            {/*<List.Description>Your site's theme</List.Description>*/}
+                        </List.Content>
+                    </List.Item>)
+            }
+        );
+
         const doers_list = [
             {key: 0, text: "Michael Waintraub", value: "Michael Waintraub"},
             {key: 1, text: "Tanya Jdanova", value: "Tanya Jdanova"},
@@ -323,7 +336,7 @@ class ProductFiles extends Component {
             ];
 
         return (
-            <div textAlign='center' className="ingest_segment" >
+            <List.List>
                 {/*<Label  attached='top' className="trimmed_label">*/}
                 {/*    {product_data.product_name ? product_data.product_name : ""}*/}
                 {/*</Label>*/}
@@ -428,24 +441,25 @@ class ProductFiles extends Component {
                         </Menu.Menu>
                     </Menu>
                 </Message> : null}
-                <Table selectable compact='very' basic structured className="ingest_table" fixed>
-                    <Table.Header>
-                        <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}></Table.HeaderCell>
-                            <Table.HeaderCell width={9}></Table.HeaderCell>
-                            <Table.HeaderCell width={2}></Table.HeaderCell>
-                            <Table.HeaderCell width={1}></Table.HeaderCell>
-                            <Table.HeaderCell width={1}></Table.HeaderCell>
-                            <Table.HeaderCell width={1}></Table.HeaderCell>
-                            <Table.HeaderCell width={1}></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
+                {files_list}
+                {/*<Table selectable compact='very' basic structured className="ingest_table" fixed>*/}
+                {/*    <Table.Header>*/}
+                {/*        <Table.Row className='table_header'>*/}
+                {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={9}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={2}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
+                {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
+                {/*        </Table.Row>*/}
+                {/*    </Table.Header>*/}
 
-                    <Table.Body>
-                        {products}
-                    </Table.Body>
-                </Table>
-            </div>
+                {/*    <Table.Body>*/}
+                {/*        {products}*/}
+                {/*    </Table.Body>*/}
+                {/*</Table>*/}
+            </List.List>
         );
     }
 }

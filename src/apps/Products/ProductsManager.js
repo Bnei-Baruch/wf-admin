@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Message, Dropdown, Accordion} from 'semantic-ui-react'
+import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
@@ -60,7 +60,7 @@ class ProductsManager extends Component {
     getProductFiles = (product_id) => {
         getData(`files/find?key=product_id&value=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
-            this.setState({files});
+            this.setState({product_id, files});
         });
     };
 
@@ -225,9 +225,11 @@ class ProductsManager extends Component {
 
     setProduct = (product_id) => {
         console.log(product_id)
-        this.setState({product_id});
-        this.getProductFiles(product_id)
-        // this.refs.files.getProductFiles(product_id);
+        if(product_id === this.state.product_id) {
+            //this.setState({product_id: null, files: []});
+        } else {
+            this.getProductFiles(product_id);
+        }
     }
 
     render() {
@@ -235,23 +237,17 @@ class ProductsManager extends Component {
         const {date, product_data, products, locale, product_name, language, files} = this.state;
 
 
-        const panels = products.map(data => {
+        const products_list = products.map(data => {
                 const {product_name, product_id} = data;
-                return ({key: product_id,
-                    title: {
-                        content:
-                            <Label className='product_label' size='big' basic
-                            color={product_id === this.state.product_id ? 'green' : ''}
-                                   content={product_name} onClick={() => this.setProduct(product_id)} />,
-                        // icon: 'shopping cart',
-                    },
-                    content: {
-                        content: (
-                            <ProductFiles user={this.props.user} files={files} ref="files" />
-                        ),
-                    },
-                    text: product_name, value: data
-                })
+                return (<List.Item key={product_id} active={product_id === this.state.product_id}
+                                   onClick={() => this.setProduct(product_id)}>
+                    <List.Icon name='folder' />
+                    <List.Content>
+                        <List.Header>{product_name}</List.Header>
+                        <List.Description>Product description</List.Description>
+                        {product_id === this.state.product_id ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
+                    </List.Content>
+                </List.Item>)
             }
         );
 
@@ -265,7 +261,7 @@ class ProductsManager extends Component {
                     icon='shopping cart'
                     content={<Menu secondary >
                         <Menu.Item>
-                            <Dropdown
+                            <Dropdown compact
                                 error={!language}
                                 placeholder="Language:"
                                 selection
@@ -313,7 +309,10 @@ class ProductsManager extends Component {
                         </Menu.Menu>
                     </Menu>}
                 />
-                <Accordion  defaultActiveIndex={0} panels={panels} fluid />
+                <Divider />
+                <List selection animated divided size='big' relaxed='very'>
+                    {products_list}
+                </List>
             </Segment>
         );
     }
