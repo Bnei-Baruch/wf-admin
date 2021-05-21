@@ -5,6 +5,7 @@ import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider} from 'se
 import {dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
+import FilesUpload from "../Upload/FilesUpload";
 
 class ProductsManager extends Component {
 
@@ -58,7 +59,7 @@ class ProductsManager extends Component {
     };
 
     getProductFiles = (product_id) => {
-        getData(`files/find?key=product_id&value=${product_id}`, (files) => {
+        getData(`files/${this.state.language}?product_id=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({product_id, files});
         });
@@ -245,6 +246,7 @@ class ProductsManager extends Component {
                     <List.Content>
                         <List.Header>{product_name}</List.Header>
                         <List.Description>Product description</List.Description>
+                        {product_id === this.state.product_id ? <FilesUpload product_id={product_id} language={language} /> : ''}
                         {product_id === this.state.product_id ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
                     </List.Content>
                 </List.Item>)

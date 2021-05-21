@@ -9,7 +9,6 @@ class ProductsAdmin extends Component {
         product_name: "",
         language: "heb",
         locale: "he",
-        original_language: "heb",
         metadata: {},
         input_id: "",
     };
@@ -32,15 +31,13 @@ class ProductsAdmin extends Component {
     };
 
     newProduct = () => {
-        const {product_name, language, original_language} = this.state;
-        let product_meta = newProductMeta(product_name, language, original_language);
-        // if(doers)
-        //     product_meta.parent.doers = doers;
+        const {product_name, language} = this.state;
+        let product_meta = newProductMeta(product_name, language);
         console.log(" :: New Meta: ", product_meta);
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
         });
-        this.setState({product_name: "", doers: []});
+        this.setState({product_name: ""});
     };
 
 
@@ -48,7 +45,6 @@ class ProductsAdmin extends Component {
         console.log(product_id)
         this.setState({product_id});
         this.getProductFiles(product_id)
-        // this.refs.files.getProductFiles(product_id);
     }
 
     render() {
