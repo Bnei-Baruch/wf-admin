@@ -329,14 +329,8 @@ class ProductFiles extends Component {
             }
         );
 
-        const doers_list = [
-            {key: 0, text: "Michael Waintraub", value: "Michael Waintraub"},
-            {key: 1, text: "Tanya Jdanova", value: "Tanya Jdanova"},
-            {key: 2, text: "Hava Talal", value: "Hava Talal"},
-            ];
-
         return (
-            <List.List>
+            <List selection relaxed>
                 {/*<Label  attached='top' className="trimmed_label">*/}
                 {/*    {product_data.product_name ? product_data.product_name : ""}*/}
                 {/*</Label>*/}
@@ -454,12 +448,11 @@ class ProductFiles extends Component {
                 {/*            <Table.HeaderCell width={1}></Table.HeaderCell>*/}
                 {/*        </Table.Row>*/}
                 {/*    </Table.Header>*/}
-
                 {/*    <Table.Body>*/}
                 {/*        {products}*/}
                 {/*    </Table.Body>*/}
                 {/*</Table>*/}
-            </List.List>
+            </List>
         );
     }
 }

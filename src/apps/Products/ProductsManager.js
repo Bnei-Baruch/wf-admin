@@ -153,7 +153,7 @@ class ProductsManager extends Component {
                     </List.Content>
                     <List.Icon name='folder' />
                     <List.Content>
-                        <List.Header onClick={() => this.setProduct(product_id)} >{name}</List.Header>
+                        <List.Header as='a' onClick={() => this.setProduct(product_id)} >{name}</List.Header>
                         <List.Content>{description}</List.Content>
                         {product_selected && add_language ? <AddLanguage
                             language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
@@ -223,7 +223,7 @@ class ProductsManager extends Component {
                     </Menu>}
                 />
                 <Divider />
-                <List selection animated divided size='big' relaxed='very'>
+                <List selection animated divided relaxed='very'>
                     {products_list}
                 </List>
             </Segment>
