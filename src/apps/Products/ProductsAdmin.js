@@ -7,6 +7,7 @@ class ProductsAdmin extends Component {
 
     state = {
         product_name: "",
+        product_description: "",
         language: "heb",
         locale: "he",
         metadata: {},
@@ -30,9 +31,13 @@ class ProductsAdmin extends Component {
         this.setState({product_name});
     };
 
+    setProductDescription = (product_description) => {
+        this.setState({product_description});
+    };
+
     newProduct = () => {
         const {product_name, language} = this.state;
-        let product_meta = newProductMeta(product_name, language);
+        let product_meta = newProductMeta(product_name, product_description, language);
         console.log(" :: New Meta: ", product_meta);
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -49,7 +54,7 @@ class ProductsAdmin extends Component {
 
     render() {
 
-        const {product_data, product_name, language} = this.state;
+        const {product_data, product_name, product_description, language} = this.state;
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='red' raised>
@@ -73,6 +78,12 @@ class ProductsAdmin extends Component {
                                placeholder="Product name.."
                                onChange={e => this.setProductName(e.target.value)}
                                value={product_name} />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Input size='large'
+                               placeholder="Product description.."
+                               onChange={e => this.setProductDescription(e.target.value)}
+                               value={product_description} />
                     </Menu.Item>
                     <Menu.Menu position='right'>
                     <Menu.Item>

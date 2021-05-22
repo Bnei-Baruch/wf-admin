@@ -6,6 +6,7 @@ import {dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
 import FilesUpload from "../Upload/FilesUpload";
+import AddLanguage from "./AddLanguage";
 
 class ProductsManager extends Component {
 
@@ -13,7 +14,7 @@ class ProductsManager extends Component {
         active: null,
         cit_open: false,
         date: moment().format('YYYY-MM-DD'),
-        doers: [],
+        drop_zone: false,
         insert_open: false,
         insert_button: true,
         inserting: false,
@@ -54,14 +55,14 @@ class ProductsManager extends Component {
     getProducts = (language) => {
         getData(`products`, products => {
             console.log(products)
-            this.setState({products: products})
+            this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
         });
     };
 
     getProductFiles = (product_id) => {
         getData(`files/${this.state.language}?product_id=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
-            this.setState({product_id, files});
+            this.setState({product_id, files, add_language: false, drop_zone: false});
         });
     };
 
@@ -233,21 +234,35 @@ class ProductsManager extends Component {
         }
     }
 
+    addFile = () => {
+        this.setState({drop_zone: !this.state.drop_zone});
+    }
+
+    addLanguage = () => {
+        console.log("addLanguage")
+        this.setState({add_language: true});
+        //this.setState({drop_zone: !this.state.drop_zone});
+    }
+
     render() {
 
-        const {date, product_data, products, locale, product_name, language, files} = this.state;
-
+        const {date, product_data, products, locale, drop_zone, add_language, language, files} = this.state;
 
         const products_list = products.map(data => {
-                const {product_name, product_id} = data;
-                return (<List.Item key={product_id} active={product_id === this.state.product_id}
-                                   onClick={() => this.setProduct(product_id)}>
+                const {product_name, product_id, i18n} = data;
+                const product_selected = product_id === this.state.product_id;
+                return (<List.Item key={product_id} active={product_id === this.state.product_id}>
+                    <List.Content floated='right'>
+                        {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}
+                    </List.Content>
                     <List.Icon name='folder' />
                     <List.Content>
-                        <List.Header>{product_name}</List.Header>
-                        <List.Description>Product description</List.Description>
-                        {product_id === this.state.product_id ? <FilesUpload product_id={product_id} language={language} /> : ''}
-                        {product_id === this.state.product_id ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
+                        <List.Header onClick={() => this.setProduct(product_id)} >{product_name}</List.Header>
+                        <List.Content>Product description</List.Content>
+                        {product_selected && add_language ? <AddLanguage
+                            language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
+                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
+                        {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
                     </List.Content>
                 </List.Item>)
             }
