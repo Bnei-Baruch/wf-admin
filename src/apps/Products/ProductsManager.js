@@ -12,7 +12,6 @@ class ProductsManager extends Component {
 
     state = {
         active: null,
-        cit_open: false,
         date: moment().format('YYYY-MM-DD'),
         drop_zone: false,
         insert_open: false,
@@ -91,46 +90,6 @@ class ProductsManager extends Component {
         //this.setState({player: player});
     };
 
-    renameFile = (newline) => {
-        console.log(":: Cit callback: ", newline);
-        let {product_data} = this.state;
-        product_data.line = newline;
-        let newfile_name = newline.final_name;
-        let oldfile_name = product_data.file_name;
-        if(product_data.original) {
-            let path = product_data.original.format.filename.split('/').slice(0,-1).join('/');
-            let opath = `${path}/${newfile_name}_${product_data.product_id}o.mp4`;
-            product_data.original.format.filename = opath;
-        }
-        if(product_data.proxy) {
-            let path = product_data.proxy.format.filename.split('/').slice(0,-1).join('/');
-            let ppath = `${path}/${newfile_name}_${product_data.product_id}p.mp4`;
-            product_data.proxy.format.filename = ppath;
-        }
-        this.setState({cit_open: false, renaming: true});
-        if(product_data.original) {
-            product_data.parent.file_name = oldfile_name;
-            product_data.file_name = newfile_name;
-            product_data.wfstatus.renamed = true;
-            putData(`${WFSRV_BACKEND}/workflow/rename`, product_data, (cb) => {
-                console.log(":: Ingest - rename respond: ",cb);
-                if(cb.status === "ok") {
-                    setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                    this.selectproduct(product_data);
-                } else {
-                    setTimeout(() => this.setState({renaming: false, disabled: product_data.wfstatus.wfsend}), 2000);
-                }
-            });
-        } else {
-            postData(`${WFDB_BACKEND}/products/${product_data.product_id}/line`, newline, (cb) => {
-                console.log(":: Post line in WFDB: ",cb);
-                setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                this.selectproduct(product_data);
-            });
-        }
-
-    };
-
     openCit = () => {
         let {product_data} = this.state;
         product_data.line = {manual_name: product_data.file_name};
@@ -139,31 +98,6 @@ class ProductsManager extends Component {
 
     onCancel = () => {
         this.setState({cit_open: false, insert_open: false});
-    };
-
-    setSpecial = (special) => {
-        console.log(":: Selected send options: ", special);
-        this.setState({special});
-    };
-
-    sendFile = () => {
-        let {product_data,special} = this.state;
-        product_data.special = special;
-        console.log(":: Going to send File: ", product_data + " : to: ", special);
-        this.setState({ sending: true, send_button: true });
-        fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/${special}?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
-        setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
-        // putData(`${WFSRV_BACKEND}/workflow/send_aricha`, product_data, (cb) => {
-        //     console.log(":: Aricha - send respond: ",cb);
-        //     // While polling done it does not necessary
-        //     //this.selectproduct(product_data);
-        //     if(cb.status === "ok") {
-        //         setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
-        //     } else {
-        //         alert("Something goes wrong!");
-        //     }
-        // });
-
     };
 
     setProductLang = (language) => {
@@ -183,46 +117,6 @@ class ProductsManager extends Component {
         console.log(":: Censor - set removed: ", product_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-    };
-
-    addDoer = (doers) => {
-        console.log(doers);
-        this.setState({doers});
-    };
-
-    uploadMaster = () => {
-        this.props.masterUpload(this.state.product_data.product_id);
-    };
-
-    openProduct = () => {
-        //TODO: Open modal with product files and options
-    };
-
-    newUnit = () => {
-        //TODO: Make new unit
-    };
-
-    addNote = (product_data) => {
-        const {note_area} = this.state;
-        const {name} = this.props.user;
-        const date = moment().format("YYYY-MM-DD HH:mm:ss");
-        let {product} = product_data;
-        product.notes.push({name,date,message: note_area});
-        postData(`${WFDB_BACKEND}/products/${product_data.product_id}/product`, product, (cb) => {
-            console.log(":: Post notes in WFDB: ",cb);
-            product_data.product = product;
-            this.setState({note_area: "", product_data});
-        });
-    };
-
-    delNote = (product_data,i) => {
-        let {product} = product_data;
-        product.notes.splice(i, 1);
-        postData(`${WFDB_BACKEND}/products/${product_data.product_id}/product`, product, (cb) => {
-            console.log(":: Post notes in WFDB: ",cb);
-            product_data.product = product;
-            this.setState({product_data});
-        });
     };
 
     setProduct = (product_id) => {
@@ -251,14 +145,16 @@ class ProductsManager extends Component {
         const products_list = products.map(data => {
                 const {product_name, product_id, i18n} = data;
                 const product_selected = product_id === this.state.product_id;
+                const name = i18n[language] ? i18n[language].name : product_name;
+                const description = i18n[language] ? i18n[language].description : "None";
                 return (<List.Item key={product_id} active={product_id === this.state.product_id}>
                     <List.Content floated='right'>
                         {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}
                     </List.Content>
                     <List.Icon name='folder' />
                     <List.Content>
-                        <List.Header onClick={() => this.setProduct(product_id)} >{product_name}</List.Header>
-                        <List.Content>Product description</List.Content>
+                        <List.Header onClick={() => this.setProduct(product_id)} >{name}</List.Header>
+                        <List.Content>{description}</List.Content>
                         {product_selected && add_language ? <AddLanguage
                             language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
                         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
