@@ -31,6 +31,7 @@ class ProductsAdmin extends Component {
         const {product_name, product_description, language, metadata} = this.state;
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
+        product_meta.pattern = metadata.pattern;
         console.log(" :: New Meta: ", product_meta);
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);

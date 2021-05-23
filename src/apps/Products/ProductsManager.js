@@ -2,16 +2,19 @@ import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
 import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider} from 'semantic-ui-react'
-import {dep_options} from "../../shared/consts";
+import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
 import FilesUpload from "../Upload/FilesUpload";
 import AddLanguage from "./AddLanguage";
+import {fetchCollections} from "../CIT/shared/store";
+import {isActive} from "../CIT/shared/utils";
 
 class ProductsManager extends Component {
 
     state = {
         active: null,
+        collections: [],
         date: moment().format('YYYY-MM-DD'),
         drop_zone: false,
         insert_open: false,
@@ -27,8 +30,6 @@ class ProductsManager extends Component {
         locale: "he",
         original_language: "heb",
         metadata: {},
-        input_id: "",
-        ival: null,
         renaming: false,
         rename_button: false,
         send_button: true,
@@ -39,16 +40,33 @@ class ProductsManager extends Component {
     };
 
     componentDidMount() {
-        // let ival = setInterval(() => getData('products', (data) => {
-        //         if (JSON.stringify(this.state.products) !== JSON.stringify(data))
-        //             this.setState({products: data})
-        //     }), IVAL );
-        // this.setState({ival});
-        this.getProducts(this.state.language);
+        this.getProducts();
+        fetchCollections(data => {
+            const collections = this.getActiveCollections(data);
+            this.setState({collections});
+        });
     };
+
+
 
     componentWillUnmount() {
         clearInterval(this.state.ival);
+    };
+
+    // eslint-disable-next-line class-methods-use-this
+    getActiveCollections = (collections) => {
+        const active = (collections.get(CT_VIDEO_PROGRAM) || []).filter(isActive);
+
+        active.sort((a, b) => {
+            if (a.name < b.name) {
+                return -1;
+            } else if (a.name > b.name) {
+                return 1;
+            }
+            return 0;
+        });
+        console.log(active)
+        return active;
     };
 
     getProducts = (language) => {
@@ -83,6 +101,10 @@ class ProductsManager extends Component {
             let source = `${WFSRV_BACKEND}${path}`;
             this.setState({product_data, source, active: product_data.product_id});
         }
+    };
+
+    selectCollection = (collection) => {
+        console.log("selectCollection: ", collection)
     };
 
     getPlayer = (player) => {
@@ -135,12 +157,11 @@ class ProductsManager extends Component {
     addLanguage = () => {
         console.log("addLanguage")
         this.setState({add_language: true});
-        //this.setState({drop_zone: !this.state.drop_zone});
     }
 
     render() {
 
-        const {date, product_data, products, locale, drop_zone, add_language, language, files} = this.state;
+        const {collections, date, product_data, products, locale, drop_zone, add_language, language, files} = this.state;
 
         const products_list = products.map(data => {
                 const {product_name, product_id, i18n} = data;
@@ -164,6 +185,12 @@ class ProductsManager extends Component {
             }
         );
 
+        const col_options = collections.map(data => {
+            if(collections.length > 0) {
+                const {uid, name, properties:{pattern}} = data;
+                return({key: uid, value: pattern, text: name})
+            }
+        });
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='green' raised>
@@ -199,14 +226,13 @@ class ProductsManager extends Component {
                             />
                         </Menu.Item>
                         <Menu.Item>
-                            {/*<Dropdown*/}
-                            {/*    fluid*/}
-                            {/*    search*/}
-                            {/*    selection*/}
-                            {/*    options={products_options}*/}
-                            {/*    placeholder='Select Product...'*/}
-                            {/*    onChange={(e,{value}) => this.selectProduct(value)}*/}
-                            {/*/>*/}
+                            <Dropdown
+                                search
+                                selection
+                                options={col_options}
+                                placeholder='Collections...'
+                                onChange={(e,{value}) => this.selectCollection(value)}
+                            />
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Menu.Item>
