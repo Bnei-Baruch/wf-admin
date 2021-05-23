@@ -69,8 +69,16 @@ class ProductsManager extends Component {
         return active;
     };
 
-    getProducts = (language) => {
+    getProducts = () => {
         getData(`products`, products => {
+            console.log(products)
+            this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
+        });
+    };
+
+    findProducts = () => {
+        const {language, date} = this.state;
+        getData(`products/find?language=${language}&date=${date}`, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
         });
@@ -84,7 +92,9 @@ class ProductsManager extends Component {
     };
 
     selectDate = (date) => {
-        this.setState({date: date.format('YYYY-MM-DD')});
+        this.setState({date: date.format('YYYY-MM-DD')}, () => {
+            this.findProducts();
+        });
     };
 
     selectProduct = (product_data) => {
@@ -123,8 +133,9 @@ class ProductsManager extends Component {
     };
 
     setProductLang = (language) => {
-        this.setState({language});
-        this.getProducts(language);
+        this.setState({language}, () => {
+            this.findProducts();
+        });
     }
 
     removeProduct = () => {
@@ -176,8 +187,7 @@ class ProductsManager extends Component {
                     <List.Content>
                         <List.Header as='a' onClick={() => this.setProduct(product_id)} >{name}</List.Header>
                         <List.Content>{description}</List.Content>
-                        {product_selected && add_language ? <AddLanguage
-                            language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
+                        {product_selected && add_language ? <AddLanguage language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
                         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
                         {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
                     </List.Content>
