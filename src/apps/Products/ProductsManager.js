@@ -16,7 +16,7 @@ class ProductsManager extends Component {
         active: null,
         collections: [],
         date: moment().format('YYYY-MM-DD'),
-        filters: [],
+        filters: {},
         drop_zone: false,
         insert_open: false,
         insert_button: true,
@@ -74,7 +74,8 @@ class ProductsManager extends Component {
 
     getProducts = () => {
         const {filters} = this.state;
-        let path = filters.length === 0 ? 'products' : 'products/find?' + filters.join('&');
+        const query = Object.keys(filters).map(f => f + "=" + filters[f]);
+        let path = Object.keys(filters).length === 0 ? 'products' : 'products/find?' + query.join('&');
         getData(path, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
@@ -98,14 +99,6 @@ class ProductsManager extends Component {
         });
     };
 
-    applyFilter = () => {
-        const {filters} = this.state;
-    }
-
-    selectDate = (date) => {
-        this.setState({date: date.format('YYYY-MM-DD')});
-    };
-
     selectProduct = (product_data) => {
         console.log(":: ProductsAdmin - selected product: ", product_data);
         this.props.setProduct(product_data.product_id);
@@ -122,9 +115,33 @@ class ProductsManager extends Component {
         }
     };
 
+    applyFilter = () => {
+        this.getProducts();
+    };
+
+    setProductLang = (language) => {
+        const {filters} = this.state;
+        filters.language = language
+        this.setState({filters, language});
+    };
+
+    selectDate = (date) => {
+        const {filters} = this.state;
+        filters.date = date.format('YYYY-MM-DD');
+        this.setState({filters, date: date.format('YYYY-MM-DD')});
+    };
+
     selectCollection = (pattern) => {
+        const {filters} = this.state;
         console.log("selectCollection: ", pattern);
-        this.setState({pattern});
+        filters.pattern = pattern;
+        this.setState({filters, pattern});
+    };
+
+    removeFilter = (f) => {
+        const {filters} = this.state;
+        delete filters[f];
+        this.setState({filters});
     };
 
     getPlayer = (player) => {
@@ -141,10 +158,6 @@ class ProductsManager extends Component {
     onCancel = () => {
         this.setState({cit_open: false, insert_open: false});
     };
-
-    setProductLang = (language) => {
-        this.setState({language});
-    }
 
     removeProduct = () => {
         const {product_data} = this.state;
@@ -194,7 +207,7 @@ class ProductsManager extends Component {
                     <List.Icon name='folder' />
                     <List.Content>
                         <List.Header as='a' onClick={() => this.setProduct(product_id)} >{name}</List.Header>
-                        <List.Content>{description}</List.Content>
+                        {/*<List.Content>{description}</List.Content>*/}
                         {product_selected && add_language ? <AddLanguage language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
                         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
                         {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
@@ -210,20 +223,24 @@ class ProductsManager extends Component {
             }
         });
 
+        const active_filters = Object.keys(filters).map(f => {
+            return (<Label key={f} as='a' size='big' color='blue'>{f}
+                      <Icon name='delete' onClick={() => this.removeFilter(f)}/>
+                    </Label>)
+        })
+
         return (
             <Segment textAlign='left' className="ingest_segment" color='green' raised>
                 <Label as='a' attached='top' size='big' >
                     <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'} onClick={() => this.setState({show_filters: !this.state.show_filters})} />
-                    <Label as='a' size='big' color='blue'>Tag
-                        <Icon name='delete' onClick={this.removeFilter}/>
-                    </Label>
+                    {active_filters}
                 </Label>
                 <br /><br /><br />
                 {show_filters ?
                 <Menu  >
                     <Menu.Item>
                         <Button color='blue'
-                                disabled={filters.length === 0}
+                                disabled={Object.keys(filters).length === 0}
                                 onClick={this.applyFilter}>Apply
                         </Button>
                     </Menu.Item>
