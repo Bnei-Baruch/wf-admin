@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider, Icon} from 'semantic-ui-react'
+import {Menu, Segment, Label, Button, Grid, Dropdown, List, Divider, Icon} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
@@ -141,7 +141,9 @@ class ProductsManager extends Component {
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
-        this.setState({filters});
+        this.setState({filters}, () => {
+            this.getProducts();
+        });
     };
 
     getPlayer = (player) => {
@@ -196,18 +198,30 @@ class ProductsManager extends Component {
         const {filters, pattern, collections, date, show_filters, products, locale, drop_zone, add_language, language, files} = this.state;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, i18n} = data;
+                const {product_name, product_id, i18n, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
                 const name = i18n[language] ? i18n[language].name : product_name;
                 const description = i18n[language] ? i18n[language].description : "None";
                 return (<List.Item key={product_id} active={product_id === this.state.product_id}>
-                    <List.Content floated='right'>
-                        {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}
-                    </List.Content>
+                    {/*<List.Content floated='right'>*/}
+                    {/*    {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}*/}
+                    {/*</List.Content>*/}
                     <List.Icon name='folder' />
                     <List.Content>
-                        <List.Header as='a' onClick={() => this.setProduct(product_id)} >{name}</List.Header>
-                        {/*<List.Content>{description}</List.Content>*/}
+                        <List.Header onClick={() => this.setProduct(product_id)} >
+                            <Grid columns='equal'>
+                                <Grid.Row>
+                                    <Grid.Column width={8}>{name}</Grid.Column>
+                                    <Grid.Column>{date}</Grid.Column>
+                                    <Grid.Column>{pattern}</Grid.Column>
+                                    <Grid.Column>{language}</Grid.Column>
+                                    <Grid.Column>
+                                        {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </List.Header>
+                        {product_selected ? <List.Content>{description}</List.Content> : null}
                         {product_selected && add_language ? <AddLanguage language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
                         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
                         {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
@@ -237,7 +251,7 @@ class ProductsManager extends Component {
                 </Label>
                 <br /><br /><br />
                 {show_filters ?
-                <Menu  >
+                <Menu>
                     <Menu.Item>
                         <Button color='blue'
                                 disabled={Object.keys(filters).length === 0}
@@ -283,7 +297,15 @@ class ProductsManager extends Component {
                         </Menu.Menu>
                     </Menu> : null}
 
-                <Divider />
+                <Grid columns='equal' inverted padded relaxed='very' >
+                    <Grid.Row>
+                        <Grid.Column width={8} color='grey'>Title</Grid.Column>
+                        <Grid.Column color='grey'>Date</Grid.Column>
+                        <Grid.Column color='grey'>Collection</Grid.Column>
+                        <Grid.Column color='grey'>Language</Grid.Column>
+                        <Grid.Column color='grey'>Action</Grid.Column>
+                    </Grid.Row>
+                </Grid>
                 <List selection animated divided relaxed='very'>
                     {products_list}
                 </List>
