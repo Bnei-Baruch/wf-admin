@@ -104,6 +104,12 @@ class ProductsAdmin extends Component {
                                 onClick={this.newProduct}>New Product
                         </Button>
                     </Menu.Item>
+                    <Menu.Item>
+                        <Button negative={true}
+                                disabled
+                                onClick={this.removeProduct}>Delete Product
+                        </Button>
+                    </Menu.Item>
                     </Menu.Menu>
                 </Menu>
             </Segment>

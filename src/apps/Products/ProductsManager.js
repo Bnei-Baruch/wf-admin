@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider} from 'semantic-ui-react'
+import {Menu, Segment, Label, Button, Message, Dropdown, List, Divider, Icon} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
@@ -16,6 +16,7 @@ class ProductsManager extends Component {
         active: null,
         collections: [],
         date: moment().format('YYYY-MM-DD'),
+        filters: [],
         drop_zone: false,
         insert_open: false,
         insert_button: true,
@@ -26,7 +27,8 @@ class ProductsManager extends Component {
         product_data: {},
         filedata: {},
         kmedia_option: false,
-        language: "heb",
+        language: "",
+        pattern: "",
         locale: "he",
         original_language: "heb",
         metadata: {},
@@ -37,6 +39,7 @@ class ProductsManager extends Component {
         special: "censored",
         source: null,
         note_area: "",
+        show_filters: true,
     };
 
     componentDidMount() {
@@ -70,7 +73,9 @@ class ProductsManager extends Component {
     };
 
     getProducts = () => {
-        getData(`products`, products => {
+        const {filters} = this.state;
+        let path = filters.length === 0 ? 'products' : 'products/find?' + filters.join('&');
+        getData(path, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
         });
@@ -85,16 +90,20 @@ class ProductsManager extends Component {
     };
 
     getProductFiles = (product_id) => {
+        if(!this.state.language) return
+        //TODO: Add dynamic sql here
         getData(`files/${this.state.language}?product_id=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({product_id, files, add_language: false, drop_zone: false});
         });
     };
 
+    applyFilter = () => {
+        const {filters} = this.state;
+    }
+
     selectDate = (date) => {
-        this.setState({date: date.format('YYYY-MM-DD')}, () => {
-            this.findProducts();
-        });
+        this.setState({date: date.format('YYYY-MM-DD')});
     };
 
     selectProduct = (product_data) => {
@@ -113,8 +122,9 @@ class ProductsManager extends Component {
         }
     };
 
-    selectCollection = (collection) => {
-        console.log("selectCollection: ", collection)
+    selectCollection = (pattern) => {
+        console.log("selectCollection: ", pattern);
+        this.setState({pattern});
     };
 
     getPlayer = (player) => {
@@ -133,9 +143,7 @@ class ProductsManager extends Component {
     };
 
     setProductLang = (language) => {
-        this.setState({language}, () => {
-            this.findProducts();
-        });
+        this.setState({language});
     }
 
     removeProduct = () => {
@@ -172,7 +180,7 @@ class ProductsManager extends Component {
 
     render() {
 
-        const {collections, date, product_data, products, locale, drop_zone, add_language, language, files} = this.state;
+        const {filters, pattern, collections, date, show_filters, products, locale, drop_zone, add_language, language, files} = this.state;
 
         const products_list = products.map(data => {
                 const {product_name, product_id, i18n} = data;
@@ -204,12 +212,21 @@ class ProductsManager extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='green' raised>
-                {/*<Label attached='top' className="trimmed_label">*/}
-                {/*    {product_data.product_name ? product_data.product_name : ""}*/}
-                {/*</Label>*/}
-                <Message floating
-                    icon='shopping cart'
-                    content={<Menu secondary >
+                <Label as='a' attached='top' size='big' >
+                    <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'} onClick={() => this.setState({show_filters: !this.state.show_filters})} />
+                    <Label as='a' size='big' color='blue'>Tag
+                        <Icon name='delete' onClick={this.removeFilter}/>
+                    </Label>
+                </Label>
+                <br /><br /><br />
+                {show_filters ?
+                <Menu  >
+                    <Menu.Item>
+                        <Button color='blue'
+                                disabled={filters.length === 0}
+                                onClick={this.applyFilter}>Apply
+                        </Button>
+                    </Menu.Item>
                         <Menu.Item>
                             <Dropdown compact
                                 error={!language}
@@ -237,6 +254,7 @@ class ProductsManager extends Component {
                         </Menu.Item>
                         <Menu.Item>
                             <Dropdown
+                                error={!pattern}
                                 search
                                 selection
                                 options={col_options}
@@ -245,19 +263,9 @@ class ProductsManager extends Component {
                             />
                         </Menu.Item>
                         <Menu.Menu position='right'>
-                            <Menu.Item>
-                            </Menu.Item>
-                            <Menu.Item>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button negative={true}
-                                        disabled={product_data.product_id === undefined}
-                                        onClick={this.removeProduct}>Delete Product
-                                </Button>
-                            </Menu.Item>
                         </Menu.Menu>
-                    </Menu>}
-                />
+                    </Menu> : null}
+
                 <Divider />
                 <List selection animated divided relaxed='very'>
                     {products_list}
