@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Grid, Dropdown, List, Divider, Icon} from 'semantic-ui-react'
+import {Menu, Segment, Label, Button, Grid, Dropdown, List, Divider, Input, Icon} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import ProductFiles from "./ProductFiles";
@@ -141,7 +141,8 @@ class ProductsManager extends Component {
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
-        this.setState({filters}, () => {
+        const value = f === "date" ? moment().format('YYYY-MM-DD') : "";
+        this.setState({filters, [f]: value}, () => {
             this.getProducts();
         });
     };
@@ -241,7 +242,7 @@ class ProductsManager extends Component {
             return (<Label key={f} as='a' size='big' color='blue'>{f}
                       <Icon name='delete' onClick={() => this.removeFilter(f)}/>
                     </Label>)
-        })
+        });
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='green' raised>
@@ -251,16 +252,32 @@ class ProductsManager extends Component {
                 </Label>
                 <br /><br /><br />
                 {show_filters ?
-                <Menu>
+                <Menu secondary>
                     <Menu.Item>
                         <Button color='blue'
                                 disabled={Object.keys(filters).length === 0}
                                 onClick={this.applyFilter}>Apply
                         </Button>
                     </Menu.Item>
+                    <Menu.Item>
+                        <DatePicker
+                            className="datepickercs"
+                            locale={locale}
+                            // customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
+                            dateFormat="YYYY-MM-DD"
+                            showYearDropdown
+                            showMonthDropdown
+                            scrollableYearDropdown
+                            maxDate={moment()}
+                            openToDate={moment(date)}
+                            selected={moment(date)}
+                            placeholder='Dagte...'
+                            onChange={this.selectDate}
+                        />
+                    </Menu.Item>
                         <Menu.Item>
-                            <Dropdown compact
-                                error={!language}
+                            <Dropdown className='icon' button labeled icon='world'
+                                // error={!language}
                                 placeholder="Language:"
                                 selection
                                 options={dep_options}
@@ -270,26 +287,13 @@ class ProductsManager extends Component {
                             </Dropdown>
                         </Menu.Item>
                         <Menu.Item>
-                            <DatePicker
-                                className="datepickercs"
-                                locale={locale}
-                                dateFormat="YYYY-MM-DD"
-                                showYearDropdown
-                                showMonthDropdown
-                                scrollableYearDropdown
-                                maxDate={moment()}
-                                openToDate={moment(date)}
-                                selected={moment(date)}
-                                onChange={this.selectDate}
-                            />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Dropdown
-                                error={!pattern}
+                            <Dropdown className='icon' button labeled icon='tag'
+                                // error={!pattern}
                                 search
                                 selection
                                 options={col_options}
                                 placeholder='Collections...'
+                                 value={pattern}
                                 onChange={(e,{value}) => this.selectCollection(value)}
                             />
                         </Menu.Item>
