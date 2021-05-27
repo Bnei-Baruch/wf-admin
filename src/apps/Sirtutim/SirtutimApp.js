@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Image,Segment,Table,Button,Card} from "semantic-ui-react";
 import {putData, WFSRV_BACKEND} from "../../shared/tools";
-import moment from 'moment';
 import mqtt from "../../shared/mqtt";
 
 class SirtutimApp extends Component {
@@ -24,7 +23,7 @@ class SirtutimApp extends Component {
     componentDidMount() {
         this.initMQTT();
         let ival = setInterval(() => {
-            let id = moment().format('x');
+            let id = Math.floor(Date.now() / 1000);
             this.setState({id})
         }, 2000 );
         this.setState({ival});

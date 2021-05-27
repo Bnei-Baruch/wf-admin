@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import moment from 'moment';
+
 import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
@@ -12,7 +12,7 @@ class MonitorTrimmer extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getData('trimmer/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
+            getData('trimmer/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
                 if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
                     this.setState({trimmer: data})
             }), IVAL
@@ -36,7 +36,7 @@ class MonitorTrimmer extends Component {
             const {trimmed,renamed,removed,buffer,wfsend,censored,checked,fixed} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             if(this.props.removed && removed)
                 return false;
             let rowcolor = censored && !checked;

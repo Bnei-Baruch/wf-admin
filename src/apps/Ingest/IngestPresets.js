@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import he from 'date-fns/locale/he';
+
 import {getData, putData, WFDB_BACKEND} from '../../shared/tools';
 import { Icon, Button, Table, Segment, Label } from 'semantic-ui-react'
 import IngestNames from "./IngestNames";
@@ -11,8 +12,8 @@ class IngestPresets extends Component {
         preset: {id:"",name:""},
         presets: {},
         disabled: true,
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
     };
 
     componentDidMount() {
@@ -38,7 +39,7 @@ class IngestPresets extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
+        let date = data.toISOString().slice(0,10);
         this.setState({startDate: data, date});
     };
 
@@ -114,10 +115,10 @@ class IngestPresets extends Component {
                         <Table.Row width={5}>
                             <Table.HeaderCell textAlign='center'><DatePicker
                                 className="datepickercs"
-                                dateFormat="YYYY-MM-DD"
-                                locale='he'
-                                maxDate={moment().add(10, "days")}
-                                minDate={moment()}
+                                dateFormat="yyyy-MM-dd"
+                                locale={he}
+                                maxDate={new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)}
+                                minDate={new Date()}
                                 selected={this.state.startDate}
                                 onChange={this.changeDate}
                             /></Table.HeaderCell>

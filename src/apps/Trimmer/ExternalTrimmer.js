@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import he from 'date-fns/locale/he';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Modal, Dropdown, Button, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
@@ -19,8 +19,8 @@ class ExternalTrimmer extends Component {
         file_data: "",
         open: false,
         dgima_src: "insert",
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
         source: "",
         trim_meta: {},
         units: [],
@@ -46,7 +46,7 @@ class ExternalTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format(this.state.dgima_src === "search" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
+        let date = this.state.dgima_src === "search" ? data.toISOString().slice(0,10).split('-').join('/') : data.toISOString().slice(0,10);
         this.setState({startDate: data, date: date, disabled: true});
         if(this.state.dgima_src === "search") {
             this.getLabelsData("date", date);
@@ -132,12 +132,12 @@ class ExternalTrimmer extends Component {
                     <Menu.Item>
                         <DatePicker
                             className="datepickercs"
-                            dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
-                            locale='he'
+                            dateFormat={dgima_src === "search" ? "yyyy/MM/dd" : "yyyy-MM-dd"}
+                            locale={he}
                             showYearDropdown
                             showMonthDropdown
                             scrollableYearDropdown
-                            maxDate={moment()}
+                            maxDate={new Date()}
                             selected={startDate}
                             onChange={this.changeDate}
                         />

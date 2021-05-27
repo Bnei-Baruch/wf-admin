@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import moment from 'moment';
+
 import {getData, getToken, MDB_UNIT_URL, WFDB_BACKEND} from '../../shared/tools';
 import {Icon, Table, Popup, Checkbox} from 'semantic-ui-react'
 
@@ -75,7 +75,7 @@ class WFDBDgima extends Component {
             let id = data.dgima_id;
             const {aricha,backup,buffer,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked,secured,joined} = data.wfstatus;
             let name = data.file_name;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             let href = data.line && data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : data.line && data.line.uid ? `${MDB_UNIT_URL}/?query=${data.line.uid}` : "";
             let link = !wfsend ? "" : (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>);
             let rowcolor = censored && !checked;

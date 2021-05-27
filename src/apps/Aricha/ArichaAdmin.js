@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import moment from 'moment';
+
 import {
     getData,
     getUnits,
@@ -136,7 +136,7 @@ class ArichaAdmin extends Component {
 
             // Make insert metadata
             let insert_data = {};
-            insert_data.insert_id = insert_old.length > 0 ? insert_old[0].insert_id : "i"+moment().format('X');
+            insert_data.insert_id = insert_old.length > 0 ? insert_old[0].insert_id : "i" + Math.floor(Date.now() / 1000);
             insert_data.line = file_data.line;
             insert_data.line.mime_type = "video/mp4";
             insert_data.content_type = getDCT(file_data.line.content_type);
@@ -299,7 +299,7 @@ class ArichaAdmin extends Component {
             let id = data.aricha_id;
             let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'admin_raw';

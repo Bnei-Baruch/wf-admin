@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import moment from 'moment';
+
 import {getData, postData, WFDB_BACKEND, MDB_UNIT_URL, getToken} from '../../shared/tools';
 import { Icon, Table, Loader, Popup, Checkbox, Input, Button, Label } from 'semantic-ui-react'
 
@@ -104,7 +104,7 @@ class Sources extends Component {
             let id = data.source_id;
             const {backup,buffer,censored,checked,kmedia,metus,removed,renamed,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             let href = `${MDB_UNIT_URL}/${data.line?.unit_id}`;
             let link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>) : "";
             let rowcolor = censored && !checked;

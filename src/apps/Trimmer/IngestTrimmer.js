@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import he from 'date-fns/locale/he';
+
 import {getData, newTrimMeta, getUnits, WFSRV_BACKEND, MDB_FINDSHA} from '../../shared/tools';
 import { Menu, Segment, Modal, Dropdown, Button, Label } from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
@@ -15,8 +16,8 @@ class IngestTrimmer extends Component {
         file_data: "",
         open: false,
         trim_src: "main",
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
         source: "",
         trim_meta: {},
         units: [],
@@ -32,7 +33,7 @@ class IngestTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
+        let date = data.toISOString().slice(0,10);
         this.setState({startDate: data, date, disabled: true, file_data: ""});
     };
 
@@ -96,10 +97,10 @@ class IngestTrimmer extends Component {
                     <Menu.Item>
                         <DatePicker
                             className="datepickercs"
-                            dateFormat="YYYY-MM-DD"
-                            locale='he'
-                            maxDate={moment()}
-                            minDate={moment().add(-40, "days")}
+                            dateFormat="yyyy-MM-dd"
+                            locale={he}
+                            maxDate={new Date()}
+                            minDate={new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
                         />

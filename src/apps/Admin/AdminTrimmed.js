@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import moment from 'moment';
+
 import {
     getData, getToken,
     getUnits,
@@ -196,7 +196,7 @@ class AdminTrimmed extends Component {
             const {trimmed,backup,kmedia,metus,removed,wfsend,censored,checked,fixed,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             if(this.props.removed && removed)
                 return false;
             let rowcolor = censored && !checked;

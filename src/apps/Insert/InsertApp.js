@@ -1,6 +1,5 @@
 import React, {Component, Fragment} from 'react';
 import {Button, Container, Message, Modal} from 'semantic-ui-react';
-import moment from 'moment';
 import UploadFile from './UploadFile';
 import InsertModal from './InsertModal';
 import {insertName, insertSha, putData, WFSRV_BACKEND} from '../../shared/tools';
@@ -56,11 +55,11 @@ class InsertApp extends Component {
         // Extract and validate date from file_name
         if((/\d{4}-\d{2}-\d{2}/).test(filedata.file_name)) {
             let string_date = filedata.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            let test_date = moment(string_date);
-            let date = test_date.isValid() ? string_date : moment().format('YYYY-MM-DD');
-            metadata.date = date;
+            // let test_date = moment(string_date);
+            // let date = test_date.isValid() ? string_date : new Date().toISOString().slice(0,10);
+            metadata.date = string_date;
         } else {
-            metadata.date = moment().format('YYYY-MM-DD');
+            metadata.date = new Date().toISOString().slice(0,10);
         }
 
         // If mode rename get insert workflow data

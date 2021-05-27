@@ -4,7 +4,6 @@ import IngestTrimmer from "../Trimmer/IngestTrimmer";
 import IngestPresets from "./IngestPresets";
 import LangSelector from "../../components/LangSelector";
 import {getData, newLanguages, putData, toHms, toSeconds, WFDB_BACKEND} from "../../shared/tools";
-import moment from "moment";
 import mqtt from "../../shared/mqtt";
 import {Button, ButtonGroup, Label, Message, Segment} from "semantic-ui-react";
 
@@ -92,7 +91,7 @@ class IngestApp extends Component {
         const languages = newLanguages();
         const langcheck = {
             carbon: false,
-            date: moment().format('YYYY-MM-DD'),
+            date: new Date().toISOString().slice(0,10),
             file_name: "",
             finished: true,
             id: "",

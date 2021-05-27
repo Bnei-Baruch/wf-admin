@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import moment from 'moment';
+
 import {getData, IVAL} from '../../shared/tools';
 import { Table, Loader, Segment, Label } from 'semantic-ui-react'
 import './CarbonState.css';
@@ -14,7 +14,7 @@ class CarbonState extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getData(`convert/find?key=date&value=${moment().format('YYYY-MM-DD')}`, (data) => {
+            getData(`convert/find?key=date&value=${new Date().toISOString().slice(0,10)}`, (data) => {
                 if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                     this.setState({carbon: data})
             }), IVAL

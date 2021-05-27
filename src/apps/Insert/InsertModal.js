@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
-import 'moment/locale/he';
-import 'moment/locale/ru';
-import 'moment/locale/es';
-import 'moment/locale/fr';
-import 'moment/locale/it';
-import 'moment/locale/de';
-import 'moment/locale/en-gb';
+
+import he from 'date-fns/locale/he';
+//import ru from'date-fns/locale/ru';
+// import 'date-fns/locale/es';
+// import 'date-fns/locale/fr';
+// import 'date-fns/locale/it';
+// import 'date-fns/locale/de';
+// import 'date-fns/locale/en-gb';
 import './InsertApp.css';
 import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input, Icon} from 'semantic-ui-react';
 import {
@@ -37,7 +37,7 @@ class InsertModal extends Component {
         files: [],
         store: { sources: [], tags: [], publishers: []},
         loading: false,
-        locale: "he",
+        locale: he,
         isValidated: false,
         source: "",
     };
@@ -47,12 +47,12 @@ class InsertModal extends Component {
         const {send_uid} = this.state.metadata;
         this.inputUid(send_uid);
         // Set sunday first weekday in russian
-        moment.updateLocale('ru', { week: {dow: 0,},});
-        moment.updateLocale('es', { week: {dow: 0,},});
-        moment.updateLocale('it', { week: {dow: 0,},});
-        moment.updateLocale('de', { week: {dow: 0,},});
-        moment.updateLocale('fr', { week: {dow: 0,},});
-        moment.updateLocale('en', { week: {dow: 0,},});
+        // moment.updateLocale('ru', { week: {dow: 0,},});
+        // moment.updateLocale('es', { week: {dow: 0,},});
+        // moment.updateLocale('it', { week: {dow: 0,},});
+        // moment.updateLocale('de', { week: {dow: 0,},});
+        // moment.updateLocale('fr', { week: {dow: 0,},});
+        // moment.updateLocale('en', { week: {dow: 0,},});
         fetchPublishers(publishers => this.setState({ store: { ...this.state.store, publishers: publishers.data } }));
         fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
     };
@@ -82,7 +82,7 @@ class InsertModal extends Component {
 
     selectDate = (date) => {
         let {metadata} = this.state;
-        this.setState({metadata: {...metadata, date: date.format('YYYY-MM-DD')}});
+        this.setState({metadata: {...metadata, date: date.toISOString().slice(0,10)}});
     };
 
     onClose = () => {
@@ -333,14 +333,14 @@ class InsertModal extends Component {
                     </Header>
                     <DatePicker
                         className="datepickercs"
-                        locale={locale}
-                        dateFormat="YYYY-MM-DD"
+                        //locale={locale}
+                        dateFormat="yyyy-MM-dd"
                         showYearDropdown
                         showMonthDropdown
                         scrollableYearDropdown
-                        maxDate={moment()}
-                        openToDate={moment(date)}
-                        selected={moment(date)}
+                        maxDate={new Date()}
+                        openToDate={new Date(date)}
+                        selected={new Date(date)}
                         onChange={this.selectDate}
                     />
                 </Segment>

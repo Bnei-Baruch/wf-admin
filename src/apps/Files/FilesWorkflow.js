@@ -3,7 +3,6 @@ import DatePicker from 'react-datepicker';
 import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import moment from "moment";
 
 class FilesWorkflow extends Component {
 
@@ -12,8 +11,8 @@ class FilesWorkflow extends Component {
         activeIndex: 0,
         closed: false,
         disabled: true,
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
         ingest: [],
         trimmer: [],
         file_data: null,
@@ -25,8 +24,8 @@ class FilesWorkflow extends Component {
     componentDidMount() {
         let closed = this.props.user.roles.filter(role => role === 'wf_closed').length > 0;
         this.setState({closed});
-        this.getIngestData(moment().format('YYYY-MM-DD'));
-        this.getTrimmerData(moment().format('YYYY-MM-DD'));
+        this.getIngestData(new Date().toISOString().slice(0,10));
+        this.getTrimmerData(new Date().toISOString().slice(0,10));
         this.runPolling();
     };
 
@@ -43,8 +42,8 @@ class FilesWorkflow extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
-        if(moment().format('YYYY-MM-DD') !== date) {
+        let date = data.toISOString().slice(0,10);
+        if(new Date().toISOString().slice(0,10) !== date) {
             clearInterval(this.state.ival);
             this.setState({ival: null});
         } else if(this.state.ival === null) {
@@ -132,7 +131,7 @@ class FilesWorkflow extends Component {
             let id = data.trim_id;
             const {censored,checked,kmedia,trimmed,wfsend,fixed,locked,secured} = data.wfstatus;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             let mhref = `${MDB_ADMIN_URL}/content_units/${data.line.unit_id}`;
             let mdb_link = wfsend ? (<a target="_blank" rel="noopener noreferrer" href={mhref}>{data.line.uid}</a>) : "";
             let ctype = data.line.collection_type === "DAILY_LESSON" ? "lessons" : "programs";
@@ -159,10 +158,9 @@ class FilesWorkflow extends Component {
                     <Menu.Item>
                         <DatePicker
                             className="datepickercs"
-                            dateFormat="YYYY-MM-DD"
-                            locale='he'
-                            maxDate={moment()}
-                            minDate={moment().add(-40, "days")}
+                            dateFormat="yyyy-MM-dd"
+                            maxDate={new Date()}
+                            minDate={new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)}
                             selected={this.state.startDate}
                             onChange={this.changeDate}
                         />

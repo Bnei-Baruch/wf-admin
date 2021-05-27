@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import moment from 'moment';
+
 import {getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -137,7 +137,7 @@ class IngestTrimmed extends Component {
             const {trimmed,renamed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             if(removed || buffer || censored)
                 return false;
             let active = this.state.active === id ? 'active' : '';

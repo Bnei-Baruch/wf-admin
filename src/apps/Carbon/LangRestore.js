@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import he from 'date-fns/locale/he';
+
 import {getData, putData, WFDB_BACKEND} from '../../shared/tools';
 import { Menu, Dropdown, Button } from 'semantic-ui-react'
 
@@ -11,8 +12,8 @@ class LangRestore extends Component {
         sending: false,
         carbon: {},
         lang_data: "",
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
     };
 
     getCarbon = (date) => {
@@ -28,7 +29,7 @@ class LangRestore extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format('YYYY-MM-DD');
+        let date = data.toISOString().slice(0,10);
         this.setState({startDate: data, date: date, disabled: true});
     };
 
@@ -61,10 +62,10 @@ class LangRestore extends Component {
                 <Menu.Item>
                     <DatePicker
                         className="datepickercs"
-                        dateFormat="YYYY-MM-DD"
-                        locale='he'
-                        maxDate={moment()}
-                        minDate={moment().add(-10, "days")}
+                        dateFormat="yyyy-MM-dd"
+                        locale={he}
+                        maxDate={new Date()}
+                        minDate={new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)}
                         selected={this.state.startDate}
                         onChange={this.changeDate}
                     />

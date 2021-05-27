@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import moment from 'moment';
+
 import {getData, getDCT, getUnits, MDB_FINDSHA, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Input, Segment, Label, Table, Button, Modal, Message,Select } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -82,7 +82,7 @@ class MetusDB extends Component {
                         // Build data for insert app
                         let insert_data = {};
                         insert_data.line = {};
-                        insert_data.insert_id = "i"+moment().format('X');
+                        insert_data.insert_id = "i" + Math.floor(Date.now() / 1000);
                         insert_data.date = file_data.filename.match(/\d{4}-\d{2}-\d{2}/)[0];
                         [insert_data.file_name,insert_data.extension] = file_data.filename.split('.');
                         insert_data.insert_name = file_data.filename;

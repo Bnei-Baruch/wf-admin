@@ -12,20 +12,20 @@ import WFDBCapture from './WFDBCapture';
 import WFDBDgima from './WFDBDgima';
 import WFDBLabels from './WFDBLabels';
 import './WFDB.css';
-import moment from "moment/moment";
+import he from 'date-fns/locale/he';
 import WFDBInsert from "./WFDBInsert";
 import WFDBConvert from "./WFDBConvert";
 import WFDBSources from "./WFDBSources";
 class WFDB extends Component {
 
     state = {
-        date: moment().format('YYYY-MM-DD'),
+        date: new Date().toISOString().slice(0,10),
         input_id: "",
         sjson: "wfdb",
         skey: "date",
         svalue: "",
         value: "",
-        startDate: moment(),
+        startDate: new Date(),
         wf_root: false,
         lock: false,
         tab: "ingest",
@@ -51,7 +51,7 @@ class WFDB extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format(this.state.tab === "labels" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
+        let date = this.state.tab === "labels" ? data.toISOString().slice(0,10).split('-').join('/') : data.toISOString().slice(0,10);
         this.setState({startDate: data, date, skey: "date", value: "", svalue: ""},() => {
             this.tab.searchData(this.state.tab);
         });
@@ -147,12 +147,12 @@ class WFDB extends Component {
                     <Menu.Item>
                     <DatePicker
                         className="datepickercs"
-                        dateFormat={this.state.tab === "labels" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
-                        locale='he'
+                        dateFormat={this.state.tab === "labels" ? "yyyy/MM/dd" : "yyyy-MM-dd"}
+                        locale={he}
                         showYearDropdown
                         showMonthDropdown
                         scrollableYearDropdown
-                        maxDate={moment()}
+                        maxDate={new Date()}
                         selected={this.state.startDate}
                         onChange={this.changeDate}
                     />

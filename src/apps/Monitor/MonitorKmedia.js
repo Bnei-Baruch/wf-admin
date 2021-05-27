@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import moment from 'moment';
+
 import { getData, IVAL } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 import {langs_bb} from '../../shared/consts';
@@ -14,7 +14,7 @@ class MonitorKmedia extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getData('kmedia/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
+            getData('kmedia/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
                 if (JSON.stringify(this.state.kmedia) !== JSON.stringify(data)) {
                     //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
                     this.setState({kmedia: data});

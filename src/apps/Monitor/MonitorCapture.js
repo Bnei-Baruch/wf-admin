@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import moment from 'moment';
+
 import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
@@ -12,7 +12,7 @@ class MonitorCapture extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getData('ingest/find?key=date&value='+moment().format('YYYY-MM-DD'), (data) => {
+            getData('ingest/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
                 if (JSON.stringify(this.state.capture) !== JSON.stringify(data))
                     this.setState({capture: data})
             }), IVAL

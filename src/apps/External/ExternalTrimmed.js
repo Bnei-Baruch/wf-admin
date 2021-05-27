@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import moment from 'moment';
+
 import {
     getChildren,
     getData,
@@ -162,8 +162,7 @@ class ExternalTrimmed extends Component {
         // Set capture date from string because CIT put today date
         if((/\d{4}-\d{2}-\d{2}/).test(newfile_name)) {
             let string_date = newfile_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            let check_date = moment(string_date);
-            if(check_date.isValid()) newline.capture_date = string_date;
+            newline.capture_date = string_date;
         }
 
         let ext = "mp4";
@@ -510,7 +509,7 @@ class ExternalTrimmed extends Component {
             if(data.parent.source !== "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+                let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
                 let hide = hide_censored && censored && !checked;
                 if(hide || removed) return false;
                 let rowcolor = censored && !checked;

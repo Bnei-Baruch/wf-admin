@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import FileViewer from 'react-file-viewer';
-import moment from 'moment';
+
 import {
     getData,
     putData,
@@ -201,7 +201,7 @@ class ProductJob extends Component {
         });
         this.setState({job_name: "", doers: []});
     };
-    
+
     removeJob = () => {
         const {job_data} = this.state;
         removeData(`${WFDB_BACKEND}/jobs/${job_data.job_id}`, (cb) => {
@@ -236,7 +236,7 @@ class ProductJob extends Component {
     addNote = (job_data) => {
         const {note_area} = this.state;
         const {name} = this.props.user;
-        const date = moment().format("YYYY-MM-DD HH:mm:ss");
+        const date = new Date().toISOString();
         let {product} = job_data;
         product.notes.push({name,date,message: note_area});
         postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/product`, product, (cb) => {
@@ -294,7 +294,7 @@ class ProductJob extends Component {
             let id = data.job_id;
             let ready = true;
             let title = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
-            //let time = moment.unix(id.substr(1)).format("HH:mm:ss") || "";
+            //let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'admin_raw';

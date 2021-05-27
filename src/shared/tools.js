@@ -1,5 +1,5 @@
 import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID, langs_bb} from './consts';
-import moment from 'moment';
+
 import kc from "../components/UserManager";
 
 //export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
@@ -413,8 +413,8 @@ export const newTrimMeta = (data, mode, source) => {
     const {line,original,proxy,file_name,stop_name,wfstatus,capture_id,trim_id,dgima_id,parent} = data;
     let p = source.match(/^(main|backup|trimmed|custom|ktaim|rroom)$/) ? "t" : "d";
     let key_id = p === "t" ? "trim_id" : "dgima_id";
-    let wfid = p + moment().format('X');
-    let date = moment.unix(wfid.substr(1)).format("YYYY-MM-DD");
+    let wfid = p + Math.floor(Date.now() / 1000);
+    let date = new Date(wfid.substr(1) * 1000).toISOString().slice(0,10);
     let originalsha1 = original.format.sha1;
     let proxysha1 = proxy ? proxy.format.sha1 : null;
     let name = file_name || stop_name;
@@ -460,7 +460,7 @@ export const newInsertMeta = (file_data) => {
     let date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
     let ext = file_data.original.format.format_name === "mp3" ? "mp3" : "mp4";
     let metadata = {};
-    metadata.insert_id = "i"+moment().format('X');
+    metadata.insert_id = "i" + Math.floor(Date.now() / 1000);
     metadata.line = file_data.line;
     if(ext === "mp4") metadata.line.mime_type = "video/mp4";
     metadata.content_type = getDCT(file_data.line.content_type);
@@ -481,8 +481,8 @@ export const newInsertMeta = (file_data) => {
 };
 
 export const newJobMeta = (job_name) => {
-    let job_id = "j"+moment().format('X');
-    let date = moment.unix(job_id.substr(1)).format("YYYY-MM-DD");
+    let job_id = "j" + Math.floor(Date.now() / 1000);
+    let date = new Date(job_id.substr(1) * 1000).toISOString().slice(0,10);
     let metadata = {
         job_id, date,
         file_name: null,
@@ -515,8 +515,8 @@ export const newJobMeta = (job_name) => {
 };
 
 export const newProductMeta = (product_name, product_description, language) => {
-    let product_id = "p"+moment().format('X');
-    let date = moment.unix(product_id.substr(1)).format("YYYY-MM-DD");
+    let product_id = "p" + Math.floor(Date.now() / 1000);
+    let date = new Date(product_id.substr(1) * 1000).toISOString().slice(0,10);
     let metadata = {
         product_id, date, product_name, language, type_id: null,
         product_type: "media", i18n: {[language]: {name: product_name, description: product_description}}, line: null, parent: {},

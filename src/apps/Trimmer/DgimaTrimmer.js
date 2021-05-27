@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import he from 'date-fns/locale/he';
 import {getData, getUnits, MDB_FINDSHA, newTrimMeta, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Modal, Dropdown, Button, Input, Table, Label} from 'semantic-ui-react'
 import TrimmerApp from "./TrimmerApp";
@@ -17,8 +17,8 @@ class DgimaTrimmer extends Component {
         file_data: "",
         open: false,
         dgima_src: "cassette",
-        date: moment().format('YYYY-MM-DD'),
-        startDate: moment(),
+        date: new Date().toISOString().slice(0,10),
+        startDate: new Date(),
         source: "",
         trim_meta: {},
         units: [],
@@ -93,7 +93,6 @@ class DgimaTrimmer extends Component {
         if(active_label && this.state.dgima_src === "search") {
             getData(`capture/${active_label}`, (data) => {
                 if(data) {
-                    //this.changeDate(moment(data[0].date ,'YYYY-MM-DD'));
                     this.selectFile(data);
                     this.setState({cassette_id: active_label});
                 } else {
@@ -178,11 +177,11 @@ class DgimaTrimmer extends Component {
                         <DatePicker
                             className="datepickercs"
                             dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
-                            locale='he'
+                            locale={he}
                             showYearDropdown
                             showMonthDropdown
                             scrollableYearDropdown
-                            maxDate={moment()}
+                            maxDate={new Date()}
                             selected={startDate}
                             onChange={this.changeDate}
                         />

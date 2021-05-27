@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
-import moment from 'moment';
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
 import {Menu, Segment, Label, Button, Grid, Dropdown, List, Divider, Input, Icon} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
+import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
 import FilesUpload from "../Upload/FilesUpload";
 import AddLanguage from "./AddLanguage";
@@ -15,7 +15,7 @@ class ProductsManager extends Component {
     state = {
         active: null,
         collections: [],
-        date: moment().format('YYYY-MM-DD'),
+        date: new Date(),
         filters: {},
         drop_zone: false,
         insert_open: false,
@@ -29,7 +29,7 @@ class ProductsManager extends Component {
         kmedia_option: false,
         language: "",
         pattern: "",
-        locale: "he",
+        locale: he,
         original_language: "heb",
         metadata: {},
         renaming: false,
@@ -127,8 +127,8 @@ class ProductsManager extends Component {
 
     selectDate = (date) => {
         const {filters} = this.state;
-        filters.date = date.format('YYYY-MM-DD');
-        this.setState({filters, date: date.format('YYYY-MM-DD')});
+        filters.date = date.toISOString().slice(0,10);
+        this.setState({filters, date});
     };
 
     selectCollection = (pattern) => {
@@ -141,7 +141,7 @@ class ProductsManager extends Component {
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
-        const value = f === "date" ? moment().format('YYYY-MM-DD') : "";
+        const value = f === "date" ? null : "";
         this.setState({filters, [f]: value}, () => {
             this.getProducts();
         });
@@ -261,17 +261,17 @@ class ProductsManager extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         <DatePicker
-                            className="datepickercs"
+                            className="datefilter"
                             locale={locale}
-                            // customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
-                            dateFormat="YYYY-MM-DD"
+                            customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
+                            dateFormat="yyyy-MM-dd"
                             showYearDropdown
                             showMonthDropdown
                             scrollableYearDropdown
-                            maxDate={moment()}
-                            openToDate={moment(date)}
-                            selected={moment(date)}
-                            placeholder='Dagte...'
+                            maxDate={new Date()}
+                            openToDate={new Date()}
+                            selected={date ? date : null}
+                            placeholderText="Date:"
                             onChange={this.selectDate}
                         />
                     </Menu.Item>
@@ -292,8 +292,8 @@ class ProductsManager extends Component {
                                 search
                                 selection
                                 options={col_options}
-                                placeholder='Collections...'
-                                 value={pattern}
+                                placeholder='Collections:'
+                                value={pattern}
                                 onChange={(e,{value}) => this.selectCollection(value)}
                             />
                         </Menu.Item>
