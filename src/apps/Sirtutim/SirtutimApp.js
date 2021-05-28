@@ -23,7 +23,7 @@ class SirtutimApp extends Component {
     componentDidMount() {
         this.initMQTT();
         let ival = setInterval(() => {
-            let id = Math.floor(Date.now() / 1000);
+            let id = Date.now();
             this.setState({id})
         }, 2000 );
         this.setState({ival});
@@ -35,13 +35,16 @@ class SirtutimApp extends Component {
     };
 
     initMQTT = () => {
-        mqtt.join('workflow/state/capture/multi');
+        const state = 'workflow/state/capture/multi';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const wfst = local ? state : 'bb/' + state;
+        mqtt.join(wfst);
         mqtt.watch((message, type, source) => {
             if(type === "capture") {
                 console.log("[capture] Got state: ", message, " | from: " + source);
                 this.setState({capture: message});
             }
-        }, false)
+        }, local)
     };
 
     captureSirtut = () => {
