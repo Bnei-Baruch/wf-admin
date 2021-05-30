@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Grid, Dropdown, List, Divider, Input, Icon} from 'semantic-ui-react'
+import {Menu, Segment, Label, Button, Grid, Dropdown, List, Flag, Input, Icon} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
@@ -15,7 +15,7 @@ class ProductsManager extends Component {
     state = {
         active: null,
         collections: [],
-        date: new Date(),
+        date: null,
         filters: {},
         drop_zone: false,
         insert_open: false,
@@ -28,6 +28,7 @@ class ProductsManager extends Component {
         filedata: {},
         kmedia_option: false,
         language: "",
+        file_language: null,
         pattern: "",
         locale: he,
         original_language: "heb",
@@ -91,9 +92,7 @@ class ProductsManager extends Component {
     };
 
     getProductFiles = (product_id) => {
-        if(!this.state.language) return
-        //TODO: Add dynamic sql here
-        getData(`files/${this.state.language}?product_id=${product_id}`, (files) => {
+        getData(`files/find?product_id=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({product_id, files, add_language: false, drop_zone: false});
         });
@@ -123,6 +122,10 @@ class ProductsManager extends Component {
         const {filters} = this.state;
         filters.language = language
         this.setState({filters, language});
+    };
+
+    setFileLang = (file_language) => {
+        this.setState({file_language, drop_zone: false, add_language: false});
     };
 
     selectDate = (date) => {
@@ -186,7 +189,7 @@ class ProductsManager extends Component {
     }
 
     addFile = () => {
-        this.setState({drop_zone: !this.state.drop_zone});
+        this.setState({drop_zone: true});
     }
 
     addLanguage = () => {
@@ -196,7 +199,21 @@ class ProductsManager extends Component {
 
     render() {
 
-        const {filters, pattern, collections, date, show_filters, products, locale, drop_zone, add_language, language, files} = this.state;
+        const {filters, pattern, collections, date, show_filters, products, locale, drop_zone, add_language, language, files, file_language} = this.state;
+
+        const options = [
+            { key: 'title', description: 'Choose Language:', disabled: true},
+            { key: 'd', description: '', disabled: true},
+            { key: 'il', flag: 'il', text: 'Hebrew', value: 'heb' },
+            { key: 'ru', flag: 'ru',  text: 'Russian', value: 'rus' },
+            { key: 'en', flag: 'us',  text: 'English', value: 'eng' },
+        ]
+
+        const flags = {
+            heb: (<Flag name='il'/>),
+            rus: (<Flag name='ru'/>),
+            eng: (<Flag name='us'/>)
+        }
 
         const products_list = products.map(data => {
                 const {product_name, product_id, i18n, date, language, pattern} = data;
@@ -217,14 +234,27 @@ class ProductsManager extends Component {
                                     <Grid.Column>{pattern}</Grid.Column>
                                     <Grid.Column>{language}</Grid.Column>
                                     <Grid.Column>
-                                        {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}
+                                        {product_selected ?
+                                            <Button.Group color='teal'>
+                                                <Button disabled={!file_language} onClick={i18n[file_language] ? this.addFile : this.addLanguage}>Add File</Button>
+                                                <Dropdown
+                                                    className='button icon'
+                                                    icon={flags[file_language]}
+                                                    floating
+                                                    options={options}
+                                                    value={file_language}
+                                                    on trigger={<></>}
+                                                    onChange={(e,{value}) => this.setFileLang(value)}
+                                                />
+                                            </Button.Group>
+                                            : null}
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                         </List.Header>
                         {product_selected ? <List.Content>{description}</List.Content> : null}
-                        {product_selected && add_language ? <AddLanguage language={language} product_id={product_id} getProducts={this.getProducts} /> : null}
-                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={language} /> : ''}
+                        {product_selected && add_language ? <AddLanguage language={file_language} product_id={product_id} getProducts={this.getProducts} /> : null}
+                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} /> : ''}
                         {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
                     </List.Content>
                 </List.Item>)
@@ -246,7 +276,7 @@ class ProductsManager extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='green' raised>
-                <Label as='a' attached='top' size='big' >
+                <Label attached='top' size='big' >
                     <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'} onClick={() => this.setState({show_filters: !this.state.show_filters})} />
                     {active_filters}
                 </Label>
@@ -259,26 +289,10 @@ class ProductsManager extends Component {
                                 onClick={this.applyFilter}>Apply
                         </Button>
                     </Menu.Item>
-                    <Menu.Item>
-                        <DatePicker
-                            className="datefilter"
-                            locale={locale}
-                            customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
-                            dateFormat="yyyy-MM-dd"
-                            showYearDropdown
-                            showMonthDropdown
-                            scrollableYearDropdown
-                            maxDate={new Date()}
-                            openToDate={new Date()}
-                            selected={date ? date : null}
-                            placeholderText="Date:"
-                            onChange={this.selectDate}
-                        />
-                    </Menu.Item>
                         <Menu.Item>
                             <Dropdown className='icon' button labeled icon='world'
                                 // error={!language}
-                                placeholder="Language:"
+                                placeholder="Original language:"
                                 selection
                                 options={dep_options}
                                 language={language}
@@ -297,6 +311,22 @@ class ProductsManager extends Component {
                                 onChange={(e,{value}) => this.selectCollection(value)}
                             />
                         </Menu.Item>
+                    <Menu.Item>
+                        <DatePicker
+                            className="datefilter"
+                            locale={locale}
+                            customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
+                            dateFormat="yyyy-MM-dd"
+                            showYearDropdown
+                            showMonthDropdown
+                            scrollableYearDropdown
+                            maxDate={new Date()}
+                            openToDate={new Date()}
+                            selected={date ? date : null}
+                            placeholderText="Date:"
+                            onChange={this.selectDate}
+                        />
+                    </Menu.Item>
                         <Menu.Menu position='right'>
                         </Menu.Menu>
                     </Menu> : null}
@@ -306,7 +336,7 @@ class ProductsManager extends Component {
                         <Grid.Column width={8} color='grey'>Title</Grid.Column>
                         <Grid.Column color='grey'>Date</Grid.Column>
                         <Grid.Column color='grey'>Collection</Grid.Column>
-                        <Grid.Column color='grey'>Language</Grid.Column>
+                        <Grid.Column color='grey'>Original language</Grid.Column>
                         <Grid.Column color='grey'>Action</Grid.Column>
                     </Grid.Row>
                 </Grid>
