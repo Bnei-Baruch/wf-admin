@@ -28,6 +28,7 @@ class FilesUpload extends Component {
         console.log(":: ProductFiles - got data: ", filedata);
         putData(`${WFSRV_BACKEND}/workflow/products`, filedata, (cb) => {
             console.log(":: UploadApp - workflow respond: ",cb);
+            this.props.refresh(product_id)
         });
         console.log("Upload done", filedata);
         delete progress[filedata.file_name];

@@ -94,7 +94,9 @@ class ProductsManager extends Component {
     getProductFiles = (product_id) => {
         getData(`files/find?product_id=${product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
-            this.setState({product_id, files, add_language: false, drop_zone: false});
+            this.setState({product_id, files, add_language: false, drop_zone: false}, () => {
+                this.refs.files.sortFiles();
+            });
         });
     };
 
@@ -216,10 +218,8 @@ class ProductsManager extends Component {
         }
 
         const products_list = products.map(data => {
-                const {product_name, product_id, i18n, date, language, pattern} = data;
+                const {product_name, description, product_id, i18n, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
-                const name = i18n[language] ? i18n[language].name : product_name;
-                const description = i18n[language] ? i18n[language].description : "None";
                 return (<List.Item key={product_id} active={product_id === this.state.product_id}>
                     {/*<List.Content floated='right'>*/}
                     {/*    {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}*/}
@@ -229,7 +229,7 @@ class ProductsManager extends Component {
                         <List.Header onClick={() => this.setProduct(product_id)} >
                             <Grid columns='equal'>
                                 <Grid.Row>
-                                    <Grid.Column width={8}>{name}</Grid.Column>
+                                    <Grid.Column width={8}>{product_name}</Grid.Column>
                                     <Grid.Column>{date}</Grid.Column>
                                     <Grid.Column>{pattern}</Grid.Column>
                                     <Grid.Column>{language}</Grid.Column>
@@ -251,11 +251,11 @@ class ProductsManager extends Component {
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
-                        </List.Header>
-                        {product_selected ? <List.Content>{description}</List.Content> : null}
+                        </List.Header>{description}
+                        {/*{product_selected ? <List.Content>{description}</List.Content> : null}*/}
                         {product_selected && add_language ? <AddLanguage language={file_language} product_id={product_id} getProducts={this.getProducts} /> : null}
-                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} /> : ''}
-                        {product_selected ? <ProductFiles user={this.props.user} files={files} ref="files" /> : null}
+                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} refresh={this.getProductFiles} /> : ''}
+                        {product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}
                     </List.Content>
                 </List.Item>)
             }
