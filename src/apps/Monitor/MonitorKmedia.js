@@ -7,22 +7,22 @@ import {langs_bb} from '../../shared/consts';
 class MonitorKmedia extends Component {
 
     state = {
-        kmedia: [],
+        archive: [],
         json: {},
         ival: null,
     };
 
     componentDidMount() {
-        let ival = setInterval(() =>
-            getData('kmedia/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
-                if (JSON.stringify(this.state.kmedia) !== JSON.stringify(data)) {
-                    //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
-                    this.setState({kmedia: data});
-                    this.restructure(data);
-                }
-            }), IVAL
-        );
-        this.setState({ival: ival});
+        // let ival = setInterval(() =>
+        //     getData('archive/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
+        //         if (JSON.stringify(this.state.archive) !== JSON.stringify(data)) {
+        //             //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
+        //             this.setState({archive: data});
+        //             this.restructure(data);
+        //         }
+        //     }), IVAL
+        // );
+        // this.setState({ival: ival});
     };
 
 
@@ -32,16 +32,16 @@ class MonitorKmedia extends Component {
 
     componentDidUpdate(prevProps) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-            this.restructure(this.state.kmedia);
+            this.restructure(this.props.archive);
         }
     };
 
     restructure = (data) => {
-        let kmedia = data;
+        let archive = data;
         let json = {};
         const {insert, ingest, aricha} = this.props;
-        for (let k in kmedia) {
-            let c = kmedia[k];
+        for (let k in archive) {
+            let c = archive[k];
             let src = c.source;
             if(insert && src === "insert")
                 continue;

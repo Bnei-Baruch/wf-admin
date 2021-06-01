@@ -6,18 +6,18 @@ import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 class MonitorCapture extends Component {
 
     state = {
-        capture: [],
+        ingest: [],
         ival: null,
     };
 
     componentDidMount() {
-        let ival = setInterval(() =>
-            getData('ingest/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
-                if (JSON.stringify(this.state.capture) !== JSON.stringify(data))
-                    this.setState({capture: data})
-            }), IVAL
-        );
-        this.setState({ival: ival});
+        // let ival = setInterval(() =>
+        //     getData('ingest/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
+        //         if (JSON.stringify(this.state.ingest) !== JSON.stringify(data))
+        //             this.setState({ingest: data})
+        //     }), IVAL
+        // );
+        // this.setState({ival: ival});
     };
 
     componentWillUnmount() {
@@ -29,7 +29,7 @@ class MonitorCapture extends Component {
         let x = (<Icon name='close'/>);
         let l = (<Loader size='mini' active inline />);
 
-        let capture_data = this.state.capture.map((data) => {
+        let capture_data = this.props.ingest.map((data) => {
             const {trimmed,capwf} = data.wfstatus;
             let time = data.start_name.split("_")[1];
             let name = data.stop_name || "recording...";

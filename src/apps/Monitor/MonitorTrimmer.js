@@ -11,13 +11,13 @@ class MonitorTrimmer extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() =>
-            getData('trimmer/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
-                if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
-                    this.setState({trimmer: data})
-            }), IVAL
-        );
-        this.setState({ival: ival});
+        // let ival = setInterval(() =>
+        //     getData('trimmer/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
+        //         if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
+        //             this.setState({trimmer: data})
+        //     }), IVAL
+        // );
+        // this.setState({ival: ival});
     };
 
 
@@ -32,7 +32,7 @@ class MonitorTrimmer extends Component {
         let c = (<Icon color='blue' name='copyright'/>);
         let f = (<Icon color='blue' name='configure'/>);
 
-        let trimmer_data = this.state.trimmer.map((data) => {
+        let trimmer_data = this.props.trimmer.map((data) => {
             const {trimmed,renamed,removed,buffer,wfsend,censored,checked,fixed} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;

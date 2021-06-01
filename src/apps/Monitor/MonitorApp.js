@@ -7,6 +7,7 @@ import MonitorKmedia from './MonitorKmedia';
 import MonitorUpload from './MonitorUpload';
 import MonitorConvert from "./MonitorConvert";
 import './MonitorApp.css';
+import mqtt from "../../shared/mqtt";
 
 class MonitorApp extends Component {
 
@@ -16,8 +17,36 @@ class MonitorApp extends Component {
         program: false,
         kmedia_full: false,
         insert: true,
-        ingest: false,
+        //ingest: false,
         aricha: true,
+        topic: null,
+        ingest: [],
+        trimmer: [],
+        archive: [],
+    };
+
+    componentDidMount() {
+        this.initMQTT();
+    };
+
+    componentWillUnmount() {
+        mqtt.exit(this.state.topic)
+    };
+
+    initMQTT = () => {
+        const data = 'wfdb/service/+/monitor';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const topic = local ? data : 'bb/' + data;
+        this.setState({topic})
+        mqtt.join(topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        this.setState({[type]: message})
     };
 
     toggleRemoved = () => this.setState({ removed: !this.state.removed });
@@ -25,10 +54,11 @@ class MonitorApp extends Component {
     toggleProgram = () => this.setState({ program: !this.state.program });
     toggleKmedia = () => this.setState({ kmedia_full: !this.state.kmedia_full });
     toggleInsert = () => this.setState({ insert: !this.state.insert });
-    toggleIngest = () => this.setState({ ingest: !this.state.ingest });
+    //toggleIngest = () => this.setState({ ingest: !this.state.ingest });
     toggleAricha = () => this.setState({ aricha: !this.state.aricha });
 
     render() {
+        const {ingest, trimmer, archive} = this.state;
         return (
             <Fragment>
                 <Grid columns={2} padded='horizontally' className='monitor_app'>
@@ -46,11 +76,11 @@ class MonitorApp extends Component {
                             <Checkbox label='Hide Ingest' onClick={this.toggleIngest} checked={this.state.ingest} /><br />
                             <Checkbox label='Hide Aricha' onClick={this.toggleAricha} checked={this.state.aricha} /><br />
                         </Popup>
-                        <MonitorCapture />
-                        <MonitorTrimmer {...this.state} />
+                        <MonitorCapture ingest={ingest} />
+                        <MonitorTrimmer trimmer={trimmer} />
                     </Grid.Column>
                     <Grid.Column>
-                        <MonitorKmedia {...this.state} />
+                        <MonitorKmedia archive={archive} />
                         <MonitorConvert />
                         <MonitorUpload />
                     </Grid.Column>
