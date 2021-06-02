@@ -72,29 +72,41 @@ class App extends Component {
         if(!wf_public) {
             this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products}, () => {
                 this.loadApps();
-                mqtt.init(user, (data) => {
-                    console.log("[mqtt] init: ", data);
-                })
+                this.initMQTT(user, wf_ingest);
             });
-            if(!wf_ingest) {
-                setInterval(() => getData('state/langcheck', (data) => {
-                    const count = Object.keys(data).filter(d => /t/.test(d)).length
-                    if (this.state.count !== count) {
-                        let {wf_panes} = this.state;
-                        for(let i=0; i<wf_panes.length; i++) {
-                            if(wf_panes[i].menuItem.key === "carbon") {
-                                let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
-                                wf_panes[i].menuItem.content = <div>Carbon{count > 0 ? l : ""}</div>;
-                                this.setState({wf_panes,count})
-                            }
-                        }
-                    }
-                }), 10000 );
-            }
         } else {
             alert("Access denied!");
             kc.logout();
         }
+    };
+
+    initMQTT = (user, wf_ingest) => {
+        mqtt.init(user, (data) => {
+            console.log("[mqtt] init: ", data);
+            if(!wf_ingest) {
+                const data = 'wfdb/service/langcheck/state';
+                const local = window.location.hostname !== "wfsrv.kli.one";
+                const topic = local ? data : 'bb/' + data;
+                this.setState({topic})
+                mqtt.join(topic);
+                mqtt.watch((message, type, source) => {
+                    if(type === "langcheck") {
+                        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+                        const count = Object.keys(message).filter(d => /t/.test(d)).length
+                        if (this.state.count !== count) {
+                            let {wf_panes} = this.state;
+                            for(let i=0; i<wf_panes.length; i++) {
+                                if(wf_panes[i].menuItem.key === "carbon") {
+                                    let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+                                    wf_panes[i].menuItem.content = <div>Carbon{count > 0 ? l : ""}</div>;
+                                    this.setState({wf_panes,count})
+                                }
+                            }
+                        }
+                    }
+                }, local)
+            }
+        })
     };
 
     loadApps = () => {
