@@ -3,11 +3,36 @@ import ExternalUpload from "./ExternalUpload";
 import ExternalTrimmed from "./ExternalTrimmed";
 import {captureSha, putData, WFSRV_BACKEND} from "../../shared/tools";
 import ExternalTrimmer from "../Trimmer/ExternalTrimmer";
+import mqtt from "../../shared/mqtt";
 
 class ExternalApp extends Component {
 
     state = {
-        ival: null,
+        dgima: [],
+    };
+
+    componentDidMount() {
+        this.initMQTT();
+    };
+
+    componentWillUnmount() {
+        mqtt.exit(this.state.topic)
+    };
+
+    initMQTT = () => {
+        const data = 'wfdb/service/dgima/state';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const topic = local ? data : 'bb/' + data;
+        this.setState({topic})
+        mqtt.join(topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        this.setState({dgima: message});
     };
 
     dgimaWorkflow = (filedata) => {
@@ -31,7 +56,7 @@ class ExternalApp extends Component {
             <Fragment>
                 <ExternalUpload onFileData={this.dgimaWorkflow}/>
                 <ExternalTrimmer/>
-                <ExternalTrimmed user={this.props.user} />
+                <ExternalTrimmed user={this.props.user} dgima={this.state.dgima} />
             </Fragment>
         );
     }

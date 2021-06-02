@@ -42,15 +42,15 @@ class ArichaAdmin extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('bdika', (data) => {
-                if (JSON.stringify(this.state.aricha) !== JSON.stringify(data))
-                    this.setState({aricha: data})
-            }), IVAL );
-        this.setState({ival});
+        // let ival = setInterval(() => getData('bdika', (data) => {
+        //         if (JSON.stringify(this.state.aricha) !== JSON.stringify(data))
+        //             this.setState({aricha: data})
+        //     }), IVAL );
+        // this.setState({ival});
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -291,7 +291,7 @@ class ArichaAdmin extends Component {
         let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
 
-        let aricha = this.state.aricha.map((data) => {
+        let aricha = this.props.aricha.map((data) => {
             if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
                 return false;
             }

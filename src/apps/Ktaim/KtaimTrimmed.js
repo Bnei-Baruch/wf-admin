@@ -22,18 +22,18 @@ class KtaimTrimmed extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
-            }), IVAL );
-        this.setState({ival});
+        // let ival = setInterval(() => getData('trim', (data) => {
+        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
+        //             this.setState({trimmed: data})
+        //     }), IVAL );
+        // this.setState({ival});
         getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -160,7 +160,7 @@ class KtaimTrimmed extends Component {
             return  (<p key={i} ><i style={{color: 'blue'}}>{link}</i></p>)
         });
 
-        let trimmed = this.state.trimmed.map((data) => {
+        let trimmed = this.props.trimmed.map((data) => {
             const {trimmed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;

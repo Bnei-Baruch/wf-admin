@@ -49,17 +49,17 @@ class ExternalTrimmed extends Component {
 
     componentDidMount() {
         let wf_admin = !!this.props.user.roles.find(role => role === 'wf_admin');
-        let ival = setInterval(() => getData('drim/insert', (idata) => {
-            getData('drim/congress', (cdata) => {
-                let mdata = [...idata,...cdata];
-                this.setState({dgima: mdata})
-            })
-        }), IVAL );
-        this.setState({wf_admin,ival});
+        // let ival = setInterval(() => getData('drim/insert', (idata) => {
+        //     getData('drim/congress', (cdata) => {
+        //         let mdata = [...idata,...cdata];
+        //         this.setState({dgima: mdata})
+        //     })
+        // }), IVAL );
+        this.setState({wf_admin});
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -504,35 +504,37 @@ class ExternalTrimmed extends Component {
         let j = (<Icon color='blue' name='linkify'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let dgima_data = dgima.map((data) => {
-            const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,checked,joined,secured,fixed} = data.wfstatus;
-            if(data.parent.source !== "cassette") {
-                let id = data.dgima_id;
-                let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
-                let hide = hide_censored && censored && !checked;
-                if(hide || removed) return false;
-                let rowcolor = censored && !checked;
-                let active = actived === id ? 'active' : 'admin_raw';
-                return (
-                    <Table.Row
-                        negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
-                        className={active} key={id} onClick={() => this.selectFile(data)}>
-                        <Table.Cell>
-                            {secured ? s : ""}
-                            {censored ? c : ""}
-                            {fixed ? f : ""}
-                            {locked ? d : ""}
-                            {joined ? j : ""}
-                            {name}
-                        </Table.Cell>
-                        <Table.Cell>{time}</Table.Cell>
-                        <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
-                        <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                        <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
-                    </Table.Row>
-                )
-            } return true
+        let dgima_data = this.props.dgima.map((data) => {
+            if(data.parent?.source.match(/^(congress|insert)$/)) {
+                const {locked,trimmed,backup,kmedia,metus,removed,wfsend,censored,checked,joined,secured,fixed} = data.wfstatus;
+                if(data.parent.source !== "cassette") {
+                    let id = data.dgima_id;
+                    let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+                    let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
+                    let hide = hide_censored && censored && !checked;
+                    if(hide || removed) return false;
+                    let rowcolor = censored && !checked;
+                    let active = actived === id ? 'active' : 'admin_raw';
+                    return (
+                        <Table.Row
+                            negative={rowcolor} positive={wfsend} disabled={!trimmed || locked || (censored && !checked)}
+                            className={active} key={id} onClick={() => this.selectFile(data)}>
+                            <Table.Cell>
+                                {secured ? s : ""}
+                                {censored ? c : ""}
+                                {fixed ? f : ""}
+                                {locked ? d : ""}
+                                {joined ? j : ""}
+                                {name}
+                            </Table.Cell>
+                            <Table.Cell>{time}</Table.Cell>
+                            <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
+                            <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
+                            <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
+                        </Table.Row>
+                    )
+                } return true
+            }
         });
 
         return (

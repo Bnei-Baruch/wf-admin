@@ -16,7 +16,6 @@ class FilesWorkflow extends Component {
         ingest: [],
         trimmer: [],
         file_data: null,
-        ival: null,
         name: "",
         source: "",
     };
@@ -24,31 +23,14 @@ class FilesWorkflow extends Component {
     componentDidMount() {
         let closed = this.props.user.roles.filter(role => role === 'wf_closed').length > 0;
         this.setState({closed});
-        this.getIngestData(new Date().toISOString().slice(0,10));
-        this.getTrimmerData(new Date().toISOString().slice(0,10));
-        this.runPolling();
     };
 
     componentWillUnmount() {
         clearInterval(this.state.ival);
     };
 
-    runPolling = () => {
-        let ival = setInterval(() => {
-            this.getIngestData(this.state.date);
-            this.getTrimmerData(this.state.date);
-        }, 10000 );
-        this.setState({ival});
-    };
-
     changeDate = (data) => {
         let date = data.toISOString().slice(0,10);
-        if(new Date().toISOString().slice(0,10) !== date) {
-            clearInterval(this.state.ival);
-            this.setState({ival: null});
-        } else if(this.state.ival === null) {
-            this.runPolling();
-        }
         this.setState({startDate: data, date, disabled: true, file_data: ""});
         this.getIngestData(date);
         this.getTrimmerData(date);
@@ -56,15 +38,12 @@ class FilesWorkflow extends Component {
 
     getIngestData = (date) => {
         getData(`ingest/find?key=date&value=${date}`, (ingest) => {
-            //let ingest = data.filter(m => m.capture_src.match(/^(mltcap|maincap)$/) && m.wfstatus.capwf && !m.wfstatus.locked);
-            //console.log(":: Ingest DB Data: ",ingest);
             this.setState({ingest})
         });
     };
 
     getTrimmerData = (date) => {
         getData(`trimmer/find?key=date&value=${date}`, (trimmer) => {
-            //console.log(":: Trimmer DB Data: ",trimmer);
             this.setState({trimmer});
         });
     };
@@ -84,7 +63,6 @@ class FilesWorkflow extends Component {
 
     getPlayer = (player) => {
         console.log(":: Censor - got player: ", player);
-        //this.setState({player: player});
     };
 
     handleClick = (e, titleProps) => {
@@ -97,7 +75,12 @@ class FilesWorkflow extends Component {
 
     render() {
 
-        const { ingest,trimmer,source,name } = this.state;
+        let { ingest,trimmer,source,name,date } = this.state;
+
+        if(new Date().toISOString().slice(0,10) === date) {
+            ingest = this.props.ingest;
+            trimmer = this.props.trimmer;
+        }
 
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
@@ -173,10 +156,7 @@ class FilesWorkflow extends Component {
                         </Modal>
                     </Menu.Item>
                     <Menu.Item position='right'>
-                        <Button color='teal' disabled={!source} >
-                            <Icon name='download'/>
-                            <a href={source} download={name}>{name}</a>
-                        </Button>
+                        <Button color='teal' icon='download' disabled={!source} href={source} download />
                     </Menu.Item>
                 </Menu>
                 </Message>

@@ -22,18 +22,18 @@ class IngestTrimmed extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
-            }), IVAL );
-        this.setState({ival});
+        // let ival = setInterval(() => getData('trim', (data) => {
+        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
+        //             this.setState({trimmed: data})
+        //     }), IVAL );
+        // this.setState({ival});
         getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -133,7 +133,7 @@ class IngestTrimmed extends Component {
         let d = (<Icon color='blue' name='lock'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let trimmed = this.state.trimmed.map((data) => {
+        let trimmed = this.props.trimmed.map((data) => {
             const {trimmed,renamed,buffer,removed,wfsend,censored,locked,secured} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;

@@ -18,8 +18,10 @@ class IngestApp extends Component {
         langcheck: {languages: {}},
         multi_online: false,
         multi_timer: "00:00:00",
+        trimmed: [],
         out: null,
         wfst: null,
+        wfdb: null,
     };
 
     componentDidMount() {
@@ -31,20 +33,24 @@ class IngestApp extends Component {
     };
 
     componentWillUnmount() {
-        const {out, wfst} = this.state;
+        const {out, wfst, wfdb} = this.state;
         mqtt.exit(out)
         mqtt.exit(wfst)
+        mqtt.exit(wfdb)
     };
 
     initMQTT = () => {
         const data = 'exec/service/data/#';
         const state = 'workflow/state/capture/#';
+        const trim = 'wfdb/service/trimmer/state';
         const local = window.location.hostname !== "wfsrv.kli.one";
         const out = local ? data : 'bb/' + data;
         const wfst = local ? state : 'bb/' + state;
-        this.setState({out, wfst})
+        const wfdb = local ? trim : 'bb/' + trim;
+        this.setState({out, wfst, wfdb})
         mqtt.join(out);
         mqtt.join(wfst);
+        mqtt.join(wfdb);
         mqtt.watch((message, type, source) => {
             this.onMqttMessage(message, type, source);
         }, local)
@@ -70,6 +76,8 @@ class IngestApp extends Component {
             if(source === "multi" && !captures[source].isRec) {
                 this.newCheck();
             }
+        } else if(type === "trimmer") {
+            this.setState({trimmed: message})
         } else {
             let services = message.data;
             for(let i=0; i<services?.length; i++) {
@@ -129,7 +137,7 @@ class IngestApp extends Component {
     };
 
     render() {
-        const {langcheck, languages, captures, multi_timer, check_count} = this.state;
+        const {langcheck, languages, captures, multi_timer, check_count, trimmed} = this.state;
         const {multi} = captures;
         const capture_title = multi ? multi.stop_name || multi.start_name : "";
         const save_disable = JSON.stringify(languages) === JSON.stringify(langcheck.languages);
@@ -151,7 +159,7 @@ class IngestApp extends Component {
                         : null}
                 </Segment> : null}
                 <IngestTrimmer />
-                <IngestTrimmed />
+                <IngestTrimmed trimmed={trimmed} />
                 {this.props.admin ? "" : <IngestPresets />}
             </Fragment>
         );

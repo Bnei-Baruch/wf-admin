@@ -1,11 +1,36 @@
 import React, {Component, Fragment} from 'react'
 import AdminTrimmer from "../Trimmer/AdminTrimmer";
 import AdminTrimmed from "./AdminTrimmed";
+import mqtt from "../../shared/mqtt";
 
 class AdminApp extends Component {
 
     state = {
-        ival: null,
+        trimmer: [],
+    };
+
+    componentDidMount() {
+        this.initMQTT();
+    };
+
+    componentWillUnmount() {
+        mqtt.exit(this.state.topic)
+    };
+
+    initMQTT = () => {
+        const data = 'wfdb/service/trimmer/state';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const topic = local ? data : 'bb/' + data;
+        this.setState({topic})
+        mqtt.join(topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        this.setState({trimmer: message});
     };
 
     render() {
@@ -13,7 +38,7 @@ class AdminApp extends Component {
         return (
             <Fragment>
                 <AdminTrimmer/>
-                <AdminTrimmed user={this.props.user} />
+                <AdminTrimmed user={this.props.user} trimmed={this.state.trimmer} />
             </Fragment>
         );
     }

@@ -36,21 +36,21 @@ class CensorCheck extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => {
-            getData('trim', (data) => {
-                if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-                    this.setState({trimmed: data})
-            });
-            getData('drim', (data) => {
-                if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
-                    this.setState({dgima: data})
-            });
-            // getData('cassette', (data) => {
-            //     if (JSON.stringify(this.state.cassette) !== JSON.stringify(data))
-            //         this.setState({cassette: data})
-            // });
-        }, 1000 );
-        this.setState({ival});
+        // let ival = setInterval(() => {
+        //     getData('trim', (data) => {
+        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
+        //             this.setState({trimmed: data})
+        //     });
+        //     getData('drim', (data) => {
+        //         if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
+        //             this.setState({dgima: data})
+        //     });
+        //     getData('cassette', (data) => {
+        //         if (JSON.stringify(this.state.cassette) !== JSON.stringify(data))
+        //             this.setState({cassette: data})
+        //     });
+        // }, 1000 );
+        // this.setState({ival});
     };
 
     componentWillUnmount() {
@@ -174,7 +174,7 @@ class CensorCheck extends Component {
         let d = (<Icon color='blue' name='lock'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let trimmed = this.state.trimmed.map((data) => {
+        let trimmed = this.props.trimmed.map((data) => {
             const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.trim_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -198,7 +198,7 @@ class CensorCheck extends Component {
             )
         });
 
-        let dgima_data = this.state.dgima.map((data) => {
+        let dgima_data = this.props.dgima.map((data) => {
             const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.dgima_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
