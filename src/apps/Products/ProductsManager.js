@@ -243,7 +243,7 @@ class ProductsManager extends Component {
                                                     floating
                                                     options={options}
                                                     value={file_language}
-                                                    on trigger={<></>}
+                                                    trigger={<></>}
                                                     onChange={(e,{value}) => this.setFileLang(value)}
                                                 />
                                             </Button.Group>

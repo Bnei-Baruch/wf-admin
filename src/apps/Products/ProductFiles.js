@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Menu, Button, Modal, Message, List, Segment, Grid, Dropdown} from 'semantic-ui-react'
+import {Menu, Button, Modal, Message, List, Segment, Grid, Flag} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import FilesUpload from "../Upload/FilesUpload";
+import {LANG_MAP} from "../../shared/consts";
 
 class ProductFiles extends Component {
 
@@ -64,9 +65,10 @@ class ProductFiles extends Component {
         const files_list = Object.keys(langs_files).map(l => {
                 const {name, description, files} = langs_files[l];
                 return (
-                    <div>
+                    <div key={l}>
                         <Grid columns='equal' padded>
                             <Grid.Row as='a'>
+                                <Grid.Column width={1}><Flag name={LANG_MAP[l].flag} /></Grid.Column>
                                 <Grid.Column>{name}</Grid.Column>
                                 <Grid.Column>{description}</Grid.Column>
                             </Grid.Row>
@@ -74,7 +76,7 @@ class ProductFiles extends Component {
                         {files.map(f => {
                             const {date, language, file_id, file_name} = f;
                             return(
-                                <List selection celled>
+                                <List selection celled key={file_id}>
                                     <List.Item className='file_list' active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
                                         <List.Header>
                                             <Grid>
