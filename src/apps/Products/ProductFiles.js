@@ -83,7 +83,7 @@ class ProductFiles extends Component {
                                                 <Grid.Row>
                                                     <Grid.Column>{language}</Grid.Column>
                                                     <Grid.Column width={2}>{date}</Grid.Column>
-                                                    <Grid.Column width={3}>{file_name}</Grid.Column>
+                                                    <Grid.Column width={8}>{file_name}</Grid.Column>
                                                 </Grid.Row>
                                             </Grid>
                                         </List.Header>
