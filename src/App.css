@@ -4,6 +4,10 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.file_list {
+    padding: .0em .0em!important;
+}
+
 .product_label {
     width: 97%;
 }

@@ -64,9 +64,9 @@ class ProductFiles extends Component {
         const files_list = Object.keys(langs_files).map(l => {
                 const {name, description, files} = langs_files[l];
                 return (
-                    <List.Item>
-                        <Grid columns='equal' inverted padded relaxed='very' >
-                            <Grid.Row>
+                    <div>
+                        <Grid columns='equal' padded>
+                            <Grid.Row as='a'>
                                 <Grid.Column>{name}</Grid.Column>
                                 <Grid.Column>{description}</Grid.Column>
                             </Grid.Row>
@@ -74,25 +74,22 @@ class ProductFiles extends Component {
                         {files.map(f => {
                             const {date, language, file_id, file_name} = f;
                             return(
-                                <List selection>
-                                    <List.Item active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
-                                        <List.Icon name='file' />
-                                        <List.Content>
-                                    <List.Header>
-                                    <Grid>
-                                        <Grid.Row>
-                                            <Grid.Column>{language}</Grid.Column>
-                                            <Grid.Column>{date}</Grid.Column>
-                                            <Grid.Column width={3}>{file_name}</Grid.Column>
-                                        </Grid.Row>
-                                    </Grid>
-                                    </List.Header>
-                                        </List.Content>
+                                <List selection celled>
+                                    <List.Item className='file_list' active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
+                                        <List.Header>
+                                            <Grid>
+                                                <Grid.Row>
+                                                    <Grid.Column>{language}</Grid.Column>
+                                                    <Grid.Column width={2}>{date}</Grid.Column>
+                                                    <Grid.Column width={3}>{file_name}</Grid.Column>
+                                                </Grid.Row>
+                                            </Grid>
+                                        </List.Header>
                                     </List.Item>
                                 </List>
                             )
                         })}
-                    </List.Item>)
+                    </div>)
             }
         );
 
