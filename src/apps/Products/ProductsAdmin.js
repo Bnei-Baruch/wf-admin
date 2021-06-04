@@ -3,6 +3,7 @@ import {putData, WFDB_BACKEND, newProductMeta, WFSRV_BACKEND, postData} from '..
 import {Menu, Segment, Label, Button, Input, Dropdown, Modal} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import CIT from "../CIT/CIT";
+import MDB from "./MDB";
 
 class ProductsAdmin extends Component {
 
@@ -12,11 +13,13 @@ class ProductsAdmin extends Component {
         product_description: "",
         language: "heb",
         locale: "he",
-        metadata: {},
+        metadata: {language: "heb"},
+        mdb_open: false,
+        unit: null
     };
 
     setProductLang = (language) => {
-        this.setState({language});
+        this.setState({language, metadata: {language}});
     }
 
     setProductName = (product_name) => {
@@ -28,10 +31,13 @@ class ProductsAdmin extends Component {
     };
 
     newProduct = () => {
-        const {product_name, product_description, language, metadata} = this.state;
+        const {product_name, product_description, language, metadata, unit} = this.state;
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
         product_meta.pattern = metadata.pattern;
+        product_meta.parent.mdb_uid = unit.uid;
+        product_meta.parent.mdb_id = unit.id;
+        product_meta.parent.wf_id = unit.properties?.workflow_id;
         console.log(" :: New Meta: ", product_meta);
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
             console.log(":: PUT Respond: ",cb);
@@ -52,9 +58,22 @@ class ProductsAdmin extends Component {
         this.setState({metadata, cit_open: false});
     };
 
+    openMdb = () => {
+        this.setState({mdb_open: true});
+    };
+
+    onMdbSelect = (data) => {
+        console.log(":: Got MDB data: ", data);
+        this.setState({mdb_open: false, unit: data});
+    };
+
+    onCancel = () => {
+        this.setState({cit_open: false, mdb_open: false});
+    };
+
     render() {
 
-        const {product_name, product_description, language, cit_open, metadata} = this.state;
+        const {product_name, product_description, language, cit_open, metadata, mdb_open} = this.state;
 
         return (
             <Segment textAlign='left' className="ingest_segment" color='red' raised>
@@ -84,16 +103,25 @@ class ProductsAdmin extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         <Modal closeOnDimmerClick={false}
-                               trigger={<Button color='blue' icon='tags'
-                                                onClick={this.openCit} />}
+                               trigger={<Button color='blue' icon='tags' onClick={this.openCit} />}
                                onClose={this.onCancel}
                                open={cit_open}
                                closeIcon="close"
                                mountNode={document.getElementById("cit-modal-mount")}>
                             <Modal.Content>
-                                <CIT metadata={metadata}
-                                     onCancel={this.onCancel}
-                                     onComplete={(x) => this.setMetadata(x)}/>
+                                <CIT metadata={metadata} onCancel={this.onCancel} onComplete={(x) => this.setMetadata(x)}/>
+                            </Modal.Content>
+                        </Modal>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Modal closeOnDimmerClick={false}
+                               trigger={<Button color='teal' icon='archive' onClick={this.openMdb}/>}
+                               onClose={this.onCancel}
+                               open={mdb_open}
+                               size='large'
+                               closeIcon="close">
+                            <Modal.Content>
+                                <MDB metadata={metadata} user={this.props.user} onCancel={this.onCancel} onComplete={(x) => this.onMdbSelect(x)}/>
                             </Modal.Content>
                         </Modal>
                     </Menu.Item>
