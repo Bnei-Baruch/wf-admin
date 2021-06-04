@@ -19,7 +19,7 @@ class ProductsAdmin extends Component {
     };
 
     setProductLang = (language) => {
-        this.setState({language, metadata: {language}});
+        this.setState({language});
     }
 
     setProductName = (product_name) => {
@@ -35,7 +35,13 @@ class ProductsAdmin extends Component {
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
         product_meta.pattern = metadata.pattern;
-        product_meta.parent.mdb_uid = unit.uid;
+        product_meta.parent = {
+            mdb_uid: unit.uid,
+            mdb_id: unit.id,
+            wf_id: unit.properties?.workflow_id,
+            capture_date: unit.properties?.capture_date,
+            film_date: unit.properties?.film_date,
+        };
         product_meta.parent.mdb_id = unit.id;
         product_meta.parent.wf_id = unit.properties?.workflow_id;
         console.log(" :: New Meta: ", product_meta);
@@ -55,7 +61,7 @@ class ProductsAdmin extends Component {
 
     setMetadata = (metadata) => {
         console.log(":: Cit callback: ", metadata);
-        this.setState({metadata, cit_open: false});
+        this.setState({metadata, language: metadata.language, cit_open: false});
     };
 
     openMdb = () => {
