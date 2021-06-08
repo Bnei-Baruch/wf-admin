@@ -99,7 +99,7 @@ class IngestApp extends Component {
         const languages = newLanguages();
         const langcheck = {
             carbon: false,
-            date: new Date().toLocaleString('sv').slice(0,10),
+            date: new Date().toLocaleDateString('sv'),
             file_name: "",
             finished: true,
             id: "",

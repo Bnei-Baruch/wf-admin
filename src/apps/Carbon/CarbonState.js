@@ -14,7 +14,7 @@ class CarbonState extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getData(`convert/find?key=date&value=${new Date().toLocaleString('sv').slice(0,10)}`, (data) => {
+            getData(`convert/find?key=date&value=${new Date().toLocaleDateString('sv')}`, (data) => {
                 if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                     this.setState({carbon: data})
             }), IVAL

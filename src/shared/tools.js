@@ -414,7 +414,7 @@ export const newTrimMeta = (data, mode, source) => {
     let p = source.match(/^(main|backup|trimmed|custom|ktaim|rroom)$/) ? "t" : "d";
     let key_id = p === "t" ? "trim_id" : "dgima_id";
     let wfid = p + Math.floor(Date.now() / 1000);
-    let date = new Date(wfid.substr(1) * 1000).toLocaleString('sv').slice(0,10);
+    let date = new Date(wfid.substr(1) * 1000).toLocaleDateString('sv');
     let originalsha1 = original.format.sha1;
     let proxysha1 = proxy ? proxy.format.sha1 : null;
     let name = file_name || stop_name;
@@ -482,7 +482,7 @@ export const newInsertMeta = (file_data) => {
 
 export const newJobMeta = (job_name) => {
     let job_id = "j" + Math.floor(Date.now() / 1000);
-    let date = new Date(job_id.substr(1) * 1000).toLocaleString('sv').slice(0,10);
+    let date = new Date(job_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
         job_id, date,
         file_name: null,
@@ -516,7 +516,7 @@ export const newJobMeta = (job_name) => {
 
 export const newProductMeta = (product_name, product_description, language) => {
     let product_id = "p" + Math.floor(Date.now() / 1000);
-    let date = new Date(product_id.substr(1) * 1000).toLocaleString('sv').slice(0,10);
+    let date = new Date(product_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
         product_id, date, product_name, language, type_id: null,
         product_type: "media", i18n: {[language]: {name: product_name, description: product_description}}, line: null, parent: {},

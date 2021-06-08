@@ -82,7 +82,7 @@ class InsertModal extends Component {
 
     selectDate = (date) => {
         let {metadata} = this.state;
-        this.setState({metadata: {...metadata, date: date.toLocaleString('sv').slice(0,10)}});
+        this.setState({metadata: {...metadata, date: date.toLocaleDateString('sv')}});
     };
 
     onClose = () => {

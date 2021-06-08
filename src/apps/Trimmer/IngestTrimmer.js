@@ -16,7 +16,7 @@ class IngestTrimmer extends Component {
         file_data: "",
         open: false,
         trim_src: "main",
-        date: new Date().toLocaleString('sv').slice(0,10),
+        date: new Date().toLocaleDateString('sv'),
         startDate: new Date(),
         source: "",
         trim_meta: {},
@@ -33,7 +33,7 @@ class IngestTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.toLocaleString('sv').slice(0,10);
+        let date = data.toLocaleDateString('sv');
         this.setState({startDate: data, date, disabled: true, file_data: ""});
     };
 

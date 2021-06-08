@@ -12,7 +12,7 @@ class MonitorCarbon extends Component {
 
     componentDidMount() {
         let ival = setInterval(() =>
-            getState('state/carbon/'+new Date().toLocaleString('sv').slice(0,10), (data) => {
+            getState('state/carbon/'+new Date().toLocaleDateString('sv'), (data) => {
                 if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
                     this.setState({carbon: data})
             }), IVAL

@@ -56,10 +56,10 @@ class InsertApp extends Component {
         if((/\d{4}-\d{2}-\d{2}/).test(filedata.file_name)) {
             let string_date = filedata.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
             // let test_date = moment(string_date);
-            // let date = test_date.isValid() ? string_date : new Date().toLocaleString('sv').slice(0,10);
+            // let date = test_date.isValid() ? string_date : new Date().toLocaleDateString('sv');
             metadata.date = string_date;
         } else {
-            metadata.date = new Date().toLocaleString('sv').slice(0,10);
+            metadata.date = new Date().toLocaleDateString('sv');
         }
 
         // If mode rename get insert workflow data

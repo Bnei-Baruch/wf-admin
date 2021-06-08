@@ -19,7 +19,7 @@ import WFDBSources from "./WFDBSources";
 class WFDB extends Component {
 
     state = {
-        date: new Date().toLocaleString('sv').slice(0,10),
+        date: new Date().toLocaleDateString('sv'),
         input_id: "",
         sjson: "wfdb",
         skey: "date",
@@ -51,7 +51,7 @@ class WFDB extends Component {
     };
 
     changeDate = (data) => {
-        let date = this.state.tab === "labels" ? data.toLocaleString('sv').slice(0,10).split('-').join('/') : data.toLocaleString('sv').slice(0,10);
+        let date = this.state.tab === "labels" ? data.toLocaleDateString('sv').split('-').join('/') : data.toLocaleDateString('sv');
         this.setState({startDate: data, date, skey: "date", value: "", svalue: ""},() => {
             this.tab.searchData(this.state.tab);
         });

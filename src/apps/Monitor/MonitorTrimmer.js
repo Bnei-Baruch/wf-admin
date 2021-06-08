@@ -12,7 +12,7 @@ class MonitorTrimmer extends Component {
 
     componentDidMount() {
         // let ival = setInterval(() =>
-        //     getData('trimmer/find?key=date&value='+new Date().toLocaleString('sv').slice(0,10), (data) => {
+        //     getData('trimmer/find?key=date&value='+new Date().toLocaleDateString('sv'), (data) => {
         //         if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
         //             this.setState({trimmer: data})
         //     }), IVAL

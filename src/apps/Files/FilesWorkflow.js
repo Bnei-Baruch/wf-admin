@@ -11,7 +11,7 @@ class FilesWorkflow extends Component {
         activeIndex: 0,
         closed: false,
         disabled: true,
-        date: new Date().toLocaleString('sv').slice(0,10),
+        date: new Date().toLocaleDateString('sv'),
         startDate: new Date(),
         ingest: [],
         trimmer: [],
@@ -30,7 +30,7 @@ class FilesWorkflow extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.toLocaleString('sv').slice(0,10);
+        let date = data.toLocaleDateString('sv');
         this.setState({startDate: data, date, disabled: true, file_data: ""});
         this.getIngestData(date);
         this.getTrimmerData(date);
@@ -77,7 +77,7 @@ class FilesWorkflow extends Component {
 
         let { ingest,trimmer,source,name,date } = this.state;
 
-        if(new Date().toLocaleString('sv').slice(0,10) === date) {
+        if(new Date().toLocaleDateString('sv') === date) {
             ingest = this.props.ingest;
             trimmer = this.props.trimmer;
         }

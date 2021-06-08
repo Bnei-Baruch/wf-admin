@@ -19,7 +19,7 @@ class ExternalTrimmer extends Component {
         file_data: "",
         open: false,
         dgima_src: "insert",
-        date: new Date().toLocaleString('sv').slice(0,10),
+        date: new Date().toLocaleDateString('sv'),
         startDate: new Date(),
         source: "",
         trim_meta: {},
@@ -46,7 +46,7 @@ class ExternalTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = this.state.dgima_src === "search" ? data.toLocaleString('sv').slice(0,10).split('-').join('/') : data.toLocaleString('sv').slice(0,10);
+        let date = this.state.dgima_src === "search" ? data.toLocaleDateString('sv').split('-').join('/') : data.toLocaleDateString('sv');
         this.setState({startDate: data, date: date, disabled: true});
         if(this.state.dgima_src === "search") {
             this.getLabelsData("date", date);

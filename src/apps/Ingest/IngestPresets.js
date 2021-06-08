@@ -12,7 +12,7 @@ class IngestPresets extends Component {
         preset: {id:"",name:""},
         presets: {},
         disabled: true,
-        date: new Date().toLocaleString('sv').slice(0,10),
+        date: new Date().toLocaleDateString('sv'),
         startDate: new Date(),
     };
 
@@ -39,7 +39,7 @@ class IngestPresets extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.toLocaleString('sv').slice(0,10);
+        let date = data.toLocaleDateString('sv');
         this.setState({startDate: data, date});
     };
 
