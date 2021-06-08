@@ -17,7 +17,7 @@ class DgimaTrimmer extends Component {
         file_data: "",
         open: false,
         dgima_src: "cassette",
-        date: new Date().toISOString().slice(0,10),
+        date: new Date().toLocaleString('sv').slice(0,10),
         startDate: new Date(),
         source: "",
         trim_meta: {},

@@ -70,7 +70,7 @@ class WFDBAricha extends Component {
             const {aricha,backup,youtube,censored,checked,kmedia,metus,removed,renamed,wfsend,fixed,locked} = data.wfstatus;
             let name = aricha ? data.file_name : <div><Loader size='mini' active inline />&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let censor = censored ? <Icon name='copyright'/> : "";
-            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
+            let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             let href = data.line.unit_id ? `${MDB_UNIT_URL}/${data.line.unit_id}` : `${MDB_UNIT_URL}/?query=${data.line.uid}`;
             let link = !wfsend ? "" : (<a target="_blank" rel="noopener noreferrer" href={href}>{data.line.uid}</a>);
             let rowcolor = censored && !checked;

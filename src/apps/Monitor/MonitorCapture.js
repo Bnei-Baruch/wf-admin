@@ -12,7 +12,7 @@ class MonitorCapture extends Component {
 
     componentDidMount() {
         // let ival = setInterval(() =>
-        //     getData('ingest/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
+        //     getData('ingest/find?key=date&value='+new Date().toLocaleString('sv').slice(0,10), (data) => {
         //         if (JSON.stringify(this.state.ingest) !== JSON.stringify(data))
         //             this.setState({ingest: data})
         //     }), IVAL

@@ -14,7 +14,7 @@ class MonitorKmedia extends Component {
 
     componentDidMount() {
         // let ival = setInterval(() =>
-        //     getData('archive/find?key=date&value='+new Date().toISOString().slice(0,10), (data) => {
+        //     getData('archive/find?key=date&value='+new Date().toLocaleString('sv').slice(0,10), (data) => {
         //         if (JSON.stringify(this.state.archive) !== JSON.stringify(data)) {
         //             //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
         //             this.setState({archive: data});

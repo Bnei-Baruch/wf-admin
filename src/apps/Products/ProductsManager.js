@@ -132,7 +132,7 @@ class ProductsManager extends Component {
 
     selectDate = (date) => {
         const {filters} = this.state;
-        filters.date = date.toISOString().slice(0,10);
+        filters.date = date.toLocaleString('sv').slice(0,10);
         this.setState({filters, date});
     };
 

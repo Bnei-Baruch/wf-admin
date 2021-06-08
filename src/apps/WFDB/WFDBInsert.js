@@ -46,7 +46,7 @@ class WFDBInsert extends Component {
             const {id,insert_id,insert_name,send_id,upload_type,line} = data;
             const {name,email,uid,unit_id} = line;
             let user = name ? name+" - ("+email+")" : "";
-            let time = new Date(insert_id.substr(1) * 1000).toISOString().slice(11,19);
+            let time = new Date(insert_id.substr(1) * 1000).toLocaleString('sv').slice(11,19);
             let href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
             let link = (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>);
             return (

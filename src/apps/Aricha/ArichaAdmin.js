@@ -299,7 +299,7 @@ class ArichaAdmin extends Component {
             let id = data.aricha_id;
             let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-            let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
+            let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
             let active = this.state.active === id ? 'active' : 'admin_raw';

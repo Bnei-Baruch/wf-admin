@@ -14,7 +14,7 @@ class CensorTrimmer extends Component {
         file_data: "",
         open: false,
         trim_src: "trimmed",
-        date: new Date().toISOString().slice(0,10),
+        date: new Date().toLocaleString('sv').slice(0,10),
         startDate: new Date(),
         source: "",
         trim_meta: {},
@@ -29,7 +29,7 @@ class CensorTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.toISOString().slice(0,10);
+        let date = data.toLocaleString('sv').slice(0,10);
         this.setState({startDate: data, date: date, disabled: true});
     };
 

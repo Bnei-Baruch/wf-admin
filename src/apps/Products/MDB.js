@@ -15,7 +15,7 @@ import {language_options, DCT_OPTS} from '../../shared/consts';
 class MDB extends Component {
 
     state = {
-        metadata: {...this.props.metadata, date: new Date().toISOString().slice(0,10)},
+        metadata: {...this.props.metadata, date: new Date().toLocaleString('sv').slice(0,10)},
         unit: null,
         files: [],
         store: { sources: [], tags: [], publishers: []},
@@ -68,7 +68,7 @@ class MDB extends Component {
 
     selectDate = (date) => {
         let {metadata} = this.state;
-        this.setState({metadata: {...metadata, date: date.toISOString().slice(0,10)}});
+        this.setState({metadata: {...metadata, date: date.toLocaleString('sv').slice(0,10)}});
     };
 
     onClose = () => {

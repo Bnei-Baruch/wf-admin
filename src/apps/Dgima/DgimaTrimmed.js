@@ -508,7 +508,7 @@ class DgimaTrimmed extends Component {
             if(data.parent.source === "cassette") {
                 let id = data.dgima_id;
                 let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
-                let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
+                let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
                 let hide = hide_censored && censored && !checked;
                 if(hide || removed) return false;
                 let rowcolor = censored && !checked;

@@ -217,7 +217,7 @@ class FilesManager extends Component {
     addNote = (product_data) => {
         const {note_area} = this.state;
         const {name} = this.props.user;
-        const date = new Date().toISOString();
+        const date = new Date().toLocaleString('sv');
         let {product} = product_data;
         product.notes.push({name,date,message: note_area});
         postData(`${WFDB_BACKEND}/products/${product_data.product_id}/product`, product, (cb) => {
@@ -276,7 +276,7 @@ class FilesManager extends Component {
             let id = data.file_id;
             let ready = true;
             let title = ready ? data.product_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.product_name}</div>;
-            //let time = new Date(id.substr(1) * 1000).toISOString().slice(11,19) || "";
+            //let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             //if(removed) return false;
             let rowcolor = false;
             let active = this.state.active === id ? 'active' : 'admin_raw';
