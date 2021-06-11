@@ -386,6 +386,7 @@ class ArichaAdmin extends Component {
                         </Menu>
                     </Message> : null
                 }
+                <Segment attached raised textAlign='center' className='censor_content'>
                 <Table selectable compact='very' basic structured className="ingest_table">
                     <Table.Header>
                         <Table.Row className='table_header'>
@@ -402,6 +403,7 @@ class ArichaAdmin extends Component {
                         {aricha}
                     </Table.Body>
                 </Table>
+                </Segment>
             </Segment>
         );
     }
