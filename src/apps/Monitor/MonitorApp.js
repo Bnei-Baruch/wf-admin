@@ -19,10 +19,12 @@ class MonitorApp extends Component {
         insert: true,
         //ingest: false,
         aricha: true,
-        topic: null,
+        wfdb_topic: null,
+        upload_topic: null,
         ingest: [],
         trimmer: [],
         archive: [],
+        upload: [],
     };
 
     componentDidMount() {
@@ -30,15 +32,19 @@ class MonitorApp extends Component {
     };
 
     componentWillUnmount() {
-        mqtt.exit(this.state.topic)
+        mqtt.exit(this.state.wfdb_topic);
+        mqtt.exit(this.state.upload_topic);
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/+/monitor';
+        const wfdb_data = 'wfdb/service/+/monitor';
+        const upload_data = 'workflow/server/upload/monitor';
         const local = window.location.hostname !== "wfsrv.kli.one";
-        const topic = local ? data : 'bb/' + data;
-        this.setState({topic})
-        mqtt.join(topic);
+        const wfdb_topic = local ? wfdb_data : 'bb/' + wfdb_data;
+        const upload_topic = local ? upload_data : 'bb/' + upload_data;
+        this.setState({wfdb_topic, upload_topic})
+        mqtt.join(wfdb_topic);
+        mqtt.join(upload_topic);
         mqtt.watch((message, type, source) => {
             this.onMqttMessage(message, type, source);
         }, local)
@@ -58,7 +64,7 @@ class MonitorApp extends Component {
     toggleAricha = () => this.setState({ aricha: !this.state.aricha });
 
     render() {
-        const {ingest, trimmer, archive} = this.state;
+        const {ingest, trimmer, archive, upload} = this.state;
         return (
             <Fragment>
                 <Grid columns={2} padded='horizontally' className='monitor_app'>
@@ -82,7 +88,7 @@ class MonitorApp extends Component {
                     <Grid.Column>
                         <MonitorKmedia archive={archive} />
                         <MonitorConvert />
-                        <MonitorUpload />
+                        <MonitorUpload upload={upload} />
                     </Grid.Column>
                 </Grid>
 
