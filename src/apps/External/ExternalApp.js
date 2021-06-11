@@ -31,6 +31,7 @@ class ExternalApp extends Component {
     };
 
     onMqttMessage = (message, type, source) => {
+        if(type !== "dgima") return
         console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
         this.setState({dgima: message});
     };

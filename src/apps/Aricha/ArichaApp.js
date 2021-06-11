@@ -30,6 +30,7 @@ class ArichaApp extends Component {
     };
 
     onMqttMessage = (message, type, source) => {
+        if(type !== "aricha") return
         console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
         this.setState({aricha: message});
     };
