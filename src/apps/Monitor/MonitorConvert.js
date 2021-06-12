@@ -21,7 +21,7 @@ class MonitorConvert extends Component {
                 const Arg2 = itemts[5];
                 //const Arg3 = itemts[6];
                 const task = Script.split('[')[1].split(']')[0];
-                const name = <div>{state === "running" ? l : ""}&nbsp;&nbsp;&nbsp;{Arg2}</div>
+                const name = <div>{State === "running" ? l : ""}&nbsp;&nbsp;&nbsp;{Arg2}</div>
                 const dest = State === "running" ? Arg1 : "convert";
                 const ncolor = State === "running";
                 return (
