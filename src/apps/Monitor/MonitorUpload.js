@@ -35,6 +35,7 @@ class MonitorUpload extends Component {
             <Container textAlign='center'>
                 <u>Upload</u>
                 <Table compact='very' basic size='small'>
+                    <div className='upload_content'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>Dest</Table.HeaderCell>
@@ -47,6 +48,7 @@ class MonitorUpload extends Component {
                     <Table.Body>
                         {upload_data}
                     </Table.Body>
+                    </div>
                 </Table>
             </Container>
         );

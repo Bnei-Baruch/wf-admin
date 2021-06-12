@@ -25,8 +25,8 @@ class MonitorApp extends Component {
         ingest: [],
         trimmer: [],
         archive: [],
-        upload: [],
-        convert: [],
+        upload: ["", ""],
+        convert: ["", ""],
     };
 
     componentDidMount() {
@@ -57,7 +57,7 @@ class MonitorApp extends Component {
     };
 
     onMqttMessage = (message, type, source) => {
-        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        //console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
         this.setState({[type]: message})
     };
 
@@ -93,8 +93,8 @@ class MonitorApp extends Component {
                     </Grid.Column>
                     <Grid.Column>
                         <MonitorKmedia archive={archive} />
-                        <MonitorConvert convert={convert} />
-                        <MonitorUpload upload={upload} />
+                        {convert[1] !== "" ? <MonitorConvert convert={convert} /> : null}
+                        {upload[1] !== "" ? <MonitorUpload upload={upload} /> : null}
                     </Grid.Column>
                 </Grid>
 
