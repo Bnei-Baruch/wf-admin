@@ -15,7 +15,7 @@ class MonitorConvert extends Component {
                 //const ID = itemts[0];
                 const State = itemts[1];
                 //const Log = itemts[2];
-                const Task = JSON.parse(itemts[3].split('[')[1].split(']')[0]);
+                //const Task = JSON.parse(itemts[3].split('[')[1].split(']')[0]);
                 const Script = itemts[3];
                 const Arg1 = itemts[4];
                 const Arg2 = itemts[5];
