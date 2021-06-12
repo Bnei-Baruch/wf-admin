@@ -19,12 +19,14 @@ class MonitorApp extends Component {
         insert: true,
         //ingest: false,
         aricha: true,
+        convert_topic: null,
         wfdb_topic: null,
         upload_topic: null,
         ingest: [],
         trimmer: [],
         archive: [],
         upload: [],
+        convert: [],
     };
 
     componentDidMount() {
@@ -34,17 +36,21 @@ class MonitorApp extends Component {
     componentWillUnmount() {
         mqtt.exit(this.state.wfdb_topic);
         mqtt.exit(this.state.upload_topic);
+        mqtt.exit(this.state.convert_topic);
     };
 
     initMQTT = () => {
         const wfdb_data = 'wfdb/service/+/monitor';
         const upload_data = 'workflow/server/upload/monitor';
+        const convert_data = 'workflow/server/convert/monitor';
         const local = window.location.hostname !== "wfsrv.kli.one";
         const wfdb_topic = local ? wfdb_data : 'bb/' + wfdb_data;
         const upload_topic = local ? upload_data : 'bb/' + upload_data;
-        this.setState({wfdb_topic, upload_topic})
+        const convert_topic = local ? convert_data : 'bb/' + convert_data;
+        this.setState({wfdb_topic, upload_topic, convert_topic})
         mqtt.join(wfdb_topic);
         mqtt.join(upload_topic);
+        mqtt.join(convert_topic);
         mqtt.watch((message, type, source) => {
             this.onMqttMessage(message, type, source);
         }, local)
@@ -64,7 +70,7 @@ class MonitorApp extends Component {
     toggleAricha = () => this.setState({ aricha: !this.state.aricha });
 
     render() {
-        const {ingest, trimmer, archive, upload} = this.state;
+        const {ingest, trimmer, archive, upload, convert} = this.state;
         return (
             <Fragment>
                 <Grid columns={2} padded='horizontally' className='monitor_app'>
@@ -87,7 +93,7 @@ class MonitorApp extends Component {
                     </Grid.Column>
                     <Grid.Column>
                         <MonitorKmedia archive={archive} />
-                        <MonitorConvert />
+                        <MonitorConvert convert={convert} />
                         <MonitorUpload upload={upload} />
                     </Grid.Column>
                 </Grid>
