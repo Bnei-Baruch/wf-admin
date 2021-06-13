@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Menu, Button, Modal, Message, List, Segment, Grid, Flag} from 'semantic-ui-react'
+import {Menu, Button, Modal, Message, List, Segment, Grid, Flag, Table, Icon} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import FilesUpload from "../Upload/FilesUpload";
 import {LANG_MAP} from "../../shared/consts";
@@ -62,41 +62,54 @@ class ProductFiles extends Component {
 
         const {source, language, langs_files} = this.state;
 
-        const files_list = Object.keys(langs_files).map(l => {
-                const {name, description, files} = langs_files[l];
-                return (
-                    <div key={l}>
-                        <Grid columns='equal' padded>
-                            <Grid.Row as='a'>
-                                <Grid.Column width={1}><Flag name={LANG_MAP[l].flag} /></Grid.Column>
-                                <Grid.Column>{name}</Grid.Column>
-                                <Grid.Column>{description}</Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                        {files.map(f => {
-                            const {date, language, file_id, file_name} = f;
-                            return(
-                                <List selection celled key={file_id}>
-                                    <List.Item className='file_list' active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
-                                        <List.Header>
-                                            <Grid>
-                                                <Grid.Row>
-                                                    <Grid.Column>{language}</Grid.Column>
-                                                    <Grid.Column width={2}>{date}</Grid.Column>
-                                                    <Grid.Column width={8}>{file_name}</Grid.Column>
-                                                </Grid.Row>
-                                            </Grid>
-                                        </List.Header>
-                                    </List.Item>
-                                </List>
-                            )
-                        })}
-                    </div>)
+        const files_list = this.props.files.map(f => {
+            const {date, language, file_id, file_name} = f;
+            if(language === this.props.lang) {
+                return(
+                    <Table.Row key={file_id} verticalAlign='top' >
+                        <Table.Cell singleLine selectable>{file_name}</Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
+                    </Table.Row>
+                )
+            }
             }
         );
 
+        // const files_list = Object.keys(langs_files).map(l => {
+        //         const {name, description, files} = langs_files[l];
+        //         return (
+        //             <div key={l}>
+        //                 <Grid columns='equal' padded>
+        //                     <Grid.Row as='a'>
+        //                         <Grid.Column width={1}><Flag name={LANG_MAP[l].flag} /></Grid.Column>
+        //                         <Grid.Column>{name}</Grid.Column>
+        //                         <Grid.Column>{description}</Grid.Column>
+        //                     </Grid.Row>
+        //                 </Grid>
+        //                 {files.map(f => {
+        //                     const {date, language, file_id, file_name} = f;
+        //                     return(
+        //                         <List selection celled key={file_id}>
+        //                             <List.Item className='file_list' active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
+        //                                 <List.Header>
+        //                                     <Grid>
+        //                                         <Grid.Row>
+        //                                             <Grid.Column>{language}</Grid.Column>
+        //                                             <Grid.Column width={2}>{date}</Grid.Column>
+        //                                             <Grid.Column width={8}>{file_name}</Grid.Column>
+        //                                         </Grid.Row>
+        //                                     </Grid>
+        //                                 </List.Header>
+        //                             </List.Item>
+        //                         </List>
+        //                     )
+        //                 })}
+        //             </div>)
+        //     }
+        // );
+
         return (
-            <List>
+            <Table basic='very'>
                 {this.state.upload ? <FilesUpload product_id={this.props.product_id} language={language} /> : ''}
                 { this.state.active ?
                 <Message>
@@ -113,8 +126,17 @@ class ProductFiles extends Component {
                         </Menu.Item>
                     </Menu>
                 </Message> : null}
-                {files_list}
-            </List>
+                <Table.Header fullWidth>
+                    <Table.Row>
+                        <Table.HeaderCell width={17}></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                    {files_list}
+                </Table.Body>
+            </Table>
         );
     }
 }

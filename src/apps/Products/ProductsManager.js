@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Grid, Dropdown, List, Flag, Input, Icon} from 'semantic-ui-react'
-import {CT_VIDEO_PROGRAM, dep_options} from "../../shared/consts";
+import {Menu, Segment, Label, Button, Grid, Dropdown, List, Flag, Input, Icon, Table, Checkbox, Pagination} from 'semantic-ui-react'
+import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
@@ -22,6 +22,8 @@ class ProductsManager extends Component {
         insert_button: true,
         inserting: false,
         product_name: "",
+        product: {i18n: {}},
+        selected_language: null,
         products: [],
         files: [],
         product_data: {},
@@ -41,6 +43,8 @@ class ProductsManager extends Component {
         source: null,
         note_area: "",
         show_filters: true,
+        show_files: false,
+        show_languages: false,
     };
 
     componentDidMount() {
@@ -91,11 +95,18 @@ class ProductsManager extends Component {
         });
     };
 
-    getProductFiles = (product_id) => {
-        getData(`files/find?product_id=${product_id}`, (files) => {
+    getProductFiles = () => {
+        getData(`files/find?product_id=${this.state.product_id}`, (files) => {
+            console.log(":: Files DB Data: ", files);
+            this.setState({files});
+        });
+    };
+
+    getProductFilesByLang = (product_id, lang) => {
+        getData(`files/find?product_id=${product_id}&languages=${lang}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({product_id, files, add_language: false, drop_zone: false}, () => {
-                this.refs.files.sortFiles();
+                //this.refs.files.sortFiles();
             });
         });
     };
@@ -181,27 +192,36 @@ class ProductsManager extends Component {
         fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
-    setProduct = (product_id) => {
-        console.log(product_id)
-        if(product_id === this.state.product_id) {
-            //this.setState({product_id: null, files: []});
+    setProduct = (product_id, product) => {
+        if(!this.state.show_languages) {
+            console.log(product)
+            this.setState({product_id, product, show_languages: !this.state.show_languages});
         } else {
-            this.getProductFiles(product_id);
+            this.setState({product_id: null, product: {i18n: {}}, show_languages: !this.state.show_languages});
         }
-    }
+    };
 
     addFile = () => {
         this.setState({drop_zone: true});
-    }
+    };
 
     addLanguage = () => {
         console.log("addLanguage")
         this.setState({add_language: true});
+    };
+
+    setLang = (selected_language) => {
+        if(!this.state.show_files) {
+            this.getProductFiles()
+            this.setState({selected_language, show_files: !this.state.show_files});
+        } else {
+            this.setState({selected_language: null, files: [], show_files: !this.state.show_files});
+        }
     }
 
     render() {
 
-        const {filters, pattern, collections, date, show_filters, products, locale, drop_zone, add_language, language, files, file_language} = this.state;
+        const {filters, pattern, collections, date, show_filters, product, products, locale, drop_zone, add_language, language, files, file_language, show_languages, show_files, selected_language} = this.state;
 
         const options = [
             { key: 'title', description: 'Choose Language:', disabled: true},
@@ -217,47 +237,103 @@ class ProductsManager extends Component {
             eng: (<Flag name='us'/>)
         }
 
+        const languages_list = Object.keys(product?.i18n).map(lang => {
+            console.log(lang);
+            return (
+                <Table.Row key={lang} verticalAlign='top' onClick={() => this.setLang(lang)} >
+                    <Table.Cell collapsing>
+                        <Icon name={lang ? 'minus' : 'plus'} color='blue' onClick={() => this.setState({show_files: !this.state.show_files})} />
+                    </Table.Cell>
+                    <Table.Cell>
+                        {lang}
+                        {/*{product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}*/}
+                    </Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell></Table.Cell>
+                </Table.Row>
+            )
+        })
+
         const products_list = products.map(data => {
                 const {product_name, description, product_id, i18n, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
-                return (<List.Item key={product_id} active={product_id === this.state.product_id}>
-                    {/*<List.Content floated='right'>*/}
-                    {/*    {product_selected ? <Button onClick={i18n[language] ? this.addFile : this.addLanguage}>Add File</Button> : null}*/}
-                    {/*</List.Content>*/}
-                    <List.Icon name='folder' />
-                    <List.Content>
-                        <List.Header onClick={() => this.setProduct(product_id)} >
-                            <Grid columns='equal'>
-                                <Grid.Row>
-                                    <Grid.Column width={8}>{product_name}</Grid.Column>
-                                    <Grid.Column>{date}</Grid.Column>
-                                    <Grid.Column>{pattern}</Grid.Column>
-                                    <Grid.Column>{language}</Grid.Column>
-                                    <Grid.Column>
-                                        {product_selected ?
-                                            <Button.Group color='teal'>
-                                                <Button disabled={!file_language} onClick={i18n[file_language] ? this.addFile : this.addLanguage}>Add File</Button>
-                                                <Dropdown
-                                                    className='button icon'
-                                                    icon={flags[file_language]}
-                                                    floating
-                                                    options={options}
-                                                    value={file_language}
-                                                    trigger={<></>}
-                                                    onChange={(e,{value}) => this.setFileLang(value)}
-                                                />
-                                            </Button.Group>
-                                            : null}
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </List.Header>{description}
-                        {/*{product_selected ? <List.Content>{description}</List.Content> : null}*/}
-                        {product_selected && add_language ? <AddLanguage language={file_language} product_id={product_id} getProducts={this.getProducts} /> : null}
-                        {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} refresh={this.getProductFiles} /> : ''}
-                        {product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}
-                    </List.Content>
-                </List.Item>)
+                return (
+
+                    <Table.Row key={product_id} verticalAlign='top' >
+                        <Table.Cell collapsing>
+                            <Icon link name={product_selected ? 'minus' : 'plus'} color='blue' onClick={() => this.setProduct(product_id, data)} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            {product_name}
+                            {show_languages && product_selected ?
+                                Object.keys(data?.i18n).map(lang => {
+                                    return (
+                                        <Table basic='very'>
+                                        <Table.Header fullWidth>
+                                            <Table.Row>
+                                                <Table.HeaderCell />
+                                                <Table.HeaderCell />
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Row key={lang} verticalAlign='top' >
+                                            <Table.Cell collapsing>
+                                                <Icon link name={selected_language === lang ? 'minus' : 'plus'} color='blue' onClick={() => this.setLang(lang)} />
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                {LANG_MAP[lang].text}
+                                                {product_selected && selected_language === lang ? <ProductFiles user={this.props.user} files={files} lang={selected_language} ref="files" /> : null}
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        </Table>
+                                    )
+                                }) : null
+                            }
+                            {/*{product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}*/}
+                        </Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
+                        <Table.Cell>{pattern}</Table.Cell>
+                        <Table.Cell>{language}</Table.Cell>
+                    </Table.Row>
+
+                //     <List.Item key={product_id} active={product_id === this.state.product_id}>
+                //     <List.Icon name='folder' />
+                //     <List.Content>
+                //         <List.Header onClick={() => this.setProduct(product_id)} >
+                //             <Grid columns='equal'>
+                //                 <Grid.Row>
+                //                     <Grid.Column width={8}>{product_name}</Grid.Column>
+                //                     <Grid.Column>{date}</Grid.Column>
+                //                     <Grid.Column>{pattern}</Grid.Column>
+                //                     <Grid.Column>{language}</Grid.Column>
+                //                     <Grid.Column>
+                //                         {product_selected ?
+                //                             <Button.Group color='teal'>
+                //                                 <Button disabled={!file_language} onClick={i18n[file_language] ? this.addFile : this.addLanguage}>Add File</Button>
+                //                                 <Dropdown
+                //                                     className='button icon'
+                //                                     icon={flags[file_language]}
+                //                                     floating
+                //                                     options={options}
+                //                                     value={file_language}
+                //                                     trigger={<></>}
+                //                                     onChange={(e,{value}) => this.setFileLang(value)}
+                //                                 />
+                //                             </Button.Group>
+                //                             : null}
+                //                     </Grid.Column>
+                //                 </Grid.Row>
+                //             </Grid>
+                //         </List.Header>{description}
+                //         {/*{product_selected ? <List.Content>{description}</List.Content> : null}*/}
+                //         {product_selected && add_language ? <AddLanguage language={file_language} product_id={product_id} getProducts={this.getProducts} /> : null}
+                //         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} refresh={this.getProductFiles} /> : ''}
+                //         {product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}
+                //     </List.Content>
+                // </List.Item>
+                )
             }
         );
 
@@ -331,18 +407,43 @@ class ProductsManager extends Component {
                         </Menu.Menu>
                     </Menu> : null}
 
-                <Grid columns='equal' inverted padded relaxed='very' >
-                    <Grid.Row>
-                        <Grid.Column width={8} color='grey'>Title</Grid.Column>
-                        <Grid.Column color='grey'>Date</Grid.Column>
-                        <Grid.Column color='grey'>Collection</Grid.Column>
-                        <Grid.Column color='grey'>Original language</Grid.Column>
-                        <Grid.Column color='grey'>Action</Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                <List selection animated divided relaxed='very'>
-                    {products_list}
-                </List>
+                <Table basic='very'>
+                    <Table.Header fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell />
+                            <Table.HeaderCell width={7}>Product Name</Table.HeaderCell>
+                            <Table.HeaderCell>Film Date</Table.HeaderCell>
+                            <Table.HeaderCell>Date Added</Table.HeaderCell>
+                            <Table.HeaderCell>Collection</Table.HeaderCell>
+                            <Table.HeaderCell>Original Language</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {products_list}
+                    </Table.Body>
+
+                    <Table.Footer fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='6' textAlign='center'>
+                                <Pagination defaultActivePage={1} disabled totalPages={5} />
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
+                </Table>
+
+                {/*<Grid columns='equal' inverted padded relaxed='very' >*/}
+                {/*    <Grid.Row>*/}
+                {/*        <Grid.Column width={8} color='grey'>Title</Grid.Column>*/}
+                {/*        <Grid.Column color='grey'>Date</Grid.Column>*/}
+                {/*        <Grid.Column color='grey'>Collection</Grid.Column>*/}
+                {/*        <Grid.Column color='grey'>Original language</Grid.Column>*/}
+                {/*        <Grid.Column color='grey'>Action</Grid.Column>*/}
+                {/*    </Grid.Row>*/}
+                {/*</Grid>*/}
+                {/*<List selection animated divided relaxed='very'>*/}
+                {/*    {products_list}*/}
+                {/*</List>*/}
             </Segment>
         );
     }
