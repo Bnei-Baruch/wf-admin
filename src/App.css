@@ -390,7 +390,7 @@ body {
 
 .datefilter {
     cursor: pointer!important;
-    /*width:145px;*/
+    width:200px;
     height:38px!important;
     font-size: 18px!important;
     font-weight: bolder!important;

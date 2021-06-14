@@ -37,7 +37,7 @@ class ProductsApp extends Component {
         return (
             <Fragment>
                 {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
-                <ProductsAdmin user={this.props.user} setProduct={this.setProduct} />
+                {/*<ProductsAdmin user={this.props.user} setProduct={this.setProduct} />*/}
                 <ProductsManager user={this.props.user} />
             </Fragment>
         );

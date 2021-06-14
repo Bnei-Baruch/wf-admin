@@ -237,25 +237,6 @@ class ProductsManager extends Component {
             eng: (<Flag name='us'/>)
         }
 
-        const languages_list = Object.keys(product?.i18n).map(lang => {
-            console.log(lang);
-            return (
-                <Table.Row key={lang} verticalAlign='top' onClick={() => this.setLang(lang)} >
-                    <Table.Cell collapsing>
-                        <Icon name={lang ? 'minus' : 'plus'} color='blue' onClick={() => this.setState({show_files: !this.state.show_files})} />
-                    </Table.Cell>
-                    <Table.Cell>
-                        {lang}
-                        {/*{product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}*/}
-                    </Table.Cell>
-                    <Table.Cell></Table.Cell>
-                    <Table.Cell></Table.Cell>
-                    <Table.Cell></Table.Cell>
-                    <Table.Cell></Table.Cell>
-                </Table.Row>
-            )
-        })
-
         const products_list = products.map(data => {
                 const {product_name, description, product_id, i18n, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
@@ -271,12 +252,6 @@ class ProductsManager extends Component {
                                 Object.keys(data?.i18n).map(lang => {
                                     return (
                                         <Table basic='very'>
-                                        <Table.Header fullWidth>
-                                            <Table.Row>
-                                                <Table.HeaderCell />
-                                                <Table.HeaderCell />
-                                            </Table.Row>
-                                        </Table.Header>
                                         <Table.Row key={lang} verticalAlign='top' >
                                             <Table.Cell collapsing>
                                                 <Icon link name={selected_language === lang ? 'minus' : 'plus'} color='blue' onClick={() => this.setLang(lang)} />
@@ -297,42 +272,6 @@ class ProductsManager extends Component {
                         <Table.Cell>{pattern}</Table.Cell>
                         <Table.Cell>{language}</Table.Cell>
                     </Table.Row>
-
-                //     <List.Item key={product_id} active={product_id === this.state.product_id}>
-                //     <List.Icon name='folder' />
-                //     <List.Content>
-                //         <List.Header onClick={() => this.setProduct(product_id)} >
-                //             <Grid columns='equal'>
-                //                 <Grid.Row>
-                //                     <Grid.Column width={8}>{product_name}</Grid.Column>
-                //                     <Grid.Column>{date}</Grid.Column>
-                //                     <Grid.Column>{pattern}</Grid.Column>
-                //                     <Grid.Column>{language}</Grid.Column>
-                //                     <Grid.Column>
-                //                         {product_selected ?
-                //                             <Button.Group color='teal'>
-                //                                 <Button disabled={!file_language} onClick={i18n[file_language] ? this.addFile : this.addLanguage}>Add File</Button>
-                //                                 <Dropdown
-                //                                     className='button icon'
-                //                                     icon={flags[file_language]}
-                //                                     floating
-                //                                     options={options}
-                //                                     value={file_language}
-                //                                     trigger={<></>}
-                //                                     onChange={(e,{value}) => this.setFileLang(value)}
-                //                                 />
-                //                             </Button.Group>
-                //                             : null}
-                //                     </Grid.Column>
-                //                 </Grid.Row>
-                //             </Grid>
-                //         </List.Header>{description}
-                //         {/*{product_selected ? <List.Content>{description}</List.Content> : null}*/}
-                //         {product_selected && add_language ? <AddLanguage language={file_language} product_id={product_id} getProducts={this.getProducts} /> : null}
-                //         {product_selected && drop_zone ? <FilesUpload product_id={product_id} language={file_language} refresh={this.getProductFiles} /> : ''}
-                //         {product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}
-                //     </List.Content>
-                // </List.Item>
                 )
             }
         );
@@ -389,7 +328,6 @@ class ProductsManager extends Component {
                         </Menu.Item>
                     <Menu.Item>
                         <DatePicker
-                            className="datefilter"
                             locale={locale}
                             customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
                             dateFormat="yyyy-MM-dd"
@@ -403,8 +341,11 @@ class ProductsManager extends Component {
                             onChange={this.selectDate}
                         />
                     </Menu.Item>
-                        <Menu.Menu position='right'>
-                        </Menu.Menu>
+                    <Menu.Item position='right'>
+                            <Button positive={true}
+                                    onClick={this.newProduct}>Add Product
+                            </Button>
+                    </Menu.Item>
                     </Menu> : null}
 
                 <Table basic='very'>
@@ -431,19 +372,6 @@ class ProductsManager extends Component {
                         </Table.Row>
                     </Table.Footer>
                 </Table>
-
-                {/*<Grid columns='equal' inverted padded relaxed='very' >*/}
-                {/*    <Grid.Row>*/}
-                {/*        <Grid.Column width={8} color='grey'>Title</Grid.Column>*/}
-                {/*        <Grid.Column color='grey'>Date</Grid.Column>*/}
-                {/*        <Grid.Column color='grey'>Collection</Grid.Column>*/}
-                {/*        <Grid.Column color='grey'>Original language</Grid.Column>*/}
-                {/*        <Grid.Column color='grey'>Action</Grid.Column>*/}
-                {/*    </Grid.Row>*/}
-                {/*</Grid>*/}
-                {/*<List selection animated divided relaxed='very'>*/}
-                {/*    {products_list}*/}
-                {/*</List>*/}
             </Segment>
         );
     }

@@ -66,8 +66,8 @@ class ProductFiles extends Component {
             const {date, language, file_id, file_name} = f;
             if(language === this.props.lang) {
                 return(
-                    <Table.Row key={file_id} verticalAlign='top' >
-                        <Table.Cell singleLine selectable>{file_name}</Table.Cell>
+                    <Table.Row key={file_id} >
+                        <Table.Cell singleLine>{file_name}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
                 )
@@ -126,12 +126,6 @@ class ProductFiles extends Component {
                         </Menu.Item>
                     </Menu>
                 </Message> : null}
-                <Table.Header fullWidth>
-                    <Table.Row>
-                        <Table.HeaderCell width={17}></Table.HeaderCell>
-                        <Table.HeaderCell></Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
 
                 <Table.Body>
                     {files_list}
