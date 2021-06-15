@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {putData, WFDB_BACKEND, newProductMeta, WFSRV_BACKEND, postData} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Input, Dropdown, Modal} from 'semantic-ui-react'
+import {Container, Segment, Label, Button, Input, Dropdown, Modal, Form} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import CIT from "../CIT/CIT";
 import MDB from "./MDB";
@@ -82,46 +82,31 @@ class ProductsAdmin extends Component {
         const {product_name, product_description, language, cit_open, metadata, mdb_open} = this.state;
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='red' raised>
-                <Menu secondary >
-                    <Menu.Item>
-                        <Dropdown
-                            error={!language}
-                            placeholder="Language:"
-                            selection
-                            options={dep_options}
-                            language={language}
-                            onChange={(e,{value}) => this.setProductLang(value)}
-                            value={language} >
-                        </Dropdown>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product name.."
-                               onChange={e => this.setProductName(e.target.value)}
-                               value={product_name} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product description.."
-                               onChange={e => this.setProductDescription(e.target.value)}
-                               value={product_description} />
-                    </Menu.Item>
-                    <Menu.Item>
+            <Segment padded basic>
+                <Form>
+                    <Form.Select
+                        fluid
+                        label='Original Language'
+                        options={dep_options}
+                        placeholder='Choose Original Language'
+                    />
+                    <Form.Input fluid label='Title' placeholder='Title' />
+                    <Form.TextArea label='Description' placeholder='Description...' />
+                    <Form.Group widths='equal'>
+                        <Form.Field>
                         <Modal closeOnDimmerClick={false}
-                               trigger={<Button color='blue' icon='tags' onClick={this.openCit} />}
+                               trigger={<Button color='blue' content='RENAME' icon='tags' onClick={this.openCit} />}
                                onClose={this.onCancel}
                                open={cit_open}
-                               closeIcon="close"
-                               mountNode={document.getElementById("cit-modal-mount")}>
+                               closeIcon="close" >
                             <Modal.Content>
                                 <CIT metadata={metadata} onCancel={this.onCancel} onComplete={(x) => this.setMetadata(x)}/>
                             </Modal.Content>
                         </Modal>
-                    </Menu.Item>
-                    <Menu.Item>
+                        </Form.Field>
+                            <Form.Field>
                         <Modal closeOnDimmerClick={false}
-                               trigger={<Button color='teal' icon='archive' onClick={this.openMdb}/>}
+                               trigger={<Button color='teal' content='RELATE' icon='archive' onClick={this.openMdb}/>}
                                onClose={this.onCancel}
                                open={mdb_open}
                                size='large'
@@ -130,22 +115,14 @@ class ProductsAdmin extends Component {
                                 <MDB metadata={metadata} user={this.props.user} onCancel={this.onCancel} onComplete={(x) => this.onMdbSelect(x)}/>
                             </Modal.Content>
                         </Modal>
-                    </Menu.Item>
-                    <Menu.Menu position='right'>
-                    <Menu.Item>
-                        <Button positive={true}
-                                disabled={product_name === ""}
-                                onClick={this.newProduct}>New Product
-                        </Button>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Button negative={true}
-                                disabled
-                                onClick={this.removeProduct}>Delete Product
-                        </Button>
-                    </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
+                            </Form.Field>
+                    </Form.Group>
+                    {/*<Segment basic />*/}
+                    {/*<Segment textAlign='right' basic>*/}
+                    {/*    <Button onClick={this.removeProduct}>Cancel</Button>*/}
+                    {/*    <Button positive={true} onClick={this.newProduct}>Apply</Button>*/}
+                    {/*</Segment>*/}
+                </Form>
             </Segment>
         );
     }

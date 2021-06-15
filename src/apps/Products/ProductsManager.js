@@ -1,10 +1,26 @@
 import React, {Component} from 'react'
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Grid, Dropdown, List, Flag, Input, Icon, Table, Checkbox, Pagination} from 'semantic-ui-react'
+import {
+    Menu,
+    Segment,
+    Label,
+    Button,
+    Grid,
+    Dropdown,
+    List,
+    Flag,
+    Input,
+    Icon,
+    Table,
+    Popup,
+    Pagination,
+    Modal
+} from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
+import ProductsAdmin from "./ProductsAdmin";
 import FilesUpload from "../Upload/FilesUpload";
 import AddLanguage from "./AddLanguage";
 import {fetchCollections} from "../CIT/shared/store";
@@ -42,6 +58,7 @@ class ProductsManager extends Component {
         special: "censored",
         source: null,
         note_area: "",
+        show_admin: false,
         show_filters: true,
         show_files: false,
         show_languages: false,
@@ -217,11 +234,11 @@ class ProductsManager extends Component {
         } else {
             this.setState({selected_language: null, files: [], show_files: !this.state.show_files});
         }
-    }
+    };
 
     render() {
 
-        const {filters, pattern, collections, date, show_filters, product, products, locale, drop_zone, add_language, language, files, file_language, show_languages, show_files, selected_language} = this.state;
+        const {filters, pattern, collections, date, show_filters, show_admin, products, locale, drop_zone, add_language, language, files, file_language, show_languages, show_files, selected_language} = this.state;
 
         const options = [
             { key: 'title', description: 'Choose Language:', disabled: true},
@@ -290,7 +307,7 @@ class ProductsManager extends Component {
         });
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='green' raised>
+            <Segment textAlign='left' className="ingest_segment" basic>
                 <Label attached='top' size='big' >
                     <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'} onClick={() => this.setState({show_filters: !this.state.show_filters})} />
                     {active_filters}
@@ -342,9 +359,21 @@ class ProductsManager extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item position='right'>
-                            <Button positive={true}
-                                    onClick={this.newProduct}>Add Product
-                            </Button>
+                        <Modal closeOnDimmerClick={false}
+                               trigger={<Button positive={true} onClick={() => this.setState({show_admin: !show_admin})}>Add Product</Button>}
+                               onClose={() => this.setState({show_admin: false})}
+                               open={show_admin}
+                               size='tiny'
+                               closeIcon="close">
+                            <Modal.Header>Add/Edit Product</Modal.Header>
+                            <Modal.Content>
+                                <ProductsAdmin user={this.props.user} setProduct={this.setProduct} />
+                            </Modal.Content>
+                            <Modal.Actions>
+                                <Button>Cancel</Button>
+                                <Button positive={true} >Apply</Button>
+                            </Modal.Actions>
+                        </Modal>
                     </Menu.Item>
                     </Menu> : null}
 

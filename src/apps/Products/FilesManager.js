@@ -171,7 +171,9 @@ class FilesManager extends Component {
         this.setState({product_name});
     };
 
-    newProduct = () => {
+    newProduct = (event, data) => {
+        console.log(event, data);
+        return
         const {product_name, language, original_language} = this.state;
         let product_meta = newProductMeta(product_name, language, original_language);
         // if(doers)

@@ -4,6 +4,10 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.popup_product {
+    width: 520px;
+}
+
 .file_list {
     padding: .0em .0em!important;
 }
