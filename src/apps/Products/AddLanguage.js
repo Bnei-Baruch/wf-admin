@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {postData, WFDB_BACKEND} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Input} from 'semantic-ui-react'
+import {Segment, Button, Form} from 'semantic-ui-react'
+import {dep_options} from "../../shared/consts";
 
 class AddLanguage extends Component {
 
@@ -40,31 +41,25 @@ class AddLanguage extends Component {
         const {name, description} = this.state;
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='red' raised>
-                <Menu secondary >
-                    <Menu.Item>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product name.."
-                               onChange={e => this.setProductName(e.target.value)}
-                               value={name} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product description.."
-                               onChange={e => this.setProductDescription(e.target.value)}
-                               value={description} />
-                    </Menu.Item>
-                    <Menu.Menu position='right'>
-                    <Menu.Item>
-                        <Button positive={true}
-                                disabled={name === ""}
-                                onClick={this.addProduct}>Add Language
-                        </Button>
-                    </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
+            <Segment padded basic>
+                <Form>
+                    <Form.Select
+                        fluid
+                        label='Language'
+                        options={dep_options}
+                        placeholder='Choose Language'
+                    />
+                    <Form.Input fluid label='Title' placeholder='Title' onChange={e => this.setProductName(e.target.value)} value={name} />
+                    <Form.TextArea label='Description' placeholder='Description...' onChange={e => this.setProductDescription(e.target.value)} value={description} />
+                    <Form.Group widths='equal'>
+                        <Form.Field>
+                            <Button positive={true}
+                                    disabled={name === ""}
+                                    onClick={this.addProduct}>Add Language
+                            </Button>
+                        </Form.Field>
+                    </Form.Group>
+                </Form>
             </Segment>
         );
     }

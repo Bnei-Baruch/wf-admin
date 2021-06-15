@@ -62,6 +62,7 @@ class ProductsManager extends Component {
         show_filters: true,
         show_files: false,
         show_languages: false,
+        add_language: false,
     };
 
     componentDidMount() {
@@ -218,6 +219,11 @@ class ProductsManager extends Component {
         }
     };
 
+    editProduct = (product) => {
+        console.log(product)
+        this.setState({product, show_admin: true});
+    };
+
     addFile = () => {
         this.setState({drop_zone: true});
     };
@@ -238,14 +244,31 @@ class ProductsManager extends Component {
 
     render() {
 
-        const {filters, pattern, collections, date, show_filters, show_admin, products, locale, drop_zone, add_language, language, files, file_language, show_languages, show_files, selected_language} = this.state;
+        const {
+            filters,
+            pattern,
+            collections,
+            date,
+            show_filters,
+            show_admin,
+            products,
+            locale,
+            drop_zone,
+            add_language,
+            language,
+            files,
+            file_language,
+            show_languages,
+            show_files,
+            selected_language
+        } = this.state;
 
         const options = [
-            { key: 'title', description: 'Choose Language:', disabled: true},
-            { key: 'd', description: '', disabled: true},
-            { key: 'il', flag: 'il', text: 'Hebrew', value: 'heb' },
-            { key: 'ru', flag: 'ru',  text: 'Russian', value: 'rus' },
-            { key: 'en', flag: 'us',  text: 'English', value: 'eng' },
+            {key: 'title', description: 'Choose Language:', disabled: true},
+            {key: 'd', description: '', disabled: true},
+            {key: 'il', flag: 'il', text: 'Hebrew', value: 'heb'},
+            {key: 'ru', flag: 'ru', text: 'Russian', value: 'rus'},
+            {key: 'en', flag: 'us', text: 'English', value: 'eng'},
         ]
 
         const flags = {
@@ -258,32 +281,59 @@ class ProductsManager extends Component {
                 const {product_name, description, product_id, i18n, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
                 return (
-
-                    <Table.Row key={product_id} verticalAlign='top' >
+                    <Table.Row key={product_id} verticalAlign='top'>
                         <Table.Cell collapsing>
-                            <Icon link name={product_selected ? 'minus' : 'plus'} color='blue' onClick={() => this.setProduct(product_id, data)} />
+                            <Icon link name={product_selected ? 'minus' : 'plus'} color='blue'
+                                  onClick={() => this.setProduct(product_id, data)}/>
                         </Table.Cell>
                         <Table.Cell>
                             {product_name}
                             {show_languages && product_selected ?
                                 Object.keys(data?.i18n).map(lang => {
                                     return (
-                                        <Table basic='very'>
-                                        <Table.Row key={lang} verticalAlign='top' >
-                                            <Table.Cell collapsing>
-                                                <Icon link name={selected_language === lang ? 'minus' : 'plus'} color='blue' onClick={() => this.setLang(lang)} />
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                {LANG_MAP[lang].text}
-                                                {product_selected && selected_language === lang ? <ProductFiles user={this.props.user} files={files} lang={selected_language} ref="files" /> : null}
-                                            </Table.Cell>
-                                        </Table.Row>
+                                        <Table basic='very' key={product_id + lang}>
+                                            <Table.Row key={lang} verticalAlign='top'>
+                                                <Table.Cell collapsing>
+                                                    <Icon link name={selected_language === lang ? 'minus' : 'plus'}
+                                                          color='blue' onClick={() => this.setLang(lang)}/>
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    {LANG_MAP[lang].text}
+                                                    {product_selected && selected_language === lang ?
+                                                        <ProductFiles user={this.props.user} files={files}
+                                                                      lang={selected_language} ref="files"/> : null}
+                                                </Table.Cell>
+                                            </Table.Row>
                                         </Table>
                                     )
                                 }) : null
                             }
-                            {/*{product_selected ? <ProductFiles user={this.props.user} files={files} langs={i18n} ref="files" /> : null}*/}
+                            {show_languages && product_selected ?
+                                <Table basic='very'>
+                                    <Table.Row verticalAlign='top'>
+                                        <Table.Cell collapsing>
+                                            <Modal closeOnDimmerClick={false}
+                                                   trigger={<Icon link name='plus' color='blue' onClick={() => this.setState({add_language: !add_language})}/>}
+                                                   onClose={() => this.setState({add_language: false})}
+                                                   open={add_language}
+                                                   size='tiny'
+                                                   closeIcon="close">
+                                                <Modal.Header>Add/Edit Language</Modal.Header>
+                                                <Modal.Content>
+                                                    <AddLanguage user={this.props.user} />
+                                                </Modal.Content>
+                                                <Modal.Actions>
+                                                    <Button>Cancel</Button>
+                                                    <Button positive={true}>Apply</Button>
+                                                </Modal.Actions>
+                                            </Modal>
+                                        </Table.Cell>
+                                        <Table.Cell>Add Language</Table.Cell>
+                                    </Table.Row>
+                                </Table> : null
+                            }
                         </Table.Cell>
+                        <Table.Cell><Button basic positive onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{pattern}</Table.Cell>
@@ -294,94 +344,100 @@ class ProductsManager extends Component {
         );
 
         const col_options = collections.map(data => {
-            if(collections.length > 0) {
-                const {uid, name, properties:{pattern}} = data;
-                return({key: uid, value: pattern, text: name})
+            if (collections.length > 0) {
+                const {uid, name, properties: {pattern}} = data;
+                return ({key: uid, value: pattern, text: name})
             }
         });
 
         const active_filters = Object.keys(filters).map(f => {
             return (<Label key={f} as='a' size='big' color='blue'>{f}
-                      <Icon name='delete' onClick={() => this.removeFilter(f)}/>
-                    </Label>)
+                <Icon name='delete' onClick={() => this.removeFilter(f)}/>
+            </Label>)
         });
 
         return (
             <Segment textAlign='left' className="ingest_segment" basic>
-                <Label attached='top' size='big' >
-                    <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'} onClick={() => this.setState({show_filters: !this.state.show_filters})} />
+                <Label attached='top' size='big'>
+                    <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'}
+                          onClick={() => this.setState({show_filters: !this.state.show_filters})}/>
                     {active_filters}
                 </Label>
-                <br /><br /><br />
+                <br/><br/><br/>
                 {show_filters ?
-                <Menu secondary>
-                    <Menu.Item>
-                        <Button color='blue'
-                                disabled={Object.keys(filters).length === 0}
-                                onClick={this.applyFilter}>Apply
-                        </Button>
-                    </Menu.Item>
+                    <Menu secondary>
+                        <Menu.Item>
+                            <Button color='blue'
+                                    disabled={Object.keys(filters).length === 0}
+                                    onClick={this.applyFilter}>Apply
+                            </Button>
+                        </Menu.Item>
                         <Menu.Item>
                             <Dropdown className='icon' button labeled icon='world'
                                 // error={!language}
-                                placeholder="Original language:"
-                                selection
-                                options={dep_options}
-                                language={language}
-                                onChange={(e,{value}) => this.setProductLang(value)}
-                                value={language} >
+                                      placeholder="Original language:"
+                                      selection
+                                      options={dep_options}
+                                      language={language}
+                                      onChange={(e, {value}) => this.setProductLang(value)}
+                                      value={language}>
                             </Dropdown>
                         </Menu.Item>
                         <Menu.Item>
                             <Dropdown className='icon' button labeled icon='tag'
                                 // error={!pattern}
-                                search
-                                selection
-                                options={col_options}
-                                placeholder='Collections:'
-                                value={pattern}
-                                onChange={(e,{value}) => this.selectCollection(value)}
+                                      search
+                                      selection
+                                      options={col_options}
+                                      placeholder='Collections:'
+                                      value={pattern}
+                                      onChange={(e, {value}) => this.selectCollection(value)}
                             />
                         </Menu.Item>
-                    <Menu.Item>
-                        <DatePicker
-                            locale={locale}
-                            customInput={<Input action={{ icon: 'calendar' }} actionPosition='left' placeholder='Dagte...'  />}
-                            dateFormat="yyyy-MM-dd"
-                            showYearDropdown
-                            showMonthDropdown
-                            scrollableYearDropdown
-                            maxDate={new Date()}
-                            openToDate={new Date()}
-                            selected={date ? date : null}
-                            placeholderText="Date:"
-                            onChange={this.selectDate}
-                        />
-                    </Menu.Item>
-                    <Menu.Item position='right'>
-                        <Modal closeOnDimmerClick={false}
-                               trigger={<Button positive={true} onClick={() => this.setState({show_admin: !show_admin})}>Add Product</Button>}
-                               onClose={() => this.setState({show_admin: false})}
-                               open={show_admin}
-                               size='tiny'
-                               closeIcon="close">
-                            <Modal.Header>Add/Edit Product</Modal.Header>
-                            <Modal.Content>
-                                <ProductsAdmin user={this.props.user} setProduct={this.setProduct} />
-                            </Modal.Content>
-                            <Modal.Actions>
-                                <Button>Cancel</Button>
-                                <Button positive={true} >Apply</Button>
-                            </Modal.Actions>
-                        </Modal>
-                    </Menu.Item>
+                        <Menu.Item>
+                            <DatePicker
+                                locale={locale}
+                                customInput={<Input action={{icon: 'calendar'}} actionPosition='left'
+                                                    placeholder='Dagte...'/>}
+                                dateFormat="yyyy-MM-dd"
+                                showYearDropdown
+                                showMonthDropdown
+                                scrollableYearDropdown
+                                maxDate={new Date()}
+                                openToDate={new Date()}
+                                selected={date ? date : null}
+                                placeholderText="Date:"
+                                onChange={this.selectDate}
+                            />
+                        </Menu.Item>
+                        <Menu.Item position='right'>
+                            <Modal closeOnDimmerClick={false}
+                                   trigger={<Button positive={true}
+                                                    onClick={() => this.setState({show_admin: !show_admin})}>Add
+                                       Product</Button>}
+                                   onClose={() => this.setState({show_admin: false})}
+                                   open={show_admin}
+                                   size='tiny'
+                                   closeIcon="close">
+                                <Modal.Header>Add/Edit Product</Modal.Header>
+                                <Modal.Content>
+                                    <ProductsAdmin user={this.props.user}
+                                                   setProduct={this.setProduct} {...this.state} />
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button>Cancel</Button>
+                                    <Button positive={true}>Apply</Button>
+                                </Modal.Actions>
+                            </Modal>
+                        </Menu.Item>
                     </Menu> : null}
 
                 <Table basic='very'>
                     <Table.Header fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell />
+                            <Table.HeaderCell/>
                             <Table.HeaderCell width={7}>Product Name</Table.HeaderCell>
+                            <Table.HeaderCell/>
                             <Table.HeaderCell>Film Date</Table.HeaderCell>
                             <Table.HeaderCell>Date Added</Table.HeaderCell>
                             <Table.HeaderCell>Collection</Table.HeaderCell>
@@ -396,7 +452,7 @@ class ProductsManager extends Component {
                     <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell colSpan='6' textAlign='center'>
-                                <Pagination defaultActivePage={1} disabled totalPages={5} />
+                                <Pagination defaultActivePage={1} disabled totalPages={5}/>
                             </Table.HeaderCell>
                         </Table.Row>
                     </Table.Footer>

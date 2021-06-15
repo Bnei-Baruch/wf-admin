@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import {putData, WFDB_BACKEND, newProductMeta, WFSRV_BACKEND, postData} from '../../shared/tools';
-import {Container, Segment, Label, Button, Input, Dropdown, Modal, Form} from 'semantic-ui-react'
+import {putData, WFDB_BACKEND, newProductMeta} from '../../shared/tools';
+import {Segment, Button, Modal, Form} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import CIT from "../CIT/CIT";
 import MDB from "./MDB";
