@@ -291,7 +291,7 @@ class ProductsManager extends Component {
                             {show_languages && product_selected ?
                                 Object.keys(data?.i18n).map(lang => {
                                     return (
-                                        <Table basic='very' key={product_id + lang}>
+                                        <Table basic='very' key={product_id + lang} >
                                             <Table.Row key={lang} verticalAlign='top'>
                                                 <Table.Cell collapsing>
                                                     <Icon link name={selected_language === lang ? 'minus' : 'plus'}
@@ -333,11 +333,11 @@ class ProductsManager extends Component {
                                 </Table> : null
                             }
                         </Table.Cell>
-                        <Table.Cell><Button basic positive onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
+                        <Table.Cell><Button compact basic positive onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{pattern}</Table.Cell>
-                        <Table.Cell>{language}</Table.Cell>
+                        <Table.Cell>{LANG_MAP[language].text}</Table.Cell>
                     </Table.Row>
                 )
             }
@@ -397,8 +397,7 @@ class ProductsManager extends Component {
                         <Menu.Item>
                             <DatePicker
                                 locale={locale}
-                                customInput={<Input action={{icon: 'calendar'}} actionPosition='left'
-                                                    placeholder='Dagte...'/>}
+                                customInput={<Input action={{icon: 'calendar'}} actionPosition='left' placeholder='Dagte...'/>}
                                 dateFormat="yyyy-MM-dd"
                                 showYearDropdown
                                 showMonthDropdown
@@ -431,7 +430,6 @@ class ProductsManager extends Component {
                             </Modal>
                         </Menu.Item>
                     </Menu> : null}
-
                 <Table basic='very'>
                     <Table.Header fullWidth>
                         <Table.Row>
@@ -444,14 +442,12 @@ class ProductsManager extends Component {
                             <Table.HeaderCell>Original Language</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {products_list}
                     </Table.Body>
-
                     <Table.Footer fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='6' textAlign='center'>
+                            <Table.HeaderCell colSpan='7' textAlign='center'>
                                 <Pagination defaultActivePage={1} disabled totalPages={5}/>
                             </Table.HeaderCell>
                         </Table.Row>
