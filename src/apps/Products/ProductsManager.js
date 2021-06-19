@@ -101,7 +101,7 @@ class ProductsManager extends Component {
         let path = Object.keys(filters).length === 0 ? 'products' : 'products/find?' + query.join('&');
         getData(path, products => {
             console.log(products)
-            this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
+            this.setState({products: products, product_id: null, files: [], show_language: false})
         });
     };
 
@@ -109,7 +109,7 @@ class ProductsManager extends Component {
         const {language, date} = this.state;
         getData(`products/find?language=${language}&date=${date}`, products => {
             console.log(products)
-            this.setState({products: products, product_id: null, files: [], add_language: false, drop_zone: false})
+            this.setState({products: products, product_id: null, files: [], show_language: false})
         });
     };
 
@@ -123,7 +123,7 @@ class ProductsManager extends Component {
     getProductFilesByLang = (product_id, lang) => {
         getData(`files/find?product_id=${product_id}&languages=${lang}`, (files) => {
             console.log(":: Files DB Data: ", files);
-            this.setState({product_id, files, add_language: false, drop_zone: false}, () => {
+            this.setState({product_id, files, drop_zone: false}, () => {
                 //this.refs.files.sortFiles();
             });
         });
@@ -156,7 +156,7 @@ class ProductsManager extends Component {
     };
 
     setFileLang = (file_language) => {
-        this.setState({file_language, drop_zone: false, add_language: false});
+        this.setState({file_language});
     };
 
     selectDate = (date) => {
@@ -250,6 +250,16 @@ class ProductsManager extends Component {
         this.toggleProductAdmin();
         this.getProducts();
         this.setState({show_admin: false, product: null});
+    };
+
+    toggleAddLanguage = () => {
+        this.setState({add_language: !this.state.add_language});
+    };
+
+    finishLanguage = () => {
+        this.toggleAddLanguage();
+        this.getProducts();
+        this.setState({product_id: null, product: null, show_languages: false});
     }
 
     render() {
@@ -264,7 +274,6 @@ class ProductsManager extends Component {
             products,
             locale,
             drop_zone,
-            add_language,
             language,
             files,
             file_language,
@@ -273,22 +282,8 @@ class ProductsManager extends Component {
             selected_language
         } = this.state;
 
-        const options = [
-            {key: 'title', description: 'Choose Language:', disabled: true},
-            {key: 'd', description: '', disabled: true},
-            {key: 'il', flag: 'il', text: 'Hebrew', value: 'heb'},
-            {key: 'ru', flag: 'ru', text: 'Russian', value: 'rus'},
-            {key: 'en', flag: 'us', text: 'English', value: 'eng'},
-        ]
-
-        const flags = {
-            heb: (<Flag name='il'/>),
-            rus: (<Flag name='ru'/>),
-            eng: (<Flag name='us'/>)
-        }
-
         const products_list = products.map(data => {
-                const {product_name, description, product_id, i18n, date, language, pattern} = data;
+                const {product_name, product_id, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
                 return (
                     <Table.Row key={product_id} verticalAlign='top'>
@@ -322,21 +317,7 @@ class ProductsManager extends Component {
                                 <Table basic='very'>
                                     <Table.Row verticalAlign='top'>
                                         <Table.Cell collapsing>
-                                            <Modal closeOnDimmerClick={false}
-                                                   trigger={<Icon link name='plus' color='blue' onClick={() => this.setState({add_language: !add_language})}/>}
-                                                   onClose={() => this.setState({add_language: false})}
-                                                   open={add_language}
-                                                   size='tiny'
-                                                   closeIcon="close">
-                                                <Modal.Header>Add/Edit Language</Modal.Header>
-                                                <Modal.Content>
-                                                    <AddLanguage user={this.props.user} />
-                                                </Modal.Content>
-                                                <Modal.Actions>
-                                                    <Button>Cancel</Button>
-                                                    <Button positive={true}>Apply</Button>
-                                                </Modal.Actions>
-                                            </Modal>
+                                            <Icon link name='plus' color='blue' onClick={this.toggleAddLanguage}/>
                                         </Table.Cell>
                                         <Table.Cell>Add Language</Table.Cell>
                                     </Table.Row>
@@ -426,6 +407,11 @@ class ProductsManager extends Component {
                                            show_admin={this.state.show_admin}
                                            finishProduct={this.finishProduct}
                                            toggleProductAdmin={this.toggleProductAdmin} />
+                            <AddLanguage user={this.props.user}
+                                         product_id={this.state.product_id}
+                                         add_language={this.state.add_language}
+                                         finishLanguage={this.finishLanguage}
+                                         toggleAddLanguage={this.toggleAddLanguage} />
                         </Menu.Item>
                     </Menu> : null}
                 <Table basic='very'>

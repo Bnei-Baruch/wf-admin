@@ -1,66 +1,71 @@
 import React, {Component} from 'react'
 import {postData, WFDB_BACKEND} from '../../shared/tools';
-import {Segment, Button, Form} from 'semantic-ui-react'
-import {dep_options} from "../../shared/consts";
+import {Segment, Button, Form, Modal} from 'semantic-ui-react'
+import {language_options} from "../../shared/consts";
 
 class AddLanguage extends Component {
 
     state = {
+        language: "",
         name: "",
         description: "",
     };
 
-    setProductName = (name) => {
+    setLanguageName = (name) => {
         this.setState({name});
     };
 
-    setProductDescription = (description) => {
+    setLanguageDescription = (description) => {
         this.setState({description});
     };
 
-    addProduct = () => {
-        const {name, description} = this.state;
-        const {product_id, language} = this.props;
+    setLanguage = (language) => {
+        this.setState({language});
+    };
+
+    addLanguage = () => {
+        const {language, name, description} = this.state;
+        const {product_id} = this.props;
         const data = {name, description};
         postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${language}`, data, (cb) => {
             console.log(":: PUT Respond: ",cb);
-            this.setState({name: "", description: ""});
-            this.props.getProducts(language);
+            this.setState({name: "", description: "", language: ""});
+            this.props.finishLanguage();
         });
     };
 
-
-    setProduct = (product_id) => {
-        console.log(product_id)
-        this.setState({product_id});
-        this.getProductFiles(product_id)
-    }
-
     render() {
 
-        const {name, description} = this.state;
+        const {language, name, description} = this.state;
 
         return (
-            <Segment padded basic>
-                <Form>
-                    <Form.Select
-                        fluid
-                        label='Language'
-                        options={dep_options}
-                        placeholder='Choose Language'
-                    />
-                    <Form.Input fluid label='Title' placeholder='Title' onChange={e => this.setProductName(e.target.value)} value={name} />
-                    <Form.TextArea label='Description' placeholder='Description...' onChange={e => this.setProductDescription(e.target.value)} value={description} />
-                    <Form.Group widths='equal'>
-                        <Form.Field>
-                            <Button positive={true}
-                                    disabled={name === ""}
-                                    onClick={this.addProduct}>Add Language
-                            </Button>
-                        </Form.Field>
-                    </Form.Group>
-                </Form>
-            </Segment>
+            <Modal closeOnDimmerClick={false}
+                   onClose={this.props.toggleAddLanguage}
+                   open={this.props.add_language}
+                   size='tiny'
+                   closeIcon="close">
+                <Modal.Header>Add/Edit Language</Modal.Header>
+                <Modal.Content>
+                    <Segment padded basic>
+                        <Form>
+                            <Form.Select
+                                fluid
+                                label='Language'
+                                options={language_options} //FIXME: Don't show languages that already exist
+                                placeholder='Choose Language'
+                                value={language}
+                                onChange={(e, {value}) => this.setLanguage(value)}
+                            />
+                            <Form.Input fluid label='Title' placeholder='Title' onChange={e => this.setLanguageName(e.target.value)} value={name} />
+                            <Form.TextArea label='Description' placeholder='Description...' onChange={e => this.setLanguageDescription(e.target.value)} value={description} />
+                        </Form>
+                    </Segment>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.props.toggleAddLanguage} >Cancel</Button>
+                    <Button positive={true} onClick={this.addLanguage} >Apply</Button>
+                </Modal.Actions>
+            </Modal>
         );
     }
 }
