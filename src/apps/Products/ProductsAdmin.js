@@ -11,11 +11,19 @@ class ProductsAdmin extends Component {
         cit_open: false,
         product_name: "",
         product_description: "",
-        language: "heb",
+        language: "",
         locale: "he",
-        metadata: {language: "heb"},
+        metadata: {language: ""},
         mdb_open: false,
-        unit: null
+        unit: null,
+    };
+
+    checkEdit = () => {
+        if(this.props.product) {
+            const {product_name, language, i18n, line, parent} = this.props.product;
+            const {[language]: {description}} = i18n;
+            this.setState({product_name, language, product_description: description, metadata: line, parent});
+        }
     };
 
     setProductLang = (language) => {
@@ -45,10 +53,34 @@ class ProductsAdmin extends Component {
         product_meta.parent.mdb_id = unit.id;
         product_meta.parent.wf_id = unit.properties?.workflow_id;
         console.log(" :: New Meta: ", product_meta);
+        this.saveProduct(product_meta);
+    };
+
+    editProduct = () => {
+        let {product_name, product_description, language, metadata, unit, parent} = this.state;
+        let {product} = this.props;
+        let line = metadata;
+        if(unit) {
+            parent = {...parent,
+                mdb_uid: unit.uid,
+                mdb_id: unit.id,
+                wf_id: unit.properties?.workflow_id,
+                capture_date: unit.properties?.capture_date,
+                film_date: unit.properties?.film_date,
+            }
+        }
+        product = {...product, product_name, language, parent, line,
+            i18n: {[language]: {name: product_name, description: product_description}}
+        };
+        this.saveProduct(product);
+    }
+
+    saveProduct = (product_meta) => {
         putData(`${WFDB_BACKEND}/products/${product_meta.product_id}`, product_meta, (cb) => {
-            console.log(":: PUT Respond: ",cb);
+            console.log(":: saveProduct Respond: ",cb);
+            this.setState({product_name: "", product_description: "", language: "", unit: null, metadata: {language: ""}});
+            this.props.finishProduct();
         });
-        this.setState({product_name: ""});
     };
 
     openCit = () => {
@@ -82,48 +114,59 @@ class ProductsAdmin extends Component {
         const {product_name, product_description, language, cit_open, metadata, mdb_open} = this.state;
 
         return (
-            <Segment padded basic>
-                <Form>
-                    <Form.Select
-                        fluid
-                        label='Original Language'
-                        options={dep_options}
-                        placeholder='Choose Original Language'
-                    />
-                    <Form.Input fluid label='Title' placeholder='Title' />
-                    <Form.TextArea label='Description' placeholder='Description...' />
-                    <Form.Group widths='equal'>
-                        <Form.Field>
-                        <Modal closeOnDimmerClick={false}
-                               trigger={<Button color='blue' content='RENAME' icon='tags' onClick={this.openCit} />}
-                               onClose={this.onCancel}
-                               open={cit_open}
-                               closeIcon="close" >
-                            <Modal.Content>
-                                <CIT metadata={metadata} onCancel={this.onCancel} onComplete={(x) => this.setMetadata(x)}/>
-                            </Modal.Content>
-                        </Modal>
-                        </Form.Field>
-                            <Form.Field>
-                        <Modal closeOnDimmerClick={false}
-                               trigger={<Button color='teal' content='RELATE' icon='archive' onClick={this.openMdb}/>}
-                               onClose={this.onCancel}
-                               open={mdb_open}
-                               size='large'
-                               closeIcon="close">
-                            <Modal.Content>
-                                <MDB metadata={metadata} user={this.props.user} onCancel={this.onCancel} onComplete={(x) => this.onMdbSelect(x)}/>
-                            </Modal.Content>
-                        </Modal>
-                            </Form.Field>
-                    </Form.Group>
-                    {/*<Segment basic />*/}
-                    {/*<Segment textAlign='right' basic>*/}
-                    {/*    <Button onClick={this.removeProduct}>Cancel</Button>*/}
-                    {/*    <Button positive={true} onClick={this.newProduct}>Apply</Button>*/}
-                    {/*</Segment>*/}
-                </Form>
-            </Segment>
+            <Modal closeOnDimmerClick={false}
+                   onMount={this.checkEdit}
+                   onClose={this.props.toggleProductAdmin}
+                   open={this.props.show_admin}
+                   size='tiny'
+                   closeIcon="close">
+                <Modal.Header>Add/Edit Product</Modal.Header>
+                <Modal.Content>
+                    <Segment padded basic>
+                        <Form>
+                            <Form.Select
+                                fluid
+                                label='Original Language'
+                                options={dep_options}
+                                placeholder='Choose Original Language'
+                                value={language}
+                                onChange={(e, {value}) => this.setProductLang(value)}
+                            />
+                            <Form.Input fluid label='Title' placeholder='Title' value={product_name} onChange={(e, {value}) => this.setProductName(value)} />
+                            <Form.TextArea label='Description' placeholder='Description...' value={product_description} onChange={(e, {value}) => this.setProductDescription(value)}/>
+                            <Form.Group widths='equal'>
+                                <Form.Field>
+                                    <Modal closeOnDimmerClick={false}
+                                           trigger={<Button color='blue' content='RENAME' icon='tags' onClick={this.openCit} />}
+                                           onClose={this.onCancel}
+                                           open={cit_open}
+                                           closeIcon="close" >
+                                        <Modal.Content>
+                                            <CIT metadata={metadata} onCancel={this.onCancel} onComplete={(x) => this.setMetadata(x)}/>
+                                        </Modal.Content>
+                                    </Modal>
+                                </Form.Field>
+                                <Form.Field>
+                                    <Modal closeOnDimmerClick={false}
+                                           trigger={<Button color='teal' content='RELATE' icon='archive' onClick={this.openMdb}/>}
+                                           onClose={this.onCancel}
+                                           open={mdb_open}
+                                           size='large'
+                                           closeIcon="close">
+                                        <Modal.Content>
+                                            <MDB metadata={metadata} user={this.props.user} onCancel={this.onCancel} onComplete={(x) => this.onMdbSelect(x)}/>
+                                        </Modal.Content>
+                                    </Modal>
+                                </Form.Field>
+                            </Form.Group>
+                        </Form>
+                    </Segment>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.props.toggleProductAdmin}>Cancel</Button>
+                    <Button positive={true} onClick={this.props.product ? this.editProduct : this.newProduct}>Apply</Button>
+                </Modal.Actions>
+            </Modal>
         );
     }
 }

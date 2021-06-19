@@ -38,7 +38,7 @@ class ProductsManager extends Component {
         insert_button: true,
         inserting: false,
         product_name: "",
-        product: {i18n: {}},
+        product: null,
         selected_language: null,
         products: [],
         files: [],
@@ -215,7 +215,7 @@ class ProductsManager extends Component {
             console.log(product)
             this.setState({product_id, product, show_languages: !this.state.show_languages});
         } else {
-            this.setState({product_id: null, product: {i18n: {}}, show_languages: !this.state.show_languages});
+            this.setState({product_id: null, product: null, show_languages: !this.state.show_languages});
         }
     };
 
@@ -241,6 +241,16 @@ class ProductsManager extends Component {
             this.setState({selected_language: null, files: [], show_files: !this.state.show_files});
         }
     };
+
+    toggleProductAdmin = () => {
+        this.setState({show_admin: !this.state.show_admin});
+    };
+
+    finishProduct = () => {
+        this.toggleProductAdmin();
+        this.getProducts();
+        this.setState({show_admin: false, product: null});
+    }
 
     render() {
 
@@ -410,24 +420,12 @@ class ProductsManager extends Component {
                             />
                         </Menu.Item>
                         <Menu.Item position='right'>
-                            <Modal closeOnDimmerClick={false}
-                                   trigger={<Button positive={true}
-                                                    onClick={() => this.setState({show_admin: !show_admin})}>Add
-                                       Product</Button>}
-                                   onClose={() => this.setState({show_admin: false})}
-                                   open={show_admin}
-                                   size='tiny'
-                                   closeIcon="close">
-                                <Modal.Header>Add/Edit Product</Modal.Header>
-                                <Modal.Content>
-                                    <ProductsAdmin user={this.props.user}
-                                                   setProduct={this.setProduct} {...this.state} />
-                                </Modal.Content>
-                                <Modal.Actions>
-                                    <Button>Cancel</Button>
-                                    <Button positive={true}>Apply</Button>
-                                </Modal.Actions>
-                            </Modal>
+                            <Button positive={true} onClick={this.toggleProductAdmin}>Add Product</Button>
+                            <ProductsAdmin user={this.props.user}
+                                           product={this.state.product}
+                                           show_admin={this.state.show_admin}
+                                           finishProduct={this.finishProduct}
+                                           toggleProductAdmin={this.toggleProductAdmin} />
                         </Menu.Item>
                     </Menu> : null}
                 <Table basic='very'>
