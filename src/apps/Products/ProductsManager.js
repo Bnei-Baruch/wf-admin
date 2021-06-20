@@ -306,7 +306,9 @@ class ProductsManager extends Component {
                                                     {LANG_MAP[lang].text}
                                                     {product_selected && selected_language === lang ?
                                                         <ProductFiles user={this.props.user} files={files}
-                                                                      lang={selected_language} ref="files"/> : null}
+                                                                      product_id={product_id}
+                                                                      lang={selected_language} ref="files"
+                                                                      getProductFiles={this.getProductFiles}/> : null}
                                                 </Table.Cell>
                                             </Table.Row>
                                         </Table>

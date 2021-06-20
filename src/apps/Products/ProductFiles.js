@@ -57,9 +57,14 @@ class ProductFiles extends Component {
         fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
+    onFileUploaded = () => {
+        this.setState({upload: false});
+        this.props.getProductFiles();
+    };
+
     render() {
 
-        const {source, language, langs_files} = this.state;
+        const {source, language} = this.state;
 
         const files_list = this.props.files.map(f => {
             const {date, language, file_id, file_name} = f;
@@ -76,7 +81,6 @@ class ProductFiles extends Component {
 
         return (
             <Table basic='very' striped>
-                {this.state.upload ? <FilesUpload product_id={this.props.product_id} language={language} /> : ''}
                 { this.state.active ?
                 <Message>
                     <Menu size='large' secondary >
@@ -97,13 +101,25 @@ class ProductFiles extends Component {
                         <Table.Cell singleLine><Input label='Title' /></Table.Cell>
                         <Table.Cell><Input label='Description'/></Table.Cell>
                     </Table.Row>
+                    {
+                        !this.state.upload ?
+                        <Table.Row>
+                            <Table.Cell>Files &nbsp;&nbsp;&nbsp;
+                                <Button basic compact positive
+                                        onClick={() => this.setState({upload: true})}>ADD FILE</Button></Table.Cell>
+                            <Table.Cell />
+                        </Table.Row>
+                        :
+                        <Table.Row>
+                            <Table.Cell colSpan='2'>
+                                <FilesUpload product_id={this.props.product_id} language={language}
+                                             onFileUploaded={this.onFileUploaded} />
+                            </Table.Cell>
+                        </Table.Row>
+                    }
                     <Table.Row>
-                        <Table.Cell>Files &nbsp;&nbsp;&nbsp; <Button basic compact positive>ADD FILE</Button></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
+                        <Table.Cell />
+                        <Table.Cell />
                     </Table.Row>
                 </Table.Header>
                     {files_list}
