@@ -214,7 +214,7 @@ class ProductsManager extends Component {
             console.log(product)
             this.setState({product_id, product, show_languages: !this.state.show_languages});
         } else {
-            this.setState({product_id: null, product: null, show_languages: !this.state.show_languages});
+            this.setState({product_id: null, product: null, show_languages: !this.state.show_languages, selected_language: null, show_files: false});
         }
     };
 
