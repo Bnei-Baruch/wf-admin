@@ -111,7 +111,7 @@ class ProductFiles extends Component {
                             <Button basic compact positive
                                     onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
                         <Table.Cell />
-                        <FilesUpload product_id={this.props.product_id} language={language} show_upload={show_upload}
+                        <FilesUpload product_id={this.props.product_id} language={this.props.lang} show_upload={show_upload}
                                      onFileUploaded={this.onFileUploaded}
                                      toggleUpload={this.toggleUpload} />
                     </Table.Row>
