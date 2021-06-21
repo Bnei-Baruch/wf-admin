@@ -1,7 +1,5 @@
 import React, {Component, Fragment} from 'react'
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
-import ProductsAdmin from "./ProductsAdmin";
-import ProductUpload from "./ProductUpload";
 import ProductsManager from "./ProductsManager";
 
 class ProductsApp extends Component {
@@ -36,8 +34,6 @@ class ProductsApp extends Component {
 
         return (
             <Fragment>
-                {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
-                {/*<ProductsAdmin user={this.props.user} setProduct={this.setProduct} />*/}
                 <ProductsManager user={this.props.user} />
             </Fragment>
         );

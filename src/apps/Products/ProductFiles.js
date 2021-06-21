@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Menu, Button, Modal, Message, Table, Input} from 'semantic-ui-react'
-import MediaPlayer from "../../components/Media/MediaPlayer";
+import {Button, Table, Input} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
+import FileManager from "./FileManager";
 
 class ProductFiles extends Component {
 
@@ -11,13 +11,13 @@ class ProductFiles extends Component {
         langs_files: {},
         product_name: "",
         files: [],
-        product_data: {},
-        filedata: {},
+        file_data: {},
         language: "heb",
         original_language: "heb",
         metadata: {},
         source: null,
         show_upload: false,
+        show_filemanager: false,
 
     };
 
@@ -34,11 +34,11 @@ class ProductFiles extends Component {
         });
     };
 
-    selectFile = (data) => {
-        console.log(":: ProductFiles - selected file: ", data);
-        let path = data.properties.url;
+    selectFile = (file_data) => {
+        console.log(":: ProductFiles - selected file: ", file_data);
+        let path = file_data.properties.url;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({product_data: data, source, active: data.file_id});
+        this.setState({file_data, source, active: file_data.file_id, show_filemanager: true});
     };
 
     getPlayer = (player) => {
@@ -51,10 +51,10 @@ class ProductFiles extends Component {
     };
 
     setRemoved = () => {
-        let {product_data} = this.state;
-        console.log(":: Censor - set removed: ", product_data);
+        let {file_data} = this.state;
+        console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     onFileUploaded = () => {
@@ -67,16 +67,20 @@ class ProductFiles extends Component {
         this.setState({show_upload: !this.state.show_upload});
     };
 
+    toggleFileManager = () => {
+        this.setState({show_filemanager: !this.state.show_filemanager});
+    };
+
     render() {
 
-        const {source, language, show_upload} = this.state;
+        const {source, show_filemanager, show_upload, file_data} = this.state;
 
         const files_list = this.props.files.map(f => {
             const {date, language, file_id, file_name} = f;
             if(language === this.props.lang) {
                 return(
                     <Table.Row key={file_id} >
-                        <Table.Cell selectable>{file_name}</Table.Cell>
+                        <Table.Cell selectable onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
                         <Table.Cell selectable>{date}</Table.Cell>
                     </Table.Row>
                 )
@@ -86,21 +90,9 @@ class ProductFiles extends Component {
 
         return (
             <Table basic='very' striped>
-                { this.state.active ?
-                <Message>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='teal' icon='download' disabled={!source} href={this.state.source} download />
-                        </Menu.Item>
-                    </Menu>
-                </Message> : null}
+                <FileManager product_id={this.props.product_id} file_data={file_data} source={source} show_filemanager={show_filemanager}
+                             onFileUploaded={this.onFileUploaded}
+                             toggleFileManager={this.toggleFileManager} />
                 <Table.Header>
                     <Table.Row>
                         <Table.Cell singleLine><Input label='Title' /></Table.Cell>

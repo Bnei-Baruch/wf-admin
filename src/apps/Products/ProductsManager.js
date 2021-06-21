@@ -21,7 +21,6 @@ import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
 import ProductsAdmin from "./ProductsAdmin";
-import FilesUpload from "../Upload/FilesUpload";
 import AddLanguage from "./AddLanguage";
 import {fetchCollections} from "../CIT/shared/store";
 import {isActive} from "../CIT/shared/utils";
