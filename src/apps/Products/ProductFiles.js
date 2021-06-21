@@ -17,7 +17,7 @@ class ProductFiles extends Component {
         original_language: "heb",
         metadata: {},
         source: null,
-        upload: false,
+        show_upload: false,
 
     };
 
@@ -60,11 +60,16 @@ class ProductFiles extends Component {
     onFileUploaded = () => {
         this.setState({upload: false});
         this.props.getProductFiles();
+        this.toggleUpload();
+    };
+
+    toggleUpload = () => {
+        this.setState({show_upload: !this.state.show_upload});
     };
 
     render() {
 
-        const {source, language} = this.state;
+        const {source, language, show_upload} = this.state;
 
         const files_list = this.props.files.map(f => {
             const {date, language, file_id, file_name} = f;
@@ -101,22 +106,15 @@ class ProductFiles extends Component {
                         <Table.Cell singleLine><Input label='Title' /></Table.Cell>
                         <Table.Cell><Input label='Description'/></Table.Cell>
                     </Table.Row>
-                    {
-                        !this.state.upload ?
-                        <Table.Row>
-                            <Table.Cell>Files &nbsp;&nbsp;&nbsp;
-                                <Button basic compact positive
-                                        onClick={() => this.setState({upload: true})}>ADD FILE</Button></Table.Cell>
-                            <Table.Cell />
-                        </Table.Row>
-                        :
-                        <Table.Row>
-                            <Table.Cell colSpan='2'>
-                                <FilesUpload product_id={this.props.product_id} language={language}
-                                             onFileUploaded={this.onFileUploaded} />
-                            </Table.Cell>
-                        </Table.Row>
-                    }
+                    <Table.Row>
+                        <Table.Cell>Files &nbsp;&nbsp;&nbsp;
+                            <Button basic compact positive
+                                    onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
+                        <Table.Cell />
+                        <FilesUpload product_id={this.props.product_id} language={language} show_upload={show_upload}
+                                     onFileUploaded={this.onFileUploaded}
+                                     toggleUpload={this.toggleUpload} />
+                    </Table.Row>
                     <Table.Row>
                         <Table.Cell />
                         <Table.Cell />

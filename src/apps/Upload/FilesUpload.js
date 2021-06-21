@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Progress,Message } from 'semantic-ui-react';
+import {Progress, Modal, Segment, Icon, Button, Divider, Header} from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {getToken, putData, WF_BACKEND, WFSRV_BACKEND} from "../../shared/tools";
+import {LANG_MAP} from "../../shared/consts";
 
 class FilesUpload extends Component {
 
@@ -42,7 +43,7 @@ class FilesUpload extends Component {
         let files_progress = Object.keys(progress).map((id) => {
             let count = progress[id];
             return (<Progress key={id} label={id} percent={count} indicating progress='percent' />)
-            });
+        });
 
         const props = {
             action: `${WF_BACKEND}/products/upload`,
@@ -63,17 +64,31 @@ class FilesUpload extends Component {
         };
 
         return (
-            <Message>
-                <Upload
-                    {...this.props}
-                    {...props}
-                    className="backup"
-                    onSuccess={this.uploadDone}
-                    onProgress={this.progress} >
-                    Drop file here or click me
-                </Upload>
-                {files_progress}
-            </Message>
+            <Modal closeOnDimmerClick={false}
+                   onClose={this.props.toggleUpload}
+                   open={this.props.show_upload}
+                   size='tiny'
+                   closeIcon="close">
+                <Modal.Header>Add Files For {LANG_MAP[this.props.language].text}</Modal.Header>
+                <Modal.Content>
+                    <Segment>
+                        <Upload {...props} onSuccess={this.uploadDone} onProgress={this.progress} >
+                            <Segment placeholder>
+                                <Header icon>
+                                    <Icon name='cloud upload' />
+                                    Drag ans drop files here
+                                </Header>
+                                <Divider horizontal>Or</Divider><br />
+                                <Button primary>Browse Files</Button>
+                            </Segment>
+                        </Upload>
+                    </Segment>
+                    {files_progress}
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.props.toggleUpload} >Cancel</Button>
+                </Modal.Actions>
+            </Modal>
         );
     }
 }
