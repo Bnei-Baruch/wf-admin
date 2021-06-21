@@ -100,7 +100,7 @@ class ProductsManager extends Component {
         let path = Object.keys(filters).length === 0 ? 'products' : 'products/find?' + query.join('&');
         getData(path, products => {
             console.log(products)
-            this.setState({products: products, product_id: null, files: [], show_language: false})
+            this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
         });
     };
 
@@ -108,7 +108,7 @@ class ProductsManager extends Component {
         const {language, date} = this.state;
         getData(`products/find?language=${language}&date=${date}`, products => {
             console.log(products)
-            this.setState({products: products, product_id: null, files: [], show_language: false})
+            this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
         });
     };
 
@@ -305,9 +305,10 @@ class ProductsManager extends Component {
                                                     {LANG_MAP[lang].text}
                                                     {product_selected && selected_language === lang ?
                                                         <ProductFiles user={this.props.user} files={files}
-                                                                      product_id={product_id}
+                                                                      product_id={product_id} metadata={data.i18n[lang]}
                                                                       lang={selected_language} ref="files"
-                                                                      getProductFiles={this.getProductFiles}/> : null}
+                                                                      getProductFiles={this.getProductFiles}
+                                                                      getProducts={this.getProducts} /> : null}
                                                 </Table.Cell>
                                             </Table.Row>
                                         </Table>
@@ -419,12 +420,12 @@ class ProductsManager extends Component {
                     <Table.Header fullWidth>
                         <Table.Row>
                             <Table.HeaderCell/>
-                            <Table.HeaderCell width={7}>Product Name</Table.HeaderCell>
-                            <Table.HeaderCell/>
-                            <Table.HeaderCell>Film Date</Table.HeaderCell>
-                            <Table.HeaderCell>Date Added</Table.HeaderCell>
-                            <Table.HeaderCell>Collection</Table.HeaderCell>
-                            <Table.HeaderCell>Original Language</Table.HeaderCell>
+                            <Table.HeaderCell width={10}>Product Name</Table.HeaderCell>
+                            <Table.HeaderCell width={1} />
+                            <Table.HeaderCell width={2}>Film Date</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Date Added</Table.HeaderCell>
+                            <Table.HeaderCell width={3}>Collection</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Original Language</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
