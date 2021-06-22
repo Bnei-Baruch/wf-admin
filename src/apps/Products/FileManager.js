@@ -64,22 +64,26 @@ class FileManager extends Component {
             <Modal closeOnDimmerClick={false}
                    onClose={this.props.toggleFileManager}
                    open={this.props.show_filemanager}
-                   size='tiny'
+                   size='large'
                    closeIcon="close">
                 <Modal.Header>{this.props.file_data.file_name}</Modal.Header>
                 <Modal.Content>
-                    <Message>
-                        <Menu size='large' secondary >
-                            <Menu.Item>
-                                <Modal trigger={<Button color='brown' icon='play' />} size='tiny'>
-                                    <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                                </Modal>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='teal' icon='download' href={source} download />
-                            </Menu.Item>
-                        </Menu>
-                    </Message>
+                    <Menu size='large' secondary >
+                        <Menu.Item>
+                            <Modal trigger={<Button color='blue' basic content='Play' />} size='tiny'>
+                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
+                            </Modal>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button color='violet' basic content='Download' href={source} download />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button color='orange' basic content='Youtube' />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button color='yellow' basic content='Mdb'/>
+                        </Menu.Item>
+                    </Menu>
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.props.toggleFileManager} >Cancel</Button>
