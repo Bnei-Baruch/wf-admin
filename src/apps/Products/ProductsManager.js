@@ -97,7 +97,7 @@ class ProductsManager extends Component {
     getProducts = () => {
         const {filters} = this.state;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? 'products' : 'products/find?' + query.join('&');
+        let path = Object.keys(filters).length === 0 ? 'products/find?limit=20&offset=0' : 'products/find?limit=10&' + query.join('&');
         getData(path, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})

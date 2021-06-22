@@ -47,7 +47,7 @@ class ProductFiles extends Component {
 
     render() {
 
-        const {source, show_filemanager, show_upload, file_data, name, description} = this.state;
+        const {active, source, show_filemanager, show_upload, file_data, name, description} = this.state;
         const {metadata} = this.props;
 
         const files_list = this.props.files.map(f => {
@@ -55,8 +55,8 @@ class ProductFiles extends Component {
             if(language === this.props.lang) {
                 return(
                     <Table.Row key={file_id} >
-                        <Table.Cell colSpan={2} selectable onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
-                        <Table.Cell selectable>{date}</Table.Cell>
+                        <Table.Cell className='product-file-cell' active={file_id === active} colSpan={2} selectable onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
                 )
             }

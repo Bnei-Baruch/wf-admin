@@ -1,0 +1,73 @@
+.lang_com .monitor_tr {
+    background: #eaeaea;
+    font-weight: bolder;
+}
+
+.lang_com .settings_btn {
+    position: absolute;
+    padding: .38571429em .47571429em .48571429em!important;
+    font-size: .68571429rem!important;
+    margin-top: 8px!important;
+}
+
+.lang_com .ui.table td:hover {
+    background: #e1e6d4!important;
+}
+
+.lang_com .scoped-semantic-ltr .ui.table tr.active, .scoped-semantic-ltr .ui.table td.active {
+    background: #e1e6d4!important;
+    color: #de0101!important;
+}
+
+.lang_com .scoped-semantic-ltr .ui.selectable.table tbody tr:hover, .scoped-semantic-ltr .ui.table tbody tr td.selectable:hover {
+    background: #e1e6d4!important;
+}
+
+.lang_com .scoped-semantic-ltr .ui.selectable.table tr.active:hover, .scoped-semantic-ltr .ui.table tr td.selectable.active:hover, .scoped-semantic-ltr .ui.selectable.table tr:hover td.active {
+    background: #e1e6d4!important;
+    color: #f98b8b!important;
+}
+
+.wfdb_app .ui[class*="very compact"].table td:hover {
+    color: #f98b8b!important;
+}
+
+.scoped-semantic-ltr .wfdb_app a:hover {
+    color: #f98b8b!important;
+}
+
+.lang_com .ui[class*="very compact"].table td {
+    padding: .1em .3em;
+}
+
+.lang_com .ui.table td.one.wide, .ui.table th.one.wide {
+    width: 2.5%;
+}
+
+.lang_com .table_header {
+    background: #dad4c1;
+}
+
+.lang_com .ui.table thead th {
+    padding: .2em .3em;
+}
+
+.lang_com .scoped-semantic-ltr .ui.fixed.table th, .scoped-semantic-ltr .ui.fixed.table td {
+    overflow: visible!important;
+}
+
+.lang_com .lang_cell {
+    color: rgba(40, 40, 40, 0.3)!important;
+    overflow: visible!important;
+    text-align: center;
+}
+
+.lang_tr {
+    font-size: 18px;
+    height: 40px;
+    cursor: pointer!important;
+}
+
+.lang_header {
+    background: #dad4c1;
+}

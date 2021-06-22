@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import { langs_bb, language_options } from '../shared/consts';
 import { Table, Flag } from 'semantic-ui-react'
+import './LangSelector.css';
 
 class LangSelector extends Component {
 
