@@ -144,14 +144,16 @@ class ProductsManager extends Component {
         }
     };
 
-    applyFilter = () => {
-        this.getProducts();
-    };
-
     setProductLang = (language) => {
+        if(!language) {
+            this.removeFilter("language");
+            return
+        }
         const {filters} = this.state;
         filters.language = language
-        this.setState({filters, language});
+        this.setState({filters, language}, () => {
+            this.getProducts();
+        });
     };
 
     setFileLang = (file_language) => {
@@ -159,16 +161,28 @@ class ProductsManager extends Component {
     };
 
     selectDate = (date) => {
+        if(!date) {
+            this.removeFilter("date");
+            return
+        }
         const {filters} = this.state;
         filters.date = date.toLocaleDateString('sv');
-        this.setState({filters, date});
+        this.setState({filters, date}, () => {
+            this.getProducts();
+        });
     };
 
     selectCollection = (pattern) => {
+        if(!pattern) {
+            this.removeFilter("pattern");
+            return
+        }
         const {filters} = this.state;
         console.log("selectCollection: ", pattern);
         filters.pattern = pattern;
-        this.setState({filters, pattern});
+        this.setState({filters, pattern}, () => {
+            this.getProducts();
+        });
     };
 
     removeFilter = (f) => {
@@ -180,34 +194,34 @@ class ProductsManager extends Component {
         });
     };
 
-    getPlayer = (player) => {
-        console.log(":: Trimmed - got player: ", player);
-        //this.setState({player: player});
-    };
-
-    openCit = () => {
-        let {product_data} = this.state;
-        product_data.line = {manual_name: product_data.file_name};
-        this.setState({product_data, cit_open: true});
-    };
-
-    onCancel = () => {
-        this.setState({cit_open: false, insert_open: false});
-    };
-
-    removeProduct = () => {
-        const {product_data} = this.state;
-        removeData(`${WFDB_BACKEND}/products/${product_data.product_id}`, (cb) => {
-            console.log(":: DELETE Respond: ",cb);
-        });
-    };
-
-    setRemoved = () => {
-        let {product_data} = this.state;
-        console.log(":: Censor - set removed: ", product_data);
-        this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-    };
+    // getPlayer = (player) => {
+    //     console.log(":: Trimmed - got player: ", player);
+    //     //this.setState({player: player});
+    // };
+    //
+    // openCit = () => {
+    //     let {product_data} = this.state;
+    //     product_data.line = {manual_name: product_data.file_name};
+    //     this.setState({product_data, cit_open: true});
+    // };
+    //
+    // onCancel = () => {
+    //     this.setState({cit_open: false, insert_open: false});
+    // };
+    //
+    // removeProduct = () => {
+    //     const {product_data} = this.state;
+    //     removeData(`${WFDB_BACKEND}/products/${product_data.product_id}`, (cb) => {
+    //         console.log(":: DELETE Respond: ",cb);
+    //     });
+    // };
+    //
+    // setRemoved = () => {
+    //     let {product_data} = this.state;
+    //     console.log(":: Censor - set removed: ", product_data);
+    //     this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
+    //     fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+    // };
 
     setProduct = (product_id, product) => {
         if(!this.state.show_languages) {
@@ -351,74 +365,72 @@ class ProductsManager extends Component {
 
         return (
             <Segment textAlign='left' className="ingest_segment" basic>
-                <Label attached='top' size='big'>
-                    <Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'}
-                          onClick={() => this.setState({show_filters: !this.state.show_filters})}/>
-                    {active_filters}
-                </Label>
-                <br/><br/><br/>
-                {show_filters ?
-                    <Menu secondary>
-                        <Menu.Item>
-                            <Button color='blue'
-                                    disabled={Object.keys(filters).length === 0}
-                                    onClick={this.applyFilter}>Apply
-                            </Button>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Dropdown className='icon' button labeled icon='world'
-                                // error={!language}
-                                      placeholder="Original language:"
-                                      selection
-                                      options={dep_options}
-                                      language={language}
-                                      onChange={(e, {value}) => this.setProductLang(value)}
-                                      value={language}>
-                            </Dropdown>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Dropdown className='icon' button labeled icon='tag'
-                                // error={!pattern}
-                                      search
-                                      selection
-                                      options={col_options}
-                                      placeholder='Collections:'
-                                      value={pattern}
-                                      onChange={(e, {value}) => this.selectCollection(value)}
-                            />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <DatePicker
-                                locale={locale}
-                                customInput={<Input action={{icon: 'calendar'}} actionPosition='left' placeholder='Dagte...'/>}
-                                dateFormat="yyyy-MM-dd"
-                                showYearDropdown
-                                showMonthDropdown
-                                scrollableYearDropdown
-                                maxDate={new Date()}
-                                openToDate={new Date()}
-                                selected={date ? date : null}
-                                placeholderText="Date:"
-                                onChange={this.selectDate}
-                            />
-                        </Menu.Item>
-                        <Menu.Item position='right'>
-                            <Button positive={true} onClick={this.toggleProductAdmin}>Add Product</Button>
-                            <ProductsAdmin user={this.props.user}
-                                           product={this.state.product}
-                                           show_admin={this.state.show_admin}
-                                           finishProduct={this.finishProduct}
-                                           toggleProductAdmin={this.toggleProductAdmin} />
-                            <AddLanguage user={this.props.user}
-                                         product_id={this.state.product_id}
-                                         add_language={this.state.add_language}
-                                         finishLanguage={this.finishLanguage}
-                                         toggleAddLanguage={this.toggleAddLanguage} />
-                        </Menu.Item>
-                    </Menu> : null}
+                {/*<Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'}*/}
+                {/*      onClick={() => this.setState({show_filters: !this.state.show_filters})}/>*/}
+                {/*{active_filters}*/}
+
+                <Menu secondary>
+                    <Menu.Item>
+                        Filter by:
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Dropdown
+                            // className='icon' button labeled icon='world'
+                            // error={!language}
+                                  placeholder="Original language:"
+                                  selection
+                                  clearable
+                                  options={dep_options}
+                                  language={language}
+                                  onChange={(e, {value}) => this.setProductLang(value)}
+                                  value={language}>
+                        </Dropdown>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Dropdown
+                            // className='icon' button labeled icon='tag'
+                            // error={!pattern}
+                                  search
+                                  clearable
+                                  selection
+                                  options={col_options}
+                                  placeholder='Collections:'
+                                  value={pattern}
+                                  onChange={(e, {value}) => this.selectCollection(value)}
+                        />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <DatePicker
+                            locale={locale}
+                            customInput={<Input placeholder='Date...' icon='dropdown' />}
+                            dateFormat="yyyy-MM-dd"
+                            showYearDropdown
+                            showMonthDropdown
+                            scrollableYearDropdown
+                            maxDate={new Date()}
+                            openToDate={new Date()}
+                            selected={date ? date : null}
+                            placeholderText="Date:"
+                            onChange={this.selectDate}
+                        />
+                    </Menu.Item>
+                    <Menu.Item position='right'>
+                        <Button positive={true} onClick={this.toggleProductAdmin}>Add Product</Button>
+                        <ProductsAdmin user={this.props.user}
+                                       product={this.state.product}
+                                       show_admin={this.state.show_admin}
+                                       finishProduct={this.finishProduct}
+                                       toggleProductAdmin={this.toggleProductAdmin} />
+                        <AddLanguage user={this.props.user}
+                                     product_id={this.state.product_id}
+                                     add_language={this.state.add_language}
+                                     finishLanguage={this.finishLanguage}
+                                     toggleAddLanguage={this.toggleAddLanguage} />
+                    </Menu.Item>
+                </Menu>
                 <Table basic='very'>
                     <Table.Header fullWidth>
-                        <Table.Row>
+                        <Table.Row warning>
                             <Table.HeaderCell/>
                             <Table.HeaderCell width={10}>Product Name</Table.HeaderCell>
                             <Table.HeaderCell width={1} />
