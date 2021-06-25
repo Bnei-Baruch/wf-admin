@@ -194,35 +194,6 @@ class ProductsManager extends Component {
         });
     };
 
-    // getPlayer = (player) => {
-    //     console.log(":: Trimmed - got player: ", player);
-    //     //this.setState({player: player});
-    // };
-    //
-    // openCit = () => {
-    //     let {product_data} = this.state;
-    //     product_data.line = {manual_name: product_data.file_name};
-    //     this.setState({product_data, cit_open: true});
-    // };
-    //
-    // onCancel = () => {
-    //     this.setState({cit_open: false, insert_open: false});
-    // };
-    //
-    // removeProduct = () => {
-    //     const {product_data} = this.state;
-    //     removeData(`${WFDB_BACKEND}/products/${product_data.product_id}`, (cb) => {
-    //         console.log(":: DELETE Respond: ",cb);
-    //     });
-    // };
-    //
-    // setRemoved = () => {
-    //     let {product_data} = this.state;
-    //     console.log(":: Censor - set removed: ", product_data);
-    //     this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-    //     fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-    // };
-
     setProduct = (product_id, product) => {
         if(!this.state.show_languages) {
             console.log(product)
@@ -277,23 +248,7 @@ class ProductsManager extends Component {
 
     render() {
 
-        const {
-            filters,
-            pattern,
-            collections,
-            date,
-            show_filters,
-            show_admin,
-            products,
-            locale,
-            drop_zone,
-            language,
-            files,
-            file_language,
-            show_languages,
-            show_files,
-            selected_language
-        } = this.state;
+        const {filters, pattern, collections, date, products, locale, language, files, show_languages, selected_language} = this.state;
 
         const products_list = products.map(data => {
                 const {product_name, product_id, date, language, pattern} = data;
@@ -357,52 +312,38 @@ class ProductsManager extends Component {
             }
         });
 
-        const active_filters = Object.keys(filters).map(f => {
-            return (<Label key={f} as='a' size='big' color='blue'>{f}
-                <Icon name='delete' onClick={() => this.removeFilter(f)}/>
-            </Label>)
-        });
-
         return (
             <Segment textAlign='left' className="ingest_segment" basic>
-                {/*<Icon name='filter' size='big' color={show_filters ? 'green' : 'grey'}*/}
-                {/*      onClick={() => this.setState({show_filters: !this.state.show_filters})}/>*/}
-                {/*{active_filters}*/}
-
                 <Menu secondary>
-                    <Menu.Item>
-                        Filter by:
-                    </Menu.Item>
+                    <Menu.Item>Filter by:</Menu.Item>
                     <Menu.Item>
                         <Dropdown
-                            // className='icon' button labeled icon='world'
-                            // error={!language}
-                                  placeholder="Original language:"
-                                  selection
-                                  clearable
-                                  options={dep_options}
-                                  language={language}
-                                  onChange={(e, {value}) => this.setProductLang(value)}
-                                  value={language}>
+                            placeholder="Original language:"
+                            selection
+                            clearable
+                            options={dep_options}
+                            language={language}
+                            onChange={(e, {value}) => this.setProductLang(value)}
+                            value={language}>
                         </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
                         <Dropdown
-                            // className='icon' button labeled icon='tag'
-                            // error={!pattern}
-                                  search
-                                  clearable
-                                  selection
-                                  options={col_options}
-                                  placeholder='Collections:'
-                                  value={pattern}
-                                  onChange={(e, {value}) => this.selectCollection(value)}
+                            search
+                            clearable
+                            selection
+                            options={col_options}
+                            placeholder='Collections:'
+                            value={pattern}
+                            onChange={(e, {value}) => this.selectCollection(value)}
                         />
                     </Menu.Item>
                     <Menu.Item>
                         <DatePicker
                             locale={locale}
-                            customInput={<Input placeholder='Date...' icon='dropdown' />}
+                            customInput={<Input icon={
+                                <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />
+                            }/>}
                             dateFormat="yyyy-MM-dd"
                             showYearDropdown
                             showMonthDropdown
@@ -416,16 +357,18 @@ class ProductsManager extends Component {
                     </Menu.Item>
                     <Menu.Item position='right'>
                         <Button positive={true} onClick={this.toggleProductAdmin}>Add Product</Button>
-                        <ProductsAdmin user={this.props.user}
-                                       product={this.state.product}
-                                       show_admin={this.state.show_admin}
-                                       finishProduct={this.finishProduct}
-                                       toggleProductAdmin={this.toggleProductAdmin} />
-                        <AddLanguage user={this.props.user}
-                                     product_id={this.state.product_id}
-                                     add_language={this.state.add_language}
-                                     finishLanguage={this.finishLanguage}
-                                     toggleAddLanguage={this.toggleAddLanguage} />
+                        <ProductsAdmin
+                            user={this.props.user}
+                            product={this.state.product}
+                            show_admin={this.state.show_admin}
+                            finishProduct={this.finishProduct}
+                            toggleProductAdmin={this.toggleProductAdmin} />
+                        <AddLanguage
+                            user={this.props.user}
+                            product_id={this.state.product_id}
+                            add_language={this.state.add_language}
+                            finishLanguage={this.finishLanguage}
+                            toggleAddLanguage={this.toggleAddLanguage} />
                     </Menu.Item>
                 </Menu>
                 <Table basic='very'>
