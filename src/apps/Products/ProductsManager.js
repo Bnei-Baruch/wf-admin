@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
 import {
     Menu,
@@ -253,55 +253,63 @@ class ProductsManager extends Component {
         const products_list = products.map(data => {
                 const {product_name, product_id, date, language, pattern} = data;
                 const product_selected = product_id === this.state.product_id;
-                return (
+                return (<Fragment>
                     <Table.Row key={product_id} verticalAlign='top'>
                         <Table.Cell collapsing>
                             <Icon link name={product_selected ? 'minus' : 'plus'} color='blue'
                                   onClick={() => this.setProduct(product_id, data)}/>
                         </Table.Cell>
-                        <Table.Cell>
-                            {product_name}
-                            {show_languages && product_selected ?
-                                Object.keys(data?.i18n).map(lang => {
-                                    return (
-                                        <Table basic='very' key={product_id + lang} >
-                                            <Table.Row key={lang} verticalAlign='top'>
-                                                <Table.Cell collapsing>
-                                                    <Icon link name={selected_language === lang ? 'minus' : 'plus'}
-                                                          color='blue' onClick={() => this.setLang(lang)}/>
-                                                </Table.Cell>
-                                                <Table.Cell>
-                                                    {LANG_MAP[lang].text}
-                                                    {product_selected && selected_language === lang ?
-                                                        <ProductFiles user={this.props.user} files={files}
-                                                                      product_id={product_id} metadata={data.i18n[lang]}
-                                                                      lang={selected_language} ref="files"
-                                                                      getProductFiles={this.getProductFiles}
-                                                                      getProducts={this.getProducts} /> : null}
-                                                </Table.Cell>
-                                            </Table.Row>
-                                        </Table>
-                                    )
-                                }) : null
-                            }
-                            {show_languages && product_selected ?
-                                <Table basic='very'>
-                                    <Table.Row verticalAlign='top'>
-                                        <Table.Cell collapsing>
-                                            <Icon link name='plus' color='blue' onClick={this.toggleAddLanguage}/>
-                                        </Table.Cell>
-                                        <Table.Cell>Add Language</Table.Cell>
-                                    </Table.Row>
-                                </Table> : null
-                            }
-                        </Table.Cell>
-                        <Table.Cell><Button compact basic positive onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
+                        <Table.Cell>{product_name}</Table.Cell>
+                        <Table.Cell><Button compact basic positive
+                                            onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{pattern}</Table.Cell>
                         <Table.Cell>{LANG_MAP[language].text}</Table.Cell>
                     </Table.Row>
-                )
+                    {show_languages && product_selected ?
+                        <Table.Row key={product_id + "lang"} verticalAlign='top'>
+                            <Table.Cell/>
+                            <Table.Cell colSpan={2}>
+                                {show_languages && product_selected ?
+                                    Object.keys(data?.i18n).map(lang => {
+                                        return (
+                                            <Table basic='very' key={product_id + lang}>
+                                                <Table.Row key={lang} verticalAlign='top'>
+                                                    <Table.Cell collapsing>
+                                                        <Icon link name={selected_language === lang ? 'minus' : 'plus'}
+                                                              color='blue' onClick={() => this.setLang(lang)}/>
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {LANG_MAP[lang].text}
+                                                        {product_selected && selected_language === lang ?
+                                                            <ProductFiles user={this.props.user} files={files}
+                                                                          product_id={product_id} metadata={data.i18n[lang]}
+                                                                          lang={selected_language} ref="files"
+                                                                          getProductFiles={this.getProductFiles}
+                                                                          getProducts={this.getProducts}/> : null}
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            </Table>
+                                        )
+                                    }) : null
+                                }
+                                {show_languages && product_selected ?
+                                    <Table basic='very'>
+                                        <Table.Row verticalAlign='top'>
+                                            <Table.Cell collapsing>
+                                                <Icon link name='plus' color='blue' onClick={this.toggleAddLanguage}/>
+                                            </Table.Cell>
+                                            <Table.Cell>Add Language</Table.Cell>
+                                        </Table.Row>
+                                    </Table> : null
+                                }
+                            </Table.Cell>
+                            <Table.Cell/>
+                            <Table.Cell/>
+                        </Table.Row> : null
+                    }
+                </Fragment>)
             }
         );
 

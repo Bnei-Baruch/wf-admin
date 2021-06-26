@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken, postData} from '../../shared/tools';
-import {Button, Table, Input} from 'semantic-ui-react'
+import {WFDB_BACKEND, WFSRV_BACKEND, postData} from '../../shared/tools';
+import {Button, Table, Icon, Popup} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
 import FileManager from "./FileManager";
 
@@ -55,7 +55,10 @@ class ProductFiles extends Component {
             if(language === this.props.lang) {
                 return(
                     <Table.Row key={file_id} >
-                        <Table.Cell className='product-file-cell' active={file_id === active} colSpan={2} selectable onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                        <Table.Cell className='product-file-cell'
+                                    colSpan={3}
+                                    selectable
+                                    onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
                 )
@@ -70,22 +73,26 @@ class ProductFiles extends Component {
                              toggleFileManager={this.toggleFileManager} />
                 <Table.Header>
                     <Table.Row>
-                        <Table.Cell width={3}>
-                            <Input fluid placeholder='Title...'
-                                   label={{ basic: true, content: 'Title' }}
-                                   value={name} onChange={e => this.setState({name: e.target.value})} />
+                        <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;<Button compact basic color='grey'>{name}</Button>
+                            {/*<Input fluid placeholder='Title...'*/}
+                            {/*       label={{ basic: true, content: 'Title' }}*/}
+                            {/*       value={name} onChange={e => this.setState({name: e.target.value})} />*/}
                         </Table.Cell>
-                        <Table.Cell>
-                            <Input fluid placeholder='Description...'
-                                   label={{ basic: true, content: 'Description' }}
-                                   value={description} onChange={e => this.setState({description: e.target.value})}/>
+                        <Table.Cell singleLine>Description&nbsp;&nbsp;&nbsp;
+                            <Popup
+                                trigger={<Button compact basic color='grey' className='overflow'>{description}</Button>}
+                                content={description}
+                                inverted
+                            />
+                            {/*<Input fluid placeholder='Description...'*/}
+                            {/*       label={{ basic: true, content: 'Description' }}*/}
+                            {/*       value={description} onChange={e => this.setState({description: e.target.value})}/>*/}
                         </Table.Cell>
-                        <Table.Cell width={2}>
-                            <Button basic color='blue' onClick={this.editLanguage}>EDIT</Button>
-                        </Table.Cell>
+                        <Table.Cell />
+                        <Table.Cell width={2}><Button compact basic color='blue' onClick={this.editLanguage}>EDIT</Button></Table.Cell>
                     </Table.Row>
                     <Table.Row>
-                        <Table.Cell colSpan={2}>Files &nbsp;&nbsp;&nbsp;
+                        <Table.Cell colSpan={3}>Files &nbsp;&nbsp;&nbsp;
                             <Button basic compact positive
                                     onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
                         <Table.Cell />
@@ -93,13 +100,26 @@ class ProductFiles extends Component {
                                      onFileUploaded={this.onFileUploaded}
                                      toggleUpload={this.toggleUpload} />
                     </Table.Row>
+                </Table.Header>
+                <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell />
-                        <Table.Cell />
-                        <Table.Cell />
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle up' : 'plus'} />Video</Table.Cell>
                     </Table.Row>
                     {files_list}
                 </Table.Header>
+                <br />
+                <Table.Header fullWidth className='files_list'>
+                    <Table.Row>
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Audio</Table.Cell>
+                    </Table.Row>
+                </Table.Header>
+                <br />
+                <Table.Header fullWidth className='files_list'>
+                    <Table.Row>
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Other</Table.Cell>
+                    </Table.Row>
+                </Table.Header>
+                <br />
             </Table>
         );
     }
