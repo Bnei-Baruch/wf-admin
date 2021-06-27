@@ -213,6 +213,15 @@ export const getDCT = (val) => {
     return Object.entries(DCT_OPTS).find(i => i[1].filter(p => p === val)[0])[0];
 };
 
+export const getMediaType = (mime_type) => {
+    const media_type = mime_type.split('/')[0];
+    if(media_type === "video" || media_type === "audio") {
+        return media_type;
+    } else {
+        return "other";
+    }
+}
+
 export const getName = (metadata) => {
     //console.log(":: GetName - got metadata: ",metadata);
     let name = [];

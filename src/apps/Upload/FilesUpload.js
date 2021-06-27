@@ -33,7 +33,7 @@ class FilesUpload extends Component {
         });
         console.log("Upload done", filedata);
         delete progress[filedata.file_name];
-        this.setState({progress})
+        this.setState({progress});
     };
 
     render() {
