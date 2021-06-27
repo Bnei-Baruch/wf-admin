@@ -11,6 +11,16 @@ class AddLanguage extends Component {
         description: "",
     };
 
+    checkEdit = () => {
+        const {selected_language, product} = this.props;
+        if(product && selected_language) {
+            const {name, description} = product.i18n[selected_language];
+            this.setState({name, language: selected_language, description});
+        } else {
+            this.setState({name: "", language: "", description: ""});
+        }
+    };
+
     setLanguageName = (name) => {
         this.setState({name});
     };
@@ -40,6 +50,7 @@ class AddLanguage extends Component {
 
         return (
             <Modal closeOnDimmerClick={false}
+                   onMount={this.checkEdit}
                    onClose={this.props.toggleAddLanguage}
                    open={this.props.add_language}
                    size='tiny'

@@ -1,20 +1,14 @@
 import React, {Component, Fragment} from 'react'
-import {getData, putData, removeData, WFDB_BACKEND, WFSRV_BACKEND, postData, getToken} from '../../shared/tools';
+import {getData,WFSRV_BACKEND} from '../../shared/tools';
 import {
     Menu,
     Segment,
-    Label,
     Button,
-    Grid,
     Dropdown,
-    List,
-    Flag,
     Input,
     Icon,
     Table,
-    Popup,
-    Pagination,
-    Modal
+    Pagination
 } from 'semantic-ui-react'
 import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP} from "../../shared/consts";
 import DatePicker from "react-datepicker";
@@ -236,6 +230,11 @@ class ProductsManager extends Component {
         this.setState({show_admin: false, product: null});
     };
 
+    addNewLanguage = () => {
+        this.setLang();
+        this.toggleAddLanguage();
+    }
+
     toggleAddLanguage = () => {
         this.setState({add_language: !this.state.add_language});
     };
@@ -248,7 +247,7 @@ class ProductsManager extends Component {
 
     render() {
 
-        const {filters, pattern, collections, date, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {pattern, collections, date, products, locale, language, files, show_languages, selected_language} = this.state;
 
         const products_list = products.map(data => {
                 const {product_name, product_id, date, language, pattern} = data;
@@ -270,7 +269,7 @@ class ProductsManager extends Component {
                     {show_languages && product_selected ?
                         <Table.Row key={product_id + "lang"} verticalAlign='top'>
                             <Table.Cell/>
-                            <Table.Cell colSpan={2}>
+                            <Table.Cell colSpan={3}>
                                 {show_languages && product_selected ?
                                     Object.keys(data?.i18n).map(lang => {
                                         return (
@@ -278,7 +277,7 @@ class ProductsManager extends Component {
                                                 <Table.Row key={lang} verticalAlign='top'>
                                                     <Table.Cell collapsing>
                                                         <Icon link name={selected_language === lang ? 'minus' : 'plus'}
-                                                              color='blue' onClick={() => this.setLang(lang)}/>
+                                                              color='blue' onClick={() => this.setLang(lang)} />
                                                     </Table.Cell>
                                                     <Table.Cell>
                                                         {LANG_MAP[lang].text}
@@ -287,8 +286,11 @@ class ProductsManager extends Component {
                                                                           product_id={product_id} metadata={data.i18n[lang]}
                                                                           lang={selected_language} ref="files"
                                                                           getProductFiles={this.getProductFiles}
-                                                                          getProducts={this.getProducts}/> : null}
+                                                                          getProducts={this.getProducts}
+                                                                          toggleAddLanguage={this.toggleAddLanguage} /> : null}
                                                     </Table.Cell>
+                                                    <Table.Cell />
+                                                    <Table.Cell />
                                                 </Table.Row>
                                             </Table>
                                         )
@@ -298,13 +300,15 @@ class ProductsManager extends Component {
                                     <Table basic='very'>
                                         <Table.Row verticalAlign='top'>
                                             <Table.Cell collapsing>
-                                                <Icon link name='plus' color='blue' onClick={this.toggleAddLanguage}/>
-                                            </Table.Cell>
-                                            <Table.Cell>Add Language</Table.Cell>
+                                                <Icon link name='plus' color='blue' onClick={this.addNewLanguage}/>
+                                            </Table.Cell >
+                                            <Table.Cell onClick={this.addNewLanguage}>Add Language</Table.Cell>
                                         </Table.Row>
                                     </Table> : null
                                 }
                             </Table.Cell>
+                            <Table.Cell/>
+                            <Table.Cell/>
                             <Table.Cell/>
                             <Table.Cell/>
                         </Table.Row> : null
@@ -375,6 +379,8 @@ class ProductsManager extends Component {
                             user={this.props.user}
                             product_id={this.state.product_id}
                             add_language={this.state.add_language}
+                            product={this.state.product}
+                            selected_language={selected_language}
                             finishLanguage={this.finishLanguage}
                             toggleAddLanguage={this.toggleAddLanguage} />
                     </Menu.Item>

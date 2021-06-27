@@ -20,17 +20,6 @@ class ProductFiles extends Component {
         this.setState({file_data, source, active: file_data.file_id, show_filemanager: true});
     };
 
-    editLanguage = () => {
-        const {name, description} = this.state;
-        const language = this.props.lang;
-        const {product_id} = this.props;
-        const data = {name, description};
-        postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${language}`, data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            this.props.getProducts();
-        });
-    };
-
     onFileUploaded = () => {
         this.setState({upload: false});
         this.props.getProductFiles();
@@ -47,8 +36,7 @@ class ProductFiles extends Component {
 
     render() {
 
-        const {active, source, show_filemanager, show_upload, file_data, name, description} = this.state;
-        const {metadata} = this.props;
+        const {source, show_filemanager, show_upload, file_data, name, description} = this.state;
 
         const files_list = this.props.files.map(f => {
             const {date, language, file_id, file_name} = f;
@@ -74,9 +62,6 @@ class ProductFiles extends Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;<Button compact basic color='grey'>{name}</Button>
-                            {/*<Input fluid placeholder='Title...'*/}
-                            {/*       label={{ basic: true, content: 'Title' }}*/}
-                            {/*       value={name} onChange={e => this.setState({name: e.target.value})} />*/}
                         </Table.Cell>
                         <Table.Cell singleLine>Description&nbsp;&nbsp;&nbsp;
                             <Popup
@@ -84,12 +69,9 @@ class ProductFiles extends Component {
                                 content={description}
                                 inverted
                             />
-                            {/*<Input fluid placeholder='Description...'*/}
-                            {/*       label={{ basic: true, content: 'Description' }}*/}
-                            {/*       value={description} onChange={e => this.setState({description: e.target.value})}/>*/}
                         </Table.Cell>
-                        <Table.Cell />
-                        <Table.Cell width={2}><Button compact basic color='blue' onClick={this.editLanguage}>EDIT</Button></Table.Cell>
+                        <Table.Cell width={1}><Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button></Table.Cell>
+                        <Table.Cell width={2} />
                     </Table.Row>
                     <Table.Row>
                         <Table.Cell colSpan={3}>Files &nbsp;&nbsp;&nbsp;
