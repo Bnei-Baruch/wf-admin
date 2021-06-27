@@ -1,6 +1,12 @@
 import { extractI18n } from './utils';
-import { CONTENT_TYPE_BY_ID, CT_VIDEO_PROGRAM, EVENT_CONTENT_TYPES, LECTURE_CONTENT_TYPES } from '../../../shared/consts';
-import {getToken} from "../../../shared/tools";
+import {
+  CONTENT_TYPE_BY_ID,
+  CT_LIKUTIM,
+  CT_VIDEO_PROGRAM,
+  EVENT_CONTENT_TYPES,
+  LECTURE_CONTENT_TYPES
+} from '../../../shared/consts';
+import { getToken } from '../../../shared/tools';
 
 const API_BACKEND = process.env.NODE_ENV !== 'production' ?
   process.env.REACT_APP_MDB_URL :
@@ -62,4 +68,19 @@ export const fetchCollections = (cb) => {
   };
 
   Fetcher(`${path}&page_no=${page}`, processPage);
+};
+
+export const fetchLikutim = (cb) => {
+  const pageSize = 50;
+  const path     = `rest/content_units/?content_type=${CT_LIKUTIM}&page_size=${pageSize}&query=${cb}`;
+
+  return fetch(`${API_BACKEND}${path}&page_no=1`, {
+    headers: { 'Content-Type': 'application/json' }
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error('Network response was not ok.');
+  })
+    .catch(ex => console.log(`get ${path}`, ex));
 };
