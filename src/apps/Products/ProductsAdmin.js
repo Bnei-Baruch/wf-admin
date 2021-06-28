@@ -11,9 +11,9 @@ class ProductsAdmin extends Component {
         cit_open: false,
         product_name: "",
         product_description: "",
-        language: "",
+        language: "heb",
         locale: "he",
-        metadata: {language: ""},
+        metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "norav"},
         mdb_open: false,
         unit: null,
     };
