@@ -486,7 +486,6 @@ class BaseForm extends Component {
 
   suggestName(diff) {
     const {
-      topic,
             language,
             lecturer,
             has_translation: hasTranslation,
@@ -496,8 +495,6 @@ class BaseForm extends Component {
             film_date: filmDate,
           } = Object.assign({}, this.state, diff || {});
 
-    let suffix = topic;
-
     // eslint-disable-next-line prefer-template
     const name = (hasTranslation ? 'mlt' : language) +
       '_o_' +
@@ -506,7 +503,6 @@ class BaseForm extends Component {
       (this.props.metadata.label_id ? filmDate : captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
-        (suffix ? `_${suffix}` : '') +
       '_n' +
       (number || 1) +
       (contentType === CT_FULL_LESSON ? '_full' : '');
@@ -890,14 +886,6 @@ class BaseForm extends Component {
             </Grid.Column> :
             null
         }
-      </Grid.Row>
-      <Grid.Row className="bb-interesting">
-        <Grid.Column width={4}>
-          {this.renderFilmDate()}
-        </Grid.Column>
-        <Grid.Column width={4}>
-          {this.renderTopic()}
-        </Grid.Column>
       </Grid.Row>
         </Fragment>
     );

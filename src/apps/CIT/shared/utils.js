@@ -34,6 +34,9 @@ export const extractI18n = (i18ns, languages, fields) => {
 export const isActive = collection =>
   !Object.prototype.hasOwnProperty.call(collection.properties, 'active') || collection.properties.active;
 
+export const isPattern = collection =>
+    Object.prototype.hasOwnProperty.call(collection.properties, 'pattern') || collection.properties.pattern;
+
 export const findPath = (forest, uid) => {
   // Put trees in stack
   const s = [];

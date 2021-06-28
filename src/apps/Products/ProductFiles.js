@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, WFSRV_BACKEND, postData} from '../../shared/tools';
+import {WFDB_BACKEND, WFSRV_BACKEND, postData, getMediaType} from '../../shared/tools';
 import {Button, Table, Icon, Popup} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
 import FileManager from "./FileManager";
@@ -38,9 +38,10 @@ class ProductFiles extends Component {
 
         const {source, show_filemanager, show_upload, file_data, name, description} = this.state;
 
-        const files_list = this.props.files.map(f => {
-            const {date, language, file_id, file_name, file_type} = f;
-            if(language === this.props.lang) {
+        const video_list = this.props.files.map(f => {
+            const {date, language, file_id, file_name, file_type, mime_type} = f;
+            const media_type = getMediaType(mime_type);
+            if(language === this.props.lang && media_type === "video") {
                 return(
                     <Table.Row key={file_id} >
                         <Table.Cell className='product-file-cell'
@@ -52,6 +53,42 @@ class ProductFiles extends Component {
                     </Table.Row>
                 )
             }
+            }
+        );
+
+        const audio_list = this.props.files.map(f => {
+                const {date, language, file_id, file_name, file_type, mime_type} = f;
+            const media_type = getMediaType(mime_type);
+                if(language === this.props.lang && media_type === "audio") {
+                    return(
+                        <Table.Row key={file_id} >
+                            <Table.Cell className='product-file-cell'
+                                        colSpan={2}
+                                        selectable
+                                        onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                            <Table.Cell>{file_type}</Table.Cell>
+                            <Table.Cell>{date}</Table.Cell>
+                        </Table.Row>
+                    )
+                }
+            }
+        );
+
+        const other_list = this.props.files.map(f => {
+                const {date, language, file_id, file_name, file_type, mime_type} = f;
+                const media_type = getMediaType(mime_type);
+                if(language === this.props.lang && media_type === "other") {
+                    return(
+                        <Table.Row key={file_id} >
+                            <Table.Cell className='product-file-cell'
+                                        colSpan={2}
+                                        selectable
+                                        onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                            <Table.Cell>{file_type}</Table.Cell>
+                            <Table.Cell>{date}</Table.Cell>
+                        </Table.Row>
+                    )
+                }
             }
         );
 
@@ -86,21 +123,26 @@ class ProductFiles extends Component {
                 </Table.Header>
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle up' : 'plus'} />Video</Table.Cell>
+                        <Table.Cell colSpan={4} width={1} onClick={() => this.setState({})}>
+                            <Icon link name={true ? 'angle up' : 'plus'} />Video</Table.Cell>
                     </Table.Row>
-                    {files_list}
+                    {video_list}
                 </Table.Header>
                 <br />
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Audio</Table.Cell>
+                        <Table.Cell colSpan={4} width={1}>
+                            <Icon link name={true ? 'angle down' : 'plus'} />Audio</Table.Cell>
                     </Table.Row>
+                    {audio_list}
                 </Table.Header>
                 <br />
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Other</Table.Cell>
+                        <Table.Cell colSpan={4} width={1}>
+                            <Icon link name={true ? 'angle down' : 'plus'} />Other</Table.Cell>
                     </Table.Row>
+                    {other_list}
                 </Table.Header>
                 <br />
             </Table>

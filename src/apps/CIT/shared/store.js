@@ -1,6 +1,6 @@
 import { extractI18n } from './utils';
 import {
-  CONTENT_TYPE_BY_ID,
+  CONTENT_TYPE_BY_ID, CT_CLIP, CT_CLIPS,
   CT_LIKUTIM,
   CT_VIDEO_PROGRAM,
   EVENT_CONTENT_TYPES,
@@ -34,6 +34,7 @@ export const fetchCollections = (cb) => {
   const contentTypes = EVENT_CONTENT_TYPES
     .concat(LECTURE_CONTENT_TYPES)
     .concat([CT_VIDEO_PROGRAM])
+    .concat([CT_CLIPS])
     .map(x => `content_type=${x}`)
     .join('&');
   const pageSize     = 1000;

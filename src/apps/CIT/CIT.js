@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import noop from 'lodash/noop';
 
 import {
-  CT_CHILDREN_LESSON,
+  CT_CHILDREN_LESSON, CT_CLIP,
   CT_EVENT_PART,
   CT_LECTURE,
   CT_LELO_MIKUD,
@@ -26,6 +26,7 @@ import EventPartForm from './forms/EventPartForm';
 // import '../../stylesheets/scoped_semantic_rtl.css';
 // import 'semantic-ui-css/semantic.rtl.min.css';
 import './forms/forms.css';
+import ClipForm from "./forms/ClipForm";
 
 class CIT extends Component {
 
@@ -145,6 +146,9 @@ class CIT extends Component {
           break;
         case CT_EVENT_PART:
           FormComponent = EventPartForm;
+          break;
+        case CT_CLIP:
+          FormComponent = ClipForm;
           break;
         case CT_LECTURE:
         case CT_CHILDREN_LESSON:
