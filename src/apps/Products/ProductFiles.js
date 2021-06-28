@@ -1,120 +1,109 @@
 import React, {Component} from 'react'
-import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Menu, Button, Modal, Message, List, Segment, Grid, Flag} from 'semantic-ui-react'
-import MediaPlayer from "../../components/Media/MediaPlayer";
+import {WFDB_BACKEND, WFSRV_BACKEND, postData} from '../../shared/tools';
+import {Button, Table, Icon, Popup} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
-import {LANG_MAP} from "../../shared/consts";
+import FileManager from "./FileManager";
 
 class ProductFiles extends Component {
 
     state = {
         active: null,
-        langs_files: {},
-        product_name: "",
-        files: [],
-        product_data: {},
-        filedata: {},
-        language: "heb",
-        original_language: "heb",
-        metadata: {},
-        source: null,
-        upload: false,
-
+        name: this.props.metadata.name,
+        description: this.props.metadata.description,
+        file_data: {},
     };
 
-    sortFiles = () => {
-        const {langs, files} = this.props;
-        Object.keys(langs).map(l => langs[l]["files"] = files.filter(f => f.language === l));
-        this.setState({langs_files: langs});
-    };
-
-    getProductFiles = (product_id) => {
-        getData(`files/find?key=product_id&value=${this.props.product_id}`, (files) => {
-            console.log(":: Files DB Data: ", files);
-            this.setState({files});
-        });
-    };
-
-    selectFile = (data) => {
-        console.log(":: ProductFiles - selected file: ", data);
-        let path = data.properties.url;
+    selectFile = (file_data) => {
+        console.log(":: ProductFiles - selected file: ", file_data);
+        let path = file_data.properties.url;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({product_data: data, source, active: data.file_id});
+        this.setState({file_data, source, active: file_data.file_id, show_filemanager: true});
     };
 
-    getPlayer = (player) => {
-        console.log(":: Trimmed - got player: ", player);
-        //this.setState({player: player});
+    onFileUploaded = () => {
+        this.setState({upload: false});
+        this.props.getProductFiles();
+        this.toggleUpload();
     };
 
-    setProductName = (product_name) => {
-        this.setState({product_name});
+    toggleUpload = () => {
+        this.setState({show_upload: !this.state.show_upload});
     };
 
-    setRemoved = () => {
-        let {product_data} = this.state;
-        console.log(":: Censor - set removed: ", product_data);
-        this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+    toggleFileManager = () => {
+        this.setState({show_filemanager: !this.state.show_filemanager});
     };
 
     render() {
 
-        const {source, language, langs_files} = this.state;
+        const {source, show_filemanager, show_upload, file_data, name, description} = this.state;
 
-        const files_list = Object.keys(langs_files).map(l => {
-                const {name, description, files} = langs_files[l];
-                return (
-                    <div key={l}>
-                        <Grid columns='equal' padded>
-                            <Grid.Row as='a'>
-                                <Grid.Column width={1}><Flag name={LANG_MAP[l].flag} /></Grid.Column>
-                                <Grid.Column>{name}</Grid.Column>
-                                <Grid.Column>{description}</Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                        {files.map(f => {
-                            const {date, language, file_id, file_name} = f;
-                            return(
-                                <List selection celled key={file_id}>
-                                    <List.Item className='file_list' active={this.state.active === file_id} key={file_id} onClick={() => this.selectFile(f)}>
-                                        <List.Header>
-                                            <Grid>
-                                                <Grid.Row>
-                                                    <Grid.Column>{language}</Grid.Column>
-                                                    <Grid.Column width={2}>{date}</Grid.Column>
-                                                    <Grid.Column width={8}>{file_name}</Grid.Column>
-                                                </Grid.Row>
-                                            </Grid>
-                                        </List.Header>
-                                    </List.Item>
-                                </List>
-                            )
-                        })}
-                    </div>)
+        const files_list = this.props.files.map(f => {
+            const {date, language, file_id, file_name, file_type} = f;
+            if(language === this.props.lang) {
+                return(
+                    <Table.Row key={file_id} >
+                        <Table.Cell className='product-file-cell'
+                                    colSpan={2}
+                                    selectable
+                                    onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                        <Table.Cell>{file_type}</Table.Cell>
+                        <Table.Cell>{date}</Table.Cell>
+                    </Table.Row>
+                )
+            }
             }
         );
 
         return (
-            <List>
-                {this.state.upload ? <FilesUpload product_id={this.props.product_id} language={language} /> : ''}
-                { this.state.active ?
-                <Message>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='teal' icon='download' disabled={!source} href={this.state.source} download />
-                        </Menu.Item>
-                    </Menu>
-                </Message> : null}
-                {files_list}
-            </List>
+            <Table basic='very'>
+                <FileManager product_id={this.props.product_id} file_data={file_data} source={source} show_filemanager={show_filemanager}
+                             onFileUploaded={this.onFileUploaded}
+                             toggleFileManager={this.toggleFileManager} />
+                <Table.Header>
+                    <Table.Row>
+                        <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;<Button compact basic color='grey'>{name}</Button>
+                        </Table.Cell>
+                        <Table.Cell singleLine>Description&nbsp;&nbsp;&nbsp;
+                            <Popup
+                                trigger={<Button compact basic color='grey' className='overflow'>{description}</Button>}
+                                content={description}
+                                inverted
+                            />
+                        </Table.Cell>
+                        <Table.Cell width={1}><Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button></Table.Cell>
+                        <Table.Cell width={2} />
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell colSpan={3}>Files &nbsp;&nbsp;&nbsp;
+                            <Button basic compact positive
+                                    onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
+                        <Table.Cell />
+                        <FilesUpload product_id={this.props.product_id} language={this.props.lang} show_upload={show_upload}
+                                     onFileUploaded={this.onFileUploaded}
+                                     toggleUpload={this.toggleUpload} />
+                    </Table.Row>
+                </Table.Header>
+                <Table.Header fullWidth className='files_list'>
+                    <Table.Row>
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle up' : 'plus'} />Video</Table.Cell>
+                    </Table.Row>
+                    {files_list}
+                </Table.Header>
+                <br />
+                <Table.Header fullWidth className='files_list'>
+                    <Table.Row>
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Audio</Table.Cell>
+                    </Table.Row>
+                </Table.Header>
+                <br />
+                <Table.Header fullWidth className='files_list'>
+                    <Table.Row>
+                        <Table.Cell colSpan={4} width={1}><Icon link name={true ? 'angle down' : 'plus'} />Other</Table.Cell>
+                    </Table.Row>
+                </Table.Header>
+                <br />
+            </Table>
         );
     }
 }

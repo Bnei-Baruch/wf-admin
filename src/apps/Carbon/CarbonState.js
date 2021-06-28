@@ -4,27 +4,41 @@ import {getData, IVAL} from '../../shared/tools';
 import { Table, Loader, Segment, Label } from 'semantic-ui-react'
 import './CarbonState.css';
 import LangRestore from "./LangRestore";
+import mqtt from "../../shared/mqtt";
+import MonitorConvert from "../Monitor/MonitorConvert";
 
 class CarbonState extends Component {
 
     state = {
         carbon: {},
-        ival: null,
+        convert: ["", ""],
+        convert_topic: null,
     };
 
     componentDidMount() {
-        let ival = setInterval(() =>
-            getData(`convert/find?key=date&value=${new Date().toLocaleDateString('sv')}`, (data) => {
-                if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
-                    this.setState({carbon: data})
-            }), IVAL
-        );
-        this.setState({ival: ival});
+        this.initMQTT();
     };
 
-
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        mqtt.exit(this.state.convert_topic);
+    };
+
+    initMQTT = () => {
+        const convert_data = 'workflow/server/convert/monitor';
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const convert_topic = local ? convert_data : 'bb/' + convert_data;
+        this.setState({convert_topic})
+        mqtt.join(convert_topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        getData(`convert/find?key=date&value=${new Date().toLocaleDateString('sv')}`, (data) => {
+            if (JSON.stringify(this.state.carbon) !== JSON.stringify(data))
+                this.setState({carbon: data, [type]: message})
+        })
     };
 
     render() {
@@ -51,6 +65,7 @@ class CarbonState extends Component {
             <Segment textAlign='center' className="carbon_state" color='brown' raised>
                 <Label  attached='top' className="trimmed_label">Carbon</Label>
                 {this.props.admin ? "" : <LangRestore />}
+                {this.state.convert[1] !== "" ? <MonitorConvert convert={this.state.convert} /> : null}
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>

@@ -223,6 +223,20 @@ export const LANG_MAP = {
     [LANG_UNKNOWN]: { text: 'Unknown', value: LANG_UNKNOWN },
 };
 
+export const PRODUCT_FILE_TYPES = {
+    [LANG_HEBREW]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Bli-LOGO", "4x4_FB"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_RUSSIAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab+Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+};
+
+
 export const MDB_LANGUAGES = {
   en: 'eng',
   he: 'heb',

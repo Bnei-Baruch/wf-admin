@@ -1,71 +1,82 @@
 import React, {Component} from 'react'
 import {postData, WFDB_BACKEND} from '../../shared/tools';
-import {Menu, Segment, Label, Button, Input} from 'semantic-ui-react'
+import {Segment, Button, Form, Modal} from 'semantic-ui-react'
+import {language_options} from "../../shared/consts";
 
 class AddLanguage extends Component {
 
     state = {
+        language: "",
         name: "",
         description: "",
     };
 
-    setProductName = (name) => {
+    checkEdit = () => {
+        const {selected_language, product} = this.props;
+        if(product && selected_language) {
+            const {name, description} = product.i18n[selected_language];
+            this.setState({name, language: selected_language, description});
+        } else {
+            this.setState({name: "", language: "", description: ""});
+        }
+    };
+
+    setLanguageName = (name) => {
         this.setState({name});
     };
 
-    setProductDescription = (description) => {
+    setLanguageDescription = (description) => {
         this.setState({description});
     };
 
-    addProduct = () => {
-        const {name, description} = this.state;
-        const {product_id, language} = this.props;
+    setLanguage = (language) => {
+        this.setState({language});
+    };
+
+    addLanguage = () => {
+        const {language, name, description} = this.state;
+        const {product_id} = this.props;
         const data = {name, description};
         postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${language}`, data, (cb) => {
             console.log(":: PUT Respond: ",cb);
-            this.setState({name: "", description: ""});
-            this.props.getProducts(language);
+            this.setState({name: "", description: "", language: ""});
+            this.props.finishLanguage();
         });
     };
 
-
-    setProduct = (product_id) => {
-        console.log(product_id)
-        this.setState({product_id});
-        this.getProductFiles(product_id)
-    }
-
     render() {
 
-        const {name, description} = this.state;
+        const {language, name, description} = this.state;
 
         return (
-            <Segment textAlign='left' className="ingest_segment" color='red' raised>
-                <Menu secondary >
-                    <Menu.Item>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product name.."
-                               onChange={e => this.setProductName(e.target.value)}
-                               value={name} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input size='large'
-                               placeholder="Product description.."
-                               onChange={e => this.setProductDescription(e.target.value)}
-                               value={description} />
-                    </Menu.Item>
-                    <Menu.Menu position='right'>
-                    <Menu.Item>
-                        <Button positive={true}
-                                disabled={name === ""}
-                                onClick={this.addProduct}>Add Language
-                        </Button>
-                    </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
-            </Segment>
+            <Modal closeOnDimmerClick={false}
+                   onMount={this.checkEdit}
+                   onClose={this.props.toggleAddLanguage}
+                   open={this.props.add_language}
+                   size='tiny'
+                   closeIcon="close">
+                <Modal.Header>Add/Edit Language</Modal.Header>
+                <Modal.Content>
+                    <Segment padded basic>
+                        <Form>
+                            <Form.Select
+                                fluid
+                                label='Language'
+                                options={language_options} //FIXME: Don't show languages that already exist
+                                placeholder='Choose Language'
+                                value={language}
+                                onChange={(e, {value}) => this.setLanguage(value)}
+                            />
+                            <Form.Input fluid label='Title' placeholder='Title' onChange={e => this.setLanguageName(e.target.value)} value={name} />
+                            <Form.TextArea label='Description' placeholder='Description...' onChange={e => this.setLanguageDescription(e.target.value)} value={description} />
+                        </Form>
+                    </Segment>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.props.toggleAddLanguage} >Cancel</Button>
+                    <Button positive={true} onClick={this.addLanguage} >Apply</Button>
+                </Modal.Actions>
+            </Modal>
         );
     }
 }

@@ -141,7 +141,7 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{files}</Tab.Pane> },
             { menuItem: { key: 'sirtutim', icon: 'pencil', content: 'Sirtutim', disabled: wf_sirtutim },
                 render: () => <Tab.Pane attached={false} >{sirtutim}</Tab.Pane> },
-            { menuItem: { key: 'carbon', icon: 'settings', content: 'Carbon', disabled: wf_ingest },
+            { menuItem: { key: 'carbon', icon: 'settings', content: 'Convert', disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{carbon}</Tab.Pane> },
             { menuItem: { key: 'ktaim', icon: 'newspaper', content: 'Ktaim', disabled: wf_ktaim },
                 render: () => <Tab.Pane attached={false} >{ktaim}</Tab.Pane> },

@@ -29,6 +29,7 @@ class KtaimApp extends Component {
     };
 
     onMqttMessage = (message, type, source) => {
+        if(type !== "trimmer") return
         console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
         this.setState({trimmer: message});
     };
