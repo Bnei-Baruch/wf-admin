@@ -27,6 +27,7 @@ class FilesUpload extends Component {
         file_data.product_id = product_id;
         file_data.language = language;
         file_data.mime_type = file_data.type;
+        file_data.properties.upload_name = file_data.file_name;
         const file_type = getMediaType(file_data.type)
         const file_type_options = PRODUCT_FILE_TYPES[language][file_type].map(data => {
             return ({key: data, value: data, text: data})
@@ -42,6 +43,7 @@ class FilesUpload extends Component {
     saveFileData = () => {
         const {file_data, file_type} = this.state;
         file_data.file_type = file_type;
+        file_data.file_name = this.props.file_name;
         putData(`${WFSRV_BACKEND}/workflow/products`, file_data, (cb) => {
             console.log(":: UploadApp - workflow respond: ",cb);
             this.props.onFileUploaded();

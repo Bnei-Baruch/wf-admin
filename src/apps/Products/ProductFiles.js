@@ -7,7 +7,7 @@ import FileManager from "./FileManager";
 class ProductFiles extends Component {
 
     state = {
-        active: null,
+        active: "video",
         name: this.props.metadata.name,
         description: this.props.metadata.description,
         file_data: {},
@@ -17,7 +17,7 @@ class ProductFiles extends Component {
         console.log(":: ProductFiles - selected file: ", file_data);
         let path = file_data.properties.url;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({file_data, source, active: file_data.file_id, show_filemanager: true});
+        this.setState({file_data, source, show_filemanager: true});
     };
 
     onFileUploaded = () => {
@@ -36,7 +36,7 @@ class ProductFiles extends Component {
 
     render() {
 
-        const {source, show_filemanager, show_upload, file_data, name, description} = this.state;
+        const {active, source, show_filemanager, show_upload, file_data, name, description} = this.state;
 
         const video_list = this.props.files.map(f => {
             const {date, language, file_id, file_name, file_type, mime_type} = f;
@@ -116,33 +116,36 @@ class ProductFiles extends Component {
                             <Button basic compact positive
                                     onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
                         <Table.Cell />
-                        <FilesUpload product_id={this.props.product_id} language={this.props.lang} show_upload={show_upload}
+                        <FilesUpload product_id={this.props.product_id}
+                                     language={this.props.lang}
+                                     file_name={this.props.file_name}
+                                     show_upload={show_upload}
                                      onFileUploaded={this.onFileUploaded}
                                      toggleUpload={this.toggleUpload} />
                     </Table.Row>
                 </Table.Header>
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1} onClick={() => this.setState({})}>
-                            <Icon link name={true ? 'angle up' : 'plus'} />Video</Table.Cell>
+                        <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "video"})}>
+                            <Icon link name={active === "video" ? 'angle up' : 'angle down'} />Video</Table.Cell>
                     </Table.Row>
-                    {video_list}
+                    {active === "video" ? video_list : null}
                 </Table.Header>
                 <br />
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1}>
-                            <Icon link name={true ? 'angle down' : 'plus'} />Audio</Table.Cell>
+                        <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "audio"})}>
+                            <Icon link name={active === "audio" ? 'angle up' : 'angle down'} />Audio</Table.Cell>
                     </Table.Row>
-                    {audio_list}
+                    {active === "audio" ? audio_list : null}
                 </Table.Header>
                 <br />
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
-                        <Table.Cell colSpan={4} width={1}>
-                            <Icon link name={true ? 'angle down' : 'plus'} />Other</Table.Cell>
+                        <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "other"})}>
+                            <Icon link name={active === "other" ? 'angle up' : 'angle down'} />Other</Table.Cell>
                     </Table.Row>
-                    {other_list}
+                    {active === "other" ? other_list : null}
                 </Table.Header>
                 <br />
             </Table>

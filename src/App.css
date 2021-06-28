@@ -304,6 +304,7 @@ body {
 
 .files_list {
     background-color: #f4f4f4;
+    cursor: pointer!important;
 }
 
 .censor_content{
