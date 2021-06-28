@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import { Button, Checkbox, Dropdown, Grid, Header, Icon, Input, Label, List, Search, Form } from 'semantic-ui-react';
 
@@ -868,6 +868,7 @@ class BaseForm extends Component {
     const { metadata, afterClear } = this.props;
 
     return (
+        <Fragment>
       <Grid.Row className="bb-interesting">
         <Grid.Column width={4}>
           {this.renderLanguage()}
@@ -885,17 +886,8 @@ class BaseForm extends Component {
             </Grid.Column> :
             null
         }
-        {
-          metadata.label_id ?
-            <Grid.Column width={4}>
-              {this.renderFilmDate()}
-            </Grid.Column> :
-            null
-        }
-        <Grid.Column width={4}>
-          {this.renderLikutim()}
-        </Grid.Column>
       </Grid.Row>
+        </Fragment>
     );
   }
 

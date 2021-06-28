@@ -79,7 +79,7 @@ class TreeItemSelector extends Component {
         {this.renderLevelDropdown(level, i, fieldLabel(selectedChild))}
       </Breadcrumb.Section>));
       if (nlHasChildren) {
-        crumbs.push(<Breadcrumb.Divider key={`d${i}`} icon="left angle" />);
+        crumbs.push(<Breadcrumb.Divider key={`d${i}`} icon="right angle" />);
       }
       level = nextLevel;
     }

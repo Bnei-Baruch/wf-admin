@@ -60,6 +60,9 @@ class ArichaAdmin extends Component {
         // Build url for preview
         let path = file_data.original.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
+        if(!file_data.line?.hasOwnProperty('content_type')) {
+            file_data.line = {language: "heb", content_type: "CLIP", has_translation: false};
+        }
         this.setState({
             file_data, source,
             active: file_data.aricha_id,
