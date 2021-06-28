@@ -1,4 +1,4 @@
-import React, {Component, lazy} from 'react';
+import React, {Component, Fragment, lazy} from 'react';
 import PropTypes from 'prop-types';
 import noop from 'lodash/noop';
 
@@ -163,9 +163,9 @@ class CIT extends Component {
     }
 
     return (
-      <div style={{ direction: 'rtl' }}>
+      <Fragment>
         {el}
-      </div>
+      </Fragment>
     );
   }
 }

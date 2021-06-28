@@ -162,29 +162,29 @@ export const LANG_FRENCH     = 'fre';
 export const LANG_PORTUGUESE = 'por';
 export const LANG_TURKISH    = 'trk';
 export const LANG_POLISH     = 'pol';
-export const LANG_ARABIC     = 'ar';
+// export const LANG_ARABIC     = 'ar';
 export const LANG_HUNGARIAN  = 'hun';
-export const LANG_FINNISH    = 'fi';
-export const LANG_LITHUANIAN = 'lt';
-export const LANG_JAPANESE   = 'ja';
-export const LANG_BULGARIAN  = 'bg';
-export const LANG_GEORGIAN   = 'ka';
-export const LANG_NORWEGIAN  = 'no';
-export const LANG_SWEDISH    = 'sv';
-export const LANG_CROATIAN   = 'hr';
-export const LANG_CHINESE    = 'zh';
-export const LANG_PERSIAN    = 'fa';
-export const LANG_ROMANIAN   = 'ro';
-export const LANG_HINDI      = 'hi';
-export const LANG_UKRAINIAN  = 'ua';
-export const LANG_MACEDONIAN = 'mk';
-export const LANG_SLOVENIAN  = 'sl';
-export const LANG_LATVIAN    = 'lv';
-export const LANG_SLOVAK     = 'sk';
-export const LANG_CZECH      = 'cs';
-export const LANG_AMHARIC    = 'am';
-export const LANG_MULTI      = 'zz';
-export const LANG_UNKNOWN    = 'xx';
+export const LANG_FINNISH    = 'fin';
+export const LANG_LITHUANIAN = 'lit';
+export const LANG_JAPANESE   = 'jpn';
+export const LANG_BULGARIAN  = 'bul';
+export const LANG_GEORGIAN   = 'geo';
+export const LANG_NORWEGIAN  = 'nor';
+export const LANG_SWEDISH    = 'swe';
+export const LANG_CROATIAN   = 'hrv';
+export const LANG_CHINESE    = 'chn';
+export const LANG_PERSIAN    = 'per';
+export const LANG_ROMANIAN   = 'ron';
+export const LANG_HINDI      = 'hin';
+export const LANG_UKRAINIAN  = 'ukr';
+// export const LANG_MACEDONIAN = 'mk';
+export const LANG_SLOVENIAN  = 'slv';
+export const LANG_LATVIAN    = 'lit';
+// export const LANG_SLOVAK     = 'sk';
+// export const LANG_CZECH      = 'cs';
+export const LANG_AMHARIC    = 'amh';
+export const LANG_MULTI      = 'mtl';
+export const LANG_UNKNOWN    = 'xxx';
 
 export const LANG_MAP = {
     [LANG_HEBREW]: { text: 'Hebrew', value: LANG_HEBREW, flag: 'il' },
@@ -198,7 +198,7 @@ export const LANG_MAP = {
     [LANG_PORTUGUESE]: { text: 'Portuguese', value: LANG_PORTUGUESE, flag: 'pt' },
     [LANG_TURKISH]: { text: 'Turkish', value: LANG_TURKISH, flag: 'tr' },
     [LANG_POLISH]: { text: 'Polish', value: LANG_POLISH, flag: 'pl' },
-    [LANG_ARABIC]: { text: 'Arabic', value: LANG_ARABIC, flag: 'sa' },
+    // [LANG_ARABIC]: { text: 'Arabic', value: LANG_ARABIC, flag: 'sa' },
     [LANG_HUNGARIAN]: { text: 'Hungarian', value: LANG_HUNGARIAN, flag: 'hu' },
     [LANG_FINNISH]: { text: 'Finnish', value: LANG_FINNISH, flag: 'fi' },
     [LANG_LITHUANIAN]: { text: 'Lithuanian', value: LANG_LITHUANIAN, flag: 'lt' },
@@ -213,11 +213,11 @@ export const LANG_MAP = {
     [LANG_ROMANIAN]: { text: 'Romanian', value: LANG_ROMANIAN, flag: 'ro' },
     [LANG_HINDI]: { text: 'Hindi', value: LANG_HINDI, flag: 'in' },
     [LANG_UKRAINIAN]: { text: 'Ukrainian', value: LANG_UKRAINIAN, flag: 'ua' },
-    [LANG_MACEDONIAN]: { text: 'Macedonian', value: LANG_MACEDONIAN, flag: 'mk' },
+    // [LANG_MACEDONIAN]: { text: 'Macedonian', value: LANG_MACEDONIAN, flag: 'mk' },
     [LANG_SLOVENIAN]: { text: 'Slovenian', value: LANG_SLOVENIAN, flag: 'si' },
     [LANG_LATVIAN]: { text: 'Latvian', value: LANG_LATVIAN, flag: 'lv' },
-    [LANG_SLOVAK]: { text: 'Slovak', value: LANG_SLOVAK, flag: 'sk' },
-    [LANG_CZECH]: { text: 'Czech', value: LANG_CZECH, flag: 'cz' },
+    // [LANG_SLOVAK]: { text: 'Slovak', value: LANG_SLOVAK, flag: 'sk' },
+    // [LANG_CZECH]: { text: 'Czech', value: LANG_CZECH, flag: 'cz' },
     [LANG_AMHARIC]: { text: 'Amharic', value: LANG_AMHARIC, flag: 'et' },
     [LANG_MULTI]: { text: 'Multi', value: LANG_MULTI },
     [LANG_UNKNOWN]: { text: 'Unknown', value: LANG_UNKNOWN },
@@ -230,7 +230,7 @@ export const PRODUCT_FILE_TYPES = {
         other: ["Text", "SRT"]
     },
     [LANG_RUSSIAN]: {
-        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab+Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
         audio: ["voice", "music", "sfx", "mix"],
         other: ["Text", "SRT"]
     },

@@ -21,6 +21,15 @@ const ContentTypeForm = props => (
     <Grid.Row columns={2}>
       <Grid.Column>
         <Button
+            fluid
+            content="תכנית טלוויזיה"
+            color="purple"
+            size="massive"
+            onClick={() => props.onSelect(CT_VIDEO_PROGRAM_CHAPTER)}
+        />
+      </Grid.Column>
+      <Grid.Column>
+        <Button
           fluid
           content="שיעור"
           color="blue"
@@ -28,17 +37,17 @@ const ContentTypeForm = props => (
           onClick={() => props.onSelect(CT_LESSON_PART)}
         />
       </Grid.Column>
-      <Grid.Column>
-        <Button
-          fluid
-          content="תכנית טלוויזיה"
-          color="purple"
-          size="massive"
-          onClick={() => props.onSelect(CT_VIDEO_PROGRAM_CHAPTER)}
-        />
-      </Grid.Column>
     </Grid.Row>
     <Grid.Row columns={2}>
+      <Grid.Column>
+        <Button
+            fluid
+            content="סעודה"
+            color="teal"
+            size="massive"
+            onClick={() => props.onSelect(CT_MEAL)}
+        />
+      </Grid.Column>
       <Grid.Column>
         <Button
           fluid
@@ -48,17 +57,17 @@ const ContentTypeForm = props => (
           onClick={() => props.onSelect(CT_FRIENDS_GATHERING)}
         />
       </Grid.Column>
-      <Grid.Column>
-        <Button
-          fluid
-          content="סעודה"
-          color="teal"
-          size="massive"
-          onClick={() => props.onSelect(CT_MEAL)}
-        />
-      </Grid.Column>
     </Grid.Row>
     <Grid.Row columns={2}>
+      <Grid.Column>
+        <Button
+            fluid
+            content="אירוע מיוחד"
+            color="teal"
+            size="massive"
+            onClick={() => props.onSelect(CT_EVENT_PART)}
+        />
+      </Grid.Column>
       <Grid.Column>
         <Button
           fluid
@@ -66,15 +75,6 @@ const ContentTypeForm = props => (
           color="teal"
           size="massive"
           onClick={() => props.onSelect(CT_VIRTUAL_LESSON)}
-        />
-      </Grid.Column>
-      <Grid.Column>
-        <Button
-          fluid
-          content="אירוע מיוחד"
-          color="teal"
-          size="massive"
-          onClick={() => props.onSelect(CT_EVENT_PART)}
         />
       </Grid.Column>
     </Grid.Row>

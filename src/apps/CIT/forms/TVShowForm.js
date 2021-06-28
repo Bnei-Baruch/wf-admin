@@ -77,6 +77,11 @@ class TVShowForm extends BaseForm {
                 {this.renderEpisode()}
               </Grid.Column>
             </Grid.Row>
+              <Grid.Row>
+                  <Grid.Column>
+                      {this.renderTopic()}
+                  </Grid.Column>
+              </Grid.Row>
           </Grid>
         </Grid.Column>
         <Grid.Column width={2} />
