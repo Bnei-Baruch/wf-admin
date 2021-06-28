@@ -53,8 +53,7 @@ class ClipForm extends BaseForm {
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
       pattern +
-        (suffix ? `_${suffix}` : '') +
-      (episode !== '' ? (Number.isNaN(Number.parseInt(episode, 10)) ? '_' : '_n') + episode : '');
+        (suffix ? `_${suffix}` : '');
 
     return {
       pattern,
@@ -74,12 +73,12 @@ class ClipForm extends BaseForm {
         <Grid.Column width={10}>
           <Grid>
             <Grid.Row columns={2}>
-              <Grid.Column width={12}>
+              <Grid.Column width={16}>
                 {this.renderCollection()}
               </Grid.Column>
-              <Grid.Column width={4}>
-                {this.renderEpisode()}
-              </Grid.Column>
+              {/*<Grid.Column width={4}>*/}
+              {/*  {this.renderEpisode()}*/}
+              {/*</Grid.Column>*/}
             </Grid.Row>
               <Grid.Row>
                   <Grid.Column>

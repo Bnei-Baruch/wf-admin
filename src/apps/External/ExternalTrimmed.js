@@ -67,6 +67,12 @@ class ExternalTrimmed extends Component {
         const {fix_mode} = this.state;
         const {renamed,wfsend,secured,checked,kmedia} = file_data.wfstatus;
 
+        if(file_data.line && (/\d{4}-\d{2}-\d{2}/).test(file_data.file_name)) {
+            let string_date = file_data.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            file_data.line.capture_date = string_date;
+            file_data.line.film_date = string_date;
+        }
+
         if(!wfsend && fix_mode) {
             // Find files with units
             getChildren(file_data.parent.capture_id,"capture_id", (data) => {

@@ -724,6 +724,7 @@ class BaseForm extends Component {
         <Dropdown
           selection
           fluid
+          search
           placeholder={activeCollections.length === 0 ? 'אין אוספים פתוחים' : 'בחר אוסף'}
           options={activeCollections.map((x, i) => ({ text: x.name, value: i }))}
           value={sIdx}
