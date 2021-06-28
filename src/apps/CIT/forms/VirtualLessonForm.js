@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import {ARTIFACT_TYPES, CONTENT_TYPES_MAPPINGS} from '../../../shared/consts';
-import { isActive, sourcesTagsPattern } from '../shared/utils';
+import { isActive, patternByContentType } from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class VirtualLessonForm extends BaseForm {
@@ -37,7 +37,7 @@ class VirtualLessonForm extends BaseForm {
 
     let suffix = topic;
     if (!suffix) {
-      suffix = sourcesTagsPattern(sources, tags, major);
+      suffix = patternByContentType(sources, tags, [], major);
     }
 
     // eslint-disable-next-line prefer-template

@@ -67,10 +67,12 @@ export const findPath = (forest, uid) => {
   return [];
 };
 
-export const sourcesTagsPattern = (sources, tags, major) => {
+export const patternByContentType = (sources, tags, likutims, major) => {
   let pattern = '';
 
-  if (major.type) {
+  if (major.type === 'likutim') {
+    pattern = likutims[major.idx]?.properties?.pattern;
+  } else if (major.type) {
     const selection = major.type === 'source' ? sources : tags;
     const item      = selection[major.idx];
     if (Array.isArray(item)) {
@@ -111,6 +113,11 @@ export const sourcesTagsPattern = (sources, tags, major) => {
         break;
       }
     }
+  }
+
+  // check if can take pattern from likutim
+  for (let i = 0; pattern === '' && i < likutims.length; i++) {
+    pattern = likutims[i]?.properties?.pattern;
   }
 
   return pattern;

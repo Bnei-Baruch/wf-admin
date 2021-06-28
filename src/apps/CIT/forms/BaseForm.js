@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Dropdown, Grid, Header, Icon, Input, Label, List } from 'semantic-ui-react';
+import { Button, Checkbox, Dropdown, Grid, Header, Icon, Input, Label, List, Search, Form } from 'semantic-ui-react';
 
 import {
   ARTIFACT_TYPES,
@@ -25,6 +25,7 @@ import SourceSelector from '../components/SourceSelector';
 import TagSelector from '../components/TagSelector';
 import FileNamesWidget from '../components/FileNamesWidget';
 import CassetteDayPicker from '../components/CassetteDayPicker';
+import { fetchLikutim } from '../shared/store';
 
 class BaseForm extends Component {
 
@@ -64,6 +65,7 @@ class BaseForm extends Component {
       manual_name: null,
       sources: [],
       tags: [],
+      likutims: [],
       major: {},
       pattern: '',  // given in suggestName
 
@@ -119,7 +121,6 @@ class BaseForm extends Component {
     }
 
     Object.assign(state, this.suggestName(state));
-
     return state;
   }
 
@@ -215,6 +216,11 @@ class BaseForm extends Component {
     this.setStateAndName({ major });
   }
 
+  onLikutimClick(idx) {
+    const major = this.updateMajor('SET', 'likutim', idx);
+    this.setStateAndName({ major });
+  }
+
   onSelectedCollectionChange = (e, data) => {
     const sIdx       = data.value;
     const collection = this.state.active_collections[sIdx];
@@ -266,6 +272,11 @@ class BaseForm extends Component {
   onEpisodeChange = (e, data) => {
     const clean = data.value.trim().split(/\s+/).join('_');
     this.setStateAndName({ episode: clean });
+  };
+
+  onLikutimChange = (e, data) => {
+    const clean = data.value.trim().split(/\s+/).join('_');
+    this.setStateAndName({ likutims: clean });
   };
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
@@ -405,6 +416,29 @@ class BaseForm extends Component {
     this.setStateAndName({ tags, major });
   }
 
+  addLikutim = (e, data) => {
+    const { likutims }  = this.state;
+    const { result: l } = data;
+
+    // Prevent duplicates
+    if (likutims.some((x, j) => l.id === x.id)) return;
+
+    likutims.push(l);
+    const major = this.updateMajor('ADD', 'likutim', likutims.length - 1);
+    this.setStateAndName({ likutims, major, error: null });
+    this.setState({ likutimQuery: '', likutimData: [] });
+  };
+
+  removeLikutim(e, idx) {
+    e.stopPropagation(); // don't bubble up to onTagClick
+
+    const { likutims } = this.state;
+    const major        = this.updateMajor('REMOVE', 'likutim', idx);
+
+    likutims.splice(idx, 1);
+    this.setStateAndName({ likutims, major });
+  }
+
   updateMajor(op, type, idx) {
     let major = this.state.major;
 
@@ -431,9 +465,9 @@ class BaseForm extends Component {
             major = { type, idx: Math.max(0, idx - 1) };
           } else {
             // try the other type
-            const type2 = type === 'source' ? 'tag' : 'source';
-            selection   = this.state[`${type2}s`];
-            if (selection.length > 0) {
+            const types = ['sources', 'tags', 'likutims'];
+            const type2 = types.find(t => this.state[t].length > 0);
+            if (type2) {
               major = { type: type2, idx: 0 };
             } else {
               // no replacement
@@ -758,6 +792,78 @@ class BaseForm extends Component {
     );
   }
 
+  handleLikutimChange = (e, data) => {
+    fetchLikutim(data.value).then(({ data: likutimData }) => {
+      this.setState({ likutimData });
+    });
+    this.setState({ likutimQuery: data.value });
+  };
+
+  resultRendererLikutim = ({ i18n }) => <Label content={i18n?.he?.name} />;
+
+  renderSelectedLikutim() {
+    const { likutims, major } = this.state;
+
+    if (likutims.length === 0) {
+      return (
+        <List className="bb-selected-sources-list">
+          <List.Item>
+            <Header as="h5" color="grey">אין ליקוטים</Header>
+          </List.Item>
+        </List>
+      );
+    }
+
+    return (
+      <List className="bb-selected-sources-list">
+        {
+          likutims.map((x, i) => {
+            const title   = x.i18n.he?.name || x.i18n.en?.name;
+            const isMajor = major.type === 'likutim' && major.idx === i;
+
+            return (
+              <List.Item key={x.id}>
+                <Label
+                  color="blue"
+                  size="large"
+                  basic={!isMajor}
+                  onClick={() => this.onLikutimClick(i)}
+                >
+                  {title}
+                  <Icon name="delete" onClick={e => this.removeLikutim(e, i)} />
+                </Label>
+              </List.Item>
+            );
+          })
+        }
+      </List>
+    );
+  }
+
+  renderLikutim = () => {
+    const { likutimData, likutimQuery } = this.state;
+
+    return (
+      <div>
+        <Header size="medium">ליקוטים</Header>
+        <Form.Field>
+          <Search
+            fluid
+            aligned="left"
+            id="likutim"
+            onResultSelect={this.addLikutim}
+            onSearchChange={this.handleLikutimChange}
+            results={likutimData}
+            value={likutimQuery}
+            input={{ fluid: true }}
+            resultRenderer={this.resultRendererLikutim}
+          />
+        </Form.Field>
+        {this.renderSelectedLikutim()}
+      </div>
+    );
+  };
+
   renderForm() {
     const { metadata, afterClear } = this.props;
 
@@ -786,6 +892,9 @@ class BaseForm extends Component {
             </Grid.Column> :
             null
         }
+        <Grid.Column width={4}>
+          {this.renderLikutim()}
+        </Grid.Column>
       </Grid.Row>
     );
   }

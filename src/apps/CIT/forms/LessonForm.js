@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import { ARTIFACT_TYPES, CONTENT_TYPES_MAPPINGS } from '../../../shared/consts';
-import { sourcesTagsPattern } from '../shared/utils';
+import { patternByContentType } from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class LessonForm extends BaseForm {
@@ -15,6 +15,7 @@ class LessonForm extends BaseForm {
             has_translation: hasTranslation,
             sources,
             tags,
+            likutims,
             capture_date: captureDate,
             film_date: filmDate,
             number,
@@ -23,7 +24,7 @@ class LessonForm extends BaseForm {
             major
           } = Object.assign({}, this.state, diff || {});
 
-    let pattern = sourcesTagsPattern(sources, tags, major);
+    let pattern = patternByContentType(sources, tags, likutims, major);
 
     // override lesson preparation value
     if (pattern === '' && part === 0) {
@@ -88,6 +89,11 @@ class LessonForm extends BaseForm {
             <Grid.Row>
               <Grid.Column>
                 {this.renderSources()}
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderLikutim()}
               </Grid.Column>
             </Grid.Row>
             {
