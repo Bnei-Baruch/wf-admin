@@ -144,7 +144,8 @@ class InsertModal extends Component {
             fetchUnits(`${metadata.line.unit_id}/files/`, (data) => {
                 let published = data.filter(p => p.published && p.removed_at === null);
                 let mdb_name = published.filter(s => s.name.match(metadata.insert_name));
-                if(mdb_name.length > 0) {
+                //FIXME: Hack for vladek clips
+                if(mdb_name.length > 0 && metadata.line.collection_uid !== "KmHXzSQ6") {
                     alert("File with name: "+metadata.insert_name+" - exist in MDB");
                     this.setState({ isValidated: false });
                 } else {
