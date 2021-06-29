@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Menu, Button, Modal, Message, Table} from 'semantic-ui-react'
+import {Divider, Button, Modal, Grid, Confirm, Segment} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import {LANG_MAP} from "../../shared/consts";
 
 class FileManager extends Component {
 
@@ -17,7 +16,7 @@ class FileManager extends Component {
         original_language: "heb",
         metadata: {},
         source: null,
-
+        showConfirm: false,
     };
 
     sortFiles = () => {
@@ -50,40 +49,69 @@ class FileManager extends Component {
     };
 
     setRemoved = () => {
-        let {product_data} = this.state;
-        console.log(":: Censor - set removed: ", product_data);
-        this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/products/${product_data.product_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        let {file_data} = this.props;
+        console.log(":: FileManager - set removed: ", file_data);
+        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        this.setState({showConfirm: false});
+        setTimeout(() => {
+            this.props.getProductFiles();
+            this.props.toggleFileManager();
+        }, 1000)
     };
 
     render() {
+        const {showConfirm} = this.state;
+        const {source, file_data} = this.props;
 
-        const {source} = this.props;
+        const message = (
+            <div>
+                <Segment size='massive' basic textAlign='center'>Delete filename.mp4?</Segment>
+                <Segment size='massive' basic textAlign='center'>This action can't be undone!</Segment>
+            </div>
+        )
 
         return (
             <Modal closeOnDimmerClick={false}
                    onClose={this.props.toggleFileManager}
                    open={this.props.show_filemanager}
-                   size='large'
+                   size='small'
                    closeIcon="close">
-                <Modal.Header>{this.props.file_data.file_name}</Modal.Header>
+                <Modal.Header style={{display: "flex", justifyContent: "center"}}>{file_data.file_name}</Modal.Header>
                 <Modal.Content>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='blue' basic content='Play' />} size='tiny'>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='violet' basic content='Download' href={source} download />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='orange' basic content='Youtube' />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='yellow' basic content='Mdb'/>
-                        </Menu.Item>
-                    </Menu>
+                    <Grid textAlign='center'>
+                        <Grid.Row columns={4}>
+                            <Grid.Column>
+                                <Modal trigger={<Button color='green' basic content='Edit' />} size='tiny'>
+                                </Modal>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button color='red' basic content='Delete' onClick={() => this.setState({showConfirm: true})} />
+                                <Confirm
+                                    content={message}
+                                    open={showConfirm}
+                                    onCancel={() => this.setState({showConfirm: false})}
+                                    onConfirm={this.setRemoved}
+                                />
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Divider hidden />
+                        <Grid.Row columns={4}>
+                            <Grid.Column>
+                                <Modal trigger={<Button color='blue' basic content='Play' />} size='tiny'>
+                                    <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
+                                </Modal>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button color='violet' basic content='Download' href={source} download />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button color='orange' basic content='Youtube' />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button color='yellow' basic content='Mdb'/>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.props.toggleFileManager} >Cancel</Button>

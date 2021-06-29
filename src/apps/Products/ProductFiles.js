@@ -95,7 +95,7 @@ class ProductFiles extends Component {
         return (
             <Table basic='very'>
                 <FileManager product_id={this.props.product_id} file_data={file_data} source={source} show_filemanager={show_filemanager}
-                             onFileUploaded={this.onFileUploaded}
+                             getProductFiles={this.props.getProductFiles}
                              toggleFileManager={this.toggleFileManager} />
                 <Table.Header>
                     <Table.Row>
