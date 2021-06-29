@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
-import {getData, WFDB_BACKEND, WFSRV_BACKEND, getToken} from '../../shared/tools';
-import {Divider, Button, Modal, Grid, Confirm, Segment} from 'semantic-ui-react'
+import {WFDB_BACKEND, WFSRV_BACKEND, getToken, getMediaType, putData} from '../../shared/tools';
+import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import {PRODUCT_FILE_TYPES} from "../../shared/consts";
 
 class FileManager extends Component {
 
     state = {
         active: null,
+        file_type: "",
         langs_files: {},
         product_name: "",
         files: [],
@@ -17,19 +19,20 @@ class FileManager extends Component {
         metadata: {},
         source: null,
         showConfirm: false,
+        showEditFile: false,
+    };
+
+    checkEdit = () => {
+        if(this.props.file_data) {
+            const {file_type} = this.props.file_data;
+            this.setState({file_type});
+        }
     };
 
     sortFiles = () => {
         const {langs, files} = this.props;
         Object.keys(langs).map(l => langs[l]["files"] = files.filter(f => f.language === l));
         this.setState({langs_files: langs});
-    };
-
-    getProductFiles = (product_id) => {
-        getData(`files/find?key=product_id&value=${this.props.product_id}`, (files) => {
-            console.log(":: Files DB Data: ", files);
-            this.setState({files});
-        });
     };
 
     selectFile = (data) => {
@@ -59,29 +62,71 @@ class FileManager extends Component {
         }, 1000)
     };
 
+    saveFileData = () => {
+        const {file_data} = this.props;
+        file_data.file_type = this.state.file_type;
+        delete file_data.id;
+        putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+            console.log(":: EditFile respond: ",cb);
+            this.setState({showEditFile: false});
+            this.props.getProductFiles();
+        });
+    }
+
     render() {
-        const {showConfirm} = this.state;
+        const {showConfirm, showEditFile, file_type} = this.state;
         const {source, file_data} = this.props;
+        if(Object.keys(file_data).length === 0) return null
+
+        const full_name = file_data.file_name+'.'+file_data.extension;
+
+        const type = getMediaType(file_data.mime_type)
+        const file_type_options = PRODUCT_FILE_TYPES[file_data.language][type].map(data => {
+            return ({key: data, value: data, text: data})
+        });
 
         const message = (
             <div>
-                <Segment size='massive' basic textAlign='center'>Delete filename.mp4?</Segment>
+                <Segment size='massive' basic textAlign='center'>Delete {full_name}?</Segment>
                 <Segment size='massive' basic textAlign='center'>This action can't be undone!</Segment>
             </div>
         )
 
         return (
             <Modal closeOnDimmerClick={false}
+                   onMount={this.checkEdit}
                    onClose={this.props.toggleFileManager}
                    open={this.props.show_filemanager}
                    size='small'
                    closeIcon="close">
-                <Modal.Header style={{display: "flex", justifyContent: "center"}}>{file_data.file_name}</Modal.Header>
+                <Modal.Header style={{display: "flex", justifyContent: "center"}}>{full_name}</Modal.Header>
                 <Modal.Content>
                     <Grid textAlign='center'>
                         <Grid.Row columns={4}>
                             <Grid.Column>
-                                <Modal trigger={<Button color='green' basic content='Edit' />} size='tiny'>
+                                <Modal
+                                    onClose={() => this.setState({showEditFile: false})}
+                                    onOpen={() => this.setState({showEditFile: true})}
+                                    open={showEditFile}
+                                    trigger={<Button color='green' basic content='Edit' />}
+                                    size='small'>
+                                    <Modal.Content>
+                                        <Segment size='massive' basic textAlign='center'>Change File Type.</Segment>
+                                        <Segment size='massive' basic textAlign='center'>{full_name}</Segment>
+                                        <Segment size='small' basic textAlign='center'>
+                                            <Select
+                                                error={!file_type}
+                                                options={file_type_options}
+                                                placeholder='File Type'
+                                                value={file_type}
+                                                onChange={(e, {value}) => this.setState({file_type: value})}
+                                            />
+                                        </Segment>
+                                    </Modal.Content>
+                                    <Modal.Actions>
+                                        <Button onClick={() => this.setState({showEditFile: false})} >Cancel</Button>
+                                        <Button positive={true} disabled={!file_type} onClick={this.saveFileData} >Apply</Button>
+                                    </Modal.Actions>
                                 </Modal>
                             </Grid.Column>
                             <Grid.Column>
