@@ -1,5 +1,12 @@
 import React, {Component} from 'react'
-import {putData, WFDB_BACKEND, newProductMeta, getUnit, MDB_LOCAL_URL} from '../../shared/tools';
+import {
+    putData,
+    WFDB_BACKEND,
+    newProductMeta,
+    getUnit,
+    MDB_LOCAL_URL,
+    MDB_EXTERNAL_URL
+} from '../../shared/tools';
 import {Segment, Button, Modal, Form} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import CIT from "../CIT/CIT";
@@ -23,7 +30,9 @@ class ProductsAdmin extends Component {
         if(this.props.product) {
             const {product_name, language, i18n, line, parent} = this.props.product;
             const {[language]: {description}} = i18n;
-            getUnit(`${MDB_LOCAL_URL}/${parent.mdb_id}/`, (unit) => {
+            const local = window.location.hostname !== "wfsrv.kli.one";
+            const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
+            getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
                 this.setState({product_name, language, product_description: description, metadata: line, parent, unit});
             })
         } else {

@@ -11,6 +11,7 @@ export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const MDB_LOCAL_URL = process.env.REACT_APP_MDB_LOCAL_URL;
+export const MDB_EXTERNAL_URL = process.env.REACT_APP_MDB_EXTERNAL_URL;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const MDB_ADMIN_URL = 'https://kabbalahmedia.info/admin';
 export const KMEDIA_URL = 'https://kabbalahmedia.info/he';
