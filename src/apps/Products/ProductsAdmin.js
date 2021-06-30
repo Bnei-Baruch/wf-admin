@@ -23,6 +23,8 @@ class ProductsAdmin extends Component {
             const {product_name, language, i18n, line, parent} = this.props.product;
             const {[language]: {description}} = i18n;
             this.setState({product_name, language, product_description: description, metadata: line, parent});
+        } else {
+            this.setState({product_name: "", language: "heb", product_description: "", metadata: null, parent: null});
         }
     };
 

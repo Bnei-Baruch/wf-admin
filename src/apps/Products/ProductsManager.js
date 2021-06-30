@@ -211,6 +211,10 @@ class ProductsManager extends Component {
         this.setState({add_language: true});
     };
 
+    addProduct = () => {
+        this.setState({show_admin: true, product: null});
+    };
+
     setLang = (selected_language) => {
         if(!this.state.show_files) {
             this.getProductFiles()
@@ -221,11 +225,10 @@ class ProductsManager extends Component {
     };
 
     toggleProductAdmin = () => {
-        this.setState({show_admin: !this.state.show_admin});
+        this.setState({show_admin: false});
     };
 
     finishProduct = () => {
-        this.toggleProductAdmin();
         this.getProducts();
         this.setState({show_admin: false, product: null});
     };
@@ -259,8 +262,10 @@ class ProductsManager extends Component {
                                   onClick={() => this.setProduct(product_id, data)}/>
                         </Table.Cell>
                         <Table.Cell>{product_name}</Table.Cell>
-                        <Table.Cell><Button compact basic positive
-                                            onClick={() => this.editProduct(data)}>EDIT</Button></Table.Cell>
+                        <Table.Cell>
+                            <Button compact basic positive
+                                    onClick={() => this.editProduct(data)}>EDIT</Button>
+                        </Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                         <Table.Cell>{pattern}</Table.Cell>
@@ -369,7 +374,7 @@ class ProductsManager extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item position='right'>
-                        <Button positive={true} onClick={this.toggleProductAdmin}>Add Product</Button>
+                        <Button positive={true} onClick={this.addProduct}>Add Product</Button>
                         <ProductsAdmin
                             user={this.props.user}
                             product={this.state.product}
