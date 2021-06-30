@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {putData, WFDB_BACKEND, newProductMeta} from '../../shared/tools';
+import {putData, WFDB_BACKEND, newProductMeta, getUnit, MDB_LOCAL_URL} from '../../shared/tools';
 import {Segment, Button, Modal, Form} from 'semantic-ui-react'
 import {dep_options} from "../../shared/consts";
 import CIT from "../CIT/CIT";
@@ -16,15 +16,19 @@ class ProductsAdmin extends Component {
         metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "norav"},
         mdb_open: false,
         unit: null,
+        parent: null,
     };
 
     checkEdit = () => {
         if(this.props.product) {
             const {product_name, language, i18n, line, parent} = this.props.product;
             const {[language]: {description}} = i18n;
-            this.setState({product_name, language, product_description: description, metadata: line, parent});
+            getUnit(`${MDB_LOCAL_URL}/${parent.mdb_id}/`, (unit) => {
+                this.setState({product_name, language, product_description: description, metadata: line, parent, unit});
+            })
         } else {
-            this.setState({product_name: "", language: "heb", product_description: "", metadata: null, parent: null});
+            this.setState({product_name: "", language: "heb", product_description: "",
+                metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "norav"}, parent: null, unit: null});
         }
     };
 
@@ -113,7 +117,8 @@ class ProductsAdmin extends Component {
 
     render() {
 
-        const {product_name, product_description, language, cit_open, metadata, mdb_open} = this.state;
+        const {product_name, product_description, language, cit_open, metadata, parent, mdb_open, unit} = this.state;
+        const valid_form = metadata.hasOwnProperty("final_name") && !!unit && !!product_name
 
         return (
             <Modal closeOnDimmerClick={false}
@@ -166,7 +171,8 @@ class ProductsAdmin extends Component {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.props.toggleProductAdmin}>Cancel</Button>
-                    <Button positive={true} onClick={this.props.product ? this.editProduct : this.newProduct}>Apply</Button>
+                    <Button positive={true} disabled={!valid_form}
+                            onClick={this.props.product ? this.editProduct : this.newProduct}>Apply</Button>
                 </Modal.Actions>
             </Modal>
         );

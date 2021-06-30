@@ -50,10 +50,7 @@ class MDB extends Component {
 
     selectContentType = (content_type) => {
         let {metadata} = this.state;
-        let upload_type = content_type === "BLOG_POST" ? 'declamation' : this.props.metadata.upload_type;
-        if(content_type === "SOURCE")
-            upload_type = "source";
-        this.setState({metadata: {...metadata, content_type, upload_type}});
+        this.setState({metadata: {...metadata, content_type}});
     };
 
     selectLanguage = (language) => {

@@ -10,6 +10,7 @@ export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
+export const MDB_LOCAL_URL = process.env.REACT_APP_MDB_LOCAL_URL;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
 export const MDB_ADMIN_URL = 'https://kabbalahmedia.info/admin';
 export const KMEDIA_URL = 'https://kabbalahmedia.info/he';
@@ -559,6 +560,20 @@ export const Fetcher = (path, cb) => fetch(`${MDB_BACKEND}/${path}`, {
     .catch(ex => console.log(`get ${path}`, ex));
 
 export const fetchPublishers = cb => Fetcher('publishers/', cb);
+
+export const getUnit = (url, cb) => fetch(`${url}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .catch(ex => console.log(`get ${url}`, ex));
 
 export const fetchUnits = (path, cb) => fetch(`${MDB_BACKEND}/content_units/${path}`, {
     headers: {
