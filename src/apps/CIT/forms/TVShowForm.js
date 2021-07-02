@@ -2,14 +2,14 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import { CONTENT_TYPES_MAPPINGS, CT_VIDEO_PROGRAM } from '../../../shared/consts';
-import { isActive } from '../shared/utils';
+import {isActive, isPattern} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class TVShowForm extends BaseForm {
 
   // eslint-disable-next-line class-methods-use-this
   getActiveCollections(props) {
-    const active = (props.collections.get(CT_VIDEO_PROGRAM) || []).filter(isActive);
+    const active = (props.collections.get(CT_VIDEO_PROGRAM) || []).filter(c => c.properties?.active && c.properties?.pattern);
 
     active.sort((a, b) => {
       if (a.name < b.name) {
