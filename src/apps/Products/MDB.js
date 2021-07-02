@@ -80,7 +80,7 @@ class MDB extends Component {
     fetchMdb = () => {
         const {content_type, date, send_uid} = this.state.metadata;
         let path = send_uid ? [`query=${send_uid}`] : ['page_size=1000', `start_date=${date}`, `end_date=${date}`];
-        if(content_type) DCT_OPTS[content_type].map(ct => path.push(`content_type=${ct}`));
+        if(content_type) (DCT_OPTS[content_type] || []).map(ct => path.push(`content_type=${ct}`));
         fetchUnits('?' + path.join('&'), (data) => {
             this.setState({units: data.data, active: null});
             if(send_uid?.length === 8) {
