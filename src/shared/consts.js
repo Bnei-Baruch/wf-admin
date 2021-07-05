@@ -25,11 +25,12 @@ export const getContentOptions = (roles) => {
     return [
         { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
         { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap', disabled: !archive_mekorot },
+        { value: 'LIKUTIM', text: 'ליקוטים', icon: 'tasks' },
         { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
         { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
         { value: 'CLIPS', text: ' ‏קליפ', icon: 'film' },
         { value: 'MEALS', text: ' ‏סעודה', icon: 'food' },
-        { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
+        // { value: 'OTHER', text: ' ‏אחר', icon: 'unordered list' },
         { value: 'ARTICLES', text: 'מאמרים ', icon: 'newspaper' },
         { value: 'BLOG_POST', text: 'Blog-Post', icon: 'unmute' },
         //{ value: 'PUBLICATION', text: 'פירסומים ', icon: 'announcement' },
@@ -40,6 +41,7 @@ export const upload_extensions = {
     "akladot": ["doc","docx"],
     "tamlil": ["doc","docx"],
     "kitei-makor": ["doc","docx"],
+    "likutim": ["doc","docx"],
     "research-material": ["doc","docx"],
     "sirtutim": ["zip"],
     "dibuv": ["wav"],
@@ -61,6 +63,7 @@ export const DCT_OPTS = {
     OTHER: ['LECTURE','FRIENDS_GATHERING','EVENT_PART','TRAINING'],
     ARTICLES: ['ARTICLE'],
     BLOG_POST: ['BLOG_POST'],
+    LIKUTIM: ['LIKUTIM'],
 };
 
 export const mime_list = {
@@ -320,6 +323,8 @@ export const CT_PUBLICATION           = 'PUBLICATION';
 export const CT_LELO_MIKUD            = 'LELO_MIKUD';
 export const CT_RESEARCH_MATERIAL     = 'RESEARCH_MATERIAL';
 export const CT_BLOG_POST             = 'BLOG_POST';
+export const CT_KTAIM_NIVCHARIM       = 'KTAIM_NIVCHARIM';
+export const CT_SOURCE                = 'SOURCE';
 export const CT_LIKUTIM               = 'LIKUTIM';
 
 export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY];
@@ -366,6 +371,9 @@ export const CONTENT_TYPE_BY_ID = {
     38: CT_LELO_MIKUD,
     44: CT_BLOG_POST,
     45: CT_RESEARCH_MATERIAL,
+    46: CT_KTAIM_NIVCHARIM,
+    47: CT_SOURCE,
+    48: CT_LIKUTIM,
 };
 
 export const CONTENT_TYPES_MAPPINGS = {
@@ -387,6 +395,7 @@ export const CONTENT_TYPES_MAPPINGS = {
     [CT_PUBLICATION]: { collection_type: null, pattern: 'pub' },
     [CT_BLOG_POST]: { collection_type: null, pattern: 'declamation' },
     [CT_RESEARCH_MATERIAL]: { collection_type: null, pattern: 'research-material' },
+    [CT_LIKUTIM]: { collection_type: null, pattern: 'likutim' },
 };
 
 export const EVENT_PART_TYPES = [

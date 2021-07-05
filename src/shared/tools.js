@@ -2,8 +2,7 @@ import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE
 
 import kc from "../components/UserManager";
 
-//export const WFDB_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_STATE : '/stdb';
-//export const WFRP_STATE = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_STATE : '/strp';
+//export const MDB_BACKEND = 'http://dev.mdb.bbdomain.org/rest';
 export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
 export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
@@ -17,7 +16,7 @@ export const MDB_ADMIN_URL = 'https://kabbalahmedia.info/admin';
 export const KMEDIA_URL = 'https://kabbalahmedia.info/he';
 //export const SIRTUT_URL = process.env.REACT_APP_SIRTUT_URL;
 export const CNV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_CNV_BACKEND : '/cnvapi';
-//export const MDB_BACKEND = 'http://app.mdb.bbdomain.org/rest';
+
 //export const MDB_BACKEND = 'https://kabbalahmedia.info/mdb-api';
 export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
@@ -275,6 +274,8 @@ export const getName = (metadata) => {
         name[2] = "rav";
         name[4] = "declamation";
         name[5] =  "blog-rav_full";
+    } else if(upload_type === "likutim") {
+        name[5] = line.pattern;
     }
 
     return name.join("_") + '.' + mime_list[line.mime_type];
@@ -315,6 +316,8 @@ export const insertLine = (metadata,unit) => {
         metadata.line.film_date = film_date.split('T')[0];
         metadata.line.original_language = MDB_LANGUAGES[properties.original_language];
         metadata.send_id = properties.workflow_id || null;
+        if(properties.pattern)
+            metadata.line.pattern = properties.pattern;
         return metadata;
     }
 };
