@@ -76,7 +76,10 @@ export const fetchLikutim = (cb) => {
   const path     = `rest/content_units/?content_type=${CT_LIKUTIM}&page_size=${pageSize}&query=${cb}`;
 
   return fetch(`${API_BACKEND}${path}&page_no=1`, {
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer ' + getToken()
+    }
   }).then((response) => {
     if (response.ok) {
       return response.json();
