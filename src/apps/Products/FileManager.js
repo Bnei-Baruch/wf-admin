@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, WFSRV_BACKEND, getToken, getMediaType, putData} from '../../shared/tools';
+import {WFDB_BACKEND, getToken, getMediaType, putData} from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {PRODUCT_FILE_TYPES} from "../../shared/consts";
@@ -17,7 +17,6 @@ class FileManager extends Component {
         language: "heb",
         original_language: "heb",
         metadata: {},
-        source: null,
         showConfirm: false,
         showEditFile: false,
     };
@@ -33,13 +32,6 @@ class FileManager extends Component {
         const {langs, files} = this.props;
         Object.keys(langs).map(l => langs[l]["files"] = files.filter(f => f.language === l));
         this.setState({langs_files: langs});
-    };
-
-    selectFile = (data) => {
-        console.log(":: ProductFiles - selected file: ", data);
-        let path = data.properties.url;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({product_data: data, source, active: data.file_id});
     };
 
     getPlayer = (player) => {
@@ -71,7 +63,7 @@ class FileManager extends Component {
             this.setState({showEditFile: false});
             this.props.getProductFiles();
         });
-    }
+    };
 
     render() {
         const {showConfirm, showEditFile, file_type} = this.state;

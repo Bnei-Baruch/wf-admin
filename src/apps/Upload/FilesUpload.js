@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getMediaType, getToken, putData, WF_BACKEND, WFSRV_BACKEND} from "../../shared/tools";
+import {getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
 
 class FilesUpload extends Component {
@@ -40,15 +40,22 @@ class FilesUpload extends Component {
         this.setState({progress, file_type_options, file_data});
     };
 
-    saveFileData = () => {
+    saveFile = () => {
         const {file_data, file_type} = this.state;
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
-        putData(`${WFSRV_BACKEND}/workflow/products`, file_data, (cb) => {
+        putData(`${WFNAS_BACKEND}/workflow/products`, file_data, (cb) => {
             console.log(":: UploadApp - workflow respond: ",cb);
+            this.saveMeta(cb.jsonst);
+        });
+    };
+
+    saveMeta = (file_meta) => {
+        putData(`${WFDB_BACKEND}/files/${file_meta.file_id}`, file_meta, (cb) => {
+            console.log(":: saveMetadata respond: ",cb);
             this.props.onFileUploaded();
         });
-    }
+    };
 
     render() {
 
@@ -60,7 +67,7 @@ class FilesUpload extends Component {
         });
 
         const props = {
-            action: `${WF_BACKEND}/products/upload`,
+            action: `${WFNAS_BACKEND}/products/upload`,
             headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '',
@@ -109,7 +116,7 @@ class FilesUpload extends Component {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.props.toggleUpload} >Cancel</Button>
-                    <Button positive={true} disabled={!file_type} onClick={this.saveFileData} >Apply</Button>
+                    <Button positive={true} disabled={!file_type} onClick={this.saveFile} >Apply</Button>
                 </Modal.Actions>
             </Modal>
         );
