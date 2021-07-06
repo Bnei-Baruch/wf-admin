@@ -57,14 +57,15 @@ class LessonForm extends BaseForm {
       return true;
     }
 
-    this.setState({ error: 'נא לבחור חומרי לימוד או תגיות' });
+    this.setState({ error: 'נא לבחור חומרי לימוד או תגיות או ליקוטים' });
     return false;
   }
 
   isValidClassification() {
-    const { sources, tags, part, artifact_type: artifactType } = this.state;
+    const { sources, tags, likutims, part, artifact_type: artifactType } = this.state;
     return sources.length !== 0 ||
       tags.length !== 0 ||
+      likutims.length !== 0 ||
       part === 0 ||
       artifactType !== 'main';
   }
