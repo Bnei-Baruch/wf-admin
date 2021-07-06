@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Checkbox, Dropdown, Grid, Header, Icon, Input, Label, List, Search, Form } from 'semantic-ui-react';
 
@@ -339,6 +339,7 @@ class BaseForm extends Component {
     data.collection_type = CONTENT_TYPES_MAPPINGS[data.content_type].collection_type;
     data.sources         = data.sources.map(x => x[x.length - 1].uid);
     data.tags            = data.tags.map(x => x[x.length - 1].uid);
+    data.likutims        = data.likutims.map(x => x.uid);
 
     if (data.active_collections.length > data.selected_collection) {
       const selected      = data.active_collections[data.selected_collection];
@@ -869,26 +870,26 @@ class BaseForm extends Component {
     const { metadata, afterClear } = this.props;
 
     return (
-        <Fragment>
-      <Grid.Row className="bb-interesting">
-        <Grid.Column width={4}>
-          {this.renderLanguage()}
-        </Grid.Column>
-        <Grid.Column width={4}>
-          {this.renderLecturer()}
-        </Grid.Column>
-        <Grid.Column width={4}>
-          {this.renderHasTranslation()}
-        </Grid.Column>
-        {
-          afterClear ?
-            <Grid.Column width={4}>
-              {this.renderNumber()}
-            </Grid.Column> :
-            null
-        }
-      </Grid.Row>
-        </Fragment>
+      <Fragment>
+        <Grid.Row className="bb-interesting">
+          <Grid.Column width={4}>
+            {this.renderLanguage()}
+          </Grid.Column>
+          <Grid.Column width={4}>
+            {this.renderLecturer()}
+          </Grid.Column>
+          <Grid.Column width={4}>
+            {this.renderHasTranslation()}
+          </Grid.Column>
+          {
+            afterClear ?
+              <Grid.Column width={4}>
+                {this.renderNumber()}
+              </Grid.Column> :
+              null
+          }
+        </Grid.Row>
+      </Fragment>
     );
   }
 
