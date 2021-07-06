@@ -189,11 +189,15 @@ class ProductsManager extends Component {
     };
 
     setProduct = (product_id, product) => {
+        console.log(product)
         if(!this.state.show_languages) {
-            console.log(product)
             this.setState({product_id, product, show_languages: !this.state.show_languages});
         } else {
-            this.setState({product_id: null, product: null, show_languages: !this.state.show_languages, selected_language: null, show_files: false});
+            this.setState({product_id: null, product: null, show_languages: false, selected_language: null, show_files: false}, () => {
+                if(product_id !== this.state.product_id) {
+                    this.setState({product_id, product, show_languages: true});
+                }
+            });
         }
     };
 
@@ -220,7 +224,11 @@ class ProductsManager extends Component {
             this.getProductFiles()
             this.setState({selected_language, show_files: !this.state.show_files});
         } else {
-            this.setState({selected_language: null, files: [], show_files: !this.state.show_files});
+            this.setState({selected_language: null, files: [], show_files: !this.state.show_files}, () => {
+                if(selected_language !== this.state.selected_language) {
+                    this.setState({selected_language, show_files: !this.state.show_files});
+                }
+            });
         }
     };
 
