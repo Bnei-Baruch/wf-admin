@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {getMediaType, WFNAS_BACKEND} from '../../shared/tools';
-import {Button, Table, Icon, Popup} from 'semantic-ui-react'
+import {Button, Table, Icon, Popup, Label} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
 import FileManager from "./FileManager";
 
@@ -52,6 +52,8 @@ class ProductFiles extends Component {
                         <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
                 )
+            } else {
+                return null
             }
             }
         );
@@ -70,6 +72,8 @@ class ProductFiles extends Component {
                             <Table.Cell>{date}</Table.Cell>
                         </Table.Row>
                     )
+                } else {
+                    return null
                 }
             }
         );
@@ -88,6 +92,8 @@ class ProductFiles extends Component {
                             <Table.Cell>{date}</Table.Cell>
                         </Table.Row>
                     )
+                } else {
+                    return null
                 }
             }
         );
@@ -127,7 +133,9 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "video"})}>
-                            <Icon link name={active === "video" ? 'angle up' : 'angle down'} />Video</Table.Cell>
+                            <Icon link name={active === "video" ? 'angle up' : 'angle down'} />Video
+                            <Label circular color='grey' content={video_list.filter(f=>f).length} />
+                        </Table.Cell>
                     </Table.Row>
                     {active === "video" ? video_list : null}
                 </Table.Header>
@@ -135,7 +143,9 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "audio"})}>
-                            <Icon link name={active === "audio" ? 'angle up' : 'angle down'} />Audio</Table.Cell>
+                            <Icon link name={active === "audio" ? 'angle up' : 'angle down'} />Audio
+                            <Label circular color='grey' content={audio_list.filter(f=>f).length} />
+                        </Table.Cell>
                     </Table.Row>
                     {active === "audio" ? audio_list : null}
                 </Table.Header>
@@ -143,7 +153,9 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "other"})}>
-                            <Icon link name={active === "other" ? 'angle up' : 'angle down'} />Other</Table.Cell>
+                            <Icon link name={active === "other" ? 'angle up' : 'angle down'} />Other
+                            <Label circular color='grey' content={other_list.filter(f=>f).length} />
+                        </Table.Cell>
                     </Table.Row>
                     {active === "other" ? other_list : null}
                 </Table.Header>
