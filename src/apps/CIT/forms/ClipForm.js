@@ -9,7 +9,8 @@ class ClipForm extends BaseForm {
 
   // eslint-disable-next-line class-methods-use-this
   getActiveCollections(props) {
-    const active = (props.collections.get(CT_CLIPS) || []).filter(c => c.properties?.active && c.properties?.pattern);
+      //FIXME: Some collections does not have active property
+    const active = (props.collections.get(CT_CLIPS) || []).filter(c => c.uid === "KmHXzSQ6" || c.properties.active && c.properties.pattern);
 
     active.sort((a, b) => {
       if (a.name < b.name) {
