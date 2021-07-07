@@ -4,6 +4,7 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@kevincobain2000/json-to-html-table": "^1.0.1",
     "keycloak-js": "^13.0.1",
     "lodash": "^4.17.5",
     "mediaelement": "^4.2.9",
