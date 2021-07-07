@@ -166,6 +166,7 @@ class ProductsAdmin extends Component {
                                     </Modal>
                                 </Form.Field>
                                 <FormField>
+                                    {unit ?
                                     <Modal
                                         onClose={() => this.setState({show_info: false})}
                                         onOpen={() => this.setState({show_info: true})}
@@ -174,9 +175,10 @@ class ProductsAdmin extends Component {
                                         trigger={<Button>UID</Button>}
                                     >
                                         <Modal.Content>
-                                            {unit ? <JSONToHTMLTable data={unit} tableClassName="ui small basic very compact table"/> : null}
+                                            <JSONToHTMLTable data={unit} tableClassName="ui small basic very compact table"/>
                                         </Modal.Content>
                                     </Modal>
+                                        : null}
                                 </FormField>
                                 <Form.Field>
                                     <Modal closeOnDimmerClick={false}
