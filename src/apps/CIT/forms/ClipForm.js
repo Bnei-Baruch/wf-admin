@@ -41,6 +41,7 @@ class ClipForm extends BaseForm {
     const collection = activeCollections[sIdx];
 
     const pattern = collection ? collection.properties.pattern : '';
+      const collection_name = collection ? collection.i18n.en.name : '';
 
       let suffix = topic;
 
@@ -57,6 +58,7 @@ class ClipForm extends BaseForm {
         (suffix ? `_${suffix}` : '');
 
     return {
+        collection_name,
       pattern,
       auto_name: name.toLowerCase().trim(),
     };

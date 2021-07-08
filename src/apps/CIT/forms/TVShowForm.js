@@ -25,6 +25,7 @@ class TVShowForm extends BaseForm {
 
   suggestName(diff) {
     const {
+            topic,
             content_type: contentType,
             selected_collection: sIdx,
             episode,
@@ -39,6 +40,9 @@ class TVShowForm extends BaseForm {
     const collection = activeCollections[sIdx];
 
     const pattern = collection ? collection.properties.pattern : '';
+      const collection_name = collection ? collection.i18n.en.name : '';
+
+      let suffix = topic;
 
     // eslint-disable-next-line prefer-template
     const name = (hasTranslation ? 'mlt' : language) +
@@ -50,9 +54,11 @@ class TVShowForm extends BaseForm {
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
       pattern +
+        (suffix ? `_${suffix}` : '') +
       (episode !== '' ? (Number.isNaN(Number.parseInt(episode, 10)) ? '_' : '_n') + episode : '');
 
     return {
+        collection_name,
       pattern,
       auto_name: name.toLowerCase().trim(),
     };
@@ -77,6 +83,11 @@ class TVShowForm extends BaseForm {
                 {this.renderEpisode()}
               </Grid.Column>
             </Grid.Row>
+              <Grid.Row>
+                  <Grid.Column>
+                      {this.renderTopic()}
+                  </Grid.Column>
+              </Grid.Row>
           </Grid>
         </Grid.Column>
         <Grid.Column width={2} />
@@ -97,15 +108,11 @@ class TVShowForm extends BaseForm {
                 {this.renderHasTranslation()}
               </Grid.Column>
             </Grid.Row>
-            {
-              metadata.label_id ?
-                <Grid.Row>
+              <Grid.Row>
                   <Grid.Column>
-                    {this.renderFilmDate()}
+                      {this.renderFilmDate()}
                   </Grid.Column>
-                </Grid.Row> :
-                null
-            }
+              </Grid.Row>
           </Grid>
         </Grid.Column>
       </Grid.Row>
