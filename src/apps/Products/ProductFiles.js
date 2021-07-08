@@ -48,7 +48,7 @@ class ProductFiles extends Component {
                                     colSpan={2}
                                     selectable
                                     onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
-                        <Table.Cell>{file_type}</Table.Cell>
+                        <Table.Cell width={3}>{file_type}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
                 )
@@ -68,7 +68,7 @@ class ProductFiles extends Component {
                                         colSpan={2}
                                         selectable
                                         onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
-                            <Table.Cell>{file_type}</Table.Cell>
+                            <Table.Cell width={3}>{file_type}</Table.Cell>
                             <Table.Cell>{date}</Table.Cell>
                         </Table.Row>
                     )
@@ -88,7 +88,7 @@ class ProductFiles extends Component {
                                         colSpan={2}
                                         selectable
                                         onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
-                            <Table.Cell>{file_type}</Table.Cell>
+                            <Table.Cell width={3}>{file_type}</Table.Cell>
                             <Table.Cell>{date}</Table.Cell>
                         </Table.Row>
                     )

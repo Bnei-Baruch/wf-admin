@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {getData,WFSRV_BACKEND} from '../../shared/tools';
+import {getData} from '../../shared/tools';
 import {
     Menu,
     Segment,
@@ -120,22 +120,6 @@ class ProductsManager extends Component {
                 //this.refs.files.sortFiles();
             });
         });
-    };
-
-    selectProduct = (product_data) => {
-        console.log(":: ProductsAdmin - selected product: ", product_data);
-        this.props.setProduct(product_data.product_id);
-
-        // Check if master file is added
-        if(!product_data.original) {
-            this.setState({product_data, source: null, active: product_data.product_id});
-            return
-        } else {
-            // Build url for preview (take proxy if exist)
-            let path = product_data.proxy ? product_data.proxy.format.filename : product_data.original.format.filename;
-            let source = `${WFSRV_BACKEND}${path}`;
-            this.setState({product_data, source, active: product_data.product_id});
-        }
     };
 
     setProductLang = (language) => {
