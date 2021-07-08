@@ -108,7 +108,7 @@ class FileManager extends Component {
                                         <Segment size='massive' basic textAlign='center'>Change File Type.</Segment>
                                         <Segment size='massive' basic textAlign='center'>{full_name}</Segment>
                                         <Segment size='small' basic textAlign='center'>
-                                            <Select
+                                            <Select fluid
                                                 error={!file_type}
                                                 options={file_type_options}
                                                 placeholder='File Type'
