@@ -261,7 +261,7 @@ class ProductsManager extends Component {
         const {pattern, collections, date, product, products, locale, language, files, show_languages, selected_language} = this.state;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, date, language, pattern} = data;
+                const {product_name, product_id, date, language, line} = data;
                 const product_selected = product_id === this.state.product_id;
                 return (<Fragment>
                     <Table.Row key={product_id} verticalAlign='top'>
@@ -274,9 +274,9 @@ class ProductsManager extends Component {
                             <Button compact basic positive
                                     onClick={() => this.editProduct(data)}>EDIT</Button>
                         </Table.Cell>
+                        <Table.Cell>{line.film_date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
-                        <Table.Cell>{date}</Table.Cell>
-                        <Table.Cell>{pattern}</Table.Cell>
+                        <Table.Cell>{line.collection_name}</Table.Cell>
                         <Table.Cell>{LANG_MAP[language].text}</Table.Cell>
                     </Table.Row>
                     {show_languages && product_selected ?

@@ -25,6 +25,8 @@ class FileManager extends Component {
         if(this.props.file_data) {
             const {file_type} = this.props.file_data;
             this.setState({file_type});
+        } else {
+            this.setState({file_type: ""});
         }
     };
 

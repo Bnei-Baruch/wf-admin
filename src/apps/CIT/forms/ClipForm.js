@@ -34,7 +34,7 @@ class ClipForm extends BaseForm {
             lecturer,
             has_translation: hasTranslation,
             active_collections: activeCollections,
-            capture_date: captureDate,
+            //capture_date: captureDate,
             film_date: filmDate,
           } = Object.assign({}, this.state, diff || {});
 
@@ -50,7 +50,7 @@ class ClipForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      (filmDate ? filmDate : captureDate) +
+      filmDate +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
@@ -58,11 +58,26 @@ class ClipForm extends BaseForm {
         (suffix ? `_${suffix}` : '');
 
     return {
+        topic,
         collection_name,
       pattern,
       auto_name: name.toLowerCase().trim(),
     };
   }
+
+    validate() {
+        if (this.isValidClassification()) {
+            return true;
+        }
+
+        this.setState({ error: 'All form fields must be filled' });
+        return false;
+    }
+
+    isValidClassification() {
+        const { topic } = this.state;
+        return topic !== '';
+    }
 
   // eslint-disable-next-line class-methods-use-this
   renderHeader() {

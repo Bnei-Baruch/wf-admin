@@ -34,7 +34,6 @@ class TVShowForm extends BaseForm {
             has_translation: hasTranslation,
             active_collections: activeCollections,
             capture_date: captureDate,
-            film_date: filmDate,
           } = Object.assign({}, this.state, diff || {});
 
     const collection = activeCollections[sIdx];
@@ -49,7 +48,7 @@ class TVShowForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      captureDate +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +

@@ -18,12 +18,12 @@ class CassetteDayPicker extends PureComponent {
   };
 
   state = {
-    selectedDay: this.props.defaultValue || today(),
+    selectedDay: this.props.defaultValue || '',
     isUnknown: false,
   };
 
   handleDateChange = (date) => {
-    const value = date ? formatDate(date) : '1970-01-01';
+    const value = date ? formatDate(date) : '';
     this.setState({
       selectedDay: value,
       isUnknown: false,
