@@ -133,8 +133,8 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "video"})}>
-                            <Icon link name={active === "video" ? 'angle up' : 'angle down'} />Video
-                            <Label circular color='grey' content={video_list.filter(f=>f).length} />
+                            <Icon link name={active === "video" ? 'angle up' : 'angle down'} />Video &nbsp;
+                            <Label size='tiny' color='grey' content={video_list.filter(f=>f).length} />
                         </Table.Cell>
                     </Table.Row>
                     {active === "video" ? video_list : null}
@@ -143,8 +143,8 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "audio"})}>
-                            <Icon link name={active === "audio" ? 'angle up' : 'angle down'} />Audio
-                            <Label circular color='grey' content={audio_list.filter(f=>f).length} />
+                            <Icon link name={active === "audio" ? 'angle up' : 'angle down'} />Audio &nbsp;
+                            <Label size='tiny' color='grey' content={audio_list.filter(f=>f).length} />
                         </Table.Cell>
                     </Table.Row>
                     {active === "audio" ? audio_list : null}
@@ -153,8 +153,8 @@ class ProductFiles extends Component {
                 <Table.Header fullWidth className='files_list'>
                     <Table.Row>
                         <Table.Cell colSpan={4} width={1} onClick={() => this.setState({active: "other"})}>
-                            <Icon link name={active === "other" ? 'angle up' : 'angle down'} />Other
-                            <Label circular color='grey' content={other_list.filter(f=>f).length} />
+                            <Icon link name={active === "other" ? 'angle up' : 'angle down'} />Other &nbsp;
+                            <Label size='tiny' color='grey' content={other_list.filter(f=>f).length} />
                         </Table.Cell>
                     </Table.Row>
                     {active === "other" ? other_list : null}
