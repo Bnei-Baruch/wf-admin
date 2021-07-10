@@ -44,9 +44,9 @@ class FilesUpload extends Component {
         const {file_data, file_type} = this.state;
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
-        putData(`${WFNAS_BACKEND}/workflow/products`, file_data, (cb) => {
-            console.log(":: UploadApp - workflow respond: ",cb);
-            this.saveMeta(cb.jsonst);
+        putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
+            console.log(":: UploadApp - workflow respond: ",file_meta);
+            this.saveMeta(file_meta);
         });
     };
 
@@ -56,6 +56,11 @@ class FilesUpload extends Component {
             this.props.onFileUploaded();
         });
     };
+
+    closeModal = () => {
+        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: []});
+        this.props.toggleUpload();
+    }
 
     render() {
 
@@ -86,7 +91,7 @@ class FilesUpload extends Component {
 
         return (
             <Modal closeOnDimmerClick={false}
-                   onClose={this.props.toggleUpload}
+                   onClose={this.closeModal}
                    open={this.props.show_upload}
                    size='tiny'
                    closeIcon="close">
@@ -115,7 +120,7 @@ class FilesUpload extends Component {
                     {files_progress}
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button onClick={this.props.toggleUpload} >Cancel</Button>
+                    <Button onClick={this.closeModal} >Cancel</Button>
                     <Button positive={true} disabled={!file_type} onClick={this.saveFile} >Apply</Button>
                 </Modal.Actions>
             </Modal>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, getToken, getMediaType, putData} from '../../shared/tools';
+import {WFDB_BACKEND, getToken, getMediaType, putData, postData} from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {PRODUCT_FILE_TYPES} from "../../shared/consts";
@@ -64,6 +64,17 @@ class FileManager extends Component {
             console.log(":: EditFile respond: ",cb);
             this.setState({showEditFile: false});
             this.props.getProductFiles();
+        });
+    };
+
+    makeUnit = () => {
+        const data = {
+            "type_id":29,
+            "properties":{"film_date":"2021-07-09","original_language":"he","pattern":"test-pattern-wf2"},
+            "i18n":{"he":{"name":"test_heb_title","language":"he"},"en":{"name":"test_eng_title","language":"en"},"ru":{"name":"test_rus_title","language":"ru"}}
+        };
+        postData("http://dev.mdb.bbdomain.org/rest/content_units/", data, (cb) => {
+            console.log("makeUnit: ", cb)
         });
     };
 
@@ -147,7 +158,7 @@ class FileManager extends Component {
                                 <Button color='orange' basic content='Youtube' />
                             </Grid.Column>
                             <Grid.Column>
-                                <Button color='yellow' basic content='Mdb'/>
+                                <Button color='yellow' basic content='Mdb' onClick={this.makeUnit} />
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
