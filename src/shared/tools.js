@@ -1,4 +1,12 @@
-import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID, langs_bb} from './consts';
+import {
+    mime_list,
+    CONTENT_TYPES_MAPPINGS,
+    MDB_LANGUAGES,
+    DCT_OPTS,
+    CONTENT_TYPE_BY_ID,
+    langs_bb,
+    WF_LANGUAGES
+} from './consts';
 
 import kc from "../components/UserManager";
 
@@ -534,7 +542,7 @@ export const newProductMeta = (product_name, product_description, language) => {
     let date = new Date(product_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
         product_id, date, product_name, language, type_id: null,
-        product_type: "media", i18n: {[language]: {name: product_name, description: product_description}}, line: null, parent: {},
+        product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: product_name, description: product_description}}, line: null, parent: {},
         pattern: null,
         properties: {
             buffer: false,

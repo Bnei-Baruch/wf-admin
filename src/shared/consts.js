@@ -386,6 +386,14 @@ export const CONTENT_TYPE_BY_ID = {
     48: CT_LIKUTIM,
 };
 
+export const CONTENT_ID_BY_TYPE = function() {
+    let ret = {};
+    for(let key in CONTENT_TYPE_BY_ID) {
+        ret[CONTENT_TYPE_BY_ID[key]] = key;
+    }
+    return ret;
+}()
+
 export const CONTENT_TYPES_MAPPINGS = {
     [CT_LESSON_PART]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
     [CT_FULL_LESSON]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },

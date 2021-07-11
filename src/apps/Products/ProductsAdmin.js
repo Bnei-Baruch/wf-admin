@@ -8,7 +8,7 @@ import {
     MDB_EXTERNAL_URL
 } from '../../shared/tools';
 import {Segment, Button, Modal, Form, FormField} from 'semantic-ui-react'
-import {dep_options} from "../../shared/consts";
+import {dep_options, WF_LANGUAGES} from "../../shared/consts";
 import CIT from "../CIT/CIT";
 import MDB from "./MDB";
 import {JSONToHTMLTable} from "@kevincobain2000/json-to-html-table";
@@ -31,7 +31,7 @@ class ProductsAdmin extends Component {
     checkEdit = () => {
         if(this.props.product) {
             const {product_name, language, i18n, line, parent} = this.props.product;
-            const {[language]: {description}} = i18n;
+            const {[WF_LANGUAGES[language]]: {description}} = i18n;
             const local = window.location.hostname !== "wfsrv.kli.one";
             const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
             getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
@@ -74,7 +74,7 @@ class ProductsAdmin extends Component {
     };
 
     editProduct = () => {
-        let {product_name, product_description, language, metadata, unit, parent} = this.state;
+        let {product_name, language, metadata, unit, parent} = this.state;
         let {product} = this.props;
         let line = metadata;
         if(unit) {
@@ -87,7 +87,7 @@ class ProductsAdmin extends Component {
             }
         }
         product = {...product, product_name, language, parent, line,
-            i18n: {[language]: {name: "", description: ""}}
+            i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}
         };
         this.saveProduct(product);
     }
