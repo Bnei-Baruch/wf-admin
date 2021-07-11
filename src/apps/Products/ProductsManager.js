@@ -10,7 +10,7 @@ import {
     Table,
     Pagination
 } from 'semantic-ui-react'
-import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP} from "../../shared/consts";
+import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
@@ -268,20 +268,20 @@ class ProductsManager extends Component {
                             <Table.Cell/>
                             <Table.Cell colSpan={3}>
                                 {show_languages && product_selected ?
-                                    Object.keys(data?.i18n).map(lang => {
+                                    Object.keys(data?.i18n).map(la => {
                                         return (
-                                            <Table basic='very' key={product_id + lang}>
-                                                <Table.Row key={lang} verticalAlign='top'>
+                                            <Table basic='very' key={product_id + la}>
+                                                <Table.Row key={la} verticalAlign='top'>
                                                     <Table.Cell collapsing>
-                                                        <Icon link name={selected_language === lang ? 'minus' : 'plus'}
-                                                              color='blue' onClick={() => this.setLang(lang)} />
+                                                        <Icon link name={selected_language === MDB_LANGUAGES[la] ? 'minus' : 'plus'}
+                                                              color='blue' onClick={() => this.setLang(MDB_LANGUAGES[la])} />
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {LANG_MAP[lang].text}
-                                                        {product_selected && selected_language === lang ?
+                                                        {LANG_MAP[MDB_LANGUAGES[la]].text}
+                                                        {product_selected && selected_language === MDB_LANGUAGES[la] ?
                                                             <ProductFiles user={this.props.user} files={files}
                                                                           file_name={product?.line?.final_name}
-                                                                          product_id={product_id} metadata={data.i18n[lang]}
+                                                                          product_id={product_id} metadata={data.i18n[la]}
                                                                           lang={selected_language} ref="files"
                                                                           getProductFiles={this.getProductFiles}
                                                                           getProducts={this.getProducts}

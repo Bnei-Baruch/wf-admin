@@ -283,6 +283,14 @@ export const MDB_LANGUAGES = {
   xx: 'unk',
 };
 
+export const WF_LANGUAGES = function() {
+    let ret = {};
+    for(let key in MDB_LANGUAGES) {
+        ret[MDB_LANGUAGES[key]] = key;
+    }
+    return ret;
+}()
+
 export const LECTURERS = [
   { text: 'רב', value: 'rav' },
   { text: 'בלי רב', value: 'norav' },

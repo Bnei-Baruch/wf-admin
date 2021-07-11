@@ -105,14 +105,17 @@ class ProductFiles extends Component {
                              toggleFileManager={this.toggleFileManager} />
                 <Table.Header>
                     <Table.Row>
-                        <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;<Button compact basic color='grey'>{name}</Button>
+                        <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;
+                            <Button compact basic color='grey'>{name}</Button>
                         </Table.Cell>
                         <Table.Cell singleLine>Description&nbsp;&nbsp;&nbsp;
-                            <Popup
-                                trigger={<Button compact basic color='grey' className='overflow'>{description}</Button>}
-                                content={description}
-                                inverted
-                            />
+                            {description ?
+                                <Popup
+                                    trigger={<Button compact basic color='grey' className='overflow'>{description}</Button>}
+                                    content={description}
+                                    inverted
+                                />
+                            : " ..."}
                         </Table.Cell>
                         <Table.Cell width={1}><Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button></Table.Cell>
                         <Table.Cell width={2} />

@@ -70,8 +70,15 @@ class FileManager extends Component {
     makeUnit = () => {
         const data = {
             "type_id":29,
-            "properties":{"film_date":"2021-07-09","original_language":"he","pattern":"test-pattern-wf2"},
-            "i18n":{"he":{"name":"test_heb_title","language":"he"},"en":{"name":"test_eng_title","language":"en"},"ru":{"name":"test_rus_title","language":"ru"}}
+            "properties":{
+                "film_date":"2021-07-09",
+                "original_language":"he",
+                "pattern":"test-pattern-wf2"},
+            "i18n":{
+                "he":{"name":"test_heb_title","language":"he"},
+                "en":{"name":"test_eng_title","language":"en"},
+                "ru":{"name":"test_rus_title","language":"ru"}
+            }
         };
         postData("http://dev.mdb.bbdomain.org/rest/content_units/", data, (cb) => {
             console.log("makeUnit: ", cb)
