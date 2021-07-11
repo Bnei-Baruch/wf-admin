@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
+import {getData, getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
 
 class FilesUpload extends Component {
@@ -21,23 +21,29 @@ class FilesUpload extends Component {
     };
 
     uploadDone = (file_data) => {
-        //TODO: Check if file already exist
         console.log(":: ProductFiles - got data: ", file_data);
         let {progress} = this.state;
-        const {product_id, language} = this.props;
-        file_data.product_id = product_id;
-        file_data.language = language;
-        file_data.mime_type = file_data.type;
-        file_data.properties = {upload_name: file_data.file_name};
-        const file_type = getMediaType(file_data.type)
-        const file_type_options = PRODUCT_FILE_TYPES[language][file_type].map(data => {
-            return ({key: data, value: data, text: data})
+        getData(`files/find?sha1=${file_data.sha1}`, (files_sha) => {
+            console.log(":: Files DB Data: ", files_sha);
+            if(files_sha.length > 0) {
+                alert("File already exist!");
+                this.closeModal();
+            } else {
+                const {product_id, language} = this.props;
+                file_data.product_id = product_id;
+                file_data.language = language;
+                file_data.mime_type = file_data.type;
+                file_data.properties = {upload_name: file_data.file_name};
+                const file_type = getMediaType(file_data.type)
+                const file_type_options = PRODUCT_FILE_TYPES[language][file_type].map(data => {
+                    return ({key: data, value: data, text: data})
+                });
+                delete file_data.type;
+                delete file_data.url;
+                delete progress[file_data.file_name];
+                this.setState({progress, file_type_options, file_data});
+            }
         });
-
-        delete file_data.type;
-        delete file_data.url;
-        delete progress[file_data.file_name];
-        this.setState({progress, file_type_options, file_data});
     };
 
     saveFile = () => {
