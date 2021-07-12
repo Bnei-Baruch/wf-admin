@@ -101,6 +101,7 @@ class ProductFiles extends Component {
         return (
             <Table basic='very'>
                 <FileManager product_id={this.props.product_id}
+                             user={this.props.user}
                              file_data={file_data}
                              source={source}
                              show_filemanager={show_filemanager}
@@ -110,16 +111,14 @@ class ProductFiles extends Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.Cell singleLine width={3}>Title&nbsp;&nbsp;&nbsp;
-                            <Button compact basic color='grey'>{name}</Button>
+                            <Button compact basic color='grey'>{name || " ..."}</Button>
                         </Table.Cell>
                         <Table.Cell singleLine>Description&nbsp;&nbsp;&nbsp;
-                            {description ?
                                 <Popup
-                                    trigger={<Button compact basic color='grey' className='overflow'>{description}</Button>}
-                                    content={description}
+                                    trigger={<Button compact basic color='grey' className='overflow'>{description || " ..."}</Button>}
+                                    content={description || " ..."}
                                     inverted
                                 />
-                            : " ..."}
                         </Table.Cell>
                         <Table.Cell width={1}><Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button></Table.Cell>
                         <Table.Cell width={2} />

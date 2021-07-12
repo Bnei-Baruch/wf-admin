@@ -1,5 +1,14 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, getToken, getMediaType, putData, postData, newMdbUnit} from '../../shared/tools';
+import {
+    WFDB_BACKEND,
+    getToken,
+    getMediaType,
+    putData,
+    postData,
+    newMdbUnit,
+    WFSRV_BACKEND,
+    getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL
+} from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {PRODUCT_FILE_TYPES} from "../../shared/consts";
@@ -68,12 +77,72 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
-        newMdbUnit(this.props.product.line).
-            then(unit => {
-            console.log("makeUnit: ", unit);
-            this.setState({unit});
-        })
+        const {line} = this.props.product;
+
+        // UID in line indicate that unit already created. If we again here it's mean
+        // insert was not successful. So we get unit from MDB and try to insert again.
+        if(line.uid) {
+            const local = window.location.hostname !== "wfsrv.kli.one";
+            const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
+            getUnit(`${url}/${line.unit_id}/`, (unit) => {
+                this.archiveInsert(unit);
+            })
+        } else {
+            newMdbUnit(this.props.product.line)
+                .then(unit => {
+                    console.log("makeUnit: ", unit);
+                    this.archiveInsert(unit);
+                })
+                .catch(reason => {
+                    console.log(reason.message)
+                })
+        }
     };
+
+    archiveInsert = (unit) => {
+        const {file_data, product, user} = this.props;
+        const {name,email} = user;
+        const {date,extension,file_name,language,sha1,size} = file_data;
+
+        if(!product.line.uid) {
+            product.line.unit_id = unit.id;
+            product.line.uid = unit.uid;
+            putData(`${WFDB_BACKEND}/products/${product.product_id}`, product, (cb) => {
+                console.log(":: saveProduct: ",cb);
+            });
+        }
+
+        const insert_meta = {
+            date, extension, file_name,
+            insert_id: "i" + Math.floor(Date.now() / 1000),
+            insert_name: `${file_name}.${extension}`,
+            insert_type: "1",
+            language,
+            line: {...product.line, name, email},
+            send_id: product.product_id,
+            sha1, size,
+            upload_type: "product",
+        };
+
+        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
+            console.log(":: WFSRV respond: ",cb);
+            if(cb.status === "ok") {
+
+                // We save file data to DB after successful insert.
+                file_data.uid = unit.uid;
+                file_data.properties.archive = true;
+                delete file_data.id;
+                putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                    console.log(":: saveFile: ",cb);
+                    this.props.getProductFiles();
+                });
+
+                alert("Insert successful :)");
+            } else {
+                alert("Something gone wrong :(");
+            }
+        });
+    }
 
     render() {
         const {showConfirm, showEditFile, file_type} = this.state;
