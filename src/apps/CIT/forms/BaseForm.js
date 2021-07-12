@@ -349,6 +349,7 @@ class BaseForm extends Component {
     if (data.active_collections.length > data.selected_collection) {
       const selected      = data.active_collections[data.selected_collection];
       data.collection_uid = selected.uid;
+      data.collection_id = selected.id;
     }
 
     return this.cleanData(data);
