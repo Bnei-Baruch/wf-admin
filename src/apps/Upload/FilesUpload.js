@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select} from 'semantic-ui-react';
+import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select, Grid, Checkbox} from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {getData, getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
@@ -7,6 +7,7 @@ import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
 class FilesUpload extends Component {
 
     state = {
+        archive: false,
         file_data: null,
         progress: {},
         file_type: null,
@@ -47,9 +48,10 @@ class FilesUpload extends Component {
     };
 
     saveFile = () => {
-        const {file_data, file_type} = this.state;
+        const {file_data, file_type, archive} = this.state;
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
+        file_data.properties.archive = archive;
         putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
             console.log(":: UploadApp - workflow respond: ",file_meta);
             this.saveMeta(file_meta);
@@ -64,13 +66,13 @@ class FilesUpload extends Component {
     };
 
     closeModal = () => {
-        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: []});
+        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
         this.props.toggleUpload();
     }
 
     render() {
 
-        const {progress, file_type, file_type_options} = this.state;
+        const {progress, file_type, file_type_options, archive} = this.state;
 
         let files_progress = Object.keys(progress).map((id) => {
             let count = progress[id];
@@ -104,13 +106,25 @@ class FilesUpload extends Component {
                 <Modal.Header>Add Files For {LANG_MAP[this.props.language].text}</Modal.Header>
                 <Modal.Content>
                     {file_type_options.length > 0 ?
-                        <Select
-                            error={!file_type}
-                            options={file_type_options}
-                            placeholder='File Type'
-                            value={file_type}
-                            onChange={(e, {value}) => this.setState({file_type: value})}
-                        /> : null}
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Select
+                                    fluid
+                                    error={!file_type}
+                                    options={file_type_options}
+                                    placeholder='File Type'
+                                    value={file_type}
+                                    onChange={(e, {value}) => this.setState({file_type: value})}
+                                />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Segment size='mini' basic>
+                                    <Checkbox label='To Archive' value={archive}
+                                              onChange={() => this.setState({archive: !archive})} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid>
+                        : null}
                     <Segment>
                         <Upload {...props} onSuccess={this.uploadDone} onProgress={this.progress} >
                             <Segment placeholder>

@@ -68,7 +68,11 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
-        newMdbUnit(this.props.product.line).then(data => console.log("makeUnit: ", data))
+        newMdbUnit(this.props.product.line).
+            then(unit => {
+            console.log("makeUnit: ", unit);
+            this.setState({unit});
+        })
     };
 
     render() {
@@ -151,7 +155,9 @@ class FileManager extends Component {
                                 <Button color='orange' basic content='Youtube' />
                             </Grid.Column>
                             <Grid.Column>
-                                <Button color='yellow' basic content='Mdb' onClick={this.makeUnit} />
+                                <Button color='yellow' basic content='Mdb'
+                                        disabled={!file_data.properties?.archive}
+                                        onClick={this.makeUnit} />
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
