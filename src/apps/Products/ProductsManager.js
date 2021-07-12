@@ -281,7 +281,9 @@ class ProductsManager extends Component {
                                                         {product_selected && selected_language === MDB_LANGUAGES[la] ?
                                                             <ProductFiles user={this.props.user} files={files}
                                                                           file_name={product?.line?.final_name}
-                                                                          product_id={product_id} metadata={data.i18n[la]}
+                                                                          product={product}
+                                                                          product_id={product_id}
+                                                                          metadata={data.i18n[la]}
                                                                           lang={selected_language} ref="files"
                                                                           getProductFiles={this.getProductFiles}
                                                                           getProducts={this.getProducts}

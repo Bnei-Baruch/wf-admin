@@ -100,7 +100,11 @@ class ProductFiles extends Component {
 
         return (
             <Table basic='very'>
-                <FileManager product_id={this.props.product_id} file_data={file_data} source={source} show_filemanager={show_filemanager}
+                <FileManager product_id={this.props.product_id}
+                             file_data={file_data}
+                             source={source}
+                             show_filemanager={show_filemanager}
+                             product={this.props.product}
                              getProductFiles={this.props.getProductFiles}
                              toggleFileManager={this.toggleFileManager} />
                 <Table.Header>

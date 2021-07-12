@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, getToken, getMediaType, putData, postData} from '../../shared/tools';
+import {WFDB_BACKEND, getToken, getMediaType, putData, postData, newMdbUnit} from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {PRODUCT_FILE_TYPES} from "../../shared/consts";
@@ -68,21 +68,7 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
-        const data = {
-            "type_id":29,
-            "properties":{
-                "film_date":"2021-07-09",
-                "original_language":"he",
-                "pattern":"test-pattern-wf2"},
-            "i18n":{
-                "he":{"name":"test_heb_title","language":"he"},
-                "en":{"name":"test_eng_title","language":"en"},
-                "ru":{"name":"test_rus_title","language":"ru"}
-            }
-        };
-        postData("http://dev.mdb.bbdomain.org/rest/content_units/", data, (cb) => {
-            console.log("makeUnit: ", cb)
-        });
+        newMdbUnit(this.props.product.line).then(data => console.log("makeUnit: ", data))
     };
 
     render() {
