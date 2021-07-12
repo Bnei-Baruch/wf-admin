@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {postData, WFDB_BACKEND} from '../../shared/tools';
 import {Segment, Button, Form, Modal} from 'semantic-ui-react'
-import {language_options, MDB_LANGUAGES, WF_LANGUAGES} from "../../shared/consts";
+import {language_options, WF_LANGUAGES} from "../../shared/consts";
 
 class AddLanguage extends Component {
 
@@ -37,7 +37,7 @@ class AddLanguage extends Component {
         const {language, name, description} = this.state;
         const {product_id} = this.props;
         const data = {name, description};
-        postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${MDB_LANGUAGES[language]}`, data, (cb) => {
+        postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${WF_LANGUAGES[language]}`, data, (cb) => {
             console.log(":: PUT Respond: ",cb);
             this.setState({name: "", description: "", language: ""});
             this.props.finishLanguage();
