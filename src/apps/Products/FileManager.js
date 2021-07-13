@@ -9,7 +9,7 @@ import {
     WFSRV_BACKEND,
     getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL
 } from '../../shared/tools';
-import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
+import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {PRODUCT_FILE_TYPES, WF_LANGUAGES} from "../../shared/consts";
 
@@ -28,15 +28,16 @@ class FileManager extends Component {
         metadata: {},
         showConfirm: false,
         showEditFile: false,
-        inserting: false
+        inserting: false,
+        archive: false,
     };
 
     checkEdit = () => {
         if(this.props.file_data) {
-            const {file_type} = this.props.file_data;
-            this.setState({file_type});
+            const {file_type, properties: {archive}} = this.props.file_data;
+            this.setState({file_type, archive});
         } else {
-            this.setState({file_type: ""});
+            this.setState({file_type: "", archive: false});
         }
     };
 
@@ -69,6 +70,7 @@ class FileManager extends Component {
     saveFileData = () => {
         const {file_data} = this.props;
         file_data.file_type = this.state.file_type;
+        file_data.properties.archive = this.state.archive;
         delete file_data.id;
         putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
             console.log(":: EditFile respond: ",cb);
@@ -153,7 +155,7 @@ class FileManager extends Component {
     }
 
     render() {
-        const {showConfirm, showEditFile, file_type, inserting} = this.state;
+        const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
         const {source, file_data} = this.props;
         if(Object.keys(file_data).length === 0) return null
 
@@ -193,13 +195,23 @@ class FileManager extends Component {
                                         <Segment size='massive' basic textAlign='center'>Change File Type.</Segment>
                                         <Segment size='massive' basic textAlign='center'>{full_name}</Segment>
                                         <Segment size='small' basic textAlign='center'>
-                                            <Select fluid
-                                                error={!file_type}
-                                                options={file_type_options}
-                                                placeholder='File Type'
-                                                value={file_type}
-                                                onChange={(e, {value}) => this.setState({file_type: value})}
-                                            />
+                                            <Grid columns='equal'>
+                                                <Grid.Column>
+                                                    <Select fluid
+                                                            error={!file_type}
+                                                            options={file_type_options}
+                                                            placeholder='File Type'
+                                                            value={file_type}
+                                                            onChange={(e, {value}) => this.setState({file_type: value})}
+                                                    />
+                                                </Grid.Column>
+                                                <Grid.Column>
+                                                    <Segment size='mini' basic>
+                                                        <Checkbox label='To Archive' checked={archive}
+                                                                  onChange={() => this.setState({archive: !archive})} />
+                                                    </Segment>
+                                                </Grid.Column>
+                                            </Grid>
                                         </Segment>
                                     </Modal.Content>
                                     <Modal.Actions>
