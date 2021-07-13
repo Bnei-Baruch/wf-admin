@@ -39,7 +39,7 @@ class ProductFiles extends Component {
         const {active, source, show_filemanager, show_upload, file_data, name, description} = this.state;
 
         const video_list = this.props.files.map(f => {
-            const {date, language, file_id, file_name, file_type, mime_type} = f;
+            const {date, language, file_id, file_name, file_type, mime_type, uid, properties} = f;
             const media_type = getMediaType(mime_type);
             if(language === this.props.lang && media_type === "video") {
                 return(
@@ -47,7 +47,9 @@ class ProductFiles extends Component {
                         <Table.Cell className='product-file-cell'
                                     colSpan={2}
                                     selectable
-                                    onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                                    onClick={() => this.selectFile(f)}>{file_name}&nbsp;&nbsp;&nbsp;
+                            {properties?.archive ? <Icon name='archive' color={uid ? 'green' : 'red'} /> : null}
+                        </Table.Cell>
                         <Table.Cell width={3}>{file_type}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
                     </Table.Row>
@@ -87,7 +89,8 @@ class ProductFiles extends Component {
                             <Table.Cell className='product-file-cell'
                                         colSpan={2}
                                         selectable
-                                        onClick={() => this.selectFile(f)}>{file_name}</Table.Cell>
+                                        onClick={() => this.selectFile(f)}>{file_name}
+                            </Table.Cell>
                             <Table.Cell width={3}>{file_type}</Table.Cell>
                             <Table.Cell>{date}</Table.Cell>
                         </Table.Row>

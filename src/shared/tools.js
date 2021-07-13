@@ -69,7 +69,7 @@ export const getToken = () => {
     return kc.token;
 };
 
-export const newMdbUnit = async(line) => {
+export const newMdbUnit = async(line, derived_id) => {
     let options, r, body
     const {collection_id, collection_uid, content_type, topic, language, film_date} = line;
 
@@ -90,6 +90,13 @@ export const newMdbUnit = async(line) => {
     options = getRequestOptions(body);
     r = await fetch(`${MDB_BACKEND}/collections/${collection_id}/content_units/`, options);
     console.log(r)
+
+    if(derived_id) {
+        body = {derived_id, name: ""};
+        options = getRequestOptions(body);
+        r = await fetch(`${MDB_BACKEND}/content_units/${unit.id}/derivatives/`, options);
+        console.log(r)
+    }
 
     if(line.lecturer === "rav") {
         body = {person_id: 1, role_id: 1};

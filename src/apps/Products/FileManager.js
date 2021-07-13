@@ -11,7 +11,7 @@ import {
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import {PRODUCT_FILE_TYPES} from "../../shared/consts";
+import {PRODUCT_FILE_TYPES, WF_LANGUAGES} from "../../shared/consts";
 
 class FileManager extends Component {
 
@@ -78,7 +78,7 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
-        const {line} = this.props.product;
+        const {line, parent} = this.props.product;
         this.setState({inserting: true});
 
         // UID in line indicate that unit already created. If we again here it's mean
@@ -90,7 +90,7 @@ class FileManager extends Component {
                 this.archiveInsert(unit);
             })
         } else {
-            newMdbUnit(this.props.product.line)
+            newMdbUnit(line, parent.mdb_id)
                 .then(unit => {
                     console.log("makeUnit: ", unit);
                     this.archiveInsert(unit);
@@ -110,6 +110,7 @@ class FileManager extends Component {
         if(!product.line.uid) {
             product.line.unit_id = unit.id;
             product.line.uid = unit.uid;
+            product.i18n[WF_LANGUAGES[language]].archive = true;
             putData(`${WFDB_BACKEND}/products/${product.product_id}`, product, (cb) => {
                 console.log(":: saveProduct: ",cb);
             });
