@@ -28,6 +28,7 @@ class FileManager extends Component {
         metadata: {},
         showConfirm: false,
         showEditFile: false,
+        inserting: false
     };
 
     checkEdit = () => {
@@ -78,9 +79,10 @@ class FileManager extends Component {
 
     makeUnit = () => {
         const {line} = this.props.product;
+        this.setState({inserting: true});
 
         // UID in line indicate that unit already created. If we again here it's mean
-        // insert was not successful. So we get unit from MDB and try to insert again.
+        // insert was not successful or we insert translation. So we get unit from MDB and try to insert again.
         if(line.uid) {
             const local = window.location.hostname !== "wfsrv.kli.one";
             const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
@@ -94,7 +96,8 @@ class FileManager extends Component {
                     this.archiveInsert(unit);
                 })
                 .catch(reason => {
-                    console.log(reason.message)
+                    console.log(reason.message);
+                    this.setState({inserting: false});
                 })
         }
     };
@@ -102,7 +105,7 @@ class FileManager extends Component {
     archiveInsert = (unit) => {
         const {file_data, product, user} = this.props;
         const {name,email} = user;
-        const {date,extension,file_name,language,sha1,size} = file_data;
+        const {date,extension,file_name,language,sha1,size,properties:{url}} = file_data;
 
         if(!product.line.uid) {
             product.line.unit_id = unit.id;
@@ -118,11 +121,13 @@ class FileManager extends Component {
             insert_name: `${file_name}.${extension}`,
             insert_type: "1",
             language,
-            line: {...product.line, name, email},
+            line: {...product.line, name, email, url},
             send_id: product.product_id,
             sha1, size,
             upload_type: "product",
         };
+
+        console.log(insert_meta)
 
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
             console.log(":: WFSRV respond: ",cb);
@@ -135,17 +140,19 @@ class FileManager extends Component {
                 putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
                     console.log(":: saveFile: ",cb);
                     this.props.getProductFiles();
+                    this.setState({inserting: false});
                 });
 
                 alert("Insert successful :)");
             } else {
                 alert("Something gone wrong :(");
+                this.setState({inserting: false});
             }
         });
     }
 
     render() {
-        const {showConfirm, showEditFile, file_type} = this.state;
+        const {showConfirm, showEditFile, file_type, inserting} = this.state;
         const {source, file_data} = this.props;
         if(Object.keys(file_data).length === 0) return null
 
@@ -224,8 +231,8 @@ class FileManager extends Component {
                                 <Button color='orange' basic content='Youtube' />
                             </Grid.Column>
                             <Grid.Column>
-                                <Button color='yellow' basic content='Mdb'
-                                        disabled={!file_data.properties?.archive}
+                                <Button color='yellow' basic content='Mdb' loading={inserting}
+                                        disabled={inserting || !file_data.properties?.archive || file_data.uid}
                                         onClick={this.makeUnit} />
                             </Grid.Column>
                         </Grid.Row>
