@@ -76,25 +76,25 @@ export const newMdbUnit = async(line) => {
     const type_id = parseInt(CONTENT_ID_BY_TYPE[content_type], 10);
     body = {"collectionUid": collection_uid,"typeId": type_id};
     options = getRequestOptions(body);
-    r = await fetch(`http://dev.mdb.bbdomain.org/rest/content_unit/autoname`, options);
+    r = await fetch(`${MDB_BACKEND}/content_unit/autoname`, options);
     const auto_name = await r.json();
 
     const i18n = {}
     auto_name.map(l => i18n[l.language] = {language: l.language, name: l.name})
     body = {type_id, properties: {film_date, original_language: WF_LANGUAGES[language], pattern: topic}, i18n};
     options = getRequestOptions(body)
-    r = await fetch(`http://dev.mdb.bbdomain.org/rest/content_units/`, options);
+    r = await fetch(`${MDB_BACKEND}/content_units/`, options);
     const unit = await r.json();
 
     body = [{content_unit_id: unit.id, name: "",position: null}];
     options = getRequestOptions(body);
-    r = await fetch(`http://dev.mdb.bbdomain.org/rest/collections/${collection_id}/content_units/`, options);
+    r = await fetch(`${MDB_BACKEND}/collections/${collection_id}/content_units/`, options);
     console.log(r)
 
     if(line.lecturer === "rav") {
         body = {person_id: 1, role_id: 1};
         options = getRequestOptions(body)
-        r = await fetch(`http://dev.mdb.bbdomain.org/rest/content_units/${unit.id}/persons/`, options);
+        r = await fetch(`${MDB_BACKEND}/content_units/${unit.id}/persons/`, options);
         console.log(r)
     }
 
