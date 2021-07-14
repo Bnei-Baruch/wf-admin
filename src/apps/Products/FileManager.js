@@ -207,7 +207,7 @@ class FileManager extends Component {
                                                 </Grid.Column>
                                                 <Grid.Column>
                                                     <Segment size='mini' basic>
-                                                        <Checkbox label='To Archive' checked={archive} disabled={mdb}
+                                                        <Checkbox label='File for  Archive' checked={archive} disabled={mdb}
                                                                   onChange={() => this.setState({archive: !archive})} />
                                                     </Segment>
                                                 </Grid.Column>
