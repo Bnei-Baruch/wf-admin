@@ -10,7 +10,7 @@ import {
     Table,
     Pagination
 } from 'semantic-ui-react'
-import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES} from "../../shared/consts";
+import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES, WF_LANGUAGES} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
@@ -56,6 +56,7 @@ class ProductsManager extends Component {
         show_files: false,
         show_languages: false,
         add_language: false,
+        page: 0,
     };
 
     componentDidMount() {
@@ -88,13 +89,15 @@ class ProductsManager extends Component {
         return active;
     };
 
-    getProducts = () => {
+    getProducts = (offset) => {
+        console.log(offset)
+        offset = offset < 0 ? 0 : offset || 0;
         const {filters} = this.state;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? 'products/find?limit=20&offset=0' : 'products/find?limit=10&' + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `products/find?limit=10&offset=${offset}` : `products/find?limit=10&offset=${offset}&` + query.join('&');
         getData(path, products => {
             console.log(products)
-            this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
+            this.setState({page: offset, products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
         });
     };
 
@@ -245,9 +248,9 @@ class ProductsManager extends Component {
         const {pattern, collections, date, product, products, locale, language, files, show_languages, selected_language} = this.state;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, date, language, line} = data;
+                const {product_name, product_id, date, language, line, i18n} = data;
                 const product_selected = product_id === this.state.product_id;
-                return (<Fragment>
+                return (<Fragment key={product_id + "div"}>
                     <Table.Row key={product_id} verticalAlign='top'>
                         <Table.Cell collapsing>
                             <Icon link name={product_selected ? 'minus' : 'plus'} color='blue'
@@ -255,8 +258,9 @@ class ProductsManager extends Component {
                         </Table.Cell>
                         <Table.Cell>{product_name}</Table.Cell>
                         <Table.Cell>
-                            <Button compact basic positive
-                                    onClick={() => this.editProduct(data)}>EDIT</Button>
+                            <Button basic positive compact
+                                    onClick={() => this.editProduct(data)}>EDIT</Button>&nbsp;&nbsp;&nbsp;
+                            {i18n[WF_LANGUAGES[language]].archive ? <Icon name='archive' color='blue' /> : null}
                         </Table.Cell>
                         <Table.Cell>{line.film_date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
@@ -388,12 +392,12 @@ class ProductsManager extends Component {
                 <Table basic='very'>
                     <Table.Header fullWidth>
                         <Table.Row warning>
-                            <Table.HeaderCell/>
-                            <Table.HeaderCell width={10}>Product Name</Table.HeaderCell>
-                            <Table.HeaderCell width={1} />
-                            <Table.HeaderCell width={2}>Film Date</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Date Added</Table.HeaderCell>
-                            <Table.HeaderCell width={3}>Collection</Table.HeaderCell>
+                            <Table.HeaderCell />
+                            <Table.HeaderCell width={8}>Product Name</Table.HeaderCell>
+                            <Table.HeaderCell width={2} />
+                            <Table.HeaderCell >Film Date</Table.HeaderCell>
+                            <Table.HeaderCell >Date Added</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Collection</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Original Language</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -403,7 +407,14 @@ class ProductsManager extends Component {
                     <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell colSpan='7' textAlign='center'>
-                                <Pagination defaultActivePage={1} disabled totalPages={5}/>
+                                <Button disabled={this.state.page === 0}
+                                        onClick={() => this.getProducts(this.state.page - 10)}>
+                                    <Icon name='left chevron' />
+                                </Button>
+                                <Button disabled={products.length === 0}
+                                        onClick={() => this.getProducts(this.state.page + 10)}>
+                                    <Icon name='right chevron' />
+                                </Button>
                             </Table.HeaderCell>
                         </Table.Row>
                     </Table.Footer>
