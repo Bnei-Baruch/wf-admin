@@ -156,7 +156,7 @@ class FileManager extends Component {
 
     render() {
         const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
-        const {source, file_data} = this.props;
+        const {source, file_data, mdb} = this.props;
         if(Object.keys(file_data).length === 0) return null
 
         const full_name = file_data.file_name+'.'+file_data.extension;
@@ -207,7 +207,7 @@ class FileManager extends Component {
                                                 </Grid.Column>
                                                 <Grid.Column>
                                                     <Segment size='mini' basic>
-                                                        <Checkbox label='To Archive' checked={archive}
+                                                        <Checkbox label='To Archive' checked={archive} disabled={mdb}
                                                                   onChange={() => this.setState({archive: !archive})} />
                                                     </Segment>
                                                 </Grid.Column>

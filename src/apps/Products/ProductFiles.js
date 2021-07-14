@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getMediaType, WFSRV_BACKEND} from '../../shared/tools';
+import {getMediaType, WFNAS_URL} from '../../shared/tools';
 import {Button, Table, Icon, Popup, Label} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
 import FileManager from "./FileManager";
@@ -8,6 +8,7 @@ class ProductFiles extends Component {
 
     state = {
         active: "video",
+        archive: this.props.metadata.archive,
         name: this.props.metadata.name,
         description: this.props.metadata.description,
         file_data: {},
@@ -16,7 +17,7 @@ class ProductFiles extends Component {
     selectFile = (file_data) => {
         console.log(":: ProductFiles - selected file: ", file_data);
         let path = file_data.properties.url;
-        let source = `${WFSRV_BACKEND}${path}`;
+        let source = `${WFNAS_URL}${path}`;
         this.setState({file_data, source, show_filemanager: true});
     };
 
@@ -36,7 +37,10 @@ class ProductFiles extends Component {
 
     render() {
 
-        const {active, source, show_filemanager, show_upload, file_data, name, description} = this.state;
+        const {active, source, show_filemanager, show_upload, file_data, name, description, archive} = this.state;
+
+        // Only one file per product go to archive for now
+        const mdb = this.props.files.find(f => f.properties?.archive) || archive;
 
         const video_list = this.props.files.map(f => {
             const {date, language, file_id, file_name, file_type, mime_type, uid, properties} = f;
@@ -107,6 +111,7 @@ class ProductFiles extends Component {
         return (
             <Table basic='very'>
                 <FileManager product_id={this.props.product_id}
+                             mdb={mdb}
                              user={this.props.user}
                              file_data={file_data}
                              source={source}
@@ -135,6 +140,7 @@ class ProductFiles extends Component {
                                     onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
                         <Table.Cell />
                         <FilesUpload product_id={this.props.product_id}
+                                     mdb={mdb}
                                      language={this.props.lang}
                                      file_name={this.props.file_name}
                                      show_upload={show_upload}

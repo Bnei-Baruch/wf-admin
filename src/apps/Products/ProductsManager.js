@@ -49,7 +49,6 @@ class ProductsManager extends Component {
         send_button: true,
         sending: false,
         special: "censored",
-        source: null,
         note_area: "",
         show_admin: false,
         show_filters: true,
