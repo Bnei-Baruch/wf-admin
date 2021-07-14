@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getMediaType, WFNAS_BACKEND} from '../../shared/tools';
+import {getMediaType, WFSRV_BACKEND} from '../../shared/tools';
 import {Button, Table, Icon, Popup, Label} from 'semantic-ui-react'
 import FilesUpload from "../Upload/FilesUpload";
 import FileManager from "./FileManager";
@@ -16,7 +16,7 @@ class ProductFiles extends Component {
     selectFile = (file_data) => {
         console.log(":: ProductFiles - selected file: ", file_data);
         let path = file_data.properties.url;
-        let source = `${WFNAS_BACKEND}${path}`;
+        let source = `${WFSRV_BACKEND}${path}`;
         this.setState({file_data, source, show_filemanager: true});
     };
 
