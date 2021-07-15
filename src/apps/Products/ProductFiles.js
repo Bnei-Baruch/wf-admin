@@ -40,7 +40,8 @@ class ProductFiles extends Component {
         const {active, source, show_filemanager, show_upload, file_data, name, description, archive} = this.state;
 
         // Only one file per product go to archive for now
-        const mdb = this.props.files.find(f => f.properties?.archive) || archive;
+        const mdb = this.props.files.find(f => f.uid) || archive;
+        const mdb_file = this.props.files.find(f => f.properties?.archive);
 
         const video_list = this.props.files.map(f => {
             const {date, language, file_id, file_name, file_type, mime_type, uid, properties} = f;
@@ -111,6 +112,7 @@ class ProductFiles extends Component {
         return (
             <Table basic='very'>
                 <FileManager product_id={this.props.product_id}
+                             mdb_file={mdb_file}
                              mdb={mdb}
                              user={this.props.user}
                              file_data={file_data}

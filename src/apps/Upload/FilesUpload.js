@@ -68,7 +68,7 @@ class FilesUpload extends Component {
     closeModal = () => {
         this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
         this.props.toggleUpload();
-    }
+    };
 
     render() {
 

@@ -59,7 +59,8 @@ class FileManager extends Component {
     setRemoved = () => {
         let {file_data} = this.props;
         console.log(":: FileManager - set removed: ", file_data);
-        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`,
+            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({showConfirm: false});
         setTimeout(() => {
             this.props.getProductFiles();
@@ -68,9 +69,14 @@ class FileManager extends Component {
     };
 
     saveFileData = () => {
-        const {file_data} = this.props;
-        file_data.file_type = this.state.file_type;
-        file_data.properties.archive = this.state.archive;
+        const {file_data, mdb_file} = this.props;
+        const {file_type, archive} = this.state;
+        if(mdb_file && archive) {
+            fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/status/archive?value=false`,
+                { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        }
+        file_data.file_type = file_type;
+        file_data.properties.archive = archive;
         delete file_data.id;
         putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
             console.log(":: EditFile respond: ",cb);
@@ -152,6 +158,11 @@ class FileManager extends Component {
                 this.setState({inserting: false});
             }
         });
+    };
+
+    closeModal = () => {
+        this.setState({file_type: "", archive: false});
+        this.props.toggleFileManager();
     }
 
     render() {
@@ -176,7 +187,7 @@ class FileManager extends Component {
         return (
             <Modal closeOnDimmerClick={false}
                    onMount={this.checkEdit}
-                   onClose={this.props.toggleFileManager}
+                   onClose={this.closeModal}
                    open={this.props.show_filemanager}
                    size='small'
                    closeIcon="close">
