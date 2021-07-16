@@ -113,7 +113,7 @@ class FileManager extends Component {
     archiveInsert = (unit) => {
         const {file_data, product, user} = this.props;
         const {name,email} = user;
-        const {date,extension,file_name,language,sha1,size,properties:{url}} = file_data;
+        const {date,extension,file_name,language,sha1,size,mime_type,properties:{url}} = file_data;
 
         if(!product.line.uid) {
             product.line.unit_id = unit.id;
@@ -130,7 +130,7 @@ class FileManager extends Component {
             insert_name: `${file_name}.${extension}`,
             insert_type: "1",
             language,
-            line: {...product.line, name, email, url},
+            line: {...product.line, name, email, url, mime_type},
             send_id: product.product_id,
             sha1, size,
             upload_type: "product",
