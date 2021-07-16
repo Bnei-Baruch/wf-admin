@@ -102,9 +102,9 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     console.log(r)
 
     if(derived_id) {
-        body = {derived_id, name: ""};
+        body = {derived_id: unit.id, name: ""};
         options = getRequestOptions(body);
-        r = await fetch(`${MDB_BACKEND}/content_units/${unit.id}/derivatives/`, options);
+        r = await fetch(`${MDB_BACKEND}/content_units/${derived_id}/derivatives/`, options);
         console.log(r)
     }
 
