@@ -406,14 +406,19 @@ class ProductsManager extends Component {
                     <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell colSpan='7' textAlign='center'>
-                                <Button disabled={this.state.page === 0}
+                                <Button.Group>
+                                <Button basic disabled={this.state.page === 0}
                                         onClick={() => this.getProducts(this.state.page - 10)}>
                                     <Icon name='left chevron' />
                                 </Button>
-                                <Button disabled={products.length === 0}
+                                <Button basic>
+                                    {this.state.page}-{this.state.page+10}
+                                </Button>
+                                <Button basic disabled={products.length === 0}
                                         onClick={() => this.getProducts(this.state.page + 10)}>
                                     <Icon name='right chevron' />
                                 </Button>
+                                </Button.Group>
                             </Table.HeaderCell>
                         </Table.Row>
                     </Table.Footer>
