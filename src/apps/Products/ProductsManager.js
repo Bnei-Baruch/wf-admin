@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {getData} from '../../shared/tools';
+import {getData, MDB_UNIT_URL} from '../../shared/tools';
 import {
     Menu,
     Segment,
@@ -247,8 +247,10 @@ class ProductsManager extends Component {
         const {pattern, collections, date, product, products, locale, language, files, show_languages, selected_language} = this.state;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, date, language, line, i18n} = data;
+                const {product_name, product_id, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n} = data;
                 const product_selected = product_id === this.state.product_id;
+                const href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
+                const unit_exist = i18n[WF_LANGUAGES[language]].archive;
                 return (<Fragment key={product_id + "div"}>
                     <Table.Row key={product_id} verticalAlign='top'>
                         <Table.Cell collapsing>
@@ -259,11 +261,11 @@ class ProductsManager extends Component {
                         <Table.Cell>
                             <Button basic positive compact
                                     onClick={() => this.editProduct(data)}>EDIT</Button>&nbsp;&nbsp;&nbsp;
-                            {i18n[WF_LANGUAGES[language]].archive ? <Icon name='archive' color='blue' /> : null}
+                            {unit_exist ? <Icon link name='archive' color='blue' onClick={() => window.open(href, "_blank")} /> : null}
                         </Table.Cell>
-                        <Table.Cell>{line.film_date}</Table.Cell>
+                        <Table.Cell>{film_date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
-                        <Table.Cell>{line.collection_name}</Table.Cell>
+                        <Table.Cell>{collection_name}</Table.Cell>
                         <Table.Cell>{LANG_MAP[language].text}</Table.Cell>
                     </Table.Row>
                     {show_languages && product_selected ?
@@ -271,7 +273,7 @@ class ProductsManager extends Component {
                             <Table.Cell/>
                             <Table.Cell colSpan={3}>
                                 {show_languages && product_selected ?
-                                    Object.keys(data?.i18n).map(la => {
+                                    Object.keys(i18n).map(la => {
                                         return (
                                             <Table basic='very' key={product_id + la}>
                                                 <Table.Row key={la} verticalAlign='top'>
@@ -283,10 +285,10 @@ class ProductsManager extends Component {
                                                         {LANG_MAP[MDB_LANGUAGES[la]].text}
                                                         {product_selected && selected_language === MDB_LANGUAGES[la] ?
                                                             <ProductFiles user={this.props.user} files={files}
-                                                                          file_name={product?.line?.final_name}
+                                                                          file_name={final_name}
                                                                           product={product}
                                                                           product_id={product_id}
-                                                                          metadata={data.i18n[la]}
+                                                                          metadata={i18n[la]}
                                                                           lang={selected_language} ref="files"
                                                                           getProductFiles={this.getProductFiles}
                                                                           getProducts={this.getProducts}
