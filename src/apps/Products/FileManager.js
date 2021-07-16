@@ -167,7 +167,7 @@ class FileManager extends Component {
 
     render() {
         const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
-        const {source, file_data, mdb} = this.props;
+        const {source, file_data, mdb, metadata: {name}} = this.props;
         if(Object.keys(file_data).length === 0) return null
 
         const full_name = file_data.file_name+'.'+file_data.extension;
@@ -256,7 +256,7 @@ class FileManager extends Component {
                             </Grid.Column>
                             <Grid.Column>
                                 <Button color='yellow' basic content='Mdb' loading={inserting}
-                                        disabled={inserting || !file_data.properties?.archive || file_data.uid}
+                                        disabled={!name || inserting || !file_data.properties?.archive || file_data.uid}
                                         onClick={this.makeUnit} />
                             </Grid.Column>
                         </Grid.Row>

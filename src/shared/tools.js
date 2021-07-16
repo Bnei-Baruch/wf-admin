@@ -82,8 +82,10 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
 
     const i18n = {}
     auto_name.map(l => i18n[l.language] = {language: l.language, name: l.name});
-    const {name, description} = metadata;
+    let {name, description} = metadata;
     if(name) {
+        const title = i18n[WF_LANGUAGES[language]].name;
+        name = title ? title + ". " + name : name;
         i18n[WF_LANGUAGES[language]].name = name;
     }
     if(description) {
@@ -600,7 +602,7 @@ export const newProductMeta = (product_name, product_description, language) => {
     let date = new Date(product_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
         product_id, date, product_name, language, type_id: null,
-        product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: product_name, description: product_description}}, line: null, parent: {},
+        product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}, line: null, parent: {},
         pattern: null,
         properties: {
             archive: false,
