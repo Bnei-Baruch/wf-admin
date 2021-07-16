@@ -114,6 +114,7 @@ class ProductFiles extends Component {
                 <FileManager product_id={this.props.product_id}
                              mdb_file={mdb_file}
                              mdb={mdb}
+                             metadata={this.props.metadata}
                              user={this.props.user}
                              file_data={file_data}
                              source={source}

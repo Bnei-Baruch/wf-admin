@@ -98,7 +98,7 @@ class FileManager extends Component {
                 this.archiveInsert(unit);
             })
         } else {
-            newMdbUnit(line, parent.mdb_id)
+            newMdbUnit(line, parent.mdb_id, this.props.metadata)
                 .then(unit => {
                     console.log("makeUnit: ", unit);
                     this.archiveInsert(unit);

@@ -70,7 +70,7 @@ export const getToken = () => {
     return kc.token;
 };
 
-export const newMdbUnit = async(line, derived_id) => {
+export const newMdbUnit = async(line, derived_id, metadata) => {
     let options, r, body
     const {collection_id, collection_uid, content_type, topic, language, film_date} = line;
 
@@ -81,7 +81,14 @@ export const newMdbUnit = async(line, derived_id) => {
     const auto_name = await r.json();
 
     const i18n = {}
-    auto_name.map(l => i18n[l.language] = {language: l.language, name: l.name})
+    auto_name.map(l => i18n[l.language] = {language: l.language, name: l.name});
+    const {name, description} = metadata;
+    if(name) {
+        i18n[WF_LANGUAGES[language]].name = name;
+    }
+    if(description) {
+        i18n[WF_LANGUAGES[language]].description = description;
+    }
     body = {type_id, properties: {film_date, original_language: WF_LANGUAGES[language], pattern: topic}, i18n};
     options = getRequestOptions(body)
     r = await fetch(`${MDB_BACKEND}/content_units/`, options);
