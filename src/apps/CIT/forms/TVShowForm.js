@@ -34,6 +34,7 @@ class TVShowForm extends BaseForm {
             has_translation: hasTranslation,
             active_collections: activeCollections,
             capture_date: captureDate,
+            film_date: filmDate,
           } = Object.assign({}, this.state, diff || {});
 
     const collection = activeCollections[sIdx];
@@ -42,13 +43,14 @@ class TVShowForm extends BaseForm {
       const collection_name = collection ? collection.i18n.en.name : '';
 
       let suffix = topic;
+      const date = captureDate ? captureDate : filmDate
 
     // eslint-disable-next-line prefer-template
     const name = (hasTranslation ? 'mlt' : language) +
       '_o_' +
       lecturer +
       '_' +
-      captureDate +
+      date +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
