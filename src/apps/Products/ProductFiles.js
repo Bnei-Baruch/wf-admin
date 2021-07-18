@@ -38,6 +38,8 @@ class ProductFiles extends Component {
     render() {
 
         const {active, source, show_filemanager, show_upload, file_data, name, description, archive} = this.state;
+        const {rooter, adminer, archer, viewer} = this.props.user;
+        const lang_permission = archer || adminer || rooter;
 
         // Only one file per product go to archive for now
         const mdb = this.props.files.find(f => f.uid) || archive;
@@ -134,13 +136,20 @@ class ProductFiles extends Component {
                                     inverted
                                 />
                         </Table.Cell>
-                        <Table.Cell width={1}><Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button></Table.Cell>
+                        <Table.Cell width={1}>
+                            {lang_permission ?
+                                <Button compact basic color='blue' onClick={this.props.toggleAddLanguage} >EDIT</Button>
+                                : null}
+                        </Table.Cell>
                         <Table.Cell width={2} />
                     </Table.Row>
                     <Table.Row>
                         <Table.Cell colSpan={3}>Files &nbsp;&nbsp;&nbsp;
+                            {lang_permission ?
                             <Button basic compact positive
-                                    onClick={this.toggleUpload}>ADD FILE</Button></Table.Cell>
+                                    onClick={this.toggleUpload}>ADD FILE</Button>
+                                : null }
+                            </Table.Cell>
                         <Table.Cell />
                         <FilesUpload product_id={this.props.product_id}
                                      mdb={mdb}

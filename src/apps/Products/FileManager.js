@@ -168,6 +168,9 @@ class FileManager extends Component {
     render() {
         const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
         const {source, file_data, mdb, metadata: {name}} = this.props;
+        const {rooter, adminer, archer, viewer} = this.props.user;
+        const lang_permission = archer || adminer || rooter;
+        const product_permission = adminer || rooter;
         if(Object.keys(file_data).length === 0) return null
 
         const full_name = file_data.file_name+'.'+file_data.extension;
@@ -195,6 +198,7 @@ class FileManager extends Component {
                 <Modal.Content>
                     <Grid textAlign='center'>
                         <Grid.Row columns={4}>
+                            {lang_permission ?
                             <Grid.Column>
                                 <Modal
                                     onClose={() => this.setState({showEditFile: false})}
@@ -231,6 +235,8 @@ class FileManager extends Component {
                                     </Modal.Actions>
                                 </Modal>
                             </Grid.Column>
+                                : null}
+                            {product_permission ?
                             <Grid.Column>
                                 <Button color='red' basic content='Delete' onClick={() => this.setState({showConfirm: true})} />
                                 <Confirm
@@ -240,6 +246,7 @@ class FileManager extends Component {
                                     onConfirm={this.setRemoved}
                                 />
                             </Grid.Column>
+                                : null}
                         </Grid.Row>
                         <Divider hidden />
                         <Grid.Row columns={4}>
@@ -254,11 +261,13 @@ class FileManager extends Component {
                             <Grid.Column>
                                 <Button color='orange' basic content='Youtube' />
                             </Grid.Column>
+                            {lang_permission ?
                             <Grid.Column>
                                 <Button color='yellow' basic content='Mdb' loading={inserting}
                                         disabled={!name || inserting || !file_data.properties?.archive || file_data.uid}
                                         onClick={this.makeUnit} />
                             </Grid.Column>
+                                : null}
                         </Grid.Row>
                     </Grid>
                 </Modal.Content>

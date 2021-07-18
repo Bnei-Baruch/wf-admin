@@ -243,8 +243,10 @@ class ProductsManager extends Component {
     }
 
     render() {
-
         const {pattern, collections, date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {rooter, adminer, archer, viewer} = this.props.user;
+        const product_permission = adminer || rooter;
+        const lang_permission = archer || adminer || rooter;
 
         const products_list = products.map(data => {
                 const {product_name, product_id, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n} = data;
@@ -259,9 +261,12 @@ class ProductsManager extends Component {
                         </Table.Cell>
                         <Table.Cell>{product_name}</Table.Cell>
                         <Table.Cell>
-                            <Button basic positive compact
-                                    onClick={() => this.editProduct(data)}>EDIT</Button>&nbsp;&nbsp;&nbsp;
+                            {product_permission ?
+                                <div><Button basic positive compact
+                                        onClick={() => this.editProduct(data)}>EDIT</Button>&nbsp;&nbsp;&nbsp;
                             {unit_exist ? <Icon link name='archive' color='blue' onClick={() => window.open(href, "_blank")} /> : null}
+                                </div>: null}
+
                         </Table.Cell>
                         <Table.Cell>{film_date}</Table.Cell>
                         <Table.Cell>{date}</Table.Cell>
@@ -301,7 +306,7 @@ class ProductsManager extends Component {
                                         )
                                     }) : null
                                 }
-                                {show_languages && product_selected ?
+                                {lang_permission && show_languages && product_selected ?
                                     <Table basic='very'>
                                         <Table.Row verticalAlign='top'>
                                             <Table.Cell collapsing>
@@ -373,7 +378,9 @@ class ProductsManager extends Component {
                         />
                     </Menu.Item>
                     <Menu.Item position='right'>
+                        {product_permission ?
                         <Button positive={true} onClick={this.addProduct}>Add Product</Button>
+                            : null}
                         <ProductsAdmin
                             user={this.props.user}
                             product={this.state.product}
