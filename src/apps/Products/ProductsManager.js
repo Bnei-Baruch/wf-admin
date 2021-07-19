@@ -25,6 +25,7 @@ class ProductsManager extends Component {
         active: null,
         collections: [],
         date: null,
+        film_date: null,
         filters: {},
         drop_zone: false,
         insert_open: false,
@@ -101,8 +102,8 @@ class ProductsManager extends Component {
     };
 
     findProducts = () => {
-        const {language, date} = this.state;
-        getData(`products/find?language=${language}&date=${date}`, products => {
+        const {language, film_date} = this.state;
+        getData(`products/find?language=${language}&film_date=${film_date}`, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
         });
@@ -140,14 +141,14 @@ class ProductsManager extends Component {
         this.setState({file_language});
     };
 
-    selectDate = (date) => {
-        if(!date) {
-            this.removeFilter("date");
+    selectDate = (film_date) => {
+        if(!film_date) {
+            this.removeFilter("film_date");
             return
         }
         const {filters} = this.state;
-        filters.date = date.toLocaleDateString('sv');
-        this.setState({filters, date}, () => {
+        filters.film_date = film_date.toLocaleDateString('sv');
+        this.setState({filters, film_date}, () => {
             this.getProducts();
         });
     };
@@ -168,7 +169,7 @@ class ProductsManager extends Component {
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
-        const value = f === "date" ? null : "";
+        const value = f === "film_date" ? null : "";
         this.setState({filters, [f]: value}, () => {
             this.getProducts();
         });
@@ -243,7 +244,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {pattern, collections, date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {pattern, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -364,7 +365,7 @@ class ProductsManager extends Component {
                         <DatePicker
                             locale={locale}
                             customInput={<Input icon={
-                                <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />
+                                <Icon name={film_date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("film_date")} />
                             }/>}
                             dateFormat="yyyy-MM-dd"
                             showYearDropdown
@@ -372,8 +373,8 @@ class ProductsManager extends Component {
                             scrollableYearDropdown
                             maxDate={new Date()}
                             openToDate={new Date()}
-                            selected={date ? date : null}
-                            placeholderText="Date:"
+                            selected={film_date ? film_date : null}
+                            placeholderText="Film date:"
                             onChange={this.selectDate}
                         />
                     </Menu.Item>
