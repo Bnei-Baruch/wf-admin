@@ -601,7 +601,7 @@ export const newProductMeta = (product_name, product_description, language) => {
     let product_id = "p" + Math.floor(Date.now() / 1000);
     let date = new Date(product_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
-        product_id, date, product_name, language, type_id: null,
+        product_id, date, product_name, language, type_id: null, film_date: "",
         product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}, line: null, parent: {},
         pattern: null,
         properties: {

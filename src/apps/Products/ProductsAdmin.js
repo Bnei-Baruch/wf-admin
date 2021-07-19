@@ -59,6 +59,7 @@ class ProductsAdmin extends Component {
         const {product_name, product_description, language, metadata, unit} = this.state;
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
+        product_meta.film_date = metadata.film_date;
         product_meta.pattern = metadata.pattern;
         product_meta.parent = {
             mdb_uid: unit.uid,
@@ -86,7 +87,7 @@ class ProductsAdmin extends Component {
                 film_date: unit.properties?.film_date,
             }
         }
-        product = {...product, product_name, language, parent, line,
+        product = {...product, product_name, language, parent, line, film_date: line.film_date,
             i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}
         };
         this.saveProduct(product);
