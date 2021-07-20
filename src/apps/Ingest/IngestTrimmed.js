@@ -1,16 +1,16 @@
 import React, {Component} from 'react'
-
-import {getData, getUnits, IVAL, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
+import MDB from "../../components/MDB";
 
 class IngestTrimmed extends Component {
 
     state = {
         active: null,
         disabled: true,
-        open: false,
+        cit_open: false,
         trimmed: [],
         file_data: {},
         ival: null,
@@ -18,22 +18,14 @@ class IngestTrimmed extends Component {
         renaming: false,
         tags: {},
         units: [],
+        unit: null,
 
     };
 
     componentDidMount() {
-        // let ival = setInterval(() => getData('trim', (data) => {
-        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-        //             this.setState({trimmed: data})
-        //     }), IVAL );
-        // this.setState({ival});
         getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
-    };
-
-    componentWillUnmount() {
-        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -52,7 +44,7 @@ class IngestTrimmed extends Component {
     };
 
     openCit = () => {
-        this.setState({open: true});
+        this.setState({cit_open: true});
     };
 
     renameFile = (newline) => {
@@ -73,7 +65,7 @@ class IngestTrimmed extends Component {
         let path = file_data.proxy.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
-        this.setState({open: false, disabled: true, renaming: true});
+        this.setState({cit_open: false, disabled: true, renaming: true});
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
             console.log(":: Ingest - rename respond: ",cb);
             if(cb.status === "ok") {
@@ -84,14 +76,31 @@ class IngestTrimmed extends Component {
         });
     };
 
-    onCancel = (data) => {
-        console.log(":: Cit cancel: ", data);
-        this.setState({open: false});
+    openMdb = () => {
+        this.setState({mdb_open: true});
+    };
+
+    onCancel = () => {
+        this.setState({cit_open: false, mdb_open: false});
+    };
+
+    onMdbSelect = (data) => {
+        console.log(":: Got MDB data: ", data);
+        this.setState({mdb_open: false, unit: data});
     };
 
     sendFile = () => {
-        const {file_data} = this.state;
-        const {file_name, wfstatus, line} = file_data;
+        const {file_data, unit} = this.state;
+        const {file_name, wfstatus, line, parent} = file_data;
+
+        if(unit && line.collection_type !== "DAILY_LESSON") {
+            file_data.parent = {...parent,
+                mdb_uid: unit.uid,
+                mdb_id: unit.id,
+                wf_id: unit.properties?.workflow_id,
+            }
+        }
+
         console.log(":: Going to send File: ", file_data);
         this.setState({ sending: true, disabled: true });
 
@@ -114,7 +123,7 @@ class IngestTrimmed extends Component {
                 console.log(":: Going to send :", file_data);
                 putData(`${WFSRV_BACKEND}/workflow/send_ingest`, file_data, (cb) => {
                     console.log(":: Ingest - send respond: ",cb);
-                    setTimeout(() => this.setState({ sending: false }), 2000);
+                    setTimeout(() => this.setState({ sending: false, unit: null }), 2000);
                     // While polling done it does not necessary
                     //this.selectFile(file_data);
                     if(cb.status !== "ok") {
@@ -126,6 +135,7 @@ class IngestTrimmed extends Component {
     };
 
     render() {
+        const {metadata, file_data, cit_open, mdb_open, unit, disabled, renaming, sending} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -156,7 +166,8 @@ class IngestTrimmed extends Component {
         return (
             <Segment textAlign='center' className="ingest_segment" color='brown' raised >
                 <Label  attached='top' className="trimmed_label">
-                    {this.state.file_data.file_name ? this.state.file_data.file_name : "Trimmed"}
+                    {file_data.file_name ? file_data.file_name : "Trimmed"}
+                    {unit ? " - (Trnaslation) -  " + unit.uid : null}
                 </Label>
                 <Message size='large'>
                 <Menu size='large' secondary >
@@ -170,17 +181,17 @@ class IngestTrimmed extends Component {
                     <Menu.Menu position='left'>
                         <Menu.Item>
                             <Modal closeOnDimmerClick={false}
-                                   trigger={<Button disabled={this.state.disabled}
-                                                    loading={this.state.renaming}
+                                   trigger={<Button disabled={disabled}
+                                                    loading={renaming}
                                                     color='blue'
                                                     onClick={this.openCit} >Rename
                                             </Button>}
                                    onClose={this.onCancel}
-                                   open={this.state.open}
+                                   open={cit_open}
                                    closeIcon="close"
                                    mountNode={document.getElementById("cit-modal-mount")}>
                                 <Modal.Content >
-                                    <CIT metadata={this.state.file_data.line}
+                                    <CIT metadata={file_data.line}
                                          onCancel={this.onCancel}
                                          onComplete={(x) => this.renameFile(x)}/>
                                 </Modal.Content>
@@ -189,8 +200,20 @@ class IngestTrimmed extends Component {
                     </Menu.Menu>
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <Button positive disabled={this.state.disabled}
-                                    onClick={this.sendFile} loading={this.state.sending}>Send
+                            <Modal closeOnDimmerClick={false}
+                                   trigger={<Button color='teal' disabled={disabled} content='Translation' onClick={this.openMdb}/>}
+                                   onClose={this.onCancel}
+                                   open={mdb_open}
+                                   size='large'
+                                   closeIcon="close">
+                                <Modal.Content>
+                                    <MDB metadata={metadata} user={this.props.user} onCancel={this.onCancel} onComplete={(x) => this.onMdbSelect(x)}/>
+                                </Modal.Content>
+                            </Modal>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Button positive disabled={disabled}
+                                    onClick={this.sendFile} loading={sending}>Send
                             </Button>
                         </Menu.Item>
                     </Menu.Menu>
