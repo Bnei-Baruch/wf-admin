@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getData, getUnits, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, insertSha, putData, WFSRV_BACKEND} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -93,12 +93,26 @@ class IngestTrimmed extends Component {
         const {file_data, unit} = this.state;
         const {file_name, wfstatus, line, parent} = file_data;
 
+
         if(unit && line.collection_type !== "DAILY_LESSON") {
             file_data.parent = {...parent,
                 mdb_uid: unit.uid,
                 mdb_id: unit.id,
                 wf_id: unit.properties?.workflow_id,
             }
+            file_data.wfstatus.translation = true;
+            insertSha(`${file_data.original.format.sha1}`, (units) => {
+                console.log(units)
+                if(units[0]?.id) {
+                    insertFile(units[0]?.id, unit.id)
+                        .then(unit => {
+                            console.log("insertFile: ", unit);
+                        })
+                        .catch(reason => {
+                            console.error(reason.message);
+                        })
+                }
+            });
         }
 
         console.log(":: Going to send File: ", file_data);

@@ -118,6 +118,19 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     return unit;
 }
 
+export const insertFile = async(file_id, content_unit_id) => {
+    const r = await fetch(`${MDB_BACKEND}/files/${file_id}/`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        },
+        body:  JSON.stringify({content_unit_id})
+    });
+
+    return await r.json();
+}
+
 const getRequestOptions = (data) => {
     return {
         method: 'POST',
