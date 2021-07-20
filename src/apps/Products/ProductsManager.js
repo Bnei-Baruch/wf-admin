@@ -90,9 +90,8 @@ class ProductsManager extends Component {
     };
 
     getProducts = (offset) => {
-        console.log(offset)
-        offset = offset < 0 ? 0 : offset || 0;
-        const {filters} = this.state;
+        const {filters, page} = this.state;
+        offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
         let path = Object.keys(filters).length === 0 ? `products/find?limit=10&offset=${offset}` : `products/find?limit=10&offset=${offset}&` + query.join('&');
         getData(path, products => {

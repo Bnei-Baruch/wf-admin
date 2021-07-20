@@ -10,7 +10,7 @@ import {
 import {Segment, Button, Modal, Form, FormField} from 'semantic-ui-react'
 import {dep_options, WF_LANGUAGES} from "../../shared/consts";
 import CIT from "../CIT/CIT";
-import MDB from "./MDB";
+import MDB from "../../components/MDB";
 import {JSONToHTMLTable} from "@kevincobain2000/json-to-html-table";
 
 class ProductsAdmin extends Component {
