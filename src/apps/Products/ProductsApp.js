@@ -6,8 +6,8 @@ class ProductsApp extends Component {
 
     state = {
         user: {
-            name: this.props.user,
-            email: this.props.user,
+            name: this.props.user.name,
+            email: this.props.user.email,
             rooter: kc.hasRealmRole("wf_products_root"),
             adminer: kc.hasRealmRole("wf_products_admin"),
             archer: kc.hasRealmRole("wf_products_archive"),
