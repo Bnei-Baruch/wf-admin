@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {getData, getUnits, insertSha, putData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, insertSha, putData, WFSRV_BACKEND, insertFile} from '../../shared/tools';
 import { Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message } from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import CIT from '../CIT/CIT';
@@ -102,9 +102,10 @@ class IngestTrimmed extends Component {
             }
             file_data.wfstatus.translation = true;
             insertSha(`${file_data.original.format.sha1}`, (units) => {
-                console.log(units)
-                if(units[0]?.id) {
-                    insertFile(units[0]?.id, unit.id)
+                const file_id = units.data[0].id;
+                console.log(" Got File ID: ", file_id)
+                if(file_id) {
+                    insertFile(file_id, unit.id)
                         .then(unit => {
                             console.log("insertFile: ", unit);
                         })
