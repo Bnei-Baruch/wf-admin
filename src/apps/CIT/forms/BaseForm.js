@@ -59,8 +59,8 @@ class BaseForm extends Component {
       language: LANGUAGES[0].value,
       lecturer: LECTURERS[0].value,
       has_translation: true,
-      capture_date: today(),
-      film_date: "",
+      capture_date: '',
+      film_date: null,
       require_test: false,
       manual_name: null,
       sources: [],
@@ -293,17 +293,14 @@ class BaseForm extends Component {
 
     // temporary
     delete data.error;
-    //delete data.topic;
     delete data.selected_collection;
     delete data.active_collections;
 
-    // Cassette mode only
-    // if (!this.props.metadata.label_id) {
-    //   delete data.film_date;
-    // }
+    if (!this.state.film_date) {
+      delete data.film_date;
+    }
 
-    // Cassette mode only
-    if (this.props.metadata.content_type === "CLIP") {
+    if (!this.state.capture_date) {
       delete data.capture_date;
     }
 
@@ -507,7 +504,7 @@ class BaseForm extends Component {
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      (filmDate || captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_n' +

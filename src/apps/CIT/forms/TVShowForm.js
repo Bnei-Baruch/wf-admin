@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import { CONTENT_TYPES_MAPPINGS, CT_VIDEO_PROGRAM } from '../../../shared/consts';
-import {isActive, isPattern} from '../shared/utils';
+import {isActive, isPattern, today} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class TVShowForm extends BaseForm {
@@ -43,7 +43,7 @@ class TVShowForm extends BaseForm {
       const collection_name = collection ? collection.i18n.en.name : '';
 
       let suffix = topic;
-      const date = captureDate ? captureDate : filmDate
+      const date = filmDate || captureDate;
 
     // eslint-disable-next-line prefer-template
     const name = (hasTranslation ? 'mlt' : language) +

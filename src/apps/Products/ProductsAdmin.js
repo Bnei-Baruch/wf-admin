@@ -39,7 +39,7 @@ class ProductsAdmin extends Component {
             })
         } else {
             this.setState({product_name: "", language: "heb", product_description: "",
-                metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "rav", film_date: "", capture_date: ""}, parent: null, unit: null});
+                metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "rav"}, parent: null, unit: null});
         }
     };
 

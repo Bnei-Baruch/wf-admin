@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import {CONTENT_TYPES_MAPPINGS, CT_CLIPS} from '../../../shared/consts';
-import {isActive, isPattern} from '../shared/utils';
+import {isActive, isPattern, today} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class ClipForm extends BaseForm {
@@ -34,7 +34,7 @@ class ClipForm extends BaseForm {
             lecturer,
             has_translation: hasTranslation,
             active_collections: activeCollections,
-            //capture_date: captureDate,
+            capture_date: captureDate,
             film_date: filmDate,
           } = Object.assign({}, this.state, diff || {});
 
@@ -50,7 +50,7 @@ class ClipForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      filmDate +
+        (filmDate || captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
@@ -75,8 +75,8 @@ class ClipForm extends BaseForm {
     }
 
     isValidClassification() {
-        const { topic } = this.state;
-        return topic !== '';
+        const { topic, film_date } = this.state;
+        return topic !== '' && film_date;
     }
 
   // eslint-disable-next-line class-methods-use-this
