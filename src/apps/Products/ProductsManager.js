@@ -210,7 +210,7 @@ class ProductsManager extends Component {
             this.getProductFiles();
             this.setState({selected_language, show_files: !this.state.show_files});
         } else {
-            this.setState({selected_language: null, files: [], show_files: !this.state.show_files}, () => {
+            this.setState({selected_language: null, show_files: !this.state.show_files}, () => {
                 if(selected_language !== this.state.selected_language) {
                     this.setState({selected_language, show_files: !this.state.show_files});
                 }
@@ -243,7 +243,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {pattern, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {page, pattern, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -418,15 +418,13 @@ class ProductsManager extends Component {
                         <Table.Row>
                             <Table.HeaderCell colSpan='8' textAlign='center'>
                                 <Button.Group>
-                                <Button basic disabled={this.state.page === 0}
-                                        onClick={() => this.getProducts(this.state.page - 10)}>
+                                <Button basic disabled={page === 0}
+                                        onClick={() => this.getProducts(page - 10)}>
                                     <Icon name='left chevron' />
                                 </Button>
-                                <Button basic>
-                                    {this.state.page}-{this.state.page+10}
-                                </Button>
+                                <Button basic>{page}-{page + products.length}</Button>
                                 <Button basic disabled={products.length < 10}
-                                        onClick={() => this.getProducts(this.state.page + 10)}>
+                                        onClick={() => this.getProducts(page + 10)}>
                                     <Icon name='right chevron' />
                                 </Button>
                                 </Button.Group>
