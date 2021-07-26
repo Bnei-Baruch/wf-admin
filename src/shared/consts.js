@@ -244,6 +244,26 @@ export const PRODUCT_FILE_TYPES = {
         audio: ["voice", "music", "sfx", "mix"],
         other: ["Text", "SRT"]
     },
+    [LANG_GERMAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_FRENCH]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_BULGARIAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_SLOVENIAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
 };
 
 

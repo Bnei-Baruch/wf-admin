@@ -425,7 +425,7 @@ class ProductsManager extends Component {
                                 <Button basic>
                                     {this.state.page}-{this.state.page+10}
                                 </Button>
-                                <Button basic disabled={products.length === 0}
+                                <Button basic disabled={products.length < 10}
                                         onClick={() => this.getProducts(this.state.page + 10)}>
                                     <Icon name='right chevron' />
                                 </Button>
