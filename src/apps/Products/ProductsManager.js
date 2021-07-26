@@ -249,7 +249,7 @@ class ProductsManager extends Component {
         const lang_permission = archer || adminer || rooter;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n} = data;
+                const {product_name, product_id, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n, properties: {duration}} = data;
                 const product_selected = product_id === this.state.product_id;
                 const href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
                 const unit_exist = i18n[WF_LANGUAGES[language]].archive;
@@ -260,6 +260,7 @@ class ProductsManager extends Component {
                                   onClick={() => this.setProduct(product_id, data)}/>
                         </Table.Cell>
                         <Table.Cell>{product_name}</Table.Cell>
+                        <Table.Cell>{duration}</Table.Cell>
                         <Table.Cell>
                             {product_permission ?
                                 <div><Button basic positive compact
@@ -402,6 +403,7 @@ class ProductsManager extends Component {
                         <Table.Row warning>
                             <Table.HeaderCell />
                             <Table.HeaderCell width={8}>Product Name</Table.HeaderCell>
+                            <Table.HeaderCell>Duration</Table.HeaderCell>
                             <Table.HeaderCell width={2} />
                             <Table.HeaderCell >Film Date</Table.HeaderCell>
                             <Table.HeaderCell >Date Added</Table.HeaderCell>
@@ -414,7 +416,7 @@ class ProductsManager extends Component {
                     </Table.Body>
                     <Table.Footer fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='7' textAlign='center'>
+                            <Table.HeaderCell colSpan='8' textAlign='center'>
                                 <Button.Group>
                                 <Button basic disabled={this.state.page === 0}
                                         onClick={() => this.getProducts(this.state.page - 10)}>

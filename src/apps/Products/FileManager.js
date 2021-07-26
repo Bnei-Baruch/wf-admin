@@ -4,10 +4,9 @@ import {
     getToken,
     getMediaType,
     putData,
-    postData,
     newMdbUnit,
     WFSRV_BACKEND,
-    getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL
+    getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL, toHms
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -73,6 +72,9 @@ class FileManager extends Component {
         const {file_type, archive} = this.state;
         if(mdb_file && archive) {
             fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/status/archive?value=false`,
+                { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+            const d = toHms(file_data.media_info.format.duration);
+            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         }
         file_data.file_type = file_type;
