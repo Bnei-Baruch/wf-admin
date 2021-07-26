@@ -61,7 +61,8 @@ class FilesUpload extends Component {
     saveMeta = (file_meta) => {
         putData(`${WFDB_BACKEND}/files/${file_meta.file_id}`, file_meta, (cb) => {
             console.log(":: saveMetadata respond: ",cb);
-            this.closeModal();
+            this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
+            this.props.onFileUploaded();
         });
     };
 

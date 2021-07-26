@@ -207,7 +207,7 @@ class ProductsManager extends Component {
 
     setLang = (selected_language) => {
         if(!this.state.show_files) {
-            this.getProductFiles()
+            this.getProductFiles();
             this.setState({selected_language, show_files: !this.state.show_files});
         } else {
             this.setState({selected_language: null, files: [], show_files: !this.state.show_files}, () => {

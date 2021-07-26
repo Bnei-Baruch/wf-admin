@@ -22,7 +22,6 @@ class ProductFiles extends Component {
     };
 
     onFileUploaded = () => {
-        this.setState({upload: false});
         this.props.getProductFiles();
         this.toggleUpload();
     };
