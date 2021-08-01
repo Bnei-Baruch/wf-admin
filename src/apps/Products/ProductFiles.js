@@ -39,6 +39,17 @@ class ProductFiles extends Component {
         const {active, source, show_filemanager, show_upload, file_data, name, description, archive} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const lang_permission = archer || adminer || rooter;
+        const {lang, file_name, product_id} = this.props;
+        let lang_file_name
+
+        if(file_name.split("_")[0] === lang) {
+            lang_file_name = file_name;
+        } else {
+            let new_name = file_name.split("_");
+            new_name[0] = lang;
+            new_name[1] = "t";
+            lang_file_name = new_name.join("_");
+        }
 
         // Only one file per product go to archive for now
         const mdb = this.props.files.find(f => f.uid) || archive;
@@ -112,7 +123,7 @@ class ProductFiles extends Component {
 
         return (
             <Table basic='very'>
-                <FileManager product_id={this.props.product_id}
+                <FileManager product_id={product_id}
                              mdb_file={mdb_file}
                              mdb={mdb}
                              metadata={this.props.metadata}
@@ -150,10 +161,10 @@ class ProductFiles extends Component {
                                 : null }
                             </Table.Cell>
                         <Table.Cell />
-                        <FilesUpload product_id={this.props.product_id}
+                        <FilesUpload product_id={product_id}
                                      mdb={mdb}
-                                     language={this.props.lang}
-                                     file_name={this.props.file_name}
+                                     language={lang}
+                                     file_name={lang_file_name}
                                      show_upload={show_upload}
                                      onFileUploaded={this.onFileUploaded}
                                      toggleUpload={this.toggleUpload} />
