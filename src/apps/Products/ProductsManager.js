@@ -7,10 +7,17 @@ import {
     Dropdown,
     Input,
     Icon,
-    Table,
-    Pagination
+    Table
 } from 'semantic-ui-react'
-import {CT_CLIPS, CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES, WF_LANGUAGES} from "../../shared/consts";
+import {
+    CT_CLIPS,
+    CT_VIDEO_PROGRAM,
+    dep_options,
+    LANG_MAP,
+    MDB_LANGUAGES,
+    ui_options,
+    WF_LANGUAGES
+} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
@@ -58,6 +65,7 @@ class ProductsManager extends Component {
         show_files: false,
         show_languages: false,
         add_language: false,
+        ui_language: "en",
         page: 0,
     };
 
@@ -247,7 +255,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {page, ct_option_type, collection_uid, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {page, ui_language, ct_option_type, collection_uid, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -334,14 +342,14 @@ class ProductsManager extends Component {
 
         const col_options = (collections[ct_option_type] || []).map(data => {
             if (collections[ct_option_type].length > 0) {
-                const {uid, name} = data;
-                return ({key: uid, value: uid, text: name})
+                const {uid, i18n} = data;
+                return ({key: uid, value: uid, text: i18n[ui_language].name})
             }
         });
 
         return (
             <Segment textAlign='left' className="ingest_segment" basic>
-                <Menu secondary>
+                <Menu secondary >
                     <Menu.Item>Filter by:</Menu.Item>
                     <Menu.Item>
                         <Dropdown
@@ -390,26 +398,38 @@ class ProductsManager extends Component {
                             onChange={this.selectDate}
                         />
                     </Menu.Item>
-                    <Menu.Item position='right'>
-                        {product_permission ?
-                        <Button positive={true} onClick={this.addProduct}>Add Product</Button>
+                    <Menu.Menu position='right'>
+                        <Menu.Item>
+                            {product_permission ?
+                            <Button positive={true} onClick={this.addProduct}>Add Product</Button>
                             : null}
-                        <ProductsAdmin
-                            user={this.props.user}
-                            product={this.state.product}
-                            show_admin={this.state.show_admin}
-                            finishProduct={this.finishProduct}
-                            toggleProductAdmin={this.toggleProductAdmin} />
-                        <AddLanguage
-                            user={this.props.user}
-                            product_id={this.state.product_id}
-                            add_language={this.state.add_language}
-                            product={this.state.product}
-                            selected_language={selected_language}
-                            finishLanguage={this.finishLanguage}
-                            toggleAddLanguage={this.toggleAddLanguage} />
-                    </Menu.Item>
+                        </Menu.Item>
+                        <Menu.Item position='right'>
+                            <Dropdown
+                                placeholder="Language:"
+                                selection
+                                compact
+                                options={ui_options}
+                                onChange={(e, {value}) => this.setState({ui_language: value})}
+                                value={ui_language}>
+                            </Dropdown>
+                        </Menu.Item>
+                    </Menu.Menu>
                 </Menu>
+                <ProductsAdmin
+                    user={this.props.user}
+                    product={this.state.product}
+                    show_admin={this.state.show_admin}
+                    finishProduct={this.finishProduct}
+                    toggleProductAdmin={this.toggleProductAdmin} />
+                <AddLanguage
+                    user={this.props.user}
+                    product_id={this.state.product_id}
+                    add_language={this.state.add_language}
+                    product={this.state.product}
+                    selected_language={selected_language}
+                    finishLanguage={this.finishLanguage}
+                    toggleAddLanguage={this.toggleAddLanguage} />
                 <Table basic='very'>
                     <Table.Header fullWidth>
                         <Table.Row warning>

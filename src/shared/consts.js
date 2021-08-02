@@ -120,6 +120,13 @@ export const dep_options = [
     { key: 'en', value: 'eng', flag: 'us', text: 'English' },
 ];
 
+export const ui_options = [
+    { key: 'he', value: 'he', flag: 'il', text: 'Hebrew' },
+    { key: 'ru', value: 'ru', flag: 'ru', text: 'Russian' },
+    { key: 'en', value: 'en', flag: 'us', text: 'English' },
+    { key: 'es', value: 'es', flag: 'es', text: 'Spanish' },
+];
+
 export const LANGUAGES = [
   { text: 'עברית', value: 'heb' },
   { text: 'אנגלית', value: 'eng' },
