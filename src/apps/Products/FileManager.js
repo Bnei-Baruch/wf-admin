@@ -73,6 +73,8 @@ class FileManager extends Component {
         if(mdb_file && archive) {
             fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/status/archive?value=false`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        }
+        if(archive) {
             const d = toHms(file_data.media_info.format.duration);
             fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})

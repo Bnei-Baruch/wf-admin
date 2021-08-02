@@ -10,7 +10,7 @@ import {
     Table,
     Pagination
 } from 'semantic-ui-react'
-import {CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES, WF_LANGUAGES} from "../../shared/consts";
+import {CT_CLIPS, CT_VIDEO_PROGRAM, dep_options, LANG_MAP, MDB_LANGUAGES, WF_LANGUAGES} from "../../shared/consts";
 import DatePicker from "react-datepicker";
 import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
@@ -23,7 +23,8 @@ class ProductsManager extends Component {
 
     state = {
         active: null,
-        collections: [],
+        collections: {},
+        ct_option_type: "",
         date: null,
         film_date: null,
         filters: {},
@@ -42,6 +43,7 @@ class ProductsManager extends Component {
         language: "",
         file_language: null,
         pattern: "",
+        collection_uid: "",
         locale: he,
         original_language: "heb",
         metadata: {},
@@ -62,7 +64,9 @@ class ProductsManager extends Component {
     componentDidMount() {
         this.getProducts();
         fetchCollections(data => {
-            const collections = this.getActiveCollections(data);
+            const collections = {programs: [], clips: []};
+            collections.programs = this.getActiveCollections(data, CT_VIDEO_PROGRAM);
+            collections.clips = this.getActiveCollections(data, CT_CLIPS);
             this.setState({collections});
         });
     };
@@ -74,8 +78,8 @@ class ProductsManager extends Component {
     };
 
     // eslint-disable-next-line class-methods-use-this
-    getActiveCollections = (collections) => {
-        const active = (collections.get(CT_VIDEO_PROGRAM) || []).filter(isActive);
+    getActiveCollections = (collections, type) => {
+        const active = (collections.get(type) || []).filter(isActive);
 
         active.sort((a, b) => {
             if (a.name < b.name) {
@@ -152,15 +156,15 @@ class ProductsManager extends Component {
         });
     };
 
-    selectCollection = (pattern) => {
-        if(!pattern) {
-            this.removeFilter("pattern");
+    selectCollection = (collection_uid) => {
+        if(!collection_uid) {
+            this.removeFilter("collection_uid");
             return
         }
         const {filters} = this.state;
-        console.log("selectCollection: ", pattern);
-        filters.pattern = pattern;
-        this.setState({filters, pattern}, () => {
+        console.log("selectCollection: ", collection_uid);
+        filters.collection_uid = collection_uid;
+        this.setState({filters, collection_uid}, () => {
             this.getProducts();
         });
     };
@@ -243,7 +247,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {page, pattern, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {page, ct_option_type, collection_uid, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -328,10 +332,10 @@ class ProductsManager extends Component {
             }
         );
 
-        const col_options = collections.map(data => {
-            if (collections.length > 0) {
-                const {uid, name, properties: {pattern}} = data;
-                return ({key: uid, value: pattern, text: name})
+        const col_options = (collections[ct_option_type] || []).map(data => {
+            if (collections[ct_option_type].length > 0) {
+                const {uid, name} = data;
+                return ({key: uid, value: uid, text: name})
             }
         });
 
@@ -352,12 +356,20 @@ class ProductsManager extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         <Dropdown
+                            compact
+                            selection
+                            options={[{key: 11, value: "clips", text: "Clips"}, {key: 12, value: "programs", text: "Programs"}]}
+                            placeholder='Type:'
+                            value={ct_option_type}
+                            onChange={(e, {value}) => this.setState({ct_option_type: value})}
+                        />
+                        <Dropdown
                             search
                             clearable
                             selection
                             options={col_options}
                             placeholder='Collections:'
-                            value={pattern}
+                            value={collection_uid}
                             onChange={(e, {value}) => this.selectCollection(value)}
                         />
                     </Menu.Item>
