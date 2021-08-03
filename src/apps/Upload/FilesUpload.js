@@ -36,7 +36,14 @@ class FilesUpload extends Component {
                 file_data.mime_type = file_data.type;
                 file_data.properties = {upload_name: file_data.file_name};
                 const file_type = getMediaType(file_data.type)
-                const file_type_options = PRODUCT_FILE_TYPES[language][file_type].map(data => {
+                const def_types = {
+                    video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "4x4_FB", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB", "4x4_FB_SUB"],
+                    audio: ["voice", "music", "sfx", "mix"],
+                    other: ["Text", "SRT"]
+                }
+
+                const options = PRODUCT_FILE_TYPES[language] ? PRODUCT_FILE_TYPES[language][file_type] : def_types[file_type];
+                const file_type_options = options.map(data => {
                     return ({key: data, value: data, text: data})
                 });
                 delete file_data.type;

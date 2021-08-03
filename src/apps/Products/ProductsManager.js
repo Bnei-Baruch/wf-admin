@@ -19,7 +19,6 @@ import {
     WF_LANGUAGES
 } from "../../shared/consts";
 import DatePicker from "react-datepicker";
-import he from "date-fns/locale/he";
 import ProductFiles from "./ProductFiles";
 import ProductsAdmin from "./ProductsAdmin";
 import AddLanguage from "./AddLanguage";
@@ -51,7 +50,6 @@ class ProductsManager extends Component {
         file_language: null,
         pattern: "",
         collection_uid: "",
-        locale: he,
         original_language: "heb",
         metadata: {},
         renaming: false,
@@ -383,7 +381,7 @@ class ProductsManager extends Component {
                     </Menu.Item>
                     <Menu.Item>
                         <DatePicker
-                            locale={locale}
+                            // locale={locale}
                             customInput={<Input icon={
                                 <Icon name={film_date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("film_date")} />
                             }/>}
