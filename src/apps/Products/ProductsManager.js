@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {getData, MDB_UNIT_URL} from '../../shared/tools';
+import {getData, getUnit, MDB_EXTERNAL_URL, MDB_LOCAL_URL, MDB_UNIT_URL, toHms} from '../../shared/tools';
 import {
     Menu,
     Segment,
@@ -7,7 +7,9 @@ import {
     Dropdown,
     Input,
     Icon,
-    Table
+    Table,
+    Popup,
+    Grid
 } from 'semantic-ui-react'
 import {
     CT_CLIPS,
@@ -65,6 +67,7 @@ class ProductsManager extends Component {
         add_language: false,
         ui_language: "en",
         page: 0,
+        parent_info: ""
     };
 
     componentDidMount() {
@@ -250,16 +253,44 @@ class ProductsManager extends Component {
         this.toggleAddLanguage();
         this.getProducts();
         this.setState({product_id: null, product: null, show_languages: false});
+    };
+
+    parentInfo = (parent) => {
+        const {ui_language} = this.state;
+        const local = window.location.hostname !== "wfsrv.kli.one";
+        const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
+        getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
+            const {uid, i18n, properties: {film_date, duration}} = unit;
+            const name = i18n[ui_language].name;
+            const dur = toHms(duration)
+            const parent_info = (
+                <Grid centered divided columns={4} stretched>
+                    <Grid.Column textAlign='center'>
+                        {uid}
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        {film_date}
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        {dur}
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        {name}
+                    </Grid.Column>
+                </Grid>
+            )
+            this.setState({parent_info});
+        });
     }
 
     render() {
-        const {page, ui_language, ct_option_type, collection_uid, collections, film_date, product, products, locale, language, files, show_languages, selected_language} = this.state;
+        const {page, ui_language, ct_option_type, collection_uid, collections, film_date, product, products, parent_info, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n, properties: {duration}} = data;
+                const {product_name, product_id, parent, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n, properties: {duration}} = data;
                 const product_selected = product_id === this.state.product_id;
                 const href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
                 const unit_exist = i18n[WF_LANGUAGES[language]].archive;
@@ -276,7 +307,14 @@ class ProductsManager extends Component {
                                 </div>: null}
 
                         </Table.Cell>
-                        <Table.Cell textAlign='center'><Icon size='large' name='attention' /></Table.Cell>
+                        <Table.Cell textAlign='center'>
+                            <Popup flowing position='top center'
+                                content={parent_info}
+                                trigger={<Icon size='large' name='attention' />}
+                                onOpen={() => this.parentInfo(parent)}
+                                onClose={() => this.setState({parent_info: ""})}
+                            />
+                        </Table.Cell>
                         <Table.Cell>{duration}</Table.Cell>
                         <Table.Cell singleLine>{film_date}</Table.Cell>
                         <Table.Cell singleLine>{date}</Table.Cell>
