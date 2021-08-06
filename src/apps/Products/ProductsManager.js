@@ -264,14 +264,11 @@ class ProductsManager extends Component {
                 const href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
                 const unit_exist = i18n[WF_LANGUAGES[language]].archive;
                 return (<Fragment key={product_id + "div"}>
-                    <Table.Row key={product_id} verticalAlign='top'>
-                        <Table.Cell collapsing>
-                            <Icon link name={product_selected ? 'minus' : 'plus'} color='blue'
-                                  onClick={() => this.setProduct(product_id, data)}/>
-                        </Table.Cell>
-                        <Table.Cell>{product_name}</Table.Cell>
-                        <Table.Cell>{duration}</Table.Cell>
-                        <Table.Cell>
+                    <Table.Row key={product_id} verticalAlign='top' warning={product_selected} selectable>
+                        <Table.Cell collapsing>{product_id}</Table.Cell>
+                        <Table.Cell><Icon link name={product_selected ? 'minus' : 'plus'} color='blue'
+                                          onClick={() => this.setProduct(product_id, data)}/>{product_name}</Table.Cell>
+                        <Table.Cell verticalAlign='top'>
                             {product_permission ?
                                 <div><Button basic positive compact
                                         onClick={() => this.editProduct(data)}>EDIT</Button>&nbsp;&nbsp;&nbsp;
@@ -279,8 +276,10 @@ class ProductsManager extends Component {
                                 </div>: null}
 
                         </Table.Cell>
-                        <Table.Cell>{film_date}</Table.Cell>
-                        <Table.Cell>{date}</Table.Cell>
+                        <Table.Cell textAlign='center'><Icon size='large' name='attention' /></Table.Cell>
+                        <Table.Cell>{duration}</Table.Cell>
+                        <Table.Cell singleLine>{film_date}</Table.Cell>
+                        <Table.Cell singleLine>{date}</Table.Cell>
                         <Table.Cell>{collection_name}</Table.Cell>
                         <Table.Cell>{LANG_MAP[language].text}</Table.Cell>
                     </Table.Row>
@@ -346,7 +345,7 @@ class ProductsManager extends Component {
         });
 
         return (
-            <Segment textAlign='left' className="ingest_segment" basic>
+            <Segment textAlign='left' basic>
                 <Menu secondary >
                     <Menu.Item>Filter by:</Menu.Item>
                     <Menu.Item>
@@ -428,16 +427,17 @@ class ProductsManager extends Component {
                     selected_language={selected_language}
                     finishLanguage={this.finishLanguage}
                     toggleAddLanguage={this.toggleAddLanguage} />
-                <Table basic='very'>
+                <Table compact unstackable>
                     <Table.Header fullWidth>
-                        <Table.Row warning>
-                            <Table.HeaderCell />
-                            <Table.HeaderCell width={8}>Product Name</Table.HeaderCell>
-                            <Table.HeaderCell>Duration</Table.HeaderCell>
-                            <Table.HeaderCell width={2} />
-                            <Table.HeaderCell >Film Date</Table.HeaderCell>
-                            <Table.HeaderCell >Date Added</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Collection</Table.HeaderCell>
+                        <Table.Row>
+                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell >Product Name</Table.HeaderCell>
+                            <Table.HeaderCell  />
+                            <Table.HeaderCell width={1}>Original Program</Table.HeaderCell>
+                            <Table.HeaderCell >Duration</Table.HeaderCell>
+                            <Table.HeaderCell singleLine>Film Date</Table.HeaderCell>
+                            <Table.HeaderCell singleLine>Date Added</Table.HeaderCell>
+                            <Table.HeaderCell >Collection</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Original Language</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -446,7 +446,7 @@ class ProductsManager extends Component {
                     </Table.Body>
                     <Table.Footer fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='8' textAlign='center'>
+                            <Table.HeaderCell colSpan='9' textAlign='center'>
                                 <Button.Group>
                                 <Button basic disabled={page === 0}
                                         onClick={() => this.getProducts(page - 10)}>
