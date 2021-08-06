@@ -5,7 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@kevincobain2000/json-to-html-table": "^1.0.1",
-    "keycloak-js": "^14.0.0",
+    "keycloak-js": "^15.0.0",
     "lodash": "^4.17.21",
     "mediaelement": "^4.2.16",
     "mediaelement-plugins": "^2.5.1",
