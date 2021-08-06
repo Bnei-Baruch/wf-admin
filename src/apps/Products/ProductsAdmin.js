@@ -166,21 +166,21 @@ class ProductsAdmin extends Component {
                                         </Modal.Content>
                                     </Modal>
                                 </Form.Field>
-                                <FormField>
-                                    {unit ?
-                                    <Modal
-                                        onClose={() => this.setState({show_info: false})}
-                                        onOpen={() => this.setState({show_info: true})}
-                                        open={show_info}
-                                        size='small'
-                                        trigger={<Button>UID</Button>}
-                                    >
-                                        <Modal.Content>
-                                            <JSONToHTMLTable data={unit} tableClassName="ui small basic very compact table"/>
-                                        </Modal.Content>
-                                    </Modal>
-                                        : null}
-                                </FormField>
+                                {/*<FormField>*/}
+                                {/*    {unit ?*/}
+                                {/*    <Modal*/}
+                                {/*        onClose={() => this.setState({show_info: false})}*/}
+                                {/*        onOpen={() => this.setState({show_info: true})}*/}
+                                {/*        open={show_info}*/}
+                                {/*        size='small'*/}
+                                {/*        trigger={<Button>UID</Button>}*/}
+                                {/*    >*/}
+                                {/*        <Modal.Content>*/}
+                                {/*            <JSONToHTMLTable data={unit} tableClassName="ui small basic very compact table"/>*/}
+                                {/*        </Modal.Content>*/}
+                                {/*    </Modal>*/}
+                                {/*        : null}*/}
+                                {/*</FormField>*/}
                                 <Form.Field>
                                     <Modal closeOnDimmerClick={false}
                                            trigger={<Button color='teal' content='RELATE' icon='archive' onClick={this.openMdb}/>}

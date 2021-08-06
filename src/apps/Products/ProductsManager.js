@@ -9,7 +9,7 @@ import {
     Icon,
     Table,
     Popup,
-    Grid
+    Grid, Loader
 } from 'semantic-ui-react'
 import {
     CT_CLIPS,
@@ -67,7 +67,7 @@ class ProductsManager extends Component {
         add_language: false,
         ui_language: "en",
         page: 0,
-        parent_info: ""
+        parent_info: <Segment basic><Loader active /></Segment>
     };
 
     componentDidMount() {
@@ -312,7 +312,7 @@ class ProductsManager extends Component {
                                 content={parent_info}
                                 trigger={<Icon size='large' name='attention' />}
                                 onOpen={() => this.parentInfo(parent)}
-                                onClose={() => this.setState({parent_info: ""})}
+                                onClose={() => this.setState({parent_info: <Segment basic><Loader active /></Segment>})}
                             />
                         </Table.Cell>
                         <Table.Cell>{duration}</Table.Cell>
