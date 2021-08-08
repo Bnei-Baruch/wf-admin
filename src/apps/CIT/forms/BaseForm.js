@@ -25,7 +25,7 @@ import SourceSelector from '../components/SourceSelector';
 import TagSelector from '../components/TagSelector';
 import FileNamesWidget from '../components/FileNamesWidget';
 import CassetteDayPicker from '../components/CassetteDayPicker';
-import { fetchLikutim } from '../shared/store';
+import { searchLikutim } from '../shared/store';
 
 class BaseForm extends Component {
 
@@ -33,6 +33,7 @@ class BaseForm extends Component {
     metadata: Metadata,
     availableSources: SourcesTree,
     availableTags: TagsTree,
+    availableLikutims: PropTypes.array,
     collections: PropTypes.instanceOf(Map),
     onSubmit: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -44,6 +45,7 @@ class BaseForm extends Component {
     metadata: EMPTY_OBJECT,
     availableSources: EMPTY_ARRAY,
     availableTags: EMPTY_ARRAY,
+    availableLikutims: EMPTY_ARRAY,
     collections: new Map(),
     afterClear: false,
   };
@@ -104,6 +106,13 @@ class BaseForm extends Component {
       state.tags = [];
     }
 
+    // map likutim to their units
+    if (Array.isArray(state.likutims)) {
+      state.likutims = props.availableLikutims.length > 0 ? props.availableLikutims: [];
+    } else {
+      state.tags = [];
+    }
+
     // filter active collections and lookup specified collection
     state.active_collections = this.getActiveCollections(props);
     if (props.metadata.collection_uid) {
@@ -139,6 +148,12 @@ class BaseForm extends Component {
       nextProps.metadata.tags &&
       this.props.availableTags !== nextProps.availableTags) {
       diff.tags = nextProps.metadata.tags.map(x => findPath(nextProps.availableTags, x));
+    }
+    // availableLikutims changed ?
+    if (nextProps.availableLikutims.length > 0 &&
+      nextProps.metadata.likutims &&
+      this.props.availableLikutims !== nextProps.availableLikutims) {
+      diff.likutims = nextProps.availableLikutims;
     }
 
     // collections changed ?
@@ -795,7 +810,7 @@ class BaseForm extends Component {
   }
 
   handleLikutimChange = (e, data) => {
-    fetchLikutim(data.value).then(({ data: likutimData }) => {
+    searchLikutim(data.value).then(({ data: likutimData }) => {
       this.setState({ likutimData });
     });
     this.setState({ likutimQuery: data.value });
