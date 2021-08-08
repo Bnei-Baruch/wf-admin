@@ -310,6 +310,8 @@ class BaseForm extends Component {
     delete data.error;
     delete data.selected_collection;
     delete data.active_collections;
+    delete data.likutimQuery;
+    delete data.likutimData;
 
     if (!this.state.film_date) {
       delete data.film_date;
