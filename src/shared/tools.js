@@ -1,4 +1,12 @@
-import {mime_list, CONTENT_TYPES_MAPPINGS, MDB_LANGUAGES, DCT_OPTS, CONTENT_TYPE_BY_ID, langs_bb} from './consts';
+import {
+    mime_list,
+    CONTENT_TYPES_MAPPINGS,
+    MDB_LANGUAGES,
+    DCT_OPTS,
+    CONTENT_TYPE_BY_ID,
+    langs_bb,
+    WF_LANGUAGES, CONTENT_ID_BY_TYPE
+} from './consts';
 
 import kc from "../components/UserManager";
 
@@ -9,6 +17,8 @@ export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
+export const WFNAS_BACKEND = window.location.hostname === "wfsrv.kli.one" ? process.env.REACT_APP_WFNAS_BACKEND : WF_BACKEND;
+export const WFNAS_URL = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFNAS_URL : '/wfnas';
 export const MDB_LOCAL_URL = process.env.REACT_APP_MDB_LOCAL_URL;
 export const MDB_EXTERNAL_URL = process.env.REACT_APP_MDB_EXTERNAL_URL;
 export const MDB_UNIT_URL = process.env.REACT_APP_MDB_UNIT_URL;
@@ -59,6 +69,78 @@ export const randomString = (len, charSet) => {
 export const getToken = () => {
     return kc.token;
 };
+
+export const newMdbUnit = async(line, derived_id, metadata) => {
+    let options, r, body
+    const {collection_id, collection_uid, content_type, topic, language, film_date} = line;
+
+    const type_id = parseInt(CONTENT_ID_BY_TYPE[content_type], 10);
+    body = {"collectionUid": collection_uid,"typeId": type_id};
+    options = getRequestOptions(body);
+    r = await fetch(`${MDB_BACKEND}/content_unit/autoname`, options);
+    const auto_name = await r.json();
+
+    const i18n = {}
+    auto_name.map(l => i18n[l.language] = {language: l.language, name: l.name});
+    let {name, description} = metadata;
+    if(name) {
+        const title = i18n[WF_LANGUAGES[language]].name;
+        name = title ? title + ". " + name : name;
+        i18n[WF_LANGUAGES[language]].name = name;
+    }
+    if(description) {
+        i18n[WF_LANGUAGES[language]].description = description;
+    }
+    body = {type_id, properties: {film_date, original_language: WF_LANGUAGES[language], pattern: topic}, i18n};
+    options = getRequestOptions(body)
+    r = await fetch(`${MDB_BACKEND}/content_units/`, options);
+    const unit = await r.json();
+
+    body = [{content_unit_id: unit.id, name: "",position: null}];
+    options = getRequestOptions(body);
+    r = await fetch(`${MDB_BACKEND}/collections/${collection_id}/content_units/`, options);
+    console.log(r)
+
+    if(derived_id) {
+        body = {derived_id: unit.id, name: ""};
+        options = getRequestOptions(body);
+        r = await fetch(`${MDB_BACKEND}/content_units/${derived_id}/derivatives/`, options);
+        console.log(r)
+    }
+
+    if(line.lecturer === "rav") {
+        body = {person_id: 1, role_id: 1};
+        options = getRequestOptions(body)
+        r = await fetch(`${MDB_BACKEND}/content_units/${unit.id}/persons/`, options);
+        console.log(r)
+    }
+
+    return unit;
+}
+
+export const insertFile = async(file_id, content_unit_id) => {
+    const r = await fetch(`${MDB_BACKEND}/files/${file_id}/`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        },
+        body:  JSON.stringify({content_unit_id})
+    });
+
+    return await r.json();
+}
+
+const getRequestOptions = (data) => {
+    return {
+        method: 'POST',
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        },
+        body:  JSON.stringify(data)
+    }
+}
 
 export const mdbPost = (token, data, cb) => fetch(`${MDB_REST}`, {
     method: 'POST',
@@ -532,10 +614,11 @@ export const newProductMeta = (product_name, product_description, language) => {
     let product_id = "p" + Math.floor(Date.now() / 1000);
     let date = new Date(product_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
-        product_id, date, product_name, language, type_id: null,
-        product_type: "media", i18n: {[language]: {name: product_name, description: product_description}}, line: null, parent: {},
+        product_id, date, product_name, language, type_id: null, film_date: "",
+        product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}, line: null, parent: {},
         pattern: null,
         properties: {
+            archive: false,
             buffer: false,
             fixed: false,
             renamed: false,

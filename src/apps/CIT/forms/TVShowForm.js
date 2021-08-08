@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import { CONTENT_TYPES_MAPPINGS, CT_VIDEO_PROGRAM } from '../../../shared/consts';
-import {isActive, isPattern} from '../shared/utils';
+import {isActive, isPattern, today} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class TVShowForm extends BaseForm {
@@ -25,6 +25,7 @@ class TVShowForm extends BaseForm {
 
   suggestName(diff) {
     const {
+            topic,
             content_type: contentType,
             selected_collection: sIdx,
             episode,
@@ -39,20 +40,26 @@ class TVShowForm extends BaseForm {
     const collection = activeCollections[sIdx];
 
     const pattern = collection ? collection.properties.pattern : '';
+      const collection_name = collection ? collection.i18n.en.name : '';
+
+      let suffix = topic;
+      const date = filmDate || captureDate;
 
     // eslint-disable-next-line prefer-template
     const name = (hasTranslation ? 'mlt' : language) +
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      date +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
       pattern +
+        (suffix ? `_${suffix}` : '') +
       (episode !== '' ? (Number.isNaN(Number.parseInt(episode, 10)) ? '_' : '_n') + episode : '');
 
     return {
+        collection_name,
       pattern,
       auto_name: name.toLowerCase().trim(),
     };
@@ -77,6 +84,11 @@ class TVShowForm extends BaseForm {
                 {this.renderEpisode()}
               </Grid.Column>
             </Grid.Row>
+              <Grid.Row>
+                  <Grid.Column>
+                      {this.renderTopic()}
+                  </Grid.Column>
+              </Grid.Row>
           </Grid>
         </Grid.Column>
         <Grid.Column width={2} />
@@ -97,15 +109,11 @@ class TVShowForm extends BaseForm {
                 {this.renderHasTranslation()}
               </Grid.Column>
             </Grid.Row>
-            {
-              metadata.label_id ?
-                <Grid.Row>
+              <Grid.Row>
                   <Grid.Column>
-                    {this.renderFilmDate()}
+                      {this.renderFilmDate()}
                   </Grid.Column>
-                </Grid.Row> :
-                null
-            }
+              </Grid.Row>
           </Grid>
         </Grid.Column>
       </Grid.Row>

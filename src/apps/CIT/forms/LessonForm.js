@@ -37,7 +37,7 @@ class LessonForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      (filmDate || captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[artifactType === ARTIFACT_TYPES[0].value ? contentType : artifactType].pattern +
       (pattern ? `_${pattern}` : '') +
@@ -141,7 +141,7 @@ class LessonForm extends BaseForm {
               </Grid.Column>
             </Grid.Row>
             {
-              metadata.label_id ?
+              !metadata.capture_date ?
                 <Grid.Row>
                   <Grid.Column>
                     {this.renderFilmDate()}

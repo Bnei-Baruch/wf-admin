@@ -94,7 +94,9 @@ class MonitorKmedia extends Component {
                 });
                 return (
                     <Fragment key={i}>
-                        <Table.Row className="monitor_tr" ><Table.Cell colSpan={languages.length} >{id}</Table.Cell></Table.Row>
+                        <Table.Row className="monitor_tr" >
+                            <Table.Cell colSpan={languages.length} >{id}</Table.Cell>
+                        </Table.Row>
                         <Table.Row>{langs}</Table.Row>
                     </Fragment>
                 );
@@ -105,17 +107,18 @@ class MonitorKmedia extends Component {
 
             <Container textAlign='center'>
                 <u>Archive</u>
+                <div className='upload_content'>
                 <Table compact='very' basic size='small'>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell colSpan={this.props.kmedia_full ? languages.length + 1 : languages.length}>File Name</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {this.props.kmedia_full ? full_kmedia_data : short_kmedia_data}
                     </Table.Body>
                 </Table>
+            </div>
             </Container>
         );
     }

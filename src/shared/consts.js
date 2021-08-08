@@ -120,6 +120,13 @@ export const dep_options = [
     { key: 'en', value: 'eng', flag: 'us', text: 'English' },
 ];
 
+export const ui_options = [
+    { key: 'he', value: 'he', flag: 'il', text: 'Hebrew' },
+    { key: 'ru', value: 'ru', flag: 'ru', text: 'Russian' },
+    { key: 'en', value: 'en', flag: 'us', text: 'English' },
+    { key: 'es', value: 'es', flag: 'es', text: 'Spanish' },
+];
+
 export const LANGUAGES = [
   { text: 'עברית', value: 'heb' },
   { text: 'אנגלית', value: 'eng' },
@@ -228,16 +235,38 @@ export const LANG_MAP = {
 
 export const PRODUCT_FILE_TYPES = {
     [LANG_HEBREW]: {
-        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Bli-LOGO", "4x4_FB"],
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "4x4_FB", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB", "4x4_FB_SUB"],
         audio: ["voice", "music", "sfx", "mix"],
         other: ["Text", "SRT"]
     },
     [LANG_RUSSIAN]: {
-        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK",
+            "16x9_Strelka", "4x4_MAK", "4x4_OpTV", "16x9_Logo-Kab_SUB", "16x9_Logo-Kab-Strelka_SUB", "16x9_Logo-OpTV_SUB",
+            "16x9_Logo-MAK_SUB", "16x9_Strelka_SUB", "4x4_MAK_SUB", "4x4_OpTV_SUB"],
         audio: ["voice", "music", "sfx", "mix"],
         other: ["Text", "SRT"]
     },
     [LANG_ENGLISH]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_GERMAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_FRENCH]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_BULGARIAN]: {
+        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
+        audio: ["voice", "music", "sfx", "mix"],
+        other: ["Text", "SRT"]
+    },
+    [LANG_SLOVENIAN]: {
         video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK", "16x9_Strelka", "4x4_MAK", "4x4_OpTV"],
         audio: ["voice", "music", "sfx", "mix"],
         other: ["Text", "SRT"]
@@ -280,6 +309,14 @@ export const MDB_LANGUAGES = {
   zz: 'mlt',
   xx: 'unk',
 };
+
+export const WF_LANGUAGES = function() {
+    let ret = {};
+    for(let key in MDB_LANGUAGES) {
+        ret[MDB_LANGUAGES[key]] = key;
+    }
+    return ret;
+}()
 
 export const LECTURERS = [
   { text: 'רב', value: 'rav' },
@@ -375,6 +412,14 @@ export const CONTENT_TYPE_BY_ID = {
     47: CT_SOURCE,
     48: CT_LIKUTIM,
 };
+
+export const CONTENT_ID_BY_TYPE = function() {
+    let ret = {};
+    for(let key in CONTENT_TYPE_BY_ID) {
+        ret[CONTENT_TYPE_BY_ID[key]] = key;
+    }
+    return ret;
+}()
 
 export const CONTENT_TYPES_MAPPINGS = {
     [CT_LESSON_PART]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },

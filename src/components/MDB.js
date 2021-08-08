@@ -7,10 +7,10 @@ import he from 'date-fns/locale/he';
 // import 'date-fns/locale/it';
 // import 'date-fns/locale/de';
 // import 'date-fns/locale/en-gb';
-import '../Insert/InsertApp.css';
+import '../apps/Insert/InsertApp.css';
 import {Button, Header, Modal, Dropdown, Segment, Input, Table} from 'semantic-ui-react';
-import {fetchPublishers, getLang, fetchUnits, toHms,} from '../../shared/tools';
-import {language_options, DCT_OPTS} from '../../shared/consts';
+import {fetchPublishers, getLang, fetchUnits, toHms,} from '../shared/tools';
+import {language_options, DCT_OPTS} from '../shared/consts';
 
 class MDB extends Component {
 

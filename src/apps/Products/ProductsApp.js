@@ -1,40 +1,25 @@
 import React, {Component, Fragment} from 'react'
-import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import ProductsManager from "./ProductsManager";
+import {kc} from "../../components/UserManager";
 
 class ProductsApp extends Component {
 
     state = {
-        ival: null,
-        product_id: null,
+        user: {
+            name: this.props.user.name,
+            email: this.props.user.email,
+            rooter: kc.hasRealmRole("wf_products_root"),
+            adminer: kc.hasRealmRole("wf_products_admin"),
+            archer: kc.hasRealmRole("wf_products_archive"),
+            viewer: kc.hasRealmRole("wf_products_viewer"),
+        }
     };
-
-    jobWorkflow = (filedata) => {
-        filedata.archive_type = "product";
-        filedata.job_id = this.state.job_id;
-        filedata.timestamp = Date.now();
-        console.log(":: JobsApp - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/products`, filedata, (cb) => {
-            console.log(":: JobsApp - workflow respond: ",cb);
-            this.setState({job_id: null})
-        });
-    };
-
-    masterUpload = (job_id) => {
-        job_id = job_id === this.state.job_id ? false : job_id;
-        this.setState({job_id});
-    };
-
-    setProduct = (product_id) => {
-        this.setState({product_id});
-        this.refs.files.getProductFiles(product_id);
-    }
 
     render() {
 
         return (
             <Fragment>
-                <ProductsManager user={this.props.user} />
+                <ProductsManager {...this.state} />
             </Fragment>
         );
     }

@@ -1,8 +1,16 @@
 import React, {Component} from 'react'
-import {WFDB_BACKEND, WFSRV_BACKEND, getToken, getMediaType, putData} from '../../shared/tools';
-import {Divider, Button, Modal, Grid, Confirm, Segment, Select} from 'semantic-ui-react'
+import {
+    WFDB_BACKEND,
+    getToken,
+    getMediaType,
+    putData,
+    newMdbUnit,
+    WFSRV_BACKEND,
+    getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL, toHms
+} from '../../shared/tools';
+import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import {PRODUCT_FILE_TYPES} from "../../shared/consts";
+import {PRODUCT_FILE_TYPES, WF_LANGUAGES} from "../../shared/consts";
 
 class FileManager extends Component {
 
@@ -17,15 +25,18 @@ class FileManager extends Component {
         language: "heb",
         original_language: "heb",
         metadata: {},
-        source: null,
         showConfirm: false,
         showEditFile: false,
+        inserting: false,
+        archive: false,
     };
 
     checkEdit = () => {
         if(this.props.file_data) {
-            const {file_type} = this.props.file_data;
-            this.setState({file_type});
+            const {file_type, properties: {archive}} = this.props.file_data;
+            this.setState({file_type, archive});
+        } else {
+            this.setState({file_type: "", archive: false});
         }
     };
 
@@ -33,13 +44,6 @@ class FileManager extends Component {
         const {langs, files} = this.props;
         Object.keys(langs).map(l => langs[l]["files"] = files.filter(f => f.language === l));
         this.setState({langs_files: langs});
-    };
-
-    selectFile = (data) => {
-        console.log(":: ProductFiles - selected file: ", data);
-        let path = data.properties.url;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({product_data: data, source, active: data.file_id});
     };
 
     getPlayer = (player) => {
@@ -54,7 +58,8 @@ class FileManager extends Component {
     setRemoved = () => {
         let {file_data} = this.props;
         console.log(":: FileManager - set removed: ", file_data);
-        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`,
+            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({showConfirm: false});
         setTimeout(() => {
             this.props.getProductFiles();
@@ -63,19 +68,113 @@ class FileManager extends Component {
     };
 
     saveFileData = () => {
-        const {file_data} = this.props;
-        file_data.file_type = this.state.file_type;
+        const {file_data, mdb_file} = this.props;
+        const {file_type, archive} = this.state;
+        if(mdb_file && archive) {
+            fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/status/archive?value=false`,
+                { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        }
+        if(archive) {
+            const d = toHms(file_data.media_info.format.duration);
+            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
+                { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        }
+        file_data.file_type = file_type;
+        file_data.properties.archive = archive;
         delete file_data.id;
         putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
             console.log(":: EditFile respond: ",cb);
             this.setState({showEditFile: false});
             this.props.getProductFiles();
         });
+    };
+
+    makeUnit = () => {
+        const {line, parent} = this.props.product;
+        this.setState({inserting: true});
+
+        // UID in line indicate that unit already created. If we again here it's mean
+        // insert was not successful or we insert translation. So we get unit from MDB and try to insert again.
+        if(line.uid) {
+            const local = window.location.hostname !== "wfsrv.kli.one";
+            const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
+            getUnit(`${url}/${line.unit_id}/`, (unit) => {
+                this.archiveInsert(unit);
+            })
+        } else {
+            newMdbUnit(line, parent.mdb_id, this.props.metadata)
+                .then(unit => {
+                    console.log("makeUnit: ", unit);
+                    this.archiveInsert(unit);
+                })
+                .catch(reason => {
+                    console.log(reason.message);
+                    this.setState({inserting: false});
+                })
+        }
+    };
+
+    archiveInsert = (unit) => {
+        const {file_data, product, user} = this.props;
+        const {name,email} = user;
+        const {date,extension,file_name,language,sha1,size,mime_type,properties:{url}} = file_data;
+
+        if(!product.line.uid) {
+            product.line.unit_id = unit.id;
+            product.line.uid = unit.uid;
+            product.i18n[WF_LANGUAGES[language]].archive = true;
+            putData(`${WFDB_BACKEND}/products/${product.product_id}`, product, (cb) => {
+                console.log(":: saveProduct: ",cb);
+            });
+        }
+
+        const insert_meta = {
+            date, extension, file_name,
+            insert_id: "i" + Math.floor(Date.now() / 1000),
+            insert_name: `${file_name}.${extension}`,
+            insert_type: "1",
+            language,
+            line: {...product.line, name, email, url, mime_type},
+            send_id: product.product_id,
+            sha1, size,
+            upload_type: "product",
+        };
+
+        console.log(insert_meta)
+
+        putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
+            console.log(":: WFSRV respond: ",cb);
+            if(cb.status === "ok") {
+
+                // We save file data to DB after successful insert.
+                file_data.uid = unit.uid;
+                file_data.properties.archive = true;
+                delete file_data.id;
+                putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                    console.log(":: saveFile: ",cb);
+                    this.props.getProductFiles();
+                    this.setState({inserting: false});
+                });
+
+                alert("Insert successful :)");
+            } else {
+                alert("Something gone wrong :(");
+                this.setState({inserting: false});
+            }
+        });
+    };
+
+    closeModal = () => {
+        this.setState({file_type: "", archive: false});
+        this.props.toggleFileManager();
     }
 
     render() {
-        const {showConfirm, showEditFile, file_type} = this.state;
-        const {source, file_data} = this.props;
+        const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
+        const {source, file_data, mdb, metadata: {name}} = this.props;
+        const {rooter, adminer, archer, viewer} = this.props.user;
+        const lang_permission = archer || adminer || rooter;
+        const product_permission = adminer || rooter;
         if(Object.keys(file_data).length === 0) return null
 
         const full_name = file_data.file_name+'.'+file_data.extension;
@@ -95,7 +194,7 @@ class FileManager extends Component {
         return (
             <Modal closeOnDimmerClick={false}
                    onMount={this.checkEdit}
-                   onClose={this.props.toggleFileManager}
+                   onClose={this.closeModal}
                    open={this.props.show_filemanager}
                    size='small'
                    closeIcon="close">
@@ -103,6 +202,7 @@ class FileManager extends Component {
                 <Modal.Content>
                     <Grid textAlign='center'>
                         <Grid.Row columns={4}>
+                            {lang_permission ?
                             <Grid.Column>
                                 <Modal
                                     onClose={() => this.setState({showEditFile: false})}
@@ -114,13 +214,23 @@ class FileManager extends Component {
                                         <Segment size='massive' basic textAlign='center'>Change File Type.</Segment>
                                         <Segment size='massive' basic textAlign='center'>{full_name}</Segment>
                                         <Segment size='small' basic textAlign='center'>
-                                            <Select
-                                                error={!file_type}
-                                                options={file_type_options}
-                                                placeholder='File Type'
-                                                value={file_type}
-                                                onChange={(e, {value}) => this.setState({file_type: value})}
-                                            />
+                                            <Grid columns='equal'>
+                                                <Grid.Column>
+                                                    <Select fluid
+                                                            error={!file_type}
+                                                            options={file_type_options}
+                                                            placeholder='File Type'
+                                                            value={file_type}
+                                                            onChange={(e, {value}) => this.setState({file_type: value})}
+                                                    />
+                                                </Grid.Column>
+                                                <Grid.Column>
+                                                    <Segment size='mini' basic>
+                                                        <Checkbox label='File for  Archive' checked={archive} disabled={mdb}
+                                                                  onChange={() => this.setState({archive: !archive})} />
+                                                    </Segment>
+                                                </Grid.Column>
+                                            </Grid>
                                         </Segment>
                                     </Modal.Content>
                                     <Modal.Actions>
@@ -129,6 +239,8 @@ class FileManager extends Component {
                                     </Modal.Actions>
                                 </Modal>
                             </Grid.Column>
+                                : null}
+                            {product_permission ?
                             <Grid.Column>
                                 <Button color='red' basic content='Delete' onClick={() => this.setState({showConfirm: true})} />
                                 <Confirm
@@ -138,6 +250,7 @@ class FileManager extends Component {
                                     onConfirm={this.setRemoved}
                                 />
                             </Grid.Column>
+                                : null}
                         </Grid.Row>
                         <Divider hidden />
                         <Grid.Row columns={4}>
@@ -152,9 +265,13 @@ class FileManager extends Component {
                             <Grid.Column>
                                 <Button color='orange' basic content='Youtube' />
                             </Grid.Column>
+                            {lang_permission ?
                             <Grid.Column>
-                                <Button color='yellow' basic content='Mdb'/>
+                                <Button color='yellow' basic content='Mdb' loading={inserting}
+                                        disabled={!name || inserting || !file_data.properties?.archive || file_data.uid}
+                                        onClick={this.makeUnit} />
                             </Grid.Column>
+                                : null}
                         </Grid.Row>
                     </Grid>
                 </Modal.Content>

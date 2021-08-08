@@ -61,8 +61,8 @@ class BaseForm extends Component {
       language: LANGUAGES[0].value,
       lecturer: LECTURERS[0].value,
       has_translation: true,
-      capture_date: today(),
-      film_date: today(),
+      capture_date: '',
+      film_date: null,
       require_test: false,
       manual_name: null,
       sources: [],
@@ -308,13 +308,15 @@ class BaseForm extends Component {
 
     // temporary
     delete data.error;
-    delete data.topic;
     delete data.selected_collection;
     delete data.active_collections;
 
-    // Cassette mode only
-    if (!this.props.metadata.label_id) {
+    if (!this.state.film_date) {
       delete data.film_date;
+    }
+
+    if (!this.state.capture_date) {
+      delete data.capture_date;
     }
 
     // content_type specific
@@ -359,6 +361,7 @@ class BaseForm extends Component {
     if (data.active_collections.length > data.selected_collection) {
       const selected      = data.active_collections[data.selected_collection];
       data.collection_uid = selected.uid;
+      data.collection_id = selected.id;
     }
 
     return this.cleanData(data);
@@ -516,7 +519,7 @@ class BaseForm extends Component {
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      (filmDate || captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_n' +

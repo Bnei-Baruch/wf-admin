@@ -7,10 +7,11 @@ import {
     MDB_LOCAL_URL,
     MDB_EXTERNAL_URL
 } from '../../shared/tools';
-import {Segment, Button, Modal, Form} from 'semantic-ui-react'
-import {dep_options} from "../../shared/consts";
+import {Segment, Button, Modal, Form, FormField} from 'semantic-ui-react'
+import {dep_options, WF_LANGUAGES} from "../../shared/consts";
 import CIT from "../CIT/CIT";
-import MDB from "./MDB";
+import MDB from "../../components/MDB";
+import {JSONToHTMLTable} from "@kevincobain2000/json-to-html-table";
 
 class ProductsAdmin extends Component {
 
@@ -20,16 +21,17 @@ class ProductsAdmin extends Component {
         product_description: "",
         language: "heb",
         locale: "he",
-        metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "norav"},
+        metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "rav", film_date: "", capture_date: ""},
         mdb_open: false,
         unit: null,
         parent: null,
+        show_info: false
     };
 
     checkEdit = () => {
         if(this.props.product) {
             const {product_name, language, i18n, line, parent} = this.props.product;
-            const {[language]: {description}} = i18n;
+            const {[WF_LANGUAGES[language]]: {description}} = i18n;
             const local = window.location.hostname !== "wfsrv.kli.one";
             const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
             getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
@@ -37,7 +39,7 @@ class ProductsAdmin extends Component {
             })
         } else {
             this.setState({product_name: "", language: "heb", product_description: "",
-                metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "norav"}, parent: null, unit: null});
+                metadata: {language: "heb", content_type: "CLIP", has_translation: false, lecturer: "rav"}, parent: null, unit: null});
         }
     };
 
@@ -57,6 +59,7 @@ class ProductsAdmin extends Component {
         const {product_name, product_description, language, metadata, unit} = this.state;
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
+        product_meta.film_date = metadata.film_date;
         product_meta.pattern = metadata.pattern;
         product_meta.parent = {
             mdb_uid: unit.uid,
@@ -72,7 +75,7 @@ class ProductsAdmin extends Component {
     };
 
     editProduct = () => {
-        let {product_name, product_description, language, metadata, unit, parent} = this.state;
+        let {product_name, language, metadata, unit, parent} = this.state;
         let {product} = this.props;
         let line = metadata;
         if(unit) {
@@ -84,8 +87,8 @@ class ProductsAdmin extends Component {
                 film_date: unit.properties?.film_date,
             }
         }
-        product = {...product, product_name, language, parent, line,
-            i18n: {[language]: {name: product_name, description: product_description}}
+        product = {...product, product_name, language, parent, line, film_date: line.film_date,
+            i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}
         };
         this.saveProduct(product);
     }
@@ -126,7 +129,7 @@ class ProductsAdmin extends Component {
 
     render() {
 
-        const {product_name, product_description, language, cit_open, metadata, parent, mdb_open, unit} = this.state;
+        const {product_name, product_description, language, cit_open, metadata, show_info, mdb_open, unit} = this.state;
         const valid_form = metadata.hasOwnProperty("final_name") && !!unit && !!product_name
 
         return (
@@ -137,6 +140,7 @@ class ProductsAdmin extends Component {
                    size='tiny'
                    closeIcon="close">
                 <Modal.Header>Add/Edit Product</Modal.Header>
+
                 <Modal.Content>
                     <Segment padded basic>
                         <Form>
@@ -162,6 +166,21 @@ class ProductsAdmin extends Component {
                                         </Modal.Content>
                                     </Modal>
                                 </Form.Field>
+                                {/*<FormField>*/}
+                                {/*    {unit ?*/}
+                                {/*    <Modal*/}
+                                {/*        onClose={() => this.setState({show_info: false})}*/}
+                                {/*        onOpen={() => this.setState({show_info: true})}*/}
+                                {/*        open={show_info}*/}
+                                {/*        size='small'*/}
+                                {/*        trigger={<Button>UID</Button>}*/}
+                                {/*    >*/}
+                                {/*        <Modal.Content>*/}
+                                {/*            <JSONToHTMLTable data={unit} tableClassName="ui small basic very compact table"/>*/}
+                                {/*        </Modal.Content>*/}
+                                {/*    </Modal>*/}
+                                {/*        : null}*/}
+                                {/*</FormField>*/}
                                 <Form.Field>
                                     <Modal closeOnDimmerClick={false}
                                            trigger={<Button color='teal' content='RELATE' icon='archive' onClick={this.openMdb}/>}

@@ -79,7 +79,7 @@ class EventPartForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      (this.props.metadata.label_id ? filmDate : captureDate) +
+      (filmDate || captureDate) +
       '_' +
       eventType +
       '_' +

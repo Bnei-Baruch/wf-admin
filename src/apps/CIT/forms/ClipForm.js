@@ -2,14 +2,15 @@ import React from 'react';
 import { Grid, Header } from 'semantic-ui-react';
 
 import {CONTENT_TYPES_MAPPINGS, CT_CLIPS} from '../../../shared/consts';
-import {isActive, isPattern} from '../shared/utils';
+import {isActive, isPattern, today} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class ClipForm extends BaseForm {
 
   // eslint-disable-next-line class-methods-use-this
   getActiveCollections(props) {
-    const active = (props.collections.get(CT_CLIPS) || []).filter(c => c.properties?.active && c.properties?.pattern);
+      //FIXME: Some collections does not have active property
+    const active = (props.collections.get(CT_CLIPS) || []).filter(c => c.uid === "KmHXzSQ6" || c.properties.active && c.properties.pattern);
 
     active.sort((a, b) => {
       if (a.name < b.name) {
@@ -40,6 +41,7 @@ class ClipForm extends BaseForm {
     const collection = activeCollections[sIdx];
 
     const pattern = collection ? collection.properties.pattern : '';
+      const collection_name = collection ? collection.i18n.en.name : '';
 
       let suffix = topic;
 
@@ -48,7 +50,7 @@ class ClipForm extends BaseForm {
       '_o_' +
       lecturer +
       '_' +
-      (filmDate ? filmDate : captureDate) +
+        (filmDate || captureDate) +
       '_' +
       CONTENT_TYPES_MAPPINGS[contentType].pattern +
       '_' +
@@ -56,10 +58,26 @@ class ClipForm extends BaseForm {
         (suffix ? `_${suffix}` : '');
 
     return {
+        topic,
+        collection_name,
       pattern,
       auto_name: name.toLowerCase().trim(),
     };
   }
+
+    validate() {
+        if (this.isValidClassification()) {
+            return true;
+        }
+
+        this.setState({ error: 'All form fields must be filled' });
+        return false;
+    }
+
+    isValidClassification() {
+        const { topic, film_date } = this.state;
+        return topic !== '' && film_date;
+    }
 
   // eslint-disable-next-line class-methods-use-this
   renderHeader() {

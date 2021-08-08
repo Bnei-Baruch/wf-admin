@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select} from 'semantic-ui-react';
+import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select, Grid, Checkbox} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getMediaType, getToken, putData, WF_BACKEND, WFSRV_BACKEND} from "../../shared/tools";
+import {getData, getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
 
 class FilesUpload extends Component {
 
     state = {
+        archive: false,
         file_data: null,
         progress: {},
         file_type: null,
@@ -21,38 +22,65 @@ class FilesUpload extends Component {
     };
 
     uploadDone = (file_data) => {
-        //TODO: Check if file already exist
         console.log(":: ProductFiles - got data: ", file_data);
         let {progress} = this.state;
-        const {product_id, language} = this.props;
-        file_data.product_id = product_id;
-        file_data.language = language;
-        file_data.mime_type = file_data.type;
-        file_data.properties = {upload_name: file_data.file_name};
-        const file_type = getMediaType(file_data.type)
-        const file_type_options = PRODUCT_FILE_TYPES[language][file_type].map(data => {
-            return ({key: data, value: data, text: data})
-        });
+        getData(`files/find?sha1=${file_data.sha1}`, (files_sha) => {
+            console.log(":: Files DB Data: ", files_sha);
+            if(files_sha.length > 0) {
+                alert("File already exist!");
+                this.closeModal();
+            } else {
+                const {product_id, language} = this.props;
+                file_data.product_id = product_id;
+                file_data.language = language;
+                file_data.mime_type = file_data.type;
+                file_data.properties = {upload_name: file_data.file_name};
+                const file_type = getMediaType(file_data.type)
+                const def_types = {
+                    video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "4x4_FB", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB", "4x4_FB_SUB"],
+                    audio: ["voice", "music", "sfx", "mix"],
+                    other: ["Text", "SRT"]
+                }
 
-        delete file_data.type;
-        delete file_data.url;
-        delete progress[file_data.file_name];
-        this.setState({progress, file_type_options, file_data});
+                const options = PRODUCT_FILE_TYPES[language] ? PRODUCT_FILE_TYPES[language][file_type] : def_types[file_type];
+                const file_type_options = options.map(data => {
+                    return ({key: data, value: data, text: data})
+                });
+                delete file_data.type;
+                delete file_data.url;
+                delete progress[file_data.file_name];
+                this.setState({progress, file_type_options, file_data});
+            }
+        });
     };
 
-    saveFileData = () => {
-        const {file_data, file_type} = this.state;
+    saveFile = () => {
+        const {file_data, file_type, archive} = this.state;
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
-        putData(`${WFSRV_BACKEND}/workflow/products`, file_data, (cb) => {
-            console.log(":: UploadApp - workflow respond: ",cb);
+        file_data.properties.archive = archive;
+        putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
+            console.log(":: UploadApp - workflow respond: ",file_meta);
+            this.saveMeta(file_meta);
+        });
+    };
+
+    saveMeta = (file_meta) => {
+        putData(`${WFDB_BACKEND}/files/${file_meta.file_id}`, file_meta, (cb) => {
+            console.log(":: saveMetadata respond: ",cb);
+            this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
             this.props.onFileUploaded();
         });
-    }
+    };
+
+    closeModal = () => {
+        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
+        this.props.toggleUpload();
+    };
 
     render() {
 
-        const {progress, file_type, file_type_options} = this.state;
+        const {progress, file_type, file_type_options, archive} = this.state;
 
         let files_progress = Object.keys(progress).map((id) => {
             let count = progress[id];
@@ -60,7 +88,7 @@ class FilesUpload extends Component {
         });
 
         const props = {
-            action: `${WF_BACKEND}/products/upload`,
+            action: `${WFNAS_BACKEND}/products/upload`,
             headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '',
@@ -79,20 +107,32 @@ class FilesUpload extends Component {
 
         return (
             <Modal closeOnDimmerClick={false}
-                   onClose={this.props.toggleUpload}
+                   onClose={this.closeModal}
                    open={this.props.show_upload}
                    size='tiny'
                    closeIcon="close">
                 <Modal.Header>Add Files For {LANG_MAP[this.props.language].text}</Modal.Header>
                 <Modal.Content>
                     {file_type_options.length > 0 ?
-                        <Select
-                            error={!file_type}
-                            options={file_type_options}
-                            placeholder='File Type'
-                            value={file_type}
-                            onChange={(e, {value}) => this.setState({file_type: value})}
-                        /> : null}
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Select
+                                    fluid
+                                    error={!file_type}
+                                    options={file_type_options}
+                                    placeholder='File Type'
+                                    value={file_type}
+                                    onChange={(e, {value}) => this.setState({file_type: value})}
+                                />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Segment size='mini' basic>
+                                    <Checkbox label='File for Archive' checked={archive} disabled={this.props.mdb}
+                                              onChange={() => this.setState({archive: !archive})} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid>
+                        : null}
                     <Segment>
                         <Upload {...props} onSuccess={this.uploadDone} onProgress={this.progress} >
                             <Segment placeholder>
@@ -108,8 +148,8 @@ class FilesUpload extends Component {
                     {files_progress}
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button onClick={this.props.toggleUpload} >Cancel</Button>
-                    <Button positive={true} disabled={!file_type} onClick={this.saveFileData} >Apply</Button>
+                    <Button onClick={this.closeModal} >Cancel</Button>
+                    <Button positive={true} disabled={!file_type} onClick={this.saveFile} >Apply</Button>
                 </Modal.Actions>
             </Modal>
         );
