@@ -74,7 +74,7 @@ export const patternByContentType = (sources, tags, likutims, major) => {
   let pattern = '';
 
   if (major.type === 'likutim') {
-    pattern = likutims[major.idx]?.properties?.pattern;
+    pattern = likutims[major.idx]?.properties?.pattern || '';
   } else if (major.type) {
     const selection = major.type === 'source' ? sources : tags;
     const item      = selection[major.idx];
@@ -120,7 +120,7 @@ export const patternByContentType = (sources, tags, likutims, major) => {
 
   // check if can take pattern from likutim
   for (let i = 0; pattern === '' && i < likutims.length; i++) {
-    pattern = likutims[i]?.properties?.pattern;
+    pattern = likutims[i]?.properties?.pattern || "";
   }
 
   return pattern;

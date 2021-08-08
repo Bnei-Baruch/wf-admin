@@ -1,4 +1,4 @@
-import React, {Component, Fragment, lazy} from 'react';
+import React, { Component, Fragment, lazy } from 'react';
 import PropTypes from 'prop-types';
 import noop from 'lodash/noop';
 
@@ -15,7 +15,7 @@ import {
   EVENT_CONTENT_TYPES
 } from '../../shared/consts';
 import { Metadata } from './shared/shapes';
-import { fetchCollections, fetchSources, fetchTags } from './shared/store';
+import { fetchCollections, fetchSources, fetchTags, fetchLikutim } from './shared/store';
 import ContentTypeForm from './forms/ContentTypeForm';
 import BaseForm from './forms/BaseForm';
 import LessonForm from './forms/LessonForm';
@@ -26,7 +26,7 @@ import EventPartForm from './forms/EventPartForm';
 // import '../../stylesheets/scoped_semantic_rtl.css';
 // import 'semantic-ui-css/semantic.rtl.min.css';
 import './forms/forms.css';
-import ClipForm from "./forms/ClipForm";
+import ClipForm from './forms/ClipForm';
 
 class CIT extends Component {
 
@@ -51,6 +51,7 @@ class CIT extends Component {
       store: {
         sources: [],
         tags: [],
+        likutims: [],
         collections: new Map(),
       },
       afterClear: false,
@@ -61,6 +62,9 @@ class CIT extends Component {
     fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
     fetchTags(tags => this.setState({ store: { ...this.state.store, tags } }));
     fetchCollections(collections => this.setState({ store: { ...this.state.store, collections } }));
+    fetchLikutim(({ data: likutims = [] }) => {
+      this.setState({ store: { ...this.state.store, likutims } });
+    }, this.state.metadata.likutims);
   }
 
   onCTSelected = (contentType) => {
@@ -127,6 +131,7 @@ class CIT extends Component {
       collections: store.collections,
       availableSources: store.sources,
       availableTags: store.tags,
+      availableLikutims: store.likutims,
     };
 
     let el;

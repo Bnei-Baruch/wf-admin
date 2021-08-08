@@ -30,6 +30,8 @@ export const fetchSources = cb => Fetcher('hierarchy/sources/', cb);
 
 export const fetchTags = cb => Fetcher('hierarchy/tags/', cb);
 
+export const fetchLikutim = (cb, uids=[]) => Fetcher(`rest/content_units/?content_type=${CT_LIKUTIM}` + uids.map(u => `&uid=${u}`).join(''), cb);
+
 export const fetchCollections = (cb) => {
   const contentTypes = EVENT_CONTENT_TYPES
     .concat(LECTURE_CONTENT_TYPES)
@@ -71,9 +73,9 @@ export const fetchCollections = (cb) => {
   Fetcher(`${path}&page_no=${page}`, processPage);
 };
 
-export const fetchLikutim = (cb) => {
+export const searchLikutim = (query) => {
   const pageSize = 50;
-  const path     = `rest/content_units/?content_type=${CT_LIKUTIM}&page_size=${pageSize}&query=${cb}`;
+  const path     = `rest/content_units/?content_type=${CT_LIKUTIM}&page_size=${pageSize}&query=${query}`;
 
   return fetch(`${API_BACKEND}${path}&page_no=1`, {
     headers: {
