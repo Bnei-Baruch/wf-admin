@@ -313,6 +313,10 @@ class BaseForm extends Component {
     delete data.likutimQuery;
     delete data.likutimData;
 
+    if (data.collection_type !== "DAILY_LESSON") {
+      delete data.likutims;
+    }
+
     if (!this.state.film_date) {
       delete data.film_date;
     }
