@@ -22,9 +22,6 @@ import LessonForm from './forms/LessonForm';
 import TVShowForm from './forms/TVShowForm';
 import VirtualLessonForm from './forms/VirtualLessonForm';
 import EventPartForm from './forms/EventPartForm';
-// import '../../stylesheets/sematic-reset.css';
-// import '../../stylesheets/scoped_semantic_rtl.css';
-// import 'semantic-ui-css/semantic.rtl.min.css';
 import './forms/forms.css';
 import ClipForm from './forms/ClipForm';
 
@@ -62,9 +59,7 @@ class CIT extends Component {
     fetchSources(sources => this.setState({ store: { ...this.state.store, sources } }));
     fetchTags(tags => this.setState({ store: { ...this.state.store, tags } }));
     fetchCollections(collections => this.setState({ store: { ...this.state.store, collections } }));
-    fetchLikutim(({ data: likutims = [] }) => {
-      this.setState({ store: { ...this.state.store, likutims } });
-    }, this.state.metadata.likutims);
+    fetchLikutim(({ data: likutims = [] }) => {this.setState({ store: { ...this.state.store, likutims } });}, this.state.metadata.likutims);
   }
 
   onCTSelected = (contentType) => {

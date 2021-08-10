@@ -179,8 +179,14 @@ class FileManager extends Component {
 
         const full_name = file_data.file_name+'.'+file_data.extension;
 
-        const type = getMediaType(file_data.mime_type)
-        const file_type_options = PRODUCT_FILE_TYPES[file_data.language][type].map(data => {
+        const type = getMediaType(file_data.mime_type);
+        const def_types = {
+            video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB"],
+            audio: ["voice", "music", "sfx", "mix"],
+            other: ["Text", "SRT"]
+        }
+        const options = PRODUCT_FILE_TYPES[file_data.language] ? PRODUCT_FILE_TYPES[file_data.language][type] : def_types[type];
+        const file_type_options = options.map(data => {
             return ({key: data, value: data, text: data})
         });
 
