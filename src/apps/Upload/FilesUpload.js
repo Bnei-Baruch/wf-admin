@@ -37,7 +37,7 @@ class FilesUpload extends Component {
                 file_data.properties = {upload_name: file_data.file_name};
                 const file_type = getMediaType(file_data.type)
                 const def_types = {
-                    video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "4x4_FB", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB", "4x4_FB_SUB"],
+                    video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB"],
                     audio: ["voice", "music", "sfx", "mix"],
                     other: ["Text", "SRT"]
                 }
