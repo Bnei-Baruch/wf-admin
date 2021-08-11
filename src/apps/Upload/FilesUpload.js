@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select, Grid, Checkbox} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getData, getMediaType, getToken, putData, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
+import {getData, getMediaType, getToken, putData, toHms, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
 
 class FilesUpload extends Component {
@@ -61,6 +61,11 @@ class FilesUpload extends Component {
         file_data.properties.archive = archive;
         putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
             console.log(":: UploadApp - workflow respond: ",file_meta);
+            if(archive && file_meta.media_info) {
+                const d = toHms(file_meta.media_info.format.duration);
+                fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
+                    { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+            }
             this.saveMeta(file_meta);
         });
     };
