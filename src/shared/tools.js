@@ -616,7 +616,7 @@ export const newProductMeta = (product_name, product_description, language) => {
     let metadata = {
         product_id, date, product_name, language, type_id: null, film_date: "",
         product_type: "media", i18n: {[WF_LANGUAGES[language]]: {name: "", description: ""}}, line: null, parent: {},
-        pattern: null,
+        pattern: "",
         properties: {
             archive: false,
             buffer: false,

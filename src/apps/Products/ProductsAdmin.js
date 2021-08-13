@@ -7,11 +7,10 @@ import {
     MDB_LOCAL_URL,
     MDB_EXTERNAL_URL
 } from '../../shared/tools';
-import {Segment, Button, Modal, Form, FormField} from 'semantic-ui-react'
+import {Segment, Button, Modal, Form} from 'semantic-ui-react'
 import {dep_options, WF_LANGUAGES} from "../../shared/consts";
 import CIT from "../CIT/CIT";
 import MDB from "../../components/MDB";
-import {JSONToHTMLTable} from "@kevincobain2000/json-to-html-table";
 
 class ProductsAdmin extends Component {
 
@@ -60,7 +59,6 @@ class ProductsAdmin extends Component {
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
         product_meta.film_date = metadata.film_date;
-        product_meta.pattern = metadata.pattern;
         product_meta.parent = {
             mdb_uid: unit.uid,
             mdb_id: unit.id,

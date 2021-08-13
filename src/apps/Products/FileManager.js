@@ -122,6 +122,7 @@ class FileManager extends Component {
         if(!product.line.uid) {
             product.line.unit_id = unit.id;
             product.line.uid = unit.uid;
+            product.pattern = unit.uid;
             product.i18n[WF_LANGUAGES[language]].archive = true;
             putData(`${WFDB_BACKEND}/products/${product.product_id}`, product, (cb) => {
                 console.log(":: saveProduct: ",cb);
