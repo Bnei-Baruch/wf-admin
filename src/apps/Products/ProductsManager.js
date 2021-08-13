@@ -50,8 +50,8 @@ class ProductsManager extends Component {
         kmedia_option: false,
         language: "",
         file_language: null,
-        pattern: "",
         collection_uid: "",
+        pattern: "",
         original_language: "heb",
         metadata: {},
         renaming: false,
@@ -107,6 +107,16 @@ class ProductsManager extends Component {
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
         let path = Object.keys(filters).length === 0 ? `products/find?limit=10&offset=${offset}` : `products/find?limit=10&offset=${offset}&` + query.join('&');
+
+        if(filters.pattern) {
+            let id = filters.pattern;
+            if(id.match(/^([a-zA-Z0-9]{8})$/)) {
+                path = `products/find?pattern=${id}`
+            } else {
+                path = `products/find?product_id=${id}`
+            }
+        }
+
         getData(path, products => {
             console.log(products)
             this.setState({page: offset, products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
@@ -174,6 +184,19 @@ class ProductsManager extends Component {
         console.log("selectCollection: ", collection_uid);
         filters.collection_uid = collection_uid;
         this.setState({filters, collection_uid}, () => {
+            this.getProducts();
+        });
+    };
+
+    selectUnit = (pattern) => {
+        if(!pattern) {
+            this.removeFilter("pattern");
+            return
+        }
+        const {filters} = this.state;
+        console.log("selectUnit: ", pattern);
+        filters.pattern = pattern;
+        this.setState({filters, pattern}, () => {
             this.getProducts();
         });
     };
@@ -284,7 +307,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {page, ui_language, ct_option_type, collection_uid, collections, film_date, product, products, parent_info, language, files, show_languages, selected_language} = this.state;
+        const {page, ui_language, ct_option_type, collection_uid, pattern, collections, film_date, product, products, parent_info, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -432,6 +455,11 @@ class ProductsManager extends Component {
                             placeholderText="Film date:"
                             onChange={this.selectDate}
                         />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Input placeholder='ID' value={pattern} icon={
+                            <Icon name={pattern ? 'close' : ''} link onClick={() => this.removeFilter("pattern")} />
+                        } onChange={(e, {value}) => this.selectUnit(value)} />
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
