@@ -43,7 +43,7 @@ class MonitorApp extends Component {
         const wfdb_data = 'wfdb/service/+/monitor';
         const upload_data = 'workflow/server/upload/monitor';
         const convert_data = 'workflow/server/convert/monitor';
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const wfdb_topic = local ? wfdb_data : 'bb/' + wfdb_data;
         const upload_topic = local ? upload_data : 'bb/' + upload_data;
         const convert_topic = local ? convert_data : 'bb/' + convert_data;

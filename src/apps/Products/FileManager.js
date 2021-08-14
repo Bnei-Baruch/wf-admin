@@ -96,7 +96,7 @@ class FileManager extends Component {
         // UID in line indicate that unit already created. If we again here it's mean
         // insert was not successful or we insert translation. So we get unit from MDB and try to insert again.
         if(line.uid) {
-            const local = window.location.hostname !== "wfsrv.kli.one";
+            const local = window.location.hostname === "wfsrv.bbdomain.org";
             const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
             getUnit(`${url}/${line.unit_id}/`, (unit) => {
                 this.archiveInsert(unit);

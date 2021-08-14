@@ -36,7 +36,7 @@ class SirtutimApp extends Component {
 
     initMQTT = () => {
         const state = 'workflow/state/capture/multi';
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const wfst = local ? state : 'bb/' + state;
         mqtt.join(wfst);
         mqtt.watch((message, type, source) => {

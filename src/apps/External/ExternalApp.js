@@ -21,7 +21,7 @@ class ExternalApp extends Component {
 
     initMQTT = () => {
         const data = 'wfdb/service/dgima/state';
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
         mqtt.join(topic);

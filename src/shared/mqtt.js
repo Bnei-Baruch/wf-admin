@@ -35,7 +35,7 @@ class MqttMsg {
             transformWsUrl: transformUrl,
         };
 
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const url = local ? MQTT_LCL_URL : MQTT_EXT_URL;
         this.mq = mqtt.connect(`wss://${url}`, options);
 

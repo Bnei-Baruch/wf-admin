@@ -280,7 +280,7 @@ class ProductsManager extends Component {
 
     parentInfo = (parent) => {
         const {ui_language} = this.state;
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
         getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
             const {uid, i18n, properties: {film_date, duration}} = unit;

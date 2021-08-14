@@ -25,7 +25,7 @@ class CarbonState extends Component {
 
     initMQTT = () => {
         const convert_data = 'workflow/server/convert/monitor';
-        const local = window.location.hostname !== "wfsrv.kli.one";
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
         const convert_topic = local ? convert_data : 'bb/' + convert_data;
         this.setState({convert_topic})
         mqtt.join(convert_topic);
