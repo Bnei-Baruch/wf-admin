@@ -21,6 +21,10 @@ class FilesUpload extends Component {
         this.setState({progress});
     };
 
+    startUpload = () => {
+        this.setState({uploading: true});
+    };
+
     uploadDone = (file_data) => {
         console.log(":: ProductFiles - got data: ", file_data);
         let {progress} = this.state;
@@ -73,19 +77,19 @@ class FilesUpload extends Component {
     saveMeta = (file_meta) => {
         putData(`${WFDB_BACKEND}/files/${file_meta.file_id}`, file_meta, (cb) => {
             console.log(":: saveMetadata respond: ",cb);
-            this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
+            this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false, uploading: false});
             this.props.onFileUploaded();
         });
     };
 
     closeModal = () => {
-        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false});
+        this.setState({file_data: null, progress: {}, file_type: null, file_type_options: [], archive: false, uploading: false});
         this.props.toggleUpload();
     };
 
     render() {
 
-        const {progress, file_type, file_type_options, archive} = this.state;
+        const {progress, file_type, file_type_options, archive, uploading} = this.state;
 
         let files_progress = Object.keys(progress).map((id) => {
             let count = progress[id];
@@ -97,12 +101,9 @@ class FilesUpload extends Component {
             headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '',
-            multiple: true,
+            multiple: false,
             beforeUpload(file) {
                 console.log('beforeUpload', file);
-            },
-            onStart(file) {
-                console.log('onStart', file);
             },
             onError(err) {
                 console.log('onError', err);
@@ -138,8 +139,9 @@ class FilesUpload extends Component {
                             </Grid.Column>
                         </Grid>
                         : null}
-                    <Segment>
-                        <Upload {...props} onSuccess={this.uploadDone} onProgress={this.progress} >
+                    <Segment basic>
+                        <Upload {...props} onStart={this.startUpload} onSuccess={this.uploadDone} onProgress={this.progress} >
+                            {!uploading ?
                             <Segment placeholder>
                                 <Header icon>
                                     <Icon name='cloud upload' />
@@ -148,6 +150,7 @@ class FilesUpload extends Component {
                                 <Divider horizontal>Or</Divider><br />
                                 <Button primary>Browse Files</Button>
                             </Segment>
+                                : null}
                         </Upload>
                     </Segment>
                     {files_progress}
