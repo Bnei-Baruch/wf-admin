@@ -16,6 +16,8 @@ import he from 'date-fns/locale/he';
 import WFDBInsert from "./WFDBInsert";
 import WFDBConvert from "./WFDBConvert";
 import WFDBSources from "./WFDBSources";
+import WFDBProducts from "./WFDBProducts";
+import WFDBFiles from "./WFDBFiles";
 class WFDB extends Component {
 
     state = {
@@ -121,6 +123,10 @@ class WFDB extends Component {
                 render: () => <Tab.Pane attached={false} ><WFDBKmedia {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'archive', content: 'Archive' },
                 render: () => <Tab.Pane attached={false} ><WFDBArchive {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
+            { menuItem: { key: 'products', content: 'Products' },
+                render: () => <Tab.Pane attached={false} ><WFDBProducts {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
+            { menuItem: { key: 'files', content: 'Files' },
+                render: () => <Tab.Pane attached={false} ><WFDBFiles {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'aricha', content: 'Aricha' },
                 render: () => <Tab.Pane attached={false} ><WFDBAricha {...this.state} ref={tab => {this.tab = tab;}} /></Tab.Pane> },
             { menuItem: { key: 'capture', content: 'Capture' },
