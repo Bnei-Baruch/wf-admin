@@ -132,7 +132,7 @@ class FilesUpload extends Component {
                             </Grid.Column>
                             <Grid.Column>
                                 <Segment size='mini' basic>
-                                    <Checkbox label='File for Archive' checked={archive} disabled={this.props.mdb}
+                                    <Checkbox label='File for Archive' checked={archive} disabled={this.props.to_mdb}
                                               onChange={() => this.setState({archive: !archive})} />
                                 </Segment>
                             </Grid.Column>

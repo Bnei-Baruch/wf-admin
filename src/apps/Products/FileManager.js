@@ -172,7 +172,7 @@ class FileManager extends Component {
 
     render() {
         const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
-        const {source, file_data, mdb, metadata: {name}} = this.props;
+        const {source, file_data, to_mdb, metadata: {name}} = this.props;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const lang_permission = archer || adminer || rooter;
         const product_permission = adminer || rooter;
@@ -233,7 +233,7 @@ class FileManager extends Component {
                                                 </Grid.Column>
                                                 <Grid.Column>
                                                     <Segment size='mini' basic>
-                                                        <Checkbox label='File for  Archive' checked={archive} disabled={mdb}
+                                                        <Checkbox label='File for  Archive' checked={archive} disabled={to_mdb}
                                                                   onChange={() => this.setState({archive: !archive})} />
                                                     </Segment>
                                                 </Grid.Column>
