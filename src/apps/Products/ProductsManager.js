@@ -351,7 +351,7 @@ class ProductsManager extends Component {
                                 {show_languages && product_selected ?
                                     Object.keys(i18n).map(la => {
                                         return (
-                                            <Table basic='very' key={product_id + la}>
+                                            <Table basic='very' compact key={product_id + la}>
                                                 <Table.Row key={la} verticalAlign='top'>
                                                     <Table.Cell collapsing>
                                                         <Icon link name={selected_language === MDB_LANGUAGES[la] ? 'minus' : 'plus'}

@@ -53,7 +53,7 @@ class ProductFiles extends Component {
 
         // Only one file per language product go to archive
         const to_mdb = this.props.files.find(f => f.uid && lang === f.language) || archive;
-        const mdb_file = this.props.files.find(f => f.properties?.archive);
+        const mdb_file = this.props.files.find(f => f.properties?.archive && lang === f.language);
 
         const video_list = this.props.files.map(f => {
             const {date, language, file_id, file_name, file_type, mime_type, uid, properties} = f;
