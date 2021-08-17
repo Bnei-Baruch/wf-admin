@@ -80,7 +80,7 @@ class FilesProducts extends Component {
     };
 
     render() {
-        const {files, source, date} = this.state;
+        const {files, source, page} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -191,6 +191,23 @@ class FilesProducts extends Component {
                     <Table.Body>
                         {files_data}
                     </Table.Body>
+                    <Table.Footer fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='9' textAlign='center'>
+                                <Button.Group>
+                                    <Button basic disabled={page === 0}
+                                            onClick={() => this.getFiles(page - 20)}>
+                                        <Icon name='left chevron' />
+                                    </Button>
+                                    <Button basic>{page}-{page + files.length}</Button>
+                                    <Button basic disabled={files.length < 20}
+                                            onClick={() => this.getFiles(page + 20)}>
+                                        <Icon name='right chevron' />
+                                    </Button>
+                                </Button.Group>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
                 </Table>
             </Segment>
         );
