@@ -1,46 +1,46 @@
 import React, {Component, Fragment} from 'react'
-import FilesWorkflow from "./FilesWorkflow";
+import FilesIngest from "./FilesIngest";
 import '../WFDB/WFDB.css';
-import mqtt from "../../shared/mqtt";
+import {Tab} from "semantic-ui-react";
+import FilesProducts from "./FilesProducts";
+import {kc} from "../../components/UserManager";
 
 class FilesApp extends Component {
 
     state = {
-        ingest: [],
-        trimmer: [],
-        archive: [],
+        tab: "ingest",
     };
 
     componentDidMount() {
-        this.initMQTT();
+        let files_closed = !kc.hasRealmRole("wf_closed");
+        let files_product = !kc.hasRealmRole("wf_files_product");
+        this.setState({files_closed, files_product});
     };
 
     componentWillUnmount() {
-        mqtt.exit(this.state.topic)
+
     };
 
-    initMQTT = () => {
-        const data = 'wfdb/service/+/monitor';
-        const local = window.location.hostname === "wfsrv.bbdomain.org";
-        const topic = local ? data : 'bb/' + data;
-        this.setState({topic})
-        mqtt.join(topic);
-        mqtt.watch((message, type, source) => {
-            this.onMqttMessage(message, type, source);
-        }, local)
+    selectTab = (e, data) => {
+        let tab = data.panes[data.activeIndex].menuItem.key;
+        console.log(" :: Tab selected: ",tab);
+        this.setState({tab});
     };
 
-    onMqttMessage = (message, type, source) => {
-        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
-        this.setState({[type]: message})
-    };
 
     render() {
-        const {ingest, trimmer, archive} = this.state;
+        const {user} = this.props;
+
+        const panes = [
+        { menuItem: { key: 'ingest', content: 'Ingest' },
+            render: () => <Tab.Pane attached={true} ><FilesIngest user={user} /></Tab.Pane> },
+        { menuItem: { key: 'products', content: 'Products' },
+            render: () => <Tab.Pane attached={false} ><FilesProducts user={user} /></Tab.Pane> },
+            ]
 
         return (
             <Fragment>
-                <FilesWorkflow user={this.props.user} ingest={ingest} trimmer={trimmer} archive={archive} />
+                <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
             </Fragment>
         );
     }

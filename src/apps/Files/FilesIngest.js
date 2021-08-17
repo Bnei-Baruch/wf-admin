@@ -3,8 +3,9 @@ import DatePicker from 'react-datepicker';
 import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import mqtt from "../../shared/mqtt";
 
-class FilesWorkflow extends Component {
+class FilesIngest extends Component {
 
     state = {
         active: null,
@@ -15,6 +16,7 @@ class FilesWorkflow extends Component {
         startDate: new Date(),
         ingest: [],
         trimmer: [],
+        archive: [],
         file_data: null,
         name: "",
         source: "",
@@ -23,10 +25,27 @@ class FilesWorkflow extends Component {
     componentDidMount() {
         let closed = this.props.user.roles.filter(role => role === 'wf_closed').length > 0;
         this.setState({closed});
+        this.initMQTT();
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        mqtt.exit(this.state.topic)
+    };
+
+    initMQTT = () => {
+        const data = 'wfdb/service/+/monitor';
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
+        const topic = local ? data : 'bb/' + data;
+        this.setState({topic})
+        mqtt.join(topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        this.setState({[type]: message})
     };
 
     changeDate = (data) => {
@@ -74,13 +93,7 @@ class FilesWorkflow extends Component {
     };
 
     render() {
-
-        let { ingest,trimmer,source,name,date } = this.state;
-
-        if(new Date().toLocaleDateString('sv') === date) {
-            ingest = this.props.ingest;
-            trimmer = this.props.trimmer;
-        }
+        const {ingest, trimmer, source} = this.state;
 
         let l = (<Loader size='mini' active inline />);
         let c = (<Icon name='copyright'/>);
@@ -134,8 +147,7 @@ class FilesWorkflow extends Component {
         });
 
         return (
-            <Segment textAlign='center' className="wfdb_app" color='blue' raised>
-                <Label attached='top' className="filesapp_label">WorkFlow Files</Label>
+            <Segment textAlign='center' className="wfdb_app" basic>
                 <Message size='large'>
                 <Menu size='large' secondary >
                     <Menu.Item>
@@ -160,8 +172,8 @@ class FilesWorkflow extends Component {
                     </Menu.Item>
                 </Menu>
                 </Message>
-                <Segment attached raised textAlign='center'>
-                    <Label attached='top' className="files_label">Captured</Label>
+                <Segment basic textAlign='center'>
+                    <Label className="files_label">Captured</Label>
                     <Table compact='very' selectable basic size='small'>
                         <Table.Header>
                             <Table.Row className='table_header'>
@@ -177,8 +189,8 @@ class FilesWorkflow extends Component {
                         </Table.Body>
                     </Table>
                 </Segment>
-                <Segment attached raised textAlign='center'>
-                    <Label attached='top' className="files_label">Trimmed</Label>
+                <Segment basic textAlign='center'>
+                    <Label className="files_label">Trimmed</Label>
                     <Table selectable compact='very' basic size='small' structured>
                         <Table.Header>
                             <Table.Row className='table_header'>
@@ -199,4 +211,4 @@ class FilesWorkflow extends Component {
     }
 }
 
-export default FilesWorkflow;
+export default FilesIngest;
