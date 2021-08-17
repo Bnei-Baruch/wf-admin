@@ -1,15 +1,33 @@
-import React, {Component, Fragment} from 'react';
-import {getData, postData, WFDB_BACKEND, MDB_UNIT_URL, getToken} from '../../shared/tools';
-import {Segment,  Icon, Table, Loader, Popup, Checkbox, Input, Button, Label} from 'semantic-ui-react'
+import React, {Component} from 'react';
+import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND} from '../../shared/tools';
+import {
+    Segment,
+    Icon,
+    Table,
+    Loader,
+    Popup,
+    Checkbox,
+    Input,
+    Button,
+    Label,
+    Menu,
+    Modal,
+    Message
+} from 'semantic-ui-react'
+import DatePicker from "react-datepicker";
+import MediaPlayer from "../../components/Media/MediaPlayer";
 
 class FilesProducts extends Component {
 
     state = {
+        date: new Date().toLocaleDateString('sv'),
+        startDate: new Date(),
         files: [],
         filters: {},
         wfstatus: {},
         line: {},
         page: 0,
+        source: "",
     };
 
     componentDidMount() {
@@ -20,7 +38,7 @@ class FilesProducts extends Component {
         const {filters, page} = this.state;
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? `files/find?limit=100&offset=${offset}` : `files/find?limit=10&offset=${offset}&` + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `files/find?limit=20&offset=${offset}` : `files/find?limit=20&offset=${offset}&` + query.join('&');
 
         if(filters.pattern) {
             let id = filters.pattern;
@@ -37,23 +55,20 @@ class FilesProducts extends Component {
         });
     };
 
-    getStatus = (data) => {
-        console.log(":: Got status: ",data);
-        this.setState({wfstatus: {...data.wfstatus}, id: data.trim_id})
+    selectFile = (file_data) => {
+        console.log(":: Sselected file: ",file_data);
+        let path = file_data.properties.url;
+        let source = `${WFSRV_BACKEND}${path}`;
+        this.setState({source, active: file_data.file_id, file_data});
     };
 
-    getLine = (data) => {
-        console.log(":: Got status: ",data);
-        this.setState({line: {...data.line}, id: data.trim_id, value: data.line.week_date})
+    getPlayer = (player) => {
+        console.log(":: Censor - got player: ", player);
     };
 
-    setLine = () => {
-        let {line, id, value} = this.state;
-        line.week_date = value;
-        console.log(":: Save Line: ",line);
-        postData(`${WFDB_BACKEND}/trimmer/${id}/line`, line, (cb) => {
-            console.log(":: POST Line in WFDB: ",cb);
-        });
+    changeDate = (data) => {
+        let date = data.toLocaleDateString('sv');
+        this.setState({startDate: data, date, disabled: true, file_data: ""});
     };
 
     toggle = (data) => {
@@ -65,7 +80,7 @@ class FilesProducts extends Component {
     };
 
     render() {
-        const {files} = this.state;
+        const {files, source, date} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -110,8 +125,10 @@ class FilesProducts extends Component {
             let href = `${MDB_UNIT_URL}/${uid}`;
             let link = archive ? (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>) : "";
             let rowcolor = false;
+            let active = this.state.active === file_id ? 'active' : 'monitor_tr';
             return (
-                <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={!sync} className="monitor_tr">
+                <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={!sync} className={active}
+                           onClick={() => this.selectFile(data)}>
                     <Popup
                         trigger={<Table.Cell>{file_id}</Table.Cell>}
                         on='click'
@@ -121,14 +138,7 @@ class FilesProducts extends Component {
                         {this.props.wf_root ? root : admin}
                     </Popup>
                     <Table.Cell>{link}</Table.Cell>
-                    <Popup
-                        trigger={<Table.Cell>{name}</Table.Cell>}
-                        on='click'
-                        hideOnScroll
-                        onOpen={() => this.getLine(data)}
-                        mountNode={document.getElementById("ltr-modal-mount")}>
-                        {this.props.wf_root ? week_date : ""}
-                    </Popup>
+                    <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
                     <Table.Cell>{file_type}</Table.Cell>
                     <Table.Cell>{language}</Table.Cell>
@@ -140,8 +150,29 @@ class FilesProducts extends Component {
         });
 
         return (
-
             <Segment basic className="wfdb_app">
+                <Message size='large'>
+                    <Menu size='large' secondary >
+                        <Menu.Item>
+                            <DatePicker
+                                className="datepickercs"
+                                dateFormat="yyyy-MM-dd"
+                                selected={this.state.startDate}
+                                onChange={this.changeDate}
+                            />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
+                                   size='tiny'
+                                   mountNode={document.getElementById("ltr-modal-mount")}>
+                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
+                            </Modal>
+                        </Menu.Item>
+                        <Menu.Item position='right'>
+                            <Button color='teal' icon='download' disabled={!source} href={source} download />
+                        </Menu.Item>
+                    </Menu>
+                </Message>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>

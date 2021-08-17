@@ -30,12 +30,13 @@ class FilesApp extends Component {
 
     render() {
         const {user} = this.props;
+        const {files_closed, files_product} = this.state;
 
         const panes = [
-        { menuItem: { key: 'ingest', content: 'Ingest' },
-            render: () => <Tab.Pane attached={true} ><FilesIngest user={user} /></Tab.Pane> },
-        { menuItem: { key: 'products', content: 'Products' },
-            render: () => <Tab.Pane attached={false} ><FilesProducts user={user} /></Tab.Pane> },
+        { menuItem: { key: 'ingest', content: 'Ingest', disabled: files_closed},
+            render: () => <Tab.Pane attached={files_closed} ><FilesIngest user={user} /></Tab.Pane> },
+        { menuItem: { key: 'products', content: 'Products', disabled: files_product },
+            render: () => <Tab.Pane attached={files_product} ><FilesProducts user={user} /></Tab.Pane> },
             ]
 
         return (
