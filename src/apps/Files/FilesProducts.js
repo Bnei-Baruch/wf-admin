@@ -9,25 +9,26 @@ import {
     Checkbox,
     Input,
     Button,
-    Label,
     Menu,
     Modal,
-    Message
+    Message, Dropdown
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import {dep_options} from "../../shared/consts";
 
 class FilesProducts extends Component {
 
     state = {
-        date: new Date().toLocaleDateString('sv'),
-        startDate: new Date(),
         files: [],
         filters: {},
         wfstatus: {},
         line: {},
         page: 0,
         source: "",
+        archive: false,
+        date: null,
+        language: "",
     };
 
     componentDidMount() {
@@ -39,6 +40,10 @@ class FilesProducts extends Component {
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
         let path = Object.keys(filters).length === 0 ? `files/find?limit=20&offset=${offset}` : `files/find?limit=20&offset=${offset}&` + query.join('&');
+
+        if(filters.archive) {
+            path = `files/find?limit=20&offset=${offset}&archive=true&uid=`
+        }
 
         if(filters.pattern) {
             let id = filters.pattern;
@@ -55,6 +60,64 @@ class FilesProducts extends Component {
         });
     };
 
+    setLangFilter = (language) => {
+        if(!language) {
+            this.removeFilter("language");
+            return
+        }
+        const {filters} = this.state;
+        filters.language = language
+        this.setState({filters, language}, () => {
+            this.getFiles();
+        });
+    };
+
+    setDateFilter = (date) => {
+        if(!date) {
+            this.removeFilter("date");
+            return
+        }
+        const {filters} = this.state;
+        filters.date = date.toLocaleDateString('sv');
+        this.setState({filters, date}, () => {
+            this.getFiles();
+        });
+    };
+
+    setUnitFilter = (uid) => {
+        if(!uid) {
+            this.removeFilter("uid");
+            return
+        }
+        const {filters} = this.state;
+        console.log("selectUnit: ", uid);
+        filters.uid = uid;
+        this.setState({filters, uid}, () => {
+            this.getFiles();
+        });
+    };
+
+    setArchiveFilter = (archive) => {
+        if(!archive) {
+            this.removeFilter("archive");
+            return
+        }
+        const {filters} = this.state;
+        filters.archive = archive
+        this.setState({filters, archive}, () => {
+            this.getFiles();
+        });
+    };
+
+    removeFilter = (f) => {
+        const {filters} = this.state;
+        delete filters[f];
+        const value = f === "film_date" ? null : "";
+        this.setState({filters, [f]: value}, () => {
+            this.getFiles();
+        });
+    };
+
     selectFile = (file_data) => {
         console.log(":: Sselected file: ",file_data);
         let path = file_data.properties.url;
@@ -66,11 +129,6 @@ class FilesProducts extends Component {
         console.log(":: Censor - got player: ", player);
     };
 
-    changeDate = (data) => {
-        let date = data.toLocaleDateString('sv');
-        this.setState({startDate: data, date, disabled: true, file_data: ""});
-    };
-
     toggle = (data) => {
         console.log(":: Got state: ",data + " : ",this.state.wfstatus[data]);
         let wfstatus = this.state.wfstatus;
@@ -80,7 +138,7 @@ class FilesProducts extends Component {
     };
 
     render() {
-        const {files, source, page} = this.state;
+        const {files, source, page, archive, date, language} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -110,24 +168,17 @@ class FilesProducts extends Component {
                 <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>
         );
 
-        let week_date = (
-            <Input type='text' labelPosition='left' action
-                   value={this.state.value} onChange={e => this.setState({value: e.target.value})}>
-                <Label basic>Date:</Label><input className='input_line' />
-                <Button role='button' onClick={this.setLine} disabled={!this.state.value}>Save</Button></Input>
-        );
-
         let files_data = files.map((data) => {
-            const {file_id, file_name, file_type, date, language, extension, properties, uid} = data;
+            const {file_id, file_name, file_type, date, language, extension, properties, product_id, uid} = data;
             const {removed, archive, sync} = properties;
             let name = sync ? <div>{l}&nbsp;&nbsp;&nbsp;{file_name}</div> : file_name;
             let time = new Date(file_id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             let href = `${MDB_UNIT_URL}/${uid}`;
             let link = archive ? (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>) : "";
-            let rowcolor = false;
+            let rowcolor = archive && uid === "";
             let active = this.state.active === file_id ? 'active' : 'monitor_tr';
             return (
-                <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={!sync} className={active}
+                <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={false} className={active}
                            onClick={() => this.selectFile(data)}>
                     <Popup
                         trigger={<Table.Cell>{file_id}</Table.Cell>}
@@ -137,6 +188,7 @@ class FilesProducts extends Component {
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
+                    <Table.Cell>{product_id}</Table.Cell>
                     <Table.Cell>{link}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
@@ -154,13 +206,37 @@ class FilesProducts extends Component {
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
+                            <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
+                        </Menu.Item>
+                        <Menu.Item>
                             <DatePicker
-                                className="datepickercs"
+                                // locale={locale}
+                                customInput={<Input icon={
+                                    <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />
+                                }/>}
                                 dateFormat="yyyy-MM-dd"
-                                selected={this.state.startDate}
-                                onChange={this.changeDate}
+                                showYearDropdown
+                                showMonthDropdown
+                                scrollableYearDropdown
+                                maxDate={new Date()}
+                                openToDate={new Date()}
+                                selected={date ? date : null}
+                                placeholderText="Date:"
+                                onChange={this.setDateFilter}
                             />
                         </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                placeholder="Language:"
+                                selection
+                                clearable
+                                options={dep_options}
+                                language={language}
+                                onChange={(e, {value}) => this.setLangFilter(value)}
+                                value={language}>
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Menu position='right'>
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
                                    size='tiny'
@@ -168,15 +244,17 @@ class FilesProducts extends Component {
                                 <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
                             </Modal>
                         </Menu.Item>
-                        <Menu.Item position='right'>
+                        <Menu.Item>
                             <Button color='teal' icon='download' disabled={!source} href={source} download />
                         </Menu.Item>
+                        </Menu.Menu>
                     </Menu>
                 </Message>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={1}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Product ID</Table.HeaderCell>
                             <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                             <Table.HeaderCell width={4}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>

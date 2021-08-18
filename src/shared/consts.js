@@ -118,6 +118,7 @@ export const dep_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
     { key: 'ru', value: 'rus', flag: 'ru', text: 'Russian' },
     { key: 'en', value: 'eng', flag: 'us', text: 'English' },
+    { key: 'es', value: 'spa', flag: 'es', text: 'Spanish' },
 ];
 
 export const ui_options = [
