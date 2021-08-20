@@ -313,7 +313,7 @@ class ProductsManager extends Component {
         const lang_permission = archer || adminer || rooter;
 
         const products_list = products.map(data => {
-                const {product_name, product_id, parent, date, language, line: {unit_id, uid, final_name, film_date, collection_name}, i18n, properties: {duration}} = data;
+                const {product_name, product_id, parent, date, film_date, language, line: {unit_id, uid, final_name, collection_name}, i18n, properties: {duration}} = data;
                 const product_selected = product_id === this.state.product_id;
                 const href = unit_id ? `${MDB_UNIT_URL}/${unit_id}` : `${MDB_UNIT_URL}/?query=${uid}`;
                 const unit_exist = i18n[WF_LANGUAGES[language]].archive;
