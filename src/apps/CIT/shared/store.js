@@ -30,7 +30,10 @@ export const fetchSources = cb => Fetcher('hierarchy/sources/', cb);
 
 export const fetchTags = cb => Fetcher('hierarchy/tags/', cb);
 
-export const fetchLikutim = (cb, uids=[]) => Fetcher(`rest/content_units/?content_type=${CT_LIKUTIM}` + uids.map(u => `&uid=${u}`).join(''), cb);
+export const fetchLikutim = (cb, uids) => {
+  if (uids && uids.length > 0)
+    Fetcher(`rest/content_units/?content_type=${CT_LIKUTIM}` + uids.map(u => `&uid=${u}`).join(''), cb);
+};
 
 export const fetchCollections = (cb) => {
   const contentTypes = EVENT_CONTENT_TYPES
