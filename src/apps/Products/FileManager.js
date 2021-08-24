@@ -247,9 +247,11 @@ class FileManager extends Component {
                                 </Modal>
                             </Grid.Column>
                                 : null}
-                            {product_permission ?
+                            {lang_permission ?
                             <Grid.Column>
-                                <Button color='red' basic content='Delete' onClick={() => this.setState({showConfirm: true})} />
+                                <Button color='red' basic content='Delete'
+                                        disabled={inserting || file_data.properties?.archive || !!file_data.uid}
+                                        onClick={() => this.setState({showConfirm: true})} />
                                 <Confirm
                                     content={message}
                                     open={showConfirm}
