@@ -26,6 +26,7 @@ class VirtualLessonForm extends BaseForm {
             active_collections: activeCollections,
             capture_date: captureDate,
             film_date: filmDate,
+            part,
             sources,
             tags,
             artifact_type: artifactType,
@@ -49,7 +50,8 @@ class VirtualLessonForm extends BaseForm {
       '_' +
       CONTENT_TYPES_MAPPINGS[artifactType === ARTIFACT_TYPES[0].value ? contentType : artifactType].pattern +
       (pattern ? `_${pattern}` : '') +
-      (suffix ? `_${suffix}` : '');
+      (suffix ? `_${suffix}` : '') +
+      (part ? `_p${part}` : '');
 
     return {
       pattern,
@@ -94,6 +96,11 @@ class VirtualLessonForm extends BaseForm {
         <Grid.Column width={2} />
         <Grid.Column width={4}>
           <Grid className="bb-less-interesting">
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderPart()}
+              </Grid.Column>
+            </Grid.Row>
             <Grid.Row>
               <Grid.Column>
                 {this.renderArtifactType()}
