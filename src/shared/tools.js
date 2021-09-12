@@ -72,7 +72,7 @@ export const getToken = () => {
 
 export const newMdbUnit = async(line, derived_id, metadata) => {
     let options, r, body
-    const {collection_id, collection_uid, content_type, topic, language, film_date} = line;
+    const {collection_id, collection_uid, content_type, topic, language, film_date, episode} = line;
 
     const type_id = parseInt(CONTENT_ID_BY_TYPE[content_type], 10);
     body = {"collectionUid": collection_uid,"typeId": type_id};
@@ -96,7 +96,12 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     r = await fetch(`${MDB_BACKEND}/content_units/`, options);
     const unit = await r.json();
 
-    body = [{content_unit_id: unit.id, name: "",position: null}];
+    options = {headers: {'Authorization': 'bearer ' + getToken(), 'Content-Type': 'application/json'}};
+    r = await fetch(`${MDB_BACKEND}/collections/${collection_id}/content_units/`, options)
+    const units = await r.json();
+    const position = units.length + 1;
+
+    body = [{content_unit_id: unit.id, name: episode || "", position}];
     options = getRequestOptions(body);
     r = await fetch(`${MDB_BACKEND}/collections/${collection_id}/content_units/`, options);
     console.log(r)
