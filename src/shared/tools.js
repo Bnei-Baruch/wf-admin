@@ -123,6 +123,21 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     return unit;
 }
 
+export const updateMdbUnit = async(id, lang) => {
+    let options, r
+
+    options = {headers: {'Authorization': 'bearer ' + getToken(), 'Content-Type': 'application/json'}};
+    r = await fetch(`${MDB_BACKEND}/content_units/${id}/`, options)
+    const unit = await r.json();
+    const i18n = [...Object.values(unit.i18n), [...lang]];
+
+    options = mdbRequestOptions(i18n, 'PUT');
+    r = await fetch(`${MDB_BACKEND}/content_units/${id}/i18n/`, options);
+    const updated_unit = await r.json();
+
+    return updated_unit;
+}
+
 export const insertFile = async(file_id, content_unit_id) => {
     const r = await fetch(`${MDB_BACKEND}/files/${file_id}/`, {
         method: 'PUT',
@@ -134,6 +149,17 @@ export const insertFile = async(file_id, content_unit_id) => {
     });
 
     return await r.json();
+}
+
+const mdbRequestOptions = (data, method) => {
+    return {
+        method,
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        },
+        body:  JSON.stringify(data)
+    }
 }
 
 const getRequestOptions = (data) => {

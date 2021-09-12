@@ -5,8 +5,9 @@ import {
     getMediaType,
     putData,
     newMdbUnit,
+    updateMdbUnit,
     WFSRV_BACKEND,
-    getUnit, MDB_LOCAL_URL, MDB_EXTERNAL_URL, toHms
+    toHms
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -90,17 +91,24 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
-        const {line, parent} = this.props.product;
+        const {line, parent, i18n} = this.props.product;
         this.setState({inserting: true});
 
         // UID in line indicate that unit already created. If we again here it's mean
         // insert was not successful or we insert translation. So we get unit from MDB and try to insert again.
         if(line.uid) {
-            const local = window.location.hostname === "wfsrv.bbdomain.org";
-            const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
-            getUnit(`${url}/${line.unit_id}/`, (unit) => {
-                this.archiveInsert(unit);
-            })
+            const {language} = this.props.file_data;
+            const mdb_lang = WF_LANGUAGES[language];
+            const lang = i18n[mdb_lang]
+            lang.language = mdb_lang;
+            updateMdbUnit(line.unit_id, lang)
+                .then(unit => {
+                    this.archiveInsert(unit);
+                })
+                .catch(reason => {
+                    console.log(reason.message);
+                    this.setState({inserting: false});
+                })
         } else {
             newMdbUnit(line, parent.mdb_id, this.props.metadata)
                 .then(unit => {
