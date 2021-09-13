@@ -129,7 +129,7 @@ export const updateMdbUnit = async(id, lang) => {
     options = {headers: {'Authorization': 'bearer ' + getToken(), 'Content-Type': 'application/json'}};
     r = await fetch(`${MDB_BACKEND}/content_units/${id}/`, options)
     const unit = await r.json();
-    const i18n = [...Object.values(unit.i18n), [...lang]];
+    const i18n = [...Object.values(unit.i18n), ...[lang]];
 
     options = mdbRequestOptions(i18n, 'PUT');
     r = await fetch(`${MDB_BACKEND}/content_units/${id}/i18n/`, options);
