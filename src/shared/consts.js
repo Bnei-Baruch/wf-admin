@@ -55,7 +55,7 @@ export const upload_extensions = {
 };
 
 export const DCT_OPTS = {
-    LESSONS: ['LESSON_PART','FULL_LESSON','WOMEN_LESSON'],
+    LESSONS: ['LESSON_PART','FULL_LESSON','WOMEN_LESSON','KTAIM_NIVCHARIM'],
     PROGRAMS: ['VIDEO_PROGRAM_CHAPTER'],
     WEBINARS: ['VIRTUAL_LESSON'],
     CLIPS: ['CLIP'],
@@ -402,6 +402,7 @@ export const CONTENT_TYPES_MAPPINGS = {
     [CT_FULL_LESSON]: { collection_type: CT_DAILY_LESSON, pattern: 'lesson' },
     [CT_KITEI_MAKOR]: { collection_type: null, pattern: 'kitei-makor' },
     [CT_LELO_MIKUD]: { collection_type: null, pattern: 'lelo-mikud' },
+    [CT_KTAIM_NIVCHARIM]: { collection_type: null, pattern: 'ktaim-nivcharim' },
     [CT_VIDEO_PROGRAM_CHAPTER]: { collection_type: CT_VIDEO_PROGRAM, pattern: 'program' },
     [CT_FRIENDS_GATHERING]: { collection_type: CT_FRIENDS_GATHERINGS, pattern: 'yeshivat-haverim' },
     [CT_MEAL]: { collection_type: CT_MEALS, pattern: 'seuda' },
