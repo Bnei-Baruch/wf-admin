@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {postData, WFDB_BACKEND} from '../../shared/tools';
+import {postData, updateMdbUnit, WFDB_BACKEND} from '../../shared/tools';
 import {Segment, Button, Form, Modal} from 'semantic-ui-react'
 import {language_options, WF_LANGUAGES} from "../../shared/consts";
 
@@ -39,8 +39,25 @@ class AddLanguage extends Component {
         const data = {name, description};
         postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${WF_LANGUAGES[language]}`, data, (cb) => {
             console.log(":: PUT Respond: ",cb);
-            this.setState({name: "", description: "", language: ""});
-            this.props.finishLanguage();
+            const {line, i18n} = this.props.product;
+            if(line?.unit_id) {
+                const mdb_lang = WF_LANGUAGES[language];
+                const lang = i18n[mdb_lang]
+                lang.language = mdb_lang;
+                updateMdbUnit(line.unit_id, lang)
+                    .then(unit => {
+                        console.log(":: MDB Respond: ", unit);
+                        this.setState({name: "", description: "", language: ""});
+                        this.props.finishLanguage();
+                    })
+                    .catch(reason => {
+                        console.log(reason.message);
+                        alert("MDB Error: " + reason.message);
+                    })
+            } else {
+                this.setState({name: "", description: "", language: ""});
+                this.props.finishLanguage();
+            }
         });
     };
 
