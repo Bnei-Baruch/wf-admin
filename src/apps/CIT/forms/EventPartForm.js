@@ -10,7 +10,7 @@ import {
   EVENT_PART_TYPES,
   LESSON_PARTS_OPTIONS
 } from '../../../shared/consts';
-import { isActive } from '../shared/utils';
+import {isActive, patternByContentType} from '../shared/utils';
 import BaseForm from './BaseForm';
 
 class EventPartForm extends BaseForm {
@@ -47,15 +47,21 @@ class EventPartForm extends BaseForm {
             language,
             lecturer,
             has_translation: hasTranslation,
+            sources,
+            tags,
+            likutims,
             capture_date: captureDate,
             film_date: filmDate,
             number,
             part,
             active_collections: activeCollections,
             artifact_type: artifactType,
+            major
           } = Object.assign({}, this.state, diff || {});
 
-    let pattern   = '';
+    let pattern = patternByContentType(sources, tags, likutims, major);
+    pattern = pattern.toLowerCase().trim();
+
     let eventType = '';
     if (activeCollections.length !== 0) {
       const e   = activeCollections[sIdx];
@@ -115,33 +121,19 @@ class EventPartForm extends BaseForm {
                 {this.renderCollection()}
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={2}>
-              <Grid.Column width={10}>
-                {this.renderPartType()}
-              </Grid.Column>
-              <Grid.Column width={6}>
-                {this.renderNumber()}
-              </Grid.Column>
-            </Grid.Row>
-            {
-              EVENT_PART_TYPES[partType].content_type === CT_LESSON_PART ?
-                <Grid.Row>
-                  <Grid.Column width={6}>
-                    <Header as="h5">חלק</Header>
-                    <Dropdown
-                      selection
-                      fluid
-                      options={LESSON_PARTS_OPTIONS.concat([{ text: 'גיבוי', value: -1 }])}
-                      value={part}
-                      onChange={this.onPartChange}
-                    />
-                  </Grid.Column>
-                </Grid.Row> :
-                null
-            }
             <Grid.Row>
               <Grid.Column>
                 {this.renderTags()}
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderSources()}
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderLikutim()}
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -149,6 +141,32 @@ class EventPartForm extends BaseForm {
         <Grid.Column width={3} />
         <Grid.Column width={4}>
           <Grid stretched className="bb-less-interesting">
+            <Grid.Row >
+              <Grid.Column>
+                {this.renderPartType()}
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderNumber()}
+              </Grid.Column>
+            </Grid.Row>
+            {
+              EVENT_PART_TYPES[partType].content_type === CT_LESSON_PART ?
+                  <Grid.Row>
+                    <Grid.Column>
+                      <Header as="h5">חלק</Header>
+                      <Dropdown
+                          selection
+                          fluid
+                          options={LESSON_PARTS_OPTIONS.concat([{ text: 'גיבוי', value: -1 }])}
+                          value={part}
+                          onChange={this.onPartChange}
+                      />
+                    </Grid.Column>
+                  </Grid.Row> :
+                  null
+            }
             {
               EVENT_PART_TYPES[partType].content_type === CT_LESSON_PART ?
                 <Grid.Row>
