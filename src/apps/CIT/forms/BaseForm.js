@@ -8,7 +8,7 @@ import {
   CT_FULL_LESSON,
   CT_LELO_MIKUD,
   CT_LESSON_PART,
-  CT_VIDEO_PROGRAM_CHAPTER,
+  CT_VIDEO_PROGRAM_CHAPTER, CT_VIRTUAL_LESSON, CT_VIRTUAL_LESSONS,
   CT_WOMEN_LESSON,
   EMPTY_ARRAY,
   EMPTY_OBJECT,
@@ -338,6 +338,9 @@ class BaseForm extends Component {
       ctSpecificToClean.delete('part');
       break;
     case CT_VIDEO_PROGRAM_CHAPTER:
+      ctSpecificToClean.delete('episode');
+      break;
+    case CT_VIRTUAL_LESSON:
       ctSpecificToClean.delete('episode');
       break;
     case CT_WOMEN_LESSON:

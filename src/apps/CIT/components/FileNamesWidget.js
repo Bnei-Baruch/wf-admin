@@ -9,29 +9,29 @@ const FileNamesWidget = (props) => {
     <Table celled>
       <Table.Body>
         <Table.Row>
-          <Table.Cell collapsing>CIT</Table.Cell>
+          <Table.Cell collapsing>File Name</Table.Cell>
           <Table.Cell>{autoName}</Table.Cell>
         </Table.Row>
-        <Table.Row>
-          <Table.Cell>
-            Manual
-          </Table.Cell>
-          <Table.Cell style={{ padding: '0' }}>
-            <Input
-              fluid
-              size="small"
-              placeholder="..."
-              className="bb-manual-name-input"
-              value={manualName || ''}
-              focus={!!manualName && manualName !== autoName}
-              onChange={onChange}
-            />
-          </Table.Cell>
-        </Table.Row>
-        <Table.Row>
-          <Table.Cell>Final</Table.Cell>
-          <Table.Cell>{manualName || autoName}</Table.Cell>
-        </Table.Row>
+        {/*<Table.Row>*/}
+        {/*  <Table.Cell>*/}
+        {/*    Manual*/}
+        {/*  </Table.Cell>*/}
+        {/*  <Table.Cell style={{ padding: '0' }}>*/}
+        {/*    <Input*/}
+        {/*      fluid*/}
+        {/*      size="small"*/}
+        {/*      placeholder="..."*/}
+        {/*      className="bb-manual-name-input"*/}
+        {/*      value={manualName || ''}*/}
+        {/*      focus={!!manualName && manualName !== autoName}*/}
+        {/*      onChange={onChange}*/}
+        {/*    />*/}
+        {/*  </Table.Cell>*/}
+        {/*</Table.Row>*/}
+        {/*<Table.Row>*/}
+        {/*  <Table.Cell>Final</Table.Cell>*/}
+        {/*  <Table.Cell>{manualName || autoName}</Table.Cell>*/}
+        {/*</Table.Row>*/}
       </Table.Body>
     </Table>
   );
