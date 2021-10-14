@@ -20,11 +20,18 @@ export const getUploadOptions = (roles, content_type) => {
     ]
 };
 
-export const getContentOptions = (roles) => {
-    let archive_mekorot = roles.find(r => r === "archive_mekorot");
+export const getContentOptions = (roles, type) => {
+    const audio = mime_list[type] === "mp3";
+    let disabled = true;
+    if(roles.find(r => r === "archive_mekorot")) {
+        disabled = false;
+    }
+    if(roles.find(r => r === "archive_audio-maamarim") && audio) {
+        disabled = false;
+    }
     return [
         { value: 'LESSONS', text: ' ‏שיעור', icon: 'student' },
-        { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap', disabled: !archive_mekorot },
+        { value: 'SOURCE', text: ' ‏מקורות', icon: 'sitemap', disabled},
         { value: 'LIKUTIM', text: 'ליקוטים', icon: 'tasks' },
         { value: 'WEBINARS', text: ' ‏וובינר', icon: 'conversation' },
         { value: 'PROGRAMS', text: ' ‏תוכנית', icon: 'record' },
@@ -50,7 +57,7 @@ export const upload_extensions = {
     "article": ["doc","docx","pdf"],
     "publication": ["zip"],
     "declamation": ["mp3"],
-    "source": ["doc","docx","pdf"],
+    "source": ["doc","docx","pdf","mp3"],
     "media": ["mp4","mp3"],
 };
 

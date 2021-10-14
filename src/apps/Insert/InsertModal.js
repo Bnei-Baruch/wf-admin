@@ -279,13 +279,13 @@ class InsertModal extends Component {
 
     render() {
 
-        const {file_name} = this.props.filedata;
+        const {file_name, type} = this.props.filedata;
         const {roles} = this.props.user;
         const {metadata, isValidated, loading, locale, store, source} = this.state;
         const {date,upload_type,content_type,language,insert_type,send_uid} = metadata;
 
         const upload_options = getUploadOptions(roles, content_type);
-        const content_options = getContentOptions(roles);
+        const content_options = getContentOptions(roles, type);
 
         return (
             <Container className="insert_app">
