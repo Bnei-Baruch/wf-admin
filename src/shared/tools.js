@@ -122,6 +122,13 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     return unit;
 }
 
+export const getCollectionByID = async(id) => {
+    let options, r
+    options = {headers: {'Authorization': 'bearer ' + getToken(), 'Content-Type': 'application/json'}};
+    r = await fetch(`${MDB_BACKEND}/content_units/${id}/collections/`, options)
+    return await r.json();
+}
+
 export const updateMdbUnit = async(id, lang) => {
     let options, r
 

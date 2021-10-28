@@ -77,7 +77,7 @@ class MdbData extends Component {
 
         let uidList = units.map((unit) => {
             if(!unit.properties) return false;
-            const {number,part,capture_date,film_date,duration,workflow_id} = unit.properties;
+            const {number,part,capture_date,film_date,duration,original_language} = unit.properties;
             let name = lang && unit.i18n[lang] ? unit.i18n[lang].name : unit.i18n.he ? unit.i18n.he.name : "Name not found";
             let a = active === unit.uid ? 'active' : '';
             let n = number || "-";
@@ -90,12 +90,13 @@ class MdbData extends Component {
                 <Table.Row className={a} key={unit.id} onClick={() => this.rawClick(unit)}>
                     <Table.Cell>
                         <Popup
-                            trigger={upload_type.match(/^(aricha|article|publication)$/) ? "" : <Icon link name='help' />}
-                            mountNode={document.getElementById("ltr-modal-mount")}
+                            // trigger={upload_type.match(/^(aricha|article|publication)$/) ? "" : <Icon link name='help' />}
+                            trigger={<Icon link name='help' />}
+                            //mountNode={document.getElementById("ltr-modal-mount")}
                             flowing
                             position='bottom left'
                             hoverable >
-                            <NameHelper id={workflow_id} />
+                            <NameHelper id={unit.id} language={language} />
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>{d}</Table.Cell>

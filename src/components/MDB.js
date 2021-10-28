@@ -8,9 +8,10 @@ import he from 'date-fns/locale/he';
 // import 'date-fns/locale/de';
 // import 'date-fns/locale/en-gb';
 import '../apps/Insert/InsertApp.css';
-import {Button, Header, Modal, Dropdown, Segment, Input, Table} from 'semantic-ui-react';
+import {Button, Header, Modal, Dropdown, Segment, Input, Table, Icon, Popup} from 'semantic-ui-react';
 import {fetchPublishers, getLang, fetchUnits, toHms,} from '../shared/tools';
 import {language_options, DCT_OPTS} from '../shared/consts';
+import NameHelper from "../apps/Insert/NameHelper";
 
 class MDB extends Component {
 
@@ -132,6 +133,13 @@ class MDB extends Component {
             return (
                 <Table.Row className={a} key={unit.id} onClick={() => this.rawClick(unit)}>
                     <Table.Cell>
+                        <Popup
+                            trigger={<Icon link name='help' />}
+                            flowing
+                            position='bottom left'
+                            hoverable >
+                            <NameHelper id={unit.id} language={language} />
+                        </Popup>
                     </Table.Cell>
                     <Table.Cell>{d}</Table.Cell>
                     <Table.Cell textAlign='left' >{np}</Table.Cell>
