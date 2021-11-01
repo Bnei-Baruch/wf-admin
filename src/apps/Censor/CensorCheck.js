@@ -150,9 +150,9 @@ class CensorCheck extends Component {
     };
 
     onClose = () => {
-        let {active} = this.state;
-        let ep = getEndpoint(active);
-        fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        //let {active} = this.state;
+        //let ep = getEndpoint(active);
+        //fetch(`${WFDB_BACKEND}/${ep}/${active}/wfstatus/secured?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({open: false, disabled: true, file_data: ""});
     };
 

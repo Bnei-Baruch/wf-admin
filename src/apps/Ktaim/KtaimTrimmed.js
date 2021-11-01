@@ -53,11 +53,19 @@ class KtaimTrimmed extends Component {
         let uid = file_data.line.uid;
         let links = [];
         let offset = inpoints[0];
+        let input = 0
         let ding = 5;
         for(let i=0; i<inpoints.length; i++) {
-            if(i > 0) offset = offset + (inpoints[i] - outpoints[i-1] - ding);
-            let inp = kmHms(inpoints[i] - offset);
-            let oup = kmHms(outpoints[i] - offset);
+            let dur = outpoints[i] - inpoints[i];
+            // console.log("dur : ", dur)
+            //input = input + dur + ding;
+            let output = input + dur
+            let oup = kmHms(output);
+            let inp = i === 0 ? 0 : kmHms(input);
+            input = output + ding;
+            // if(i > 0) offset = offset + (inpoints[i] - outpoints[i-1] - ding);
+            // let inp = kmHms(inpoints[i] - offset);
+            // let oup = kmHms(outpoints[i] - offset);
             let url = `https://kabbalahmedia.info/lessons/cu/${uid}?sstart=${inp}&send=${oup}`;
             links.push(url);
         }
