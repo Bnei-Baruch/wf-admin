@@ -42,7 +42,7 @@ class FilesProducts extends Component {
         let path = Object.keys(filters).length === 0 ? `files/find?limit=20&offset=${offset}` : `files/find?limit=20&offset=${offset}&` + query.join('&');
 
         if(filters.archive) {
-            path = `files/find?limit=20&offset=${offset}&archive=true&uid=`
+            path = path + `&archive=true&uid=`
         }
 
         if(filters.pattern) {
