@@ -154,7 +154,7 @@ class ProductsManager extends Component {
         }
         const {filters} = this.state;
         filters.language = language
-        this.setState({filters, language}, () => {
+        this.setState({filters, language, page: 0}, () => {
             this.getProducts();
         });
     };
@@ -170,7 +170,7 @@ class ProductsManager extends Component {
         }
         const {filters} = this.state;
         filters.film_date = film_date.toLocaleDateString('sv');
-        this.setState({filters, film_date}, () => {
+        this.setState({filters, film_date, page: 0}, () => {
             this.getProducts();
         });
     };
@@ -183,7 +183,7 @@ class ProductsManager extends Component {
         const {filters} = this.state;
         console.log("selectCollection: ", collection_uid);
         filters.collection_uid = collection_uid;
-        this.setState({filters, collection_uid}, () => {
+        this.setState({filters, collection_uid, page: 0}, () => {
             this.getProducts();
         });
     };
@@ -196,7 +196,7 @@ class ProductsManager extends Component {
         const {filters} = this.state;
         console.log("selectUnit: ", pattern);
         filters.pattern = pattern;
-        this.setState({filters, pattern}, () => {
+        this.setState({filters, pattern, page: 0}, () => {
             this.getProducts();
         });
     };
@@ -205,7 +205,7 @@ class ProductsManager extends Component {
         const {filters} = this.state;
         delete filters[f];
         const value = f === "film_date" ? null : "";
-        this.setState({filters, [f]: value}, () => {
+        this.setState({filters, [f]: value, page: 0}, () => {
             this.getProducts();
         });
     };

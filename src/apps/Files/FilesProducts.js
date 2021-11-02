@@ -67,7 +67,7 @@ class FilesProducts extends Component {
         }
         const {filters} = this.state;
         filters.language = language
-        this.setState({filters, language}, () => {
+        this.setState({filters, language, page: 0}, () => {
             this.getFiles();
         });
     };
@@ -79,7 +79,7 @@ class FilesProducts extends Component {
         }
         const {filters} = this.state;
         filters.date = date.toLocaleDateString('sv');
-        this.setState({filters, date}, () => {
+        this.setState({filters, date, page: 0}, () => {
             this.getFiles();
         });
     };
@@ -92,7 +92,7 @@ class FilesProducts extends Component {
         const {filters} = this.state;
         console.log("selectUnit: ", uid);
         filters.uid = uid;
-        this.setState({filters, uid}, () => {
+        this.setState({filters, uid, page: 0}, () => {
             this.getFiles();
         });
     };
@@ -104,7 +104,7 @@ class FilesProducts extends Component {
         }
         const {filters} = this.state;
         filters.archive = archive
-        this.setState({filters, archive}, () => {
+        this.setState({filters, archive, page: 0}, () => {
             this.getFiles();
         });
     };
@@ -113,7 +113,7 @@ class FilesProducts extends Component {
         const {filters} = this.state;
         delete filters[f];
         const value = f === "film_date" ? null : "";
-        this.setState({filters, [f]: value}, () => {
+        this.setState({filters, [f]: value, page: 0}, () => {
             this.getFiles();
         });
     };
