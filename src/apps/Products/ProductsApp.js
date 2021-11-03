@@ -1,4 +1,5 @@
 import React, {Component, Fragment} from 'react'
+import '../WFDB/WFDB.css';
 import ProductsManager from "./ProductsManager";
 import FilesView from "./FilesView";
 import {kc} from "../../components/UserManager";
