@@ -1,10 +1,13 @@
 import React, {Component, Fragment} from 'react'
 import ProductsManager from "./ProductsManager";
+import FilesView from "./FilesView";
 import {kc} from "../../components/UserManager";
+import {Tab} from "semantic-ui-react";
 
 class ProductsApp extends Component {
 
     state = {
+        tab: "metadata",
         user: {
             name: this.props.user.name,
             email: this.props.user.email,
@@ -15,11 +18,30 @@ class ProductsApp extends Component {
         }
     };
 
+    componentDidMount() {
+        let files_product = !kc.hasRealmRole("wf_products_root");
+        this.setState({files_product});
+    };
+
+    selectTab = (e, data) => {
+        let tab = data.panes[data.activeIndex].menuItem.key;
+        console.log(" :: Tab selected: ",tab);
+        this.setState({tab});
+    };
+
     render() {
+        const {files_product} = this.state;
+
+        const panes = [
+            { menuItem: { key: 'metadata', content: 'Metadata', disabled: false},
+                render: () => <Tab.Pane attached ><ProductsManager {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'files', content: 'Files', disabled: files_product },
+                render: () => <Tab.Pane ><FilesView {...this.state} /></Tab.Pane> },
+        ]
 
         return (
             <Fragment>
-                <ProductsManager {...this.state} />
+                <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
             </Fragment>
         );
     }
