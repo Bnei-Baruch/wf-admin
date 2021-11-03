@@ -15,7 +15,7 @@ import {
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import {dep_options} from "../../shared/consts";
+import {dep_options, WF_LANGUAGES} from "../../shared/consts";
 import FileManager from "./FileManager";
 
 class FilesView extends Component {
@@ -31,7 +31,8 @@ class FilesView extends Component {
         archive: false,
         date: null,
         language: "",
-        metadata: {name: ""},
+        meta_data: {},
+        i18n_data: {name: ""},
         lang: ""
     };
 
@@ -62,6 +63,24 @@ class FilesView extends Component {
             console.log(files)
             this.setState({page: offset, files})
         });
+    };
+
+    getProduct = (file_data) => {
+        const {product_id, language} = file_data;
+        let path =  `products/${product_id}`;
+        getData(path, product => {
+            console.log(product);
+            const {i18n} = product;
+            this.setState({metadata: product, product_id, i18n_data: i18n[WF_LANGUAGES[language]]});
+        });
+    };
+
+    selectFile = (file_data) => {
+        console.log(":: Sselected file: ",file_data);
+        let path = file_data.properties.url;
+        let source = `${WFSRV_BACKEND}${path}`;
+        this.setState({source, active: file_data.file_id, file_data, show_filemanager: true, lang: file_data.language});
+        this.getProduct(file_data)
     };
 
     setLangFilter = (language) => {
@@ -122,13 +141,6 @@ class FilesView extends Component {
         });
     };
 
-    selectFile = (file_data) => {
-        console.log(":: Sselected file: ",file_data);
-        let path = file_data.properties.url;
-        let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: file_data.file_id, file_data, show_filemanager: true});
-    };
-
     getPlayer = (player) => {
         console.log(":: Censor - got player: ", player);
     };
@@ -146,7 +158,7 @@ class FilesView extends Component {
     };
 
     render() {
-        const {files, source, page, archive, date, language, show_filemanager, file_data, product_id, metadata, lang} = this.state;
+        const {files, source, page, archive, date, language, show_filemanager, file_data, product_id, i18n_data, lang, meta_data} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -217,13 +229,13 @@ class FilesView extends Component {
                 <FileManager product_id={product_id}
                              mdb_file={mdb_file}
                              to_mdb={to_mdb}
-                             metadata={metadata}
+                             metadata={i18n_data}
                              user={this.props.user}
                              file_data={file_data}
                              source={source}
                              show_filemanager={show_filemanager}
-                             product={this.props.product}
-                             getProductFiles={this.props.getProductFiles}
+                             product={meta_data}
+                             getProductFiles={this.getFiles}
                              toggleFileManager={this.toggleFileManager} />
                 <Message size='large'>
                     <Menu size='large' secondary >
