@@ -16,10 +16,12 @@ import {
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {dep_options} from "../../shared/consts";
+import FileManager from "./FileManager";
 
 class FilesView extends Component {
 
     state = {
+        file_data: {},
         files: [],
         filters: {},
         wfstatus: {},
@@ -29,6 +31,8 @@ class FilesView extends Component {
         archive: false,
         date: null,
         language: "",
+        metadata: {name: ""},
+        lang: ""
     };
 
     componentDidMount() {
@@ -122,7 +126,7 @@ class FilesView extends Component {
         console.log(":: Sselected file: ",file_data);
         let path = file_data.properties.url;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: file_data.file_id, file_data});
+        this.setState({source, active: file_data.file_id, file_data, show_filemanager: true});
     };
 
     getPlayer = (player) => {
@@ -137,8 +141,12 @@ class FilesView extends Component {
         this.setState({wfstatus: {...wfstatus}});
     };
 
+    toggleFileManager = () => {
+        this.setState({show_filemanager: !this.state.show_filemanager});
+    };
+
     render() {
-        const {files, source, page, archive, date, language} = this.state;
+        const {files, source, page, archive, date, language, show_filemanager, file_data, product_id, metadata, lang} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -201,8 +209,22 @@ class FilesView extends Component {
             )
         });
 
+        const to_mdb = files.find(f => f.uid && lang === f.language) || archive;
+        const mdb_file = files.find(f => f.properties?.archive && lang === f.language);
+
         return (
             <Segment basic className="wfdb_app">
+                <FileManager product_id={product_id}
+                             mdb_file={mdb_file}
+                             to_mdb={to_mdb}
+                             metadata={metadata}
+                             user={this.props.user}
+                             file_data={file_data}
+                             source={source}
+                             show_filemanager={show_filemanager}
+                             product={this.props.product}
+                             getProductFiles={this.props.getProductFiles}
+                             toggleFileManager={this.toggleFileManager} />
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
