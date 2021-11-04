@@ -158,6 +158,7 @@ class FileManager extends Component {
                 // We save file data to DB after successful insert.
                 file_data.uid = unit.uid;
                 file_data.properties.archive = true;
+                file_data.properties.mdb = true;
                 delete file_data.id;
                 putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
                     console.log(":: saveFile: ",cb);

@@ -243,6 +243,17 @@ class FilesView extends Component {
                             <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
                         </Menu.Item>
                         <Menu.Item>
+                            <Dropdown
+                                placeholder="Archive:"
+                                selection
+                                clearable
+                                options={dep_options}
+                                language={language}
+                                onChange={(e, {value}) => this.setArchiveFilter(value)}
+                                value={language}>
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Item>
                             <DatePicker
                                 // locale={locale}
                                 customInput={<Input icon={

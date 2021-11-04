@@ -63,6 +63,7 @@ class FilesUpload extends Component {
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
         file_data.properties.archive = archive;
+        file_data.properties.mdb = false;
         putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
             console.log(":: UploadApp - workflow respond: ",file_meta);
             if(archive && file_meta.media_info) {
