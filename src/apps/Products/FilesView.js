@@ -29,6 +29,7 @@ class FilesView extends Component {
         page: 0,
         source: "",
         archive: false,
+        mdb: false,
         date: null,
         language: "",
         meta_data: {},
@@ -132,6 +133,18 @@ class FilesView extends Component {
         });
     };
 
+    setMdbFilter = (mdb) => {
+        if(!mdb) {
+            this.removeFilter("mdb");
+            return
+        }
+        const {filters} = this.state;
+        filters.mdb = mdb
+        this.setState({filters, mdb, page: 0}, () => {
+            this.getFiles();
+        });
+    };
+
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
@@ -158,7 +171,7 @@ class FilesView extends Component {
     };
 
     render() {
-        const {files, source, page, archive, date, language, show_filemanager, file_data, product_id, i18n_data, lang, meta_data} = this.state;
+        const {files, source, page, archive, mdb, date, language, show_filemanager, file_data, product_id, i18n_data, lang, meta_data} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -240,18 +253,10 @@ class FilesView extends Component {
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
+                            <Checkbox label='Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
                         </Menu.Item>
                         <Menu.Item>
-                            <Dropdown
-                                placeholder="Archive:"
-                                selection
-                                clearable
-                                options={dep_options}
-                                language={language}
-                                onChange={(e, {value}) => this.setArchiveFilter(value)}
-                                value={language}>
-                            </Dropdown>
+                            <Checkbox label='MDB' checked={mdb} onChange={() => this.setMdbFilter(!mdb)} />
                         </Menu.Item>
                         <Menu.Item>
                             <DatePicker
