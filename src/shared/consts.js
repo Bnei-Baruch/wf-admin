@@ -256,6 +256,11 @@ export const PRODUCT_FILE_TYPES = {
     }
 };
 
+export const PRODUCT_FILE_TYPES_LIST = ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK",
+        "16x9_Strelka", "4x4_MAK", "4x4_OpTV", "16x9_Logo-Kab_SUB", "16x9_Logo-Kab-Strelka_SUB", "16x9_Logo-OpTV_SUB",
+        "16x9_Logo-MAK_SUB", "16x9_Strelka_SUB", "4x4_MAK_SUB", "4x4_OpTV_SUB", "voice", "music", "sfx", "mix", "Text", "SRT"].map(data => {
+    return ({key: data, value: data, text: data})})
+
 
 export const MDB_LANGUAGES = {
   en: 'eng',

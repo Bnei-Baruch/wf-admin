@@ -14,8 +14,7 @@ import {
     Message, Dropdown
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
-import MediaPlayer from "../../components/Media/MediaPlayer";
-import {dep_options, WF_LANGUAGES} from "../../shared/consts";
+import {dep_options, PRODUCT_FILE_TYPES_LIST, WF_LANGUAGES} from "../../shared/consts";
 import FileManager from "./FileManager";
 
 class FilesView extends Component {
@@ -23,6 +22,7 @@ class FilesView extends Component {
     state = {
         file_data: {},
         files: [],
+        file_types: PRODUCT_FILE_TYPES_LIST,
         filters: {},
         wfstatus: {},
         line: {},
@@ -34,7 +34,8 @@ class FilesView extends Component {
         language: "",
         meta_data: {},
         i18n_data: {name: ""},
-        lang: ""
+        lang: "",
+        file_type: "",
     };
 
     componentDidMount() {
@@ -92,6 +93,18 @@ class FilesView extends Component {
         const {filters} = this.state;
         filters.language = language
         this.setState({filters, language, page: 0}, () => {
+            this.getFiles();
+        });
+    };
+
+    setTypeFilter = (file_type) => {
+        if(!file_type) {
+            this.removeFilter("file_type");
+            return
+        }
+        const {filters} = this.state;
+        filters.file_type = file_type
+        this.setState({filters, file_type, page: 0}, () => {
             this.getFiles();
         });
     };
@@ -171,7 +184,7 @@ class FilesView extends Component {
     };
 
     render() {
-        const {files, source, page, archive, mdb, date, language, show_filemanager, file_data, product_id, i18n_data, lang, meta_data} = this.state;
+        const {files, source, page, archive, mdb, date, language, show_filemanager, file_data, product_id, i18n_data, lang, meta_data, file_types, file_type} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -214,22 +227,19 @@ class FilesView extends Component {
                 <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={false} className={active}
                            onClick={() => this.selectFile(data)}>
                     <Popup
-                        trigger={<Table.Cell>{file_id}</Table.Cell>}
+                        trigger={<Table.Cell>{product_id}</Table.Cell>}
                         on='click'
                         hideOnScroll
                         onOpen={() => this.getStatus(data)}
                         mountNode={document.getElementById("ltr-modal-mount")}>
                         {this.props.wf_root ? root : admin}
                     </Popup>
-                    <Table.Cell>{product_id}</Table.Cell>
                     <Table.Cell>{link}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
                     <Table.Cell>{file_type}</Table.Cell>
                     <Table.Cell>{language}</Table.Cell>
                     <Table.Cell>{extension}</Table.Cell>
-                    <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!archive}>{archive ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -253,10 +263,10 @@ class FilesView extends Component {
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Checkbox label='Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
+                            <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
                         </Menu.Item>
                         <Menu.Item>
-                            <Checkbox label='MDB' checked={mdb} onChange={() => this.setMdbFilter(!mdb)} />
+                            <Checkbox label='In Archive' checked={mdb} onChange={() => this.setMdbFilter(!mdb)} />
                         </Menu.Item>
                         <Menu.Item>
                             <DatePicker
@@ -286,33 +296,30 @@ class FilesView extends Component {
                                 value={language}>
                             </Dropdown>
                         </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                placeholder="Types:"
+                                selection
+                                clearable
+                                options={file_types}
+                                onChange={(e, {value}) => this.setTypeFilter(value)}
+                                value={file_type}>
+                            </Dropdown>
+                        </Menu.Item>
                         <Menu.Menu position='right'>
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='teal' icon='download' disabled={!source} href={source} download />
-                        </Menu.Item>
                         </Menu.Menu>
                     </Menu>
                 </Message>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Product ID</Table.HeaderCell>
                             <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                             <Table.HeaderCell width={4}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Added</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Type</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Language</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Extension</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>RMV</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>SND</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -321,7 +328,7 @@ class FilesView extends Component {
                     </Table.Body>
                     <Table.Footer fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='9' textAlign='center'>
+                            <Table.HeaderCell colSpan='6' textAlign='center'>
                                 <Button.Group>
                                     <Button basic disabled={page === 0}
                                             onClick={() => this.getFiles(page - 20)}>

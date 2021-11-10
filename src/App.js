@@ -153,7 +153,7 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{admin}</Tab.Pane> },
             { menuItem: { key: 'monitor', icon: 'eye', content: 'Monitor', disabled: wf_ingest },
                 render: () => <Tab.Pane attached={false} >{monitor}</Tab.Pane> },
-            // { menuItem: { key: 'jobs', icon: 'shopping cart', content: 'Jobs', disabled: wf_jobs },
+            // { menuItem: { key: 'jobs', icon: 'truck', content: 'Jobs', disabled: wf_jobs },
             //     render: () => <Tab.Pane attached={false} >{jsobs}</Tab.Pane> },
             { menuItem: { key: 'products', icon: 'shopping cart', content: 'Products', disabled: wf_products },
                 render: () => <Tab.Pane attached={false} >{products}</Tab.Pane> },
