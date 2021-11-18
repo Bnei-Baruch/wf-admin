@@ -8,7 +8,7 @@ import he from 'date-fns/locale/he';
 // import 'date-fns/locale/de';
 // import 'date-fns/locale/en-gb';
 import '../apps/Insert/InsertApp.css';
-import {Button, Header, Modal, Dropdown, Segment, Input, Table, Icon, Popup} from 'semantic-ui-react';
+import {Button, Menu, Modal, Dropdown, Segment, Input, Table, Icon, Popup} from 'semantic-ui-react';
 import {fetchPublishers, getLang, fetchUnits, toHms,} from '../shared/tools';
 import {language_options, DCT_OPTS} from '../shared/consts';
 import NameHelper from "../apps/Insert/NameHelper";
@@ -153,53 +153,62 @@ class MDB extends Component {
         return (
             <div className="insert_app">
                 <Segment basic >
-                    <Header floated='left' >
-                        <Dropdown
-                            error={!content_type}
-                            disabled={content_type === "ARTICLE"}
-                            className="large"
-                            placeholder="Content:"
-                            selection
-                            options={content_options}
-                            content_type={content_type}
-                            onChange={(e,{value}) => this.selectContentType(value)}
-                            value={content_type} >
-                        </Dropdown>
-                        <Dropdown
-                            error={!language}
-                            className="large"
-                            placeholder="Language:"
-                            selection
-                            options={language_options}
-                            language={language}
-                            onChange={(e,{value}) => this.selectLanguage(value)}
-                            value={language} >
-                        </Dropdown>
-                    </Header>
-                    <Header floated='right'>
-                        <Input
-                            error={send_uid?.length > 0 && send_uid?.length !== 8}
-                            className="input_uid"
-                            size="mini"
-                            icon='barcode'
-                            placeholder="UID"
-                            iconPosition='left'
-                            value={send_uid}
-                            onChange={(e,{value}) => this.inputUid(value)}
-                        />
-                    </Header>
-                    <DatePicker
-                        className="datepickercs"
-                        //locale={locale}
-                        dateFormat="yyyy-MM-dd"
-                        showYearDropdown
-                        showMonthDropdown
-                        scrollableYearDropdown
-                        maxDate={new Date()}
-                        openToDate={new Date(date)}
-                        selected={new Date(date)}
-                        onChange={this.selectDate}
-                    />
+                    <Menu secondary>
+                        <Menu.Item>
+                            <DatePicker
+                                className="datepickercs"
+                                //locale={locale}
+                                dateFormat="yyyy-MM-dd"
+                                showYearDropdown
+                                showMonthDropdown
+                                scrollableYearDropdown
+                                maxDate={new Date()}
+                                openToDate={new Date(date)}
+                                selected={new Date(date)}
+                                onChange={this.selectDate}
+                            />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                error={!content_type}
+                                disabled={content_type === "ARTICLE"}
+                                className="large"
+                                placeholder="Content:"
+                                selection
+                                options={content_options}
+                                content_type={content_type}
+                                onChange={(e,{value}) => this.selectContentType(value)}
+                                value={content_type} >
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                error={!language}
+                                className="large"
+                                placeholder="Language:"
+                                selection
+                                options={language_options}
+                                language={language}
+                                onChange={(e,{value}) => this.selectLanguage(value)}
+                                value={language} >
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Menu position='right'>
+                            <Menu.Item>
+                                <Input
+                                    error={send_uid?.length > 0 && send_uid?.length !== 8}
+                                    className="input_uid"
+                                    size="mini"
+                                    icon='barcode'
+                                    placeholder="UID"
+                                    iconPosition='left'
+                                    value={send_uid}
+                                    onChange={(e,{value}) => this.inputUid(value)}
+                                />
+                            </Menu.Item>
+
+                        </Menu.Menu>
+                    </Menu>
                 </Segment>
                 <Segment clearing >
                     <Modal.Content className="tabContent">

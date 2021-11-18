@@ -9,7 +9,7 @@ import he from 'date-fns/locale/he';
 // import 'date-fns/locale/de';
 // import 'date-fns/locale/en-gb';
 import './InsertApp.css';
-import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input, Icon} from 'semantic-ui-react';
+import {Grid, Button, Header, Modal, Dropdown, Container, Segment, Input, Icon, Menu} from 'semantic-ui-react';
 import {
     fetchPublishers,
     fetchPersons,
@@ -290,64 +290,74 @@ class InsertModal extends Component {
         return (
             <Container className="insert_app">
                 <Segment className={insert_type !== "1" ? "update_mode" : "insert_mode"} clearing >
-                    <Header floated='left' >
-                        <Dropdown
-                            error={!content_type}
-                            disabled={content_type === "ARTICLE"}
-                            className="large"
-                            placeholder="Content:"
-                            selection
-                            options={content_options}
-                            content_type={content_type}
-                            onChange={(e,{value}) => this.selectContentType(value)}
-                            value={content_type} >
-                        </Dropdown>
-                        <Dropdown
-                            error={!language}
-                            className="large"
-                            placeholder="Language:"
-                            selection
-                            options={language_options}
-                            language={language}
-                            onChange={(e,{value}) => this.selectLanguage(value)}
-                            value={language} >
-                        </Dropdown>
-                        <Dropdown
-                            className="large"
-                            error={!upload_type}
-                            disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCE" || content_type === "LIKUTIM"}
-                            placeholder="Upload Type:"
-                            selection
-                            options={upload_options}
-                            upload_type={upload_type}
-                            onChange={(e,{value}) => this.selectUpload(value)}
-                            value={upload_type}
-                        />
-                    </Header>
-                    <Header floated='right'>
-                        <Input
-                            error={send_uid?.length > 0 && send_uid?.length !== 8}
-                            className="input_uid"
-                            size="mini"
-                            icon='barcode'
-                            placeholder="UID"
-                            iconPosition='left'
-                            value={send_uid}
-                            onChange={(e,{value}) => this.inputUid(value)}
-                        />
-                    </Header>
-                    <DatePicker
-                        className="datepickercs"
-                        //locale={locale}
-                        dateFormat="yyyy-MM-dd"
-                        showYearDropdown
-                        showMonthDropdown
-                        scrollableYearDropdown
-                        maxDate={new Date()}
-                        openToDate={new Date(date)}
-                        selected={new Date(date)}
-                        onChange={this.selectDate}
-                    />
+                    <Menu secondary>
+                        <Menu.Item>
+                            <DatePicker
+                                className="datepickercs"
+                                //locale={locale}
+                                dateFormat="yyyy-MM-dd"
+                                showYearDropdown
+                                showMonthDropdown
+                                scrollableYearDropdown
+                                maxDate={new Date()}
+                                openToDate={new Date(date)}
+                                selected={new Date(date)}
+                                onChange={this.selectDate}
+                            />
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                error={!content_type}
+                                disabled={content_type === "ARTICLE"}
+                                className="large"
+                                placeholder="Content:"
+                                selection
+                                options={content_options}
+                                content_type={content_type}
+                                onChange={(e,{value}) => this.selectContentType(value)}
+                                value={content_type} >
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                error={!language}
+                                className="large"
+                                placeholder="Language:"
+                                selection
+                                options={language_options}
+                                language={language}
+                                onChange={(e,{value}) => this.selectLanguage(value)}
+                                value={language} >
+                            </Dropdown>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Dropdown
+                                className="large"
+                                error={!upload_type}
+                                disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCE" || content_type === "LIKUTIM"}
+                                placeholder="Upload Type:"
+                                selection
+                                options={upload_options}
+                                upload_type={upload_type}
+                                onChange={(e,{value}) => this.selectUpload(value)}
+                                value={upload_type}
+                            />
+                        </Menu.Item>
+                        <Menu.Menu position='right'>
+                            <Menu.Item>
+                                <Input
+                                    error={send_uid?.length > 0 && send_uid?.length !== 8}
+                                    className="input_uid"
+                                    size="mini"
+                                    icon='barcode'
+                                    placeholder="UID"
+                                    iconPosition='left'
+                                    value={send_uid}
+                                    onChange={(e,{value}) => this.inputUid(value)}
+                                />
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
                 </Segment>
                 <Segment clearing secondary color='blue'>
                     {content_type === "SOURCE" ?
