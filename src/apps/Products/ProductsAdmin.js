@@ -59,15 +59,15 @@ class ProductsAdmin extends Component {
         let product_meta = newProductMeta(product_name, product_description, language);
         product_meta.line = metadata;
         product_meta.film_date = metadata.film_date;
-        product_meta.parent = {
-            mdb_uid: unit.uid,
-            mdb_id: unit.id,
-            wf_id: unit.properties?.workflow_id,
-            capture_date: unit.properties?.capture_date,
-            film_date: unit.properties?.film_date,
-        };
-        product_meta.parent.mdb_id = unit.id;
-        product_meta.parent.wf_id = unit.properties?.workflow_id;
+        if(unit) {
+            product_meta.parent = {
+                mdb_uid: unit.uid,
+                mdb_id: unit.id,
+                wf_id: unit.properties?.workflow_id,
+                capture_date: unit.properties?.capture_date,
+                film_date: unit.properties?.film_date,
+            }
+        }
         console.log(" :: New Meta: ", product_meta);
         this.saveProduct(product_meta);
     };

@@ -51,7 +51,8 @@ class DgimaTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        let date = data.format(this.state.dgima_src === "search" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
+        //let date = data.format(this.state.dgima_src === "search" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
+        let date = data.toLocaleDateString('sv')
         this.setState({startDate: data, date: date, disabled: true});
         if(this.state.dgima_src === "search") {
             this.getLabelsData("date", date);
@@ -176,7 +177,7 @@ class DgimaTrimmer extends Component {
                     <Menu.Item>
                         <DatePicker
                             className="datepickercs"
-                            dateFormat={dgima_src === "search" ? "YYYY/MM/DD" : "YYYY-MM-DD"}
+                            dateFormat={dgima_src === "search" ? "yyyy/MM/dd" : "yyyy-MM-dd"}
                             locale={he}
                             showYearDropdown
                             showMonthDropdown

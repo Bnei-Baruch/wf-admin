@@ -15,7 +15,7 @@ const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
 const CensorApp = lazy(() => import("./apps/Censor/CensorApp"));
 const AdminApp = lazy(() => import("./apps/Admin/AdminApp"));
 const ArichaApp = lazy(() => import("./apps/Aricha/ArichaApp"));
-// const DgimaApp = lazy(() => import("./apps/Dgima/DgimaApp"));
+const DgimaApp = lazy(() => import("./apps/Dgima/DgimaApp"));
 const WFDB = lazy(() => import("./apps/WFDB/WFDB"));
 const CarbonApp = lazy(() => import("./apps/Carbon/CarbonApp"));
 const UploadApp = lazy(() => import("./apps/Upload/UploadApp"));
@@ -126,7 +126,7 @@ class App extends Component {
         let jsobs = (<Suspense fallback={loading}><JobsApp user={user} /></Suspense>);
         let products = (<Suspense fallback={loading}><ProductsApp user={user} /></Suspense>);
         let aricha = (<Suspense fallback={loading}><ArichaApp user={user} /></Suspense>);
-        // let dgima= (<Suspense fallback={loading}><DgimaApp user={user} /></Suspense>);
+        let dgima= (<Suspense fallback={loading}><DgimaApp user={user} /></Suspense>);
         let external = (<Suspense fallback={loading}><ExternalApp user={user} /></Suspense>);
         let mainpage = (<Suspense fallback={loading}><InsertApp user={user} /></Suspense>);
         let upload = (<Suspense fallback={loading}><UploadApp user={user} /></Suspense>);
@@ -159,8 +159,8 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{products}</Tab.Pane> },
             { menuItem: { key: 'aricha', icon: 'edit', content: 'Aricha', disabled: wf_aricha },
                 render: () => <Tab.Pane attached={false} >{aricha}</Tab.Pane> },
-            // { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
-            //     render: () => <Tab.Pane attached={false} >{dgima}</Tab.Pane> },
+            { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
+                render: () => <Tab.Pane attached={false} >{dgima}</Tab.Pane> },
             { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
                 render: () => <Tab.Pane attached={false} >{external}</Tab.Pane> },
             { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },
