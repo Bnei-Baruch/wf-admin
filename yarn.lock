@@ -9260,10 +9260,10 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-rc-upload@^4.3.1:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/rc-upload/-/rc-upload-4.3.2.tgz#3b56c8bdf7b25eab357e65453e032b7b10c6f3cc"
-  integrity sha512-v0HdwC/19xKAn1OYZ4hTMUSqSs/IA0n1v4p/cioSSnKubHrdpcCXC45N+TFMSOZtBlf4+xMNCFo3KDih31lAMg==
+rc-upload@4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/rc-upload/-/rc-upload-4.3.3.tgz#e237aa525e5313fa16f4d04d27f53c2f0e157bb8"
+  integrity sha512-YoJ0phCRenMj1nzwalXzciKZ9/FAaCrFu84dS5pphwucTC8GUWClcDID/WWNGsLFcM97NqIboDqrV82rVRhW/w==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.5"
