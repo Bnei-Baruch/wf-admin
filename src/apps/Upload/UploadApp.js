@@ -3,11 +3,24 @@ import AkladaUpload from "./AkladaUpload";
 import BackupUpload from "./BackupUpload";
 import {WFSRV_BACKEND, putData} from "../../shared/tools";
 import RawUpload from "./RawUpload";
+import {Tab} from "semantic-ui-react";
 
 class UploadApp extends Component {
 
     state = {
+        tab: "backup",
         ival: null,
+    };
+
+    // componentDidMount() {
+    //     let files_product = !kc.hasRealmRole("wf_products_root");
+    //     this.setState({files_product});
+    // };
+
+    selectTab = (e, data) => {
+        let tab = data.panes[data.activeIndex].menuItem.key;
+        console.log(" :: Tab selected: ",tab);
+        this.setState({tab});
     };
 
     akladaWorkflow = (filedata) => {
@@ -42,11 +55,18 @@ class UploadApp extends Component {
 
     render() {
 
+        const panes = [
+            { menuItem: { key: 'backup', content: 'Backup', disabled: false},
+                render: () => <Tab.Pane attached ><BackupUpload onFileData={this.backupWorkflow} /></Tab.Pane> },
+            { menuItem: { key: 'cloud', content: 'Cloud', disabled: false},
+                render: () => <Tab.Pane attached ><RawUpload onFileData={this.rawWorkflow} /></Tab.Pane> },
+            { menuItem: { key: 'akladot', content: 'Akladot', disabled: false},
+                render: () => <Tab.Pane attached ><AkladaUpload onFileData={this.akladaWorkflow} /></Tab.Pane> },
+        ]
+
         return (
             <Fragment>
-                <BackupUpload onFileData={this.backupWorkflow} />
-                <RawUpload onFileData={this.rawWorkflow} />
-                <AkladaUpload onFileData={this.akladaWorkflow} />
+                <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
             </Fragment>
         );
     }
