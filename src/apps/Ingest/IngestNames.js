@@ -29,10 +29,10 @@ class IngestNames extends Component {
         });
     };
 
-    selectLine = (id,line) => {
+    selectLine = (id, line) => {
         console.log(":: Select Line: ",line);
         this.setState({disabled: false, line, line_id: id, file_name: line.final_name});
-        let preset = {id,name:line.final_name};
+        let preset = {id, name:line.final_name, line};
         this.props.onLine(preset);
     };
 
