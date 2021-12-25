@@ -4,6 +4,10 @@ body {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
 
+.mejs__container {
+    height: 410px!important;
+}
+
 .popup_product {
     width: 520px;
 }
