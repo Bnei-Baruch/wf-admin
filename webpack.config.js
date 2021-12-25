@@ -15,6 +15,7 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     filename: 'static/js/[name].[chunkhash:8].js',
     chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+    clean: true,
   },
   resolve: {
     modules: [path.join(__dirname, 'src'), 'node_modules'],
