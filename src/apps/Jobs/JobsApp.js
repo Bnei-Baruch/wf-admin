@@ -4,6 +4,8 @@ import ProductJob from "./ProductJob";
 import {kc} from "../../components/UserManager";
 import {Tab} from "semantic-ui-react";
 import CloudFiles from "./CloudFiles";
+import '../WFDB/WFDB.css';
+import UsersJob from "./UsersJob";
 
 class JobsApp extends Component {
 
@@ -45,10 +47,12 @@ class JobsApp extends Component {
     render() {
 
         const panes = [
-            { menuItem: { key: 'jobs', content: 'Jobs', disabled: false},
+            { menuItem: { key: 'jobs', content: 'Projects', disabled: false},
                 render: () => <Tab.Pane attached ><ProductJob {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'files', content: 'Files', disabled: false },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'users', content: 'Users', disabled: false },
+                render: () => <Tab.Pane ><UsersJob {...this.state} /></Tab.Pane> },
         ]
 
         return (

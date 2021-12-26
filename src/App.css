@@ -220,6 +220,10 @@ body {
     width: 600px!important;
 }
 
+.job_input {
+    width: 500px!important;
+}
+
 .input_line {
     width: 120px;
 }

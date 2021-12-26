@@ -32,6 +32,7 @@ export const MDB_REST = 'http://app.mdb.bbdomain.org/rest/content_units';
 const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
 export const MQTT_LCL_URL = process.env.REACT_APP_MQTT_LCL_URL;
 export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
+export const AUTH_API = process.env.REACT_APP_AUTH_API_BACKEND;
 
 export const IVAL = 1000;
 
@@ -208,6 +209,15 @@ export const getData = (path, cb) => fetch(`${WFRP_BACKEND}/${path}`, {
         }
     })
     .catch(ex => console.log(`get ${path}`, ex));
+
+export const getAuthData = (url, cb) => fetch(`${url}`, {
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+}).then((response) => {
+    return response.json().then(data => cb(data));
+}).catch(ex => console.log(`get ${url}`, ex));
 
 export const getDataByID = (id, cb) =>  {
     fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`,{

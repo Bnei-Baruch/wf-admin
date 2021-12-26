@@ -339,7 +339,7 @@ class ProductJob extends Component {
             ];
 
         return (
-            <Segment textAlign='center' className="ingest_segment" color='teal' raised>
+            <Segment textAlign='center' className="ingest_segment" basic>
                 <Label  attached='top' className="trimmed_label">
                     {job_data.job_name ? job_data.job_name : ""}
                 </Label>
@@ -347,12 +347,12 @@ class ProductJob extends Component {
                     <Menu.Item>
                         <Button positive={true}
                                 disabled={job_name === ""}
-                                onClick={this.newJob}>New Product
+                                onClick={this.newJob}>New Project
                         </Button>
                     </Menu.Item>
                     <Menu.Item>
                         <Input className="job_input"
-                               placeholder="Product name.."
+                               placeholder="Project name.."
                                onChange={e => this.setJobName(e.target.value)}
                                value={job_name} />
                     </Menu.Item>
@@ -365,70 +365,70 @@ class ProductJob extends Component {
                             value={doers}
                             onChange={(e, {value}) => this.addDoer(value)} />
                     </Menu.Item>
-                    <Menu.Item>
-                        <Button negative={true}
-                                disabled={job_data.job_id === undefined}
-                                onClick={this.removeJob}>Delete Product
-                        </Button>
-                    </Menu.Item>
+                    {/*<Menu.Item>*/}
+                    {/*    <Button negative={true}*/}
+                    {/*            disabled={job_data.job_id === undefined}*/}
+                    {/*            onClick={this.removeJob}>Delete Product*/}
+                    {/*    </Button>*/}
+                    {/*</Menu.Item>*/}
                 </Menu>
                 <Message>
-                    <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Modal closeOnDimmerClick={false}
-                                   trigger={<Button color='blue' icon='tags'
-                                                    loading={renaming}
-                                                    disabled={job_data.job_id === undefined}
-                                                    onClick={this.openCit} />}
-                                   onClose={this.onCancel}
-                                   open={cit_open}
-                                   closeIcon="close"
-                                   mountNode={document.getElementById("cit-modal-mount")}>
-                                <Modal.Content>
-                                    <CIT metadata={job_data.line}
-                                         onCancel={this.onCancel}
-                                         onComplete={(x) => this.renameFile(x)}/>
-                                </Modal.Content>
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Menu position='left'>
-                            <Menu.Item>
-                                <Button color='teal' icon='archive'
-                                        loading={inserting}
-                                        disabled={!source}
-                                        onClick={this.newUnit} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='orange' icon='upload' disabled={job_data.job_id === undefined}
-                                        onClick={this.uploadMaster} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button color='red' icon='close' disabled={job_data.job_id === undefined}
-                                        onClick={this.setRemoved} />
-                            </Menu.Item>
-                        </Menu.Menu>
-                        <Menu.Menu position='right'>
-                            <Menu.Item>
-                                    <Select compact options={send_options}
-                                            defaultValue={special}
-                                            placeholder='Send options'
-                                            onChange={(e, {value}) => this.setSpecial(value)} />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Button positive icon="arrow right"
-                                        //disabled={send_button}
-                                        disabled={job_data.job_id === undefined}
-                                        onClick={this.sendFile} loading={sending} />
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu>
+                    {/*<Menu size='large' secondary >*/}
+                    {/*    <Menu.Item>*/}
+                    {/*        <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}*/}
+                    {/*               size='tiny'*/}
+                    {/*               mountNode={document.getElementById("ltr-modal-mount")}>*/}
+                    {/*            <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />*/}
+                    {/*        </Modal>*/}
+                    {/*    </Menu.Item>*/}
+                    {/*    <Menu.Item>*/}
+                    {/*        <Modal closeOnDimmerClick={false}*/}
+                    {/*               trigger={<Button color='blue' icon='tags'*/}
+                    {/*                                loading={renaming}*/}
+                    {/*                                disabled={job_data.job_id === undefined}*/}
+                    {/*                                onClick={this.openCit} />}*/}
+                    {/*               onClose={this.onCancel}*/}
+                    {/*               open={cit_open}*/}
+                    {/*               closeIcon="close"*/}
+                    {/*               mountNode={document.getElementById("cit-modal-mount")}>*/}
+                    {/*            <Modal.Content>*/}
+                    {/*                <CIT metadata={job_data.line}*/}
+                    {/*                     onCancel={this.onCancel}*/}
+                    {/*                     onComplete={(x) => this.renameFile(x)}/>*/}
+                    {/*            </Modal.Content>*/}
+                    {/*        </Modal>*/}
+                    {/*    </Menu.Item>*/}
+                    {/*    <Menu.Menu position='left'>*/}
+                    {/*        <Menu.Item>*/}
+                    {/*            <Button color='teal' icon='archive'*/}
+                    {/*                    loading={inserting}*/}
+                    {/*                    disabled={!source}*/}
+                    {/*                    onClick={this.newUnit} />*/}
+                    {/*        </Menu.Item>*/}
+                    {/*        <Menu.Item>*/}
+                    {/*            <Button color='orange' icon='upload' disabled={job_data.job_id === undefined}*/}
+                    {/*                    onClick={this.uploadMaster} />*/}
+                    {/*        </Menu.Item>*/}
+                    {/*        <Menu.Item>*/}
+                    {/*            <Button color='red' icon='close' disabled={job_data.job_id === undefined}*/}
+                    {/*                    onClick={this.setRemoved} />*/}
+                    {/*        </Menu.Item>*/}
+                    {/*    </Menu.Menu>*/}
+                    {/*    <Menu.Menu position='right'>*/}
+                    {/*        <Menu.Item>*/}
+                    {/*                <Select compact options={send_options}*/}
+                    {/*                        defaultValue={special}*/}
+                    {/*                        placeholder='Send options'*/}
+                    {/*                        onChange={(e, {value}) => this.setSpecial(value)} />*/}
+                    {/*        </Menu.Item>*/}
+                    {/*        <Menu.Item>*/}
+                    {/*            <Button positive icon="arrow right"*/}
+                    {/*                    //disabled={send_button}*/}
+                    {/*                    disabled={job_data.job_id === undefined}*/}
+                    {/*                    onClick={this.sendFile} loading={sending} />*/}
+                    {/*        </Menu.Item>*/}
+                    {/*    </Menu.Menu>*/}
+                    {/*</Menu>*/}
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
