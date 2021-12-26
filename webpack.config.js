@@ -11,6 +11,7 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 }, {});
 
 module.exports = {
+  devtool: "source-map",
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'static/js/[name].[chunkhash:8].js',

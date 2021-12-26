@@ -54,10 +54,10 @@ class InsertApp extends Component {
 
         // Extract and validate date from file_name
         if((/\d{4}-\d{2}-\d{2}/).test(filedata.file_name)) {
-            let string_date = filedata.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
-            // let test_date = moment(string_date);
-            // let date = test_date.isValid() ? string_date : new Date().toLocaleDateString('sv');
-            metadata.date = string_date;
+            const string_date = filedata.file_name.match(/\d{4}-\d{2}-\d{2}/)[0];
+            const test_date = new Date(string_date);
+            const isValid = test_date instanceof Date && !isNaN(test_date);
+            metadata.date = isValid ? string_date : new Date().toLocaleDateString('sv');
         } else {
             metadata.date = new Date().toLocaleDateString('sv');
         }
