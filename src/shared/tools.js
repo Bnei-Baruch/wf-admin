@@ -215,9 +215,13 @@ export const getAuthData = (url, cb) => fetch(`${url}`, {
         'Authorization': 'bearer ' + getToken(),
         'Content-Type': 'application/json'
     }
-}).then((response) => {
-    return response.json().then(data => cb(data));
-}).catch(ex => console.log(`get ${url}`, ex));
+    }).then(response => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        } else {
+            return cb(null);
+        }
+})
 
 export const getDataByID = (id, cb) =>  {
     fetch(`${WFRP_BACKEND}/${getEndpoint(id)}/${id}`,{

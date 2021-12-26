@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {WFSRV_BACKEND, putData} from "../../shared/tools";
+import {WFSRV_BACKEND, putData, getData, IVAL} from "../../shared/tools";
 import ProductJob from "./ProductJob";
 import {kc} from "../../components/UserManager";
 import {Tab} from "semantic-ui-react";
@@ -12,6 +12,7 @@ class JobsApp extends Component {
     state = {
         job_id: false,
         tab: "metadata",
+        users: [],
         user: {
             name: this.props.user.name,
             email: this.props.user.email,
@@ -20,6 +21,16 @@ class JobsApp extends Component {
             archer: kc.hasRealmRole("wf_jobs_archive"),
             viewer: kc.hasRealmRole("wf_jobs_viewer"),
         }
+    };
+
+    componentDidMount() {
+        this.getUsers();
+    };
+
+    getUsers = () => {
+        getData('users', (users) => {
+            this.setState({users})
+        });
     };
 
     jobWorkflow = (filedata) => {
@@ -52,7 +63,7 @@ class JobsApp extends Component {
             { menuItem: { key: 'files', content: 'Files', disabled: false },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'users', content: 'Users', disabled: false },
-                render: () => <Tab.Pane ><UsersJob {...this.state} /></Tab.Pane> },
+                render: () => <Tab.Pane ><UsersJob {...this.state} getUsers={this.getUsers} /></Tab.Pane> },
         ]
 
         return (

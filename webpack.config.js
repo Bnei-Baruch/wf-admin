@@ -11,6 +11,10 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 }, {});
 
 module.exports = {
+  devServer: {
+    port: '3000',
+    compress: true,
+  },
   devtool: "source-map",
   output: {
     path: path.resolve(__dirname, 'build'),

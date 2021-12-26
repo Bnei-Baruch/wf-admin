@@ -224,6 +224,10 @@ body {
     width: 500px!important;
 }
 
+.user_input {
+    width: 400px!important;
+}
+
 .input_line {
     width: 120px;
 }

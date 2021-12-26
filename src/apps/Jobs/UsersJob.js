@@ -1,13 +1,11 @@
-import React, { Component } from 'react';
-import {Container, Segment, Table, Icon, Menu, Input, Button, Select, Popup} from "semantic-ui-react";
-import {getAuthData, AUTH_API} from "../../shared/tools";
+import React, {Component} from 'react';
+import {Container, Segment, Table, Menu, Input, Button} from "semantic-ui-react";
+import {getAuthData, AUTH_API, putData, WFDB_BACKEND} from "../../shared/tools";
 
 class UsersJob extends Component {
 
     state = {
-        users: [],
-        selected_user: "",
-        search: "id",
+        user: null,
         disabled: true,
         loading: true,
         input: "",
@@ -18,18 +16,28 @@ class UsersJob extends Component {
     };
 
     searchUser = () => {
-        const {search, input, users} = this.state;
-        getAuthData(`${AUTH_API}/find?${search}=${input}`, (response) => {
-            users.push(response)
+        const {input} = this.state;
+        getAuthData(`${AUTH_API}/find?email=${input}`, (response) => {
             console.log(response)
-            this.setState({input: ""});
+            let user = null;
+            if(response) {
+                const {email, firstName, lastName, id} = response;
+                user = {email, firstName, lastName, user_id: id};
+            } else {
+                alert("Email not found");
+            }
+            this.setState({input: "", user});
         });
     };
 
-    cleanUsers = () => {
-        getAuthData(`${AUTH_API}/cleanup`, (response) => {
-            console.log(response);
-            alert("Done");
+    addUser = () => {
+        const {user} = this.state;
+        user.properties = {removed: false};
+        console.log(user);
+        putData(`${WFDB_BACKEND}/users/${user.user_id}`, user, (cb) => {
+            console.log(":: addUser respond: ",cb);
+            this.setState({user: null});
+            this.props.getUsers();
         });
     };
 
@@ -41,81 +49,53 @@ class UsersJob extends Component {
     }
 
     render() {
-        const {users, selected_user, search, input, user_info} = this.state;
-
-        const {groups,roles,social} = user_info;
-
-        let v = (<Icon color='green' name='checkmark'/>);
-        let x = (<Icon color='red' name='close'/>);
-
-        const gxy_user = !!roles?.find(r => r.name === "gxy_user")
-        const idp = social?.length ? social[0].identityProvider : x
-        const grp = groups?.length ? groups[0].name : ""
+        const {selected_user, input, user} = this.state;
+        const {users} = this.props;
 
         let users_content = users.map(user => {
-            const {id,firstName,lastName,emailVerified,email,createdTimestamp} = user;
-            const reg_time = new Date(createdTimestamp).toUTCString();
-            return (<Popup trigger={<Table.Row key={id}
-                                               active={id === selected_user}
-                                               negative={!emailVerified}
-                                               onClick={() => this.selectUser(id, user)} >
-                    <Table.Cell>{<Icon name={emailVerified ? 'checkmark' : 'close'} />} - {email}</Table.Cell>
+            const {user_id,firstName,lastName,email} = user;
+            return (
+                <Table.Row key={user_id}
+                               active={user_id === selected_user}
+                               onClick={() => this.selectUser(user_id, user)} >
                     <Table.Cell>{firstName}</Table.Cell>
                     <Table.Cell>{lastName}</Table.Cell>
-                    <Table.Cell>{reg_time}</Table.Cell>
-                </Table.Row>} flowing hoverable on='click'>
-                    <Table compact='very' structured unstackable singleLine celled>
-                        <Table.Row disabled>
-                            <Table.HeaderCell width={3}>Social Id</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Sec Group</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Gxy User</Table.HeaderCell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell textAlign='center'>{idp}</Table.Cell>
-                            <Table.Cell textAlign='center'>{grp}</Table.Cell>
-                            <Table.Cell textAlign='center'>{gxy_user ? v : x}</Table.Cell>
-                        </Table.Row>
-                    </Table>
-                </Popup>
+                    <Table.Cell>{email}</Table.Cell>
+                </Table.Row>
             )
         });
-
-        const options = [
-            { key: 'email', text: 'MAIL', value: 'email' },
-            { key: 'id', text: 'ID', value: 'id' },
-        ]
 
         return (
             <Container fluid >
                 <Menu size='large' secondary>
-                    <Menu.Item>
-                    </Menu.Item>
                     <Menu.Menu position='left'>
                         <Input type='text' placeholder='Search..' action value={input}
                                onChange={(e, { value }) => this.setState({input: value})}>
                             <input />
-                            <Select compact options={options} value={search}
-                                    onChange={(e, { value }) => this.setState({search: value})}/>
-                            <Button type='submit' color='blue' disabled={!search}
-                                    onClick={() => this.searchUser(search)}>Search</Button>
+                            <Button type='submit' color='blue' disabled={!input}
+                                    onClick={() => this.searchUser()}>Search</Button>
                         </Input>
                     </Menu.Menu>
-                    {/*<Menu.Menu position='right'>*/}
-                    {/*    <Menu.Item>*/}
-                    {/*    </Menu.Item>*/}
-                    {/*    <Menu.Item>*/}
-                    {/*        <Button color='red' onClick={this.cleanUsers}>CleanUsers</Button>*/}
-                    {/*    </Menu.Item>*/}
-                    {/*</Menu.Menu>*/}
+                    <Menu.Item>
+                    </Menu.Item>
+                    {user ?
+                        <Input className='user_input' focus type='text' placeholder='Search..' action value={user.firstName + " " + user.lastName}
+                               onChange={(e, { value }) => this.setState({input: value})}>
+                            <input />
+                            <Button type='submit' color='green'
+                                    onClick={this.addUser}>Add</Button>
+                        </Input>
+                        : null}
+                    <Menu.Item>
+                    </Menu.Item>
                 </Menu>
                 <Segment textAlign='center' className="group_list" raised >
                     <Table selectable compact='very' basic structured className="admin_table" unstackable>
                         <Table.Body>
                             <Table.Row disabled>
-                                <Table.Cell width={3}>Email</Table.Cell>
                                 <Table.Cell width={2}>First Name</Table.Cell>
                                 <Table.Cell width={2}>Last Name</Table.Cell>
-                                <Table.Cell width={3}>Reg Time</Table.Cell>
+                                <Table.Cell width={3}>Email</Table.Cell>
                             </Table.Row>
                             {users_content}
                         </Table.Body>
