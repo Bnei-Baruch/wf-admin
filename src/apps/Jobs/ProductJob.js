@@ -346,8 +346,8 @@ class ProductJob extends Component {
                 <Menu secondary >
                     <Menu.Item>
                         <Button positive={true}
-                                disabled={job_name === ""}
-                                onClick={this.newJob}>New Project
+                                disabled={job_name === "" || doers.length === 0}
+                                onClick={this.newJob}>New Job
                         </Button>
                     </Menu.Item>
                     <Menu.Item>
