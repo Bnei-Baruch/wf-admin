@@ -259,6 +259,7 @@ class ProductJob extends Component {
 
         const {job_data, source, renaming, rename_button, cit_open, inserting, insert_button, note_area,
             filedata, metadata, special, send_button, sending, job_name, doers} = this.state;
+        const {users} = this.props;
 
         const send_options = [
             {key: 'Censor', text: 'Censor', value: 'censored'},
@@ -332,11 +333,10 @@ class ProductJob extends Component {
             )
         });
 
-        const doers_list = [
-            {key: 0, text: "Michael Waintraub", value: "Michael Waintraub"},
-            {key: 1, text: "Tanya Jdanova", value: "Tanya Jdanova"},
-            {key: 2, text: "Hava Talal", value: "Hava Talal"},
-            ];
+        const doers_list = users.map( u => {
+            const {user_id, firstName, lastName, email} = u;
+            return ({key: user_id, text: firstName + " " + lastName + " (" + email + ")", value: user_id})
+        });
 
         return (
             <Segment textAlign='center' className="ingest_segment" basic>
