@@ -16,6 +16,7 @@ export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.R
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
+export const WFNAS_STP = process.env.REACT_APP_WFNAS_STP;
 export const WF_BACKEND = process.env.REACT_APP_WF_BACKEND;
 export const WFNAS_BACKEND = window.location.hostname === "wfsrv.bbdomain.org" ? WF_BACKEND : process.env.REACT_APP_WFNAS_BACKEND;
 export const WFNAS_URL = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFNAS_URL : '/wfnas';

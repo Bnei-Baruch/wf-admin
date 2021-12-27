@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND, WFNAS_STP} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -21,6 +21,8 @@ class CloudFiles extends Component {
 
     state = {
         files: [],
+        jobs: [],
+        job_id: null,
         filters: {},
         wfstatus: {},
         line: {},
@@ -36,10 +38,12 @@ class CloudFiles extends Component {
         getData('jobs/find?doers='+user_id, (jobs) => {
             console.log(jobs)
             this.setState({jobs});
-            if(jobs.length > 0) {
-                this.getFiles(jobs[0].job_id)
-            }
         })
+    };
+
+    selectJob = (job_id) => {
+        this.setState({job_id});
+        this.getFiles(job_id)
     };
 
     getFiles = (job_id, offset) => {
@@ -130,7 +134,7 @@ class CloudFiles extends Component {
     selectFile = (file_data) => {
         console.log(":: Selected file: ",file_data);
         let path = file_data.url;
-        let source = `${WFSRV_BACKEND}${path}`;
+        let source = `${WFNAS_STP}${path}`;
         this.setState({source, active: file_data.oid, file_data});
     };
 
@@ -147,7 +151,7 @@ class CloudFiles extends Component {
     };
 
     render() {
-        const {files, source, page, archive, date, language} = this.state;
+        const {files, source, page, archive, date, language, jobs} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -176,6 +180,11 @@ class CloudFiles extends Component {
                 <Checkbox label='Secured' onClick={() => this.toggle("secured")} checked={this.state.wfstatus.secured} /><br />
                 <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>
         );
+
+        const jobs_list = jobs.map(j => {
+            const {job_id, job_name} = j;
+            return ({key: job_id, text: job_name, value: job_id})
+        });
 
         let files_data = files.map((data) => {
             const {oid, name, type, date, language, extension} = data;
@@ -216,17 +225,15 @@ class CloudFiles extends Component {
                         {/*        onChange={this.setDateFilter}*/}
                         {/*    />*/}
                         {/*</Menu.Item>*/}
-                        {/*<Menu.Item>*/}
-                        {/*    <Dropdown*/}
-                        {/*        placeholder="Language:"*/}
-                        {/*        selection*/}
-                        {/*        clearable*/}
-                        {/*        options={dep_options}*/}
-                        {/*        language={language}*/}
-                        {/*        onChange={(e, {value}) => this.setLangFilter(value)}*/}
-                        {/*        value={language}>*/}
-                        {/*    </Dropdown>*/}
-                        {/*</Menu.Item>*/}
+                        <Menu.Item>
+                            <Dropdown
+                                placeholder="Select project.."
+                                selection
+                                options={jobs_list}
+                                onChange={(e, {value}) => this.selectJob(value)}
+                                value={language}>
+                            </Dropdown>
+                        </Menu.Item>
                         <Menu.Menu position='right'>
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
