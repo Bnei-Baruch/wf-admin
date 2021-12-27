@@ -32,14 +32,21 @@ class CloudFiles extends Component {
     };
 
     componentDidMount() {
-        this.getFiles();
+        const {user_id} = this.props.user;
+        getData('jobs/find?doers='+user_id, (jobs) => {
+            console.log(jobs)
+            this.setState({jobs});
+            if(jobs.length > 0) {
+                this.getFiles(jobs[0].job_id)
+            }
+        })
     };
 
-    getFiles = (offset) => {
+    getFiles = (job_id, offset) => {
         const {filters, page} = this.state;
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? `files/find?limit=20&offset=${offset}` : `files/find?limit=20&offset=${offset}&` + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `cloud/find?limit=20&offset=${offset}` : `cloud/find?limit=20&offset=${offset}&` + query.join('&');
 
         if(filters.archive) {
             path = path + `&archive=true&uid=`
@@ -48,11 +55,13 @@ class CloudFiles extends Component {
         if(filters.pattern) {
             let id = filters.pattern;
             if(id.match(/^([a-zA-Z0-9]{8})$/)) {
-                path = `files/find?pattern=${id}`
+                path = `cloud/find?pattern=${id}`
             } else {
-                path = `files/find?product_id=${id}`
+                path = `cloud/find?product_id=${id}`
             }
         }
+
+        path = `cloud/find?wid=${job_id}`
 
         getData(path, files => {
             console.log(files)
@@ -119,10 +128,10 @@ class CloudFiles extends Component {
     };
 
     selectFile = (file_data) => {
-        console.log(":: Sselected file: ",file_data);
-        let path = file_data.properties.url;
+        console.log(":: Selected file: ",file_data);
+        let path = file_data.url;
         let source = `${WFSRV_BACKEND}${path}`;
-        this.setState({source, active: file_data.file_id, file_data});
+        this.setState({source, active: file_data.oid, file_data});
     };
 
     getPlayer = (player) => {
@@ -169,34 +178,17 @@ class CloudFiles extends Component {
         );
 
         let files_data = files.map((data) => {
-            const {file_id, file_name, file_type, date, language, extension, properties, product_id, uid} = data;
-            const {removed, archive, sync} = properties;
-            let name = sync ? <div>{l}&nbsp;&nbsp;&nbsp;{file_name}</div> : file_name;
-            let time = new Date(file_id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
-            let href = `${MDB_UNIT_URL}/${uid}`;
-            let link = archive ? (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>) : "";
-            let rowcolor = archive && uid === "";
+            const {oid, name, type, date, language, extension} = data;
+            //let time = new Date(oid.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
+            const file_id = oid;
             let active = this.state.active === file_id ? 'active' : 'monitor_tr';
             return (
-                <Table.Row key={file_id} negative={rowcolor} positive={archive} warning={false} className={active}
+                <Table.Row key={file_id} warning={false} className={active}
                            onClick={() => this.selectFile(data)}>
-                    <Popup
-                        trigger={<Table.Cell>{file_id}</Table.Cell>}
-                        on='click'
-                        hideOnScroll
-                        onOpen={() => this.getStatus(data)}
-                        mountNode={document.getElementById("ltr-modal-mount")}>
-                        {this.props.wf_root ? root : admin}
-                    </Popup>
-                    <Table.Cell>{product_id}</Table.Cell>
-                    <Table.Cell>{link}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
-                    <Table.Cell>{file_type}</Table.Cell>
                     <Table.Cell>{language}</Table.Cell>
                     <Table.Cell>{extension}</Table.Cell>
-                    <Table.Cell warning={removed}>{removed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!archive}>{archive ? v : x}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -205,37 +197,36 @@ class CloudFiles extends Component {
             <Segment basic className="wfdb_app">
                 <Message size='large'>
                     <Menu size='large' secondary >
-                        <Menu.Item>
-                            <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <DatePicker
-                                // locale={locale}
-                                customInput={<Input icon={
-                                    <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />
-                                }/>}
-                                dateFormat="yyyy-MM-dd"
-                                showYearDropdown
-                                showMonthDropdown
-                                scrollableYearDropdown
-                                maxDate={new Date()}
-                                openToDate={new Date()}
-                                selected={date ? date : null}
-                                placeholderText="Date:"
-                                onChange={this.setDateFilter}
-                            />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Dropdown
-                                placeholder="Language:"
-                                selection
-                                clearable
-                                options={dep_options}
-                                language={language}
-                                onChange={(e, {value}) => this.setLangFilter(value)}
-                                value={language}>
-                            </Dropdown>
-                        </Menu.Item>
+                        {/*<Menu.Item>*/}
+                        {/*    <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />*/}
+                        {/*</Menu.Item>*/}
+                        {/*<Menu.Item>*/}
+                        {/*    <DatePicker*/}
+                        {/*        customInput={<Input icon={*/}
+                        {/*            <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />*/}
+                        {/*        }/>}*/}
+                        {/*        dateFormat="yyyy-MM-dd"*/}
+                        {/*        showYearDropdown*/}
+                        {/*        showMonthDropdown*/}
+                        {/*        scrollableYearDropdown*/}
+                        {/*        maxDate={new Date()}*/}
+                        {/*        openToDate={new Date()}*/}
+                        {/*        selected={date ? date : null}*/}
+                        {/*        placeholderText="Date:"*/}
+                        {/*        onChange={this.setDateFilter}*/}
+                        {/*    />*/}
+                        {/*</Menu.Item>*/}
+                        {/*<Menu.Item>*/}
+                        {/*    <Dropdown*/}
+                        {/*        placeholder="Language:"*/}
+                        {/*        selection*/}
+                        {/*        clearable*/}
+                        {/*        options={dep_options}*/}
+                        {/*        language={language}*/}
+                        {/*        onChange={(e, {value}) => this.setLangFilter(value)}*/}
+                        {/*        value={language}>*/}
+                        {/*    </Dropdown>*/}
+                        {/*</Menu.Item>*/}
                         <Menu.Menu position='right'>
                         <Menu.Item>
                             <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
@@ -253,16 +244,10 @@ class CloudFiles extends Component {
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>ID</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Product ID</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
                             <Table.HeaderCell width={4}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Type</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Language</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Extension</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>RMV</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>SND</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -271,7 +256,7 @@ class CloudFiles extends Component {
                     </Table.Body>
                     <Table.Footer fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='9' textAlign='center'>
+                            <Table.HeaderCell colSpan='4' textAlign='center'>
                                 <Button.Group>
                                     <Button basic disabled={page === 0}
                                             onClick={() => this.getFiles(page - 20)}>

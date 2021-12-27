@@ -14,6 +14,7 @@ class JobsApp extends Component {
         tab: "metadata",
         users: [],
         user: {
+            user_id: this.props.user.sub,
             name: this.props.user.name,
             email: this.props.user.email,
             rooter: kc.hasRealmRole("wf_jobs_root"),
@@ -58,7 +59,7 @@ class JobsApp extends Component {
     render() {
 
         const panes = [
-            { menuItem: { key: 'jobs', content: 'Projects', disabled: false},
+            { menuItem: { key: 'jobs', content: 'Admin', disabled: false},
                 render: () => <Tab.Pane attached ><ProductJob {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'files', content: 'Files', disabled: false },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
