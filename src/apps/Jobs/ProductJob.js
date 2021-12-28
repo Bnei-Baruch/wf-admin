@@ -304,7 +304,7 @@ class ProductJob extends Component {
                     className={active} key={id} onClick={() => this.selectJob(data)}>
                     <Table.Cell>
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
-                               trigger={<Icon name='mail' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
+                               trigger={<Icon name='mail' size='large' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
                             {notes_list}
                             <Message warning attached>
                                 <TextArea value={note_area} className='note_area'
@@ -316,10 +316,10 @@ class ProductJob extends Component {
                         </Popup>
                     </Table.Cell>
                     <Table.Cell>
-                        {subtitles ? <Modal trigger={<Icon name='wordpress forms' color={subtitles ? 'green' : 'grey'} />}
+                        {subtitles ? <Modal trigger={<Icon name='wordpress forms' size='large' color={subtitles ? 'green' : 'grey'} />}
                                mountNode={document.getElementById("ltr-modal-mount")} >
                             <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />
-                        </Modal> : <Icon name='file' color={subtitles ? 'green' : 'grey'} />}
+                        </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}
                     </Table.Cell>
                     <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
                     <Table.Cell>{data.file_name}</Table.Cell>
@@ -433,10 +433,10 @@ class ProductJob extends Component {
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={1}>Note</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Msg</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Title</Table.HeaderCell>
-                            <Table.HeaderCell width={9}>File Name</Table.HeaderCell>
+                            <Table.HeaderCell width={7}>Title</Table.HeaderCell>
+                            <Table.HeaderCell width={4}>Editor</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
                             <Table.HeaderCell width={1}>Fix</Table.HeaderCell>

@@ -6,6 +6,7 @@ import {Tab} from "semantic-ui-react";
 import CloudFiles from "./CloudFiles";
 import '../WFDB/WFDB.css';
 import UsersJob from "./UsersJob";
+import BoardJob from "./BoardJob";
 
 class JobsApp extends Component {
 
@@ -17,10 +18,9 @@ class JobsApp extends Component {
             user_id: this.props.user.sub,
             name: this.props.user.name,
             email: this.props.user.email,
-            rooter: kc.hasRealmRole("wf_jobs_root"),
-            adminer: kc.hasRealmRole("wf_jobs_admin"),
-            archer: kc.hasRealmRole("wf_jobs_archive"),
-            viewer: kc.hasRealmRole("wf_jobs_viewer"),
+            adminer: !kc.hasRealmRole("wf_jobs_admin"),
+            editor: !kc.hasRealmRole("wf_jobs_editor"),
+            viewer: !kc.hasRealmRole("wf_jobs_viewer"),
         }
     };
 
@@ -57,13 +57,20 @@ class JobsApp extends Component {
     };
 
     render() {
+        let {adminer, editor} = this.state.user;
+
+        if(kc.hasRealmRole("wf_root")) {
+            adminer = false; editor = false;
+        }
 
         const panes = [
-            { menuItem: { key: 'jobs', content: 'Admin', disabled: false},
-                render: () => <Tab.Pane attached ><ProductJob {...this.state} /></Tab.Pane> },
-            { menuItem: { key: 'files', content: 'Files', disabled: false },
+            { menuItem: { key: 'Home', content: 'Board', disabled: false },
+                render: () => <Tab.Pane attached={true} ><BoardJob {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'jobs', content: 'Admin', disabled: adminer},
+                render: () => <Tab.Pane><ProductJob {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'files', content: 'Files', disabled: editor },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
-            { menuItem: { key: 'users', content: 'Users', disabled: false },
+            { menuItem: { key: 'users', content: 'Users', disabled: adminer },
                 render: () => <Tab.Pane ><UsersJob {...this.state} getUsers={this.getUsers} /></Tab.Pane> },
         ]
 
