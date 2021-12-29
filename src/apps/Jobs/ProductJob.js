@@ -279,9 +279,12 @@ class ProductJob extends Component {
         let p = (<Icon color='blue' name='cogs'/>);
 
         let jobs = this.state.jobs.map((data) => {
-            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = data.wfstatus;
-            let notes = data.product ? data.product.notes : [];
-            let subtitles = data.product && data.product.subtitle ? data.product.subtitle.url : null;
+            const {date, job_name, product, parent, wfstatus} = data;
+            const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = wfstatus;
+            let notes = product ? product.notes : [];
+            let subtitles = product && product.subtitle ? product.subtitle.url : null;
+            const editor = users.find(u => u.user_id === parent.doers[0]);
+            const {firstName, lastName, email} = editor;
             let notes_list = notes.map((note,i) => {
                 const {message,name,date} = note;
                 let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
@@ -293,7 +296,7 @@ class ProductJob extends Component {
             });
             let id = data.job_id;
             let ready = true;
-            let title = ready ? data.job_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.job_name}</div>;
+            let title = ready ? job_name : <div>{l}&nbsp;&nbsp;&nbsp;{job_name}</div>;
             //let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             if(removed) return false;
             let rowcolor = censored && !checked;
@@ -322,8 +325,8 @@ class ProductJob extends Component {
                         </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}
                     </Table.Cell>
                     <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
-                    <Table.Cell>{data.file_name}</Table.Cell>
-                    <Table.Cell>{data.date}</Table.Cell>
+                    <Table.Cell>{firstName + " " + lastName + " (" + email + ")"}</Table.Cell>
+                    <Table.Cell>{date}</Table.Cell>
                     <Table.Cell negative={!checked}>{censored && !checked ? p : checked ? v : x}</Table.Cell>
                     <Table.Cell negative={!fixed}>{fix_req && !fixed ? p : fixed ? v : x}</Table.Cell>
                     <Table.Cell negative={!posted}>{post_req && !posted ? p : posted ? v : x}</Table.Cell>
