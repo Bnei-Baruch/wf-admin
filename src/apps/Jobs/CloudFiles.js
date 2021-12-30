@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND, WFNAS_STP} from '../../shared/tools';
+import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND, WFNAS_STP, putData} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -16,6 +16,7 @@ import {
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import {dep_options} from "../../shared/consts";
+import ProductUpload from "./ProductUpload";
 
 class CloudFiles extends Component {
 
@@ -70,6 +71,17 @@ class CloudFiles extends Component {
         getData(path, files => {
             console.log(files)
             this.setState({page: offset, files})
+        });
+    };
+
+    jobWorkflow = (filedata) => {
+        filedata.archive_type = "product";
+        filedata.job_id = this.state.job_id;
+        filedata.timestamp = Date.now()
+        console.log(":: JobsApp - got data: ", filedata);
+        putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
+            console.log(":: JobsApp - workflow respond: ",cb);
+            this.setState({job_id: null})
         });
     };
 
@@ -151,7 +163,7 @@ class CloudFiles extends Component {
     };
 
     render() {
-        const {files, source, page, archive, date, language, jobs} = this.state;
+        const {files, source, page, job_id, date, language, jobs} = this.state;
 
         let v = (<Icon name='checkmark'/>);
         let x = (<Icon name='close'/>);
@@ -204,6 +216,7 @@ class CloudFiles extends Component {
 
         return (
             <Segment basic className="wfdb_app">
+                {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
                 <Message size='large'>
                     <Menu size='large' secondary >
                         {/*<Menu.Item>*/}
@@ -231,7 +244,7 @@ class CloudFiles extends Component {
                                 selection
                                 options={jobs_list}
                                 onChange={(e, {value}) => this.selectJob(value)}
-                                value={language}>
+                                value={job_id}>
                             </Dropdown>
                         </Menu.Item>
                         <Menu.Menu position='right'>

@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {WFSRV_BACKEND, putData, getData, IVAL} from "../../shared/tools";
+import {getData} from "../../shared/tools";
 import ProductJob from "./ProductJob";
 import {kc} from "../../components/UserManager";
 import {Tab} from "semantic-ui-react";
@@ -11,7 +11,6 @@ import BoardJob from "./BoardJob";
 class JobsApp extends Component {
 
     state = {
-        job_id: false,
         tab: "metadata",
         users: [],
         user: {
@@ -34,26 +33,10 @@ class JobsApp extends Component {
         });
     };
 
-    jobWorkflow = (filedata) => {
-        filedata.archive_type = "product";
-        filedata.job_id = this.state.job_id;
-        filedata.timestamp = Date.now()
-        console.log(":: JobsApp - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
-            console.log(":: JobsApp - workflow respond: ",cb);
-            this.setState({job_id: null})
-        });
-    };
-
     selectTab = (e, data) => {
         let tab = data.panes[data.activeIndex].menuItem.key;
         console.log(" :: Tab selected: ",tab);
         this.setState({tab});
-    };
-
-    masterUpload = (job_id) => {
-        job_id = job_id === this.state.job_id ? false : job_id;
-        this.setState({job_id})
     };
 
     render() {
@@ -76,8 +59,6 @@ class JobsApp extends Component {
 
         return (
             <Fragment>
-                {/*{this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}*/}
-                {/*<ProductJob user={this.props.user} masterUpload={this.masterUpload} />*/}
                 <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
             </Fragment>
         );

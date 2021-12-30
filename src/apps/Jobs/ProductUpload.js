@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Progress,Message,Segment } from 'semantic-ui-react';
+import { Progress,Message } from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {WFSRV_BACKEND} from "../../shared/tools";
 
@@ -23,7 +23,7 @@ class ProductUpload extends Component {
         const props = {
             action: `${WFSRV_BACKEND}/jobs/upload`,
             type: 'drag',
-            accept: '.mp4, .doc, .docx',
+            accept: '.mp4',
             beforeUpload(file) {
                 console.log('beforeUpload', file.name);
             },
@@ -44,7 +44,7 @@ class ProductUpload extends Component {
                     className="aricha"
                     onSuccess={this.uploadDone}
                     onProgress={this.progress} >
-                    Drop file here or click me
+                    Drop your complete product here or click me for select from local disk
                 </Upload>
                 <Progress label='' percent={this.state.percent} indicating progress='percent' />
             </Message>
