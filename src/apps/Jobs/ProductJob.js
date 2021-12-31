@@ -46,6 +46,7 @@ class ProductJob extends Component {
         job_name: "",
         jobs: [],
         job_data: {},
+        job_files: [],
         filedata: {},
         kmedia_option: false,
         metadata: {},
@@ -75,33 +76,42 @@ class ProductJob extends Component {
 
     selectJob = (job_data) => {
         console.log(":: ArichaJobs - selected job: ", job_data);
-
+        this.getJobFiles(job_data.job_id);
+        this.setState({job_data, active: job_data.job_id});
         // Check if master file is added
-        if(!job_data.original) {
-            this.setState({job_data, source: null, active: job_data.job_id});
-            return
-        } else {
-            // Build url for preview (take proxy if exist)
-            let path = job_data.proxy ? job_data.proxy.format.filename : job_data.original.format.filename;
-            let source = `${WFSRV_BACKEND}${path}`;
-            this.setState({job_data, source, active: job_data.job_id});
-        }
+        // if(!job_data.original) {
+        //     this.setState({job_data, source: null, active: job_data.job_id});
+        //     return
+        // } else {
+        //     // Build url for preview (take proxy if exist)
+        //     let path = job_data.proxy ? job_data.proxy.format.filename : job_data.original.format.filename;
+        //     let source = `${WFSRV_BACKEND}${path}`;
+        //     this.setState({job_data, source, active: job_data.job_id});
+        // }
 
         // Check SHA1 in WFDB
-        getData(`trimmer/sha1?value=${job_data.original.format.sha1}`, (trimmer) => {
-            if(trimmer.length > 0) {
-                console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
-                alert("File did NOT changed from trimmer");
-            } else {
-                // Check SHA1 in MDB
-                let sha1 = job_data.original.format.sha1;
-                let fetch_url = `${MDB_FINDSHA}/${sha1}`;
-                getUnits(fetch_url, (units) => {
-                    if (units.total > 0) {
-                        console.log("The SHA1 exist in MDB!", units);
-                    }
-                });
-            }
+        // getData(`trimmer/sha1?value=${job_data.original.format.sha1}`, (trimmer) => {
+        //     if(trimmer.length > 0) {
+        //         console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
+        //         alert("File did NOT changed from trimmer");
+        //     } else {
+        //         // Check SHA1 in MDB
+        //         let sha1 = job_data.original.format.sha1;
+        //         let fetch_url = `${MDB_FINDSHA}/${sha1}`;
+        //         getUnits(fetch_url, (units) => {
+        //             if (units.total > 0) {
+        //                 console.log("The SHA1 exist in MDB!", units);
+        //             }
+        //         });
+        //     }
+        // });
+    };
+
+    getJobFiles = (job_id) => {
+        const path = `cloud/find?wid=${job_id}&type=job`
+        getData(path, job_files => {
+            console.log("getJobFiles :: ", job_files);
+            this.setState({job_files})
         });
     };
 
