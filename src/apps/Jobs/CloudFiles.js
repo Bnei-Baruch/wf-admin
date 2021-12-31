@@ -66,7 +66,7 @@ class CloudFiles extends Component {
             }
         }
 
-        path = `cloud/find?wid=${job_id}`
+        path = `cloud/find?wid=${job_id}&type=raw`
 
         getData(path, files => {
             console.log(files)
@@ -75,11 +75,12 @@ class CloudFiles extends Component {
     };
 
     jobWorkflow = (filedata) => {
-        filedata.archive_type = "product";
-        filedata.job_id = this.state.job_id;
-        filedata.timestamp = Date.now()
+        filedata.archive_type = "job";
+        filedata.source = "upload";
+        filedata.source_path = "/backup/tmp/upload";
+        filedata.wid = this.state.job_id;
         console.log(":: JobsApp - got data: ", filedata);
-        putData(`${WFSRV_BACKEND}/workflow/jobs`, filedata, (cb) => {
+        putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
             console.log(":: JobsApp - workflow respond: ",cb);
             this.setState({job_id: null})
         });

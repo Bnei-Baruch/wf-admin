@@ -21,7 +21,7 @@ class ProductUpload extends Component {
     render() {
 
         const props = {
-            action: `${WFSRV_BACKEND}/jobs/upload`,
+            action: `${WFSRV_BACKEND}/job/upload`,
             type: 'drag',
             accept: '.mp4',
             beforeUpload(file) {
