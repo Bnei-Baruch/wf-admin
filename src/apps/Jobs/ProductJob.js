@@ -33,6 +33,7 @@ import {
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import InsertModal from "../Insert/InsertModal"
 import CIT from '../CIT/CIT';
+import mqtt from "../../shared/mqtt";
 
 class ProductJob extends Component {
 
@@ -51,7 +52,7 @@ class ProductJob extends Component {
         kmedia_option: false,
         metadata: {},
         input_id: "",
-        ival: null,
+        topic: null,
         renaming: false,
         rename_button: false,
         send_button: true,
@@ -63,15 +64,28 @@ class ProductJob extends Component {
     };
 
     componentDidMount() {
-        let ival = setInterval(() => getData('jobs', (data) => {
-                if (JSON.stringify(this.state.jobs) !== JSON.stringify(data))
-                    this.setState({jobs: data})
-            }), IVAL );
-        this.setState({ival});
+        this.initMQTT();
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        mqtt.exit(this.state.topic)
+    };
+
+    initMQTT = () => {
+        const data = 'wfdb/service/jobs/state';
+        const local = window.location.hostname === "wfsrv.bbdomain.org";
+        const topic = local ? data : 'bb/' + data;
+        this.setState({topic})
+        mqtt.join(topic);
+        mqtt.watch((message, type, source) => {
+            this.onMqttMessage(message, type, source);
+        }, local)
+    };
+
+    onMqttMessage = (message, type, source) => {
+        if(type !== "jobs") return
+        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+        this.setState({jobs: message});
     };
 
     selectJob = (job_data) => {
