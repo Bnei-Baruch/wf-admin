@@ -161,7 +161,7 @@ class FileManager extends Component {
                 file_data.properties.archive = true;
                 file_data.properties.mdb = true;
                 delete file_data.id;
-                putData(`${CNV_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
                     console.log(":: saveFile: ",cb);
                     this.props.getProductFiles();
                     this.setState({inserting: false});
@@ -182,7 +182,7 @@ class FileManager extends Component {
 
     mobileConvert = () => {
         const {file_data} = this.props;
-        fetch(`${WFDB_BACKEND}/convert?id=${file_data.file_id}&key=mobile`,
+        fetch(`${CNV_BACKEND}/convert?id=${file_data.file_id}&key=mobile`,
             { method: 'GET',headers: {'Authorization': 'bearer ' + getToken()}})
         this.makeDelay();
     };
@@ -191,7 +191,7 @@ class FileManager extends Component {
         this.setState({delay: true});
         setTimeout(() => {
             this.setState({delay: false});
-        }, 10000);
+        }, 30000);
     };
 
     render() {
