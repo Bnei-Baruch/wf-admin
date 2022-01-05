@@ -7,7 +7,7 @@ import {
     newMdbUnit,
     updateMdbUnit,
     WFSRV_BACKEND,
-    toHms
+    toHms, CNV_BACKEND
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -17,6 +17,7 @@ class FileManager extends Component {
 
     state = {
         active: null,
+        delay: false,
         file_type: "",
         langs_files: {},
         product_name: "",
@@ -160,7 +161,7 @@ class FileManager extends Component {
                 file_data.properties.archive = true;
                 file_data.properties.mdb = true;
                 delete file_data.id;
-                putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                putData(`${CNV_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
                     console.log(":: saveFile: ",cb);
                     this.props.getProductFiles();
                     this.setState({inserting: false});
@@ -177,10 +178,24 @@ class FileManager extends Component {
     closeModal = () => {
         this.setState({file_type: "", archive: false});
         this.props.toggleFileManager();
-    }
+    };
+
+    mobileConvert = () => {
+        const {file_data} = this.props;
+        fetch(`${WFDB_BACKEND}/convert?id=${file_data.file_id}&key=mobile`,
+            { method: 'GET',headers: {'Authorization': 'bearer ' + getToken()}})
+        this.makeDelay();
+    };
+
+    makeDelay = () => {
+        this.setState({delay: true});
+        setTimeout(() => {
+            this.setState({delay: false});
+        }, 10000);
+    };
 
     render() {
-        const {showConfirm, showEditFile, file_type, inserting, archive} = this.state;
+        const {showConfirm, showEditFile, file_type, inserting, archive, delay} = this.state;
         const {source, file_data, to_mdb, metadata} = this.props;
         const name = metadata?.name;
         const {rooter, adminer, archer, viewer} = this.props.user;
@@ -282,7 +297,8 @@ class FileManager extends Component {
                                 <Button color='violet' basic content='Download' href={source} download />
                             </Grid.Column>
                             <Grid.Column>
-                                <Button color='orange' basic content='Youtube' />
+                                <Button color='orange' basic content='Mobile' loading={delay} disabled={delay}
+                                onClick={this.mobileConvert} />
                             </Grid.Column>
                             {lang_permission ?
                             <Grid.Column>
