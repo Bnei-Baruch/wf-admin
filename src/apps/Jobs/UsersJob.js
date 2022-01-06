@@ -32,8 +32,9 @@ class UsersJob extends Component {
     };
 
     addUser = () => {
-        const {user} = this.state;
+        const {user, role} = this.state;
         user.properties = {removed: false};
+        user.role = role;
         console.log(user);
         putData(`${WFDB_BACKEND}/users/${user.user_id}`, user, (cb) => {
             console.log(":: addUser respond: ",cb);
@@ -81,8 +82,8 @@ class UsersJob extends Component {
                     <Menu.Item>
                         {user ?
                             <Select value={role} options={[
-                                {key:"editor",text:"editor",value:"editor"},
-                                {key:"writer",text:"writer",value:"writer"}
+                                {key:"editor",text:"Editor",value:"editor"},
+                                {key:"writer",text:"Writer",value:"writer"}
                             ]} onChange={(e, { value }) => this.setState({role: value})} />
                             : null}
                     </Menu.Item>
