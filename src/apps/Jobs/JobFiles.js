@@ -11,7 +11,7 @@ import {
     Button,
     Menu,
     Modal,
-    Message, Dropdown
+    Message, Dropdown, Grid
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -218,29 +218,9 @@ class JobFiles extends Component {
 
         return (
             <Segment basic className="wfdb_app">
-                {/*{this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}*/}
                 <Message size='large'>
-                    <Menu size='large' secondary >
-                        {/*<Menu.Item>*/}
-                        {/*    <Checkbox label='To Archive' checked={archive} onChange={() => this.setArchiveFilter(!archive)} />*/}
-                        {/*</Menu.Item>*/}
-                        {/*<Menu.Item>*/}
-                        {/*    <DatePicker*/}
-                        {/*        customInput={<Input icon={*/}
-                        {/*            <Icon name={date ? 'close' : 'dropdown'} link onClick={() => this.removeFilter("date")} />*/}
-                        {/*        }/>}*/}
-                        {/*        dateFormat="yyyy-MM-dd"*/}
-                        {/*        showYearDropdown*/}
-                        {/*        showMonthDropdown*/}
-                        {/*        scrollableYearDropdown*/}
-                        {/*        maxDate={new Date()}*/}
-                        {/*        openToDate={new Date()}*/}
-                        {/*        selected={date ? date : null}*/}
-                        {/*        placeholderText="Date:"*/}
-                        {/*        onChange={this.setDateFilter}*/}
-                        {/*    />*/}
-                        {/*</Menu.Item>*/}
-                        <Menu.Item>
+                    <Grid columns='equal'>
+                        <Grid.Column width={8}>
                             <Dropdown
                                 placeholder="Select project.."
                                 fluid
@@ -249,20 +229,24 @@ class JobFiles extends Component {
                                 onChange={(e, {value}) => this.selectJob(value)}
                                 value={job_id}>
                             </Dropdown>
-                        </Menu.Item>
-                        <Menu.Menu position='right'>
-                        <Menu.Item>
-                            <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
-                                   size='tiny'
-                                   mountNode={document.getElementById("ltr-modal-mount")}>
-                                <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
-                            </Modal>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button color='teal' icon='download' disabled={!source} href={source} download />
-                        </Menu.Item>
-                        </Menu.Menu>
-                    </Menu>
+                        </Grid.Column>
+                        <Grid.Column textAlign='right' >
+                            <Menu size='large' secondary fluid >
+                                <Menu.Menu position='right'>
+                                    <Menu.Item>
+                                        <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
+                                               size='tiny'
+                                               mountNode={document.getElementById("ltr-modal-mount")}>
+                                            <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />
+                                        </Modal>
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        <Button color='teal' icon='download' disabled={!source} href={source} download />
+                                    </Menu.Item>
+                                </Menu.Menu>
+                            </Menu>
+                        </Grid.Column>
+                    </Grid>
                 </Message>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
