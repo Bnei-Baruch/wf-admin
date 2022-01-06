@@ -19,6 +19,7 @@ class JobsApp extends Component {
             email: this.props.user.email,
             adminer: !kc.hasRealmRole("wf_jobs_admin"),
             editor: !kc.hasRealmRole("wf_jobs_editor"),
+            writer: !kc.hasRealmRole("wf_jobs_writer"),
             viewer: !kc.hasRealmRole("wf_jobs_viewer"),
         }
     };
@@ -29,6 +30,7 @@ class JobsApp extends Component {
 
     getUsers = () => {
         getData('users', (users) => {
+            console.log(" :: Users: ", users);
             this.setState({users})
         });
     };

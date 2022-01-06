@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Segment, Table, Menu, Input, Button} from "semantic-ui-react";
+import {Container, Segment, Table, Menu, Input, Button, Select} from "semantic-ui-react";
 import {getAuthData, AUTH_API, putData, WFDB_BACKEND} from "../../shared/tools";
 
 class UsersJob extends Component {
@@ -9,6 +9,7 @@ class UsersJob extends Component {
         disabled: true,
         loading: true,
         input: "",
+        role: "editor",
         user_info: {},
     };
 
@@ -49,11 +50,11 @@ class UsersJob extends Component {
     }
 
     render() {
-        const {selected_user, input, user} = this.state;
+        const {selected_user, input, user, role} = this.state;
         const {users} = this.props;
 
         let users_content = users.map(user => {
-            const {user_id,firstName,lastName,email} = user;
+            const {user_id,firstName,lastName,email,role} = user;
             return (
                 <Table.Row key={user_id}
                                active={user_id === selected_user}
@@ -61,6 +62,7 @@ class UsersJob extends Component {
                     <Table.Cell>{firstName}</Table.Cell>
                     <Table.Cell>{lastName}</Table.Cell>
                     <Table.Cell>{email}</Table.Cell>
+                    <Table.Cell>{role}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -68,25 +70,31 @@ class UsersJob extends Component {
         return (
             <Container fluid >
                 <Menu size='large' secondary>
-                    <Menu.Menu position='left'>
+                    <Menu.Item position='left'>
                         <Input type='text' placeholder='Search..' action value={input}
                                onChange={(e, { value }) => this.setState({input: value})}>
                             <input />
                             <Button type='submit' color='blue' disabled={!input}
                                     onClick={() => this.searchUser()}>Search</Button>
                         </Input>
-                    </Menu.Menu>
-                    <Menu.Item>
                     </Menu.Item>
-                    {user ?
-                        <Input className='user_input' focus type='text' placeholder='Search..' action value={user.firstName + " " + user.lastName}
-                               onChange={(e, { value }) => this.setState({input: value})}>
-                            <input />
-                            <Button type='submit' color='green'
-                                    onClick={this.addUser}>Add</Button>
-                        </Input>
-                        : null}
                     <Menu.Item>
+                        {user ?
+                            <Select value={role} options={[
+                                {key:"editor",text:"editor",value:"editor"},
+                                {key:"writer",text:"writer",value:"writer"}
+                            ]} onChange={(e, { value }) => this.setState({role: value})} />
+                            : null}
+                    </Menu.Item>
+                    <Menu.Item>
+                        {user ?
+                            <Input focus type='text' placeholder='Search..' action value={user.firstName + " " + user.lastName}
+                                   onChange={(e, { value }) => this.setState({input: value})}>
+                                <input />
+                                <Button type='submit' color='green'
+                                        onClick={this.addUser}>Add</Button>
+                            </Input>
+                            : null}
                     </Menu.Item>
                 </Menu>
                 <Segment textAlign='center' className="group_list" raised >
@@ -96,6 +104,7 @@ class UsersJob extends Component {
                                 <Table.Cell width={2}>First Name</Table.Cell>
                                 <Table.Cell width={2}>Last Name</Table.Cell>
                                 <Table.Cell width={3}>Email</Table.Cell>
+                                <Table.Cell width={2}>Role</Table.Cell>
                             </Table.Row>
                             {users_content}
                         </Table.Body>
