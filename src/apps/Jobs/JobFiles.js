@@ -18,7 +18,7 @@ import MediaPlayer from "../../components/Media/MediaPlayer";
 import {dep_options} from "../../shared/consts";
 import ProductUpload from "./ProductUpload";
 
-class CloudFiles extends Component {
+class JobFiles extends Component {
 
     state = {
         files: [],
@@ -67,7 +67,7 @@ class CloudFiles extends Component {
             }
         }
 
-        path = `cloud/find?wid=${job_id}&type=raw`
+        path = `cloud/find?wid=${job_id}&type=job`
 
         getData(path, files => {
             console.log(files)
@@ -218,7 +218,7 @@ class CloudFiles extends Component {
 
         return (
             <Segment basic className="wfdb_app">
-                {this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
+                {/*{this.state.job_id ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}*/}
                 <Message size='large'>
                     <Menu size='large' secondary >
                         {/*<Menu.Item>*/}
@@ -300,4 +300,4 @@ class CloudFiles extends Component {
     }
 }
 
-export default CloudFiles;
+export default JobFiles;

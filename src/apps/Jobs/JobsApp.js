@@ -7,6 +7,7 @@ import CloudFiles from "./CloudFiles";
 import '../WFDB/WFDB.css';
 import UsersJob from "./UsersJob";
 import BoardJob from "./BoardJob";
+import JobFiles from "./JobFiles";
 
 class JobsApp extends Component {
 
@@ -44,17 +45,15 @@ class JobsApp extends Component {
     render() {
         let {adminer, editor} = this.state.user;
 
-        if(kc.hasRealmRole("wf_root")) {
-            adminer = false; editor = false;
-        }
-
         const panes = [
             { menuItem: { key: 'Home', content: 'Board', disabled: false },
                 render: () => <Tab.Pane attached={true} ><BoardJob {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'jobs', content: 'Admin', disabled: adminer},
                 render: () => <Tab.Pane><ProductJob {...this.state} /></Tab.Pane> },
-            { menuItem: { key: 'files', content: 'Files', disabled: editor },
+            { menuItem: { key: 'files', content: 'Files', disabled: false },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
+            { menuItem: { key: 'products', content: 'Products', disabled: false },
+                render: () => <Tab.Pane ><JobFiles {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'users', content: 'Users', disabled: adminer },
                 render: () => <Tab.Pane ><UsersJob {...this.state} getUsers={this.getUsers} /></Tab.Pane> },
         ]
