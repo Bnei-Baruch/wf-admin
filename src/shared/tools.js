@@ -506,7 +506,7 @@ export const remuxLine = (unit, metadata, cb) => {
         } else if(lchk && metadata.insert_type === "2") {
             insertData(uid, "uid", (data) => {
                 console.log(":: insert data - got: ",data);
-                if(data.length > 0) {
+                if(data.length > 0 && data.upload_type === metadata.upload_type) {
                     metadata = setRemuxSrc(metadata, published);
                     metadata.insert_type = "5";
                     metadata.insert_id = data[0].insert_id;
