@@ -131,7 +131,7 @@ class InsertModal extends Component {
         // Take info from unit properties
         metadata = insertLine(metadata,unit);
 
-        // Declamation - that does not has unit
+        // Source - that does not has unit
         if(upload_type === "source") {
             this.checkMeta(metadata);
             return

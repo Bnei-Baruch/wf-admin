@@ -18,7 +18,7 @@
     "lodash": "^4.17.21",
     "mediaelement": "^4.2.16",
     "mediaelement-plugins": "^2.5.1",
-    "mqtt": "^4.3.0",
+    "mqtt": "4.3.4",
     "rc-upload": "4.3.3",
     "react": "^17.0.2",
     "react-datepicker": "^4.1.1",
