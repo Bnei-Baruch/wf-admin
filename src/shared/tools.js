@@ -527,7 +527,10 @@ export const remuxLine = (unit, metadata, cb) => {
                         metadata.line.fix_hd_sha1 = null;
                     } else if(vid_remux_src.length > 1) {
                         for(let i=0; i<vid_remux_src.length; i++) {
-                            metadata.line[vid_remux_src[i].properties.video_size + "_sha1"] = remux_src[i].sha1;
+                            if (vid_remux_src[i].properties.video_size === "nHD")
+                                metadata.line.fix_nhd_sha1 = vid_remux_src[i].sha1;
+                            if (vid_remux_src[i].properties.video_size === "HD")
+                                metadata.line.fix_hd_sha1 = vid_remux_src[i].sha1;
                         }
                     } else {
                         metadata.line.fix_nhd_sha1 = vid_remux_src[0].sha1;
