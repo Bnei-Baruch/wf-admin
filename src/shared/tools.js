@@ -504,9 +504,10 @@ export const remuxLine = (unit, metadata, cb) => {
             alert("Selected language already exist");
             cb(null);
         } else if(lchk && metadata.insert_type === "2") {
+            //FIXME: search by UID is wrong here! We can get not expected data!
             insertData(uid, "uid", (data) => {
                 console.log(":: insert data - got: ",data);
-                if(data.length > 0 && data.upload_type === metadata.upload_type) {
+                if(data.length > 0 && data[0].upload_type === metadata.upload_type) {
                     metadata = setRemuxSrc(metadata, published);
                     metadata.insert_type = "5";
                     metadata.insert_id = data[0].insert_id;
