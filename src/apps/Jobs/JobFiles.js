@@ -67,7 +67,7 @@ class JobFiles extends Component {
             }
         }
 
-        path = `cloud/find?wid=${job_id}&type=job`
+        path = `cloud/find?wid=${job_id}&type=job&limit=200`
 
         getData(path, files => {
             console.log(files)
