@@ -4,21 +4,33 @@ import '../WFDB/WFDB.css';
 import {Tab} from "semantic-ui-react";
 import FilesProducts from "./FilesProducts";
 import {kc} from "../../components/UserManager";
+import FilesLc from "./FilesLc";
 
 class FilesApp extends Component {
 
     state = {
         tab: "ingest",
+        files_closed: false,
+        files_product: false,
+        files_lc: false,
+        wf_panes: []
     };
 
     componentDidMount() {
+        const {user} = this.props;
         let files_closed = !kc.hasRealmRole("wf_closed");
         let files_product = !kc.hasRealmRole("wf_files_product");
-        this.setState({files_closed, files_product});
-    };
-
-    componentWillUnmount() {
-
+        let files_lc = !kc.hasRealmRole("wf_files_lc");
+        const panes = [
+            { menuItem: { key: 'ingest', content: 'Ingest', disabled: files_closed},
+                render: () => <Tab.Pane><FilesIngest user={user} /></Tab.Pane> },
+            { menuItem: { key: 'products', content: 'Products', disabled: files_product },
+                render: () => <Tab.Pane><FilesProducts user={user} /></Tab.Pane> },
+            { menuItem: { key: 'lc', content: 'LC', disabled: files_lc },
+                render: () => <Tab.Pane><FilesLc user={user} /></Tab.Pane> },
+        ]
+        const wf_panes = panes.filter(p => !p.menuItem.disabled);
+        this.setState({files_closed, files_product, files_lc, wf_panes});
     };
 
     selectTab = (e, data) => {
@@ -29,19 +41,11 @@ class FilesApp extends Component {
 
 
     render() {
-        const {user} = this.props;
-        const {files_closed, files_product} = this.state;
-
-        const panes = [
-        { menuItem: { key: 'ingest', content: 'Ingest', disabled: files_closed},
-            render: () => <Tab.Pane attached={files_closed} ><FilesIngest user={user} /></Tab.Pane> },
-        { menuItem: { key: 'products', content: 'Products', disabled: files_product },
-            render: () => <Tab.Pane attached={files_product} ><FilesProducts user={user} /></Tab.Pane> },
-            ]
+        const {wf_panes} = this.state;
 
         return (
             <Fragment>
-                <Tab menu={{ pointing: true }} panes={panes} onTabChange={this.selectTab} />
+                <Tab menu={{ pointing: true }} panes={wf_panes} onTabChange={this.selectTab} />
             </Fragment>
         );
     }

@@ -2,6 +2,13 @@
     font-size: 14px;
 }
 
+.frame {
+    overflow-y:scroll;
+    top:0px!important;
+    left:0px;
+    height:520px!important;
+}
+
 .wfdb_app .monitor_tr {
     background: #eaeaea;
     font-weight: bolder;
