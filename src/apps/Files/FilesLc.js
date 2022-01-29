@@ -1,7 +1,7 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import {
     Button,
-    Breadcrumb,
+    Label,
     Icon,
     Menu,
     Message,
@@ -31,7 +31,7 @@ class FilesLc extends Component {
         const {is_dir, name, mod_time, path} = file_data;
         console.log(":: Selected file: ",file_data);
         if(is_dir) {
-            this.setState({data: file_data.children, navigation: {...this.state.navigation, [name]: file_data.children}})
+            this.setState({data: file_data.children, source: null, navigation: {...this.state.navigation, [name]: file_data.children}})
             return
         }
         let source = `${WFSRV_BACKEND}${path}`;
@@ -42,7 +42,16 @@ class FilesLc extends Component {
         console.log(":: Selected nav: ",key);
         const {navigation} = this.state;
         this.setState({data: navigation[key]})
-    }
+    };
+
+    removeNav = (e, key) => {
+        e.stopPropagation()
+        if(key === "Clip") return
+        console.log(":: Remove nav: ", key);
+        const {navigation} = this.state;
+        delete navigation[key]
+        this.setState({navigation})
+    };
 
     getPlayer = (player) => {
         console.log(":: Censor - got player: ", player);
@@ -50,20 +59,15 @@ class FilesLc extends Component {
 
 
     render() {
-        const {data, source, active, archive, navigation, language} = this.state;
+        const {data, source, active, archive, navigation} = this.state;
 
         let d = (<Icon name='folder'/>);
         let f = (<Icon name='file'/>);
-        // let c = (<Icon color='blue' name='copyright'/>);
-        // let f = (<Icon color='blue' name='configure'/>);
-        // let l = (<Loader size='mini' active inline />);
-        // let d = (<Icon color='blue' name='lock'/>);
-        // let s = (<Icon color='red' name='key'/>);
 
         let files_data = data.map((data) => {
             const {is_dir, name, mod_time, path} = data;
-            let href = `${WFSRV_BACKEND}/${path}`;
-            let link = archive ? (<a target="_blank" rel="noopener noreferrer" href={href}>link</a>) : "";
+            //let href = `${WFSRV_BACKEND}/${path}`;
+            //let link = (<a target="_blank" rel="noopener noreferrer" href={href}>link</a>);
             let selected = active === name ? 'active' : 'monitor_tr';
             return (
                 <Table.Row key={name} warning={is_dir} className={selected}
@@ -71,7 +75,6 @@ class FilesLc extends Component {
                     <Table.Cell>{is_dir ? d : f}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{mod_time}</Table.Cell>
-                    <Table.Cell>{link}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -83,16 +86,13 @@ class FilesLc extends Component {
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
-                            <Breadcrumb>
                                 {Object.keys(navigation).map((k, i) => {
                                     return (
-                                        <Fragment key={i}>
-                                            <Breadcrumb.Section link onClick={(e,{children}) => this.selectNav(children)}>{k}</Breadcrumb.Section>
-                                            <Breadcrumb.Divider />
-                                        </Fragment>
+                                        <Label key={i} as='a' value={k} removeIcon='delete' size='huge' content={k}
+                                               onClick={(e, {value}) => this.selectNav(value)}
+                                               onRemove={(e ,{value}) => this.removeNav(e, value)} />
                                     )
                                 })}
-                            </Breadcrumb>
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Menu.Item>
@@ -113,31 +113,13 @@ class FilesLc extends Component {
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={1}>ID</Table.HeaderCell>
                             <Table.HeaderCell width={4}>File Name</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Time</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Extension</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Modification Time</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
                         {files_data}
                     </Table.Body>
-                    {/*<Table.Footer fullWidth>*/}
-                    {/*    <Table.Row>*/}
-                    {/*        <Table.HeaderCell colSpan='9' textAlign='center'>*/}
-                    {/*            <Button.Group>*/}
-                    {/*                <Button basic disabled={page === 0}*/}
-                    {/*                        onClick={() => this.getFiles(page - 20)}>*/}
-                    {/*                    <Icon name='left chevron' />*/}
-                    {/*                </Button>*/}
-                    {/*                <Button basic>{page}-{page + files.length}</Button>*/}
-                    {/*                <Button basic disabled={files.length < 20}*/}
-                    {/*                        onClick={() => this.getFiles(page + 20)}>*/}
-                    {/*                    <Icon name='right chevron' />*/}
-                    {/*                </Button>*/}
-                    {/*            </Button.Group>*/}
-                    {/*        </Table.HeaderCell>*/}
-                    {/*    </Table.Row>*/}
-                    {/*</Table.Footer>*/}
                 </Table>
             </Segment>
         );
