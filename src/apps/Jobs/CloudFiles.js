@@ -37,7 +37,7 @@ class CloudFiles extends Component {
 
     componentDidMount() {
         const {user_id, adminer} = this.props.user;
-        const path = !adminer ? 'jobs/find' : 'jobs/find?doers='+user_id;
+        const path = !adminer ? 'jobs/find?limit=200' : 'jobs/find?doers='+user_id+'&limit=200';
         getData(path, (jobs) => {
             console.log(jobs)
             this.setState({jobs});

@@ -392,12 +392,12 @@ class ProductJob extends Component {
                             value={doers}
                             onChange={(e, {value}) => this.addDoer(value)} />
                     </Menu.Item>
-                    {/*<Menu.Item>*/}
-                    {/*    <Button negative={true}*/}
-                    {/*            disabled={job_data.job_id === undefined}*/}
-                    {/*            onClick={this.removeJob}>Delete Product*/}
-                    {/*    </Button>*/}
-                    {/*</Menu.Item>*/}
+                    <Menu.Item>
+                        <Button negative={true}
+                                disabled={job_data.job_id === undefined}
+                                onClick={this.setRemoved}>Remove Job
+                        </Button>
+                    </Menu.Item>
                 </Menu>
                 <Message>
                     {/*<Menu size='large' secondary >*/}

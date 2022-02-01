@@ -16,6 +16,7 @@ class FilesLc extends Component {
 
     state = {
         local: window.location.hostname === "wfsrv.bbdomain.org",
+        loading: true,
         data: [],
         navigation: {}
     };
@@ -23,7 +24,7 @@ class FilesLc extends Component {
     componentDidMount() {
         getFiles(data => {
             console.log(data.children)
-            this.setState({data: data.children, navigation: {Clip: data.children}})
+            this.setState({data: data.children, navigation: {Clip: data.children}, loading: false})
         });
     };
 
@@ -59,7 +60,7 @@ class FilesLc extends Component {
 
 
     render() {
-        const {data, source, active, archive, navigation} = this.state;
+        const {data, source, active, loading, navigation} = this.state;
 
         let d = (<Icon name='folder'/>);
         let f = (<Icon name='file'/>);
@@ -82,7 +83,7 @@ class FilesLc extends Component {
 
 
         return (
-            <Segment basic className="wfdb_app">
+            <Segment basic className="wfdb_app" loading={loading} >
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
