@@ -26,6 +26,7 @@ import TagSelector from '../components/TagSelector';
 import FileNamesWidget from '../components/FileNamesWidget';
 import CassetteDayPicker from '../components/CassetteDayPicker';
 import { searchLikutim } from '../shared/store';
+import {isEmpty} from "lodash";
 
 class BaseForm extends Component {
 
@@ -312,6 +313,8 @@ class BaseForm extends Component {
     delete data.active_collections;
     delete data.likutimQuery;
     delete data.likutimData;
+
+    isEmpty(data.major) && delete data.major;
 
     if (data.collection_type !== "DAILY_LESSON") {
       delete data.likutims;
