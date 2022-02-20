@@ -76,7 +76,7 @@ class FilesIngest extends Component {
         if(capture_id && !proxy)
             return;
         let path = proxy.format.filename;
-        let source = capture_id && closed || trim_id && wfstatus.kmedia ? `${WFSRV_BACKEND}${path}` : "";
+        let source = capture_id && closed || trim_id && wfstatus.kmedia && !wfstatus.secured ? `${WFSRV_BACKEND}${path}` : "";
         this.setState({source, active: id, file_data, name});
     };
 
