@@ -43,7 +43,7 @@ class IngestApp extends Component {
         const data = 'exec/service/data/#';
         const state = 'workflow/state/capture/#';
         const trim = 'wfdb/service/trimmer/state';
-        const local = window.location.hostname === "wfsrv.bbdomain.org";
+        const local = true;
         const out = local ? data : 'bb/' + data;
         const wfst = local ? state : 'bb/' + state;
         const wfdb = local ? trim : 'bb/' + trim;

@@ -85,8 +85,10 @@ class App extends Component {
             console.log("[mqtt] init: ", data);
             if(!wf_ingest) {
                 const data = 'wfdb/service/langcheck/state';
-                const local = window.location.hostname === "wfsrv.bbdomain.org";
-                const topic = local ? data : 'bb/' + data;
+                // const local = true;
+                // const topic = local ? data : 'bb/' + data;
+                const local = true;
+                const topic = data
                 this.setState({topic})
                 mqtt.join(topic);
                 mqtt.watch((message, type, source) => {

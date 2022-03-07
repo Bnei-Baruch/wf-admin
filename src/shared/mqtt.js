@@ -35,8 +35,10 @@ class MqttMsg {
             transformWsUrl: transformUrl,
         };
 
-        const local = window.location.hostname === "wfsrv.bbdomain.org";
-        const url = local ? MQTT_LCL_URL : MQTT_EXT_URL;
+        // const local = true;
+        // const url = local ? MQTT_LCL_URL : MQTT_EXT_URL;
+        const url = MQTT_LCL_URL
+
         this.mq = mqtt.connect(`wss://${url}`, options);
 
         this.mq.on('connect', (data) => {
@@ -78,7 +80,8 @@ class MqttMsg {
     }
 
     watch = (callback, local) => {
-        let i = local ? 0 : 1;
+        //let i = local ? 0 : 1;
+        let i = 0
         this.mq.on('message',  (topic, data, packet) => {
             const type = topic.split("/")[2+i]
             const source = topic.split("/")[3+i]

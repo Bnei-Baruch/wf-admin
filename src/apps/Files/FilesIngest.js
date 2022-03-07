@@ -34,7 +34,7 @@ class FilesIngest extends Component {
 
     initMQTT = () => {
         const data = 'wfdb/service/+/monitor';
-        const local = window.location.hostname === "wfsrv.bbdomain.org";
+        const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
         mqtt.join(topic);

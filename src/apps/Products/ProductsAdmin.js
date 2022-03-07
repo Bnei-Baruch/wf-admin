@@ -31,7 +31,7 @@ class ProductsAdmin extends Component {
         if(this.props.product) {
             const {product_name, language, i18n, line, parent} = this.props.product;
             const {[WF_LANGUAGES[language]]: {description}} = i18n;
-            const local = window.location.hostname === "wfsrv.bbdomain.org";
+            const local = true;
             const url = local ? MDB_LOCAL_URL : MDB_EXTERNAL_URL;
             getUnit(`${url}/${parent.mdb_id}/`, (unit) => {
                 this.setState({product_name, language, product_description: description, metadata: line, parent, unit});
