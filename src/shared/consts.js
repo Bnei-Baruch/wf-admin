@@ -451,3 +451,10 @@ export const LESSON_PARTS_OPTIONS = [{ text: 'הכנה', value: 0 }]
     .map(i => ({ text: `חלק ${i}`, value: i })));
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
+
+export const JOB_STATUS = [
+    {name: "M", desc: "Materials", status: "materials", value: false},
+    {name: "P", desc: "Product", status: "product", value: false},
+    {name: "F", desc: "Fix", status: "fixed", value: false},
+    {name: "S", desc: "Subtitles", status: "subed", value: false},
+]

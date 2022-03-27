@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import FileViewer from 'react-file-viewer';
-
+import {JOB_STATUS} from "../../shared/consts";
 import {
     getData,
     putData,
@@ -22,7 +21,7 @@ import {
     Table,
     Loader,
     Button,
-    Modal,
+    Grid,
     Select,
     Message,
     Dropdown,
@@ -239,6 +238,11 @@ class ProductJob extends Component {
         fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
+    changeStatus = (id, name, status) => {
+        console.log(":: changeStatus - set: ", id, name, status);
+        fetch(`${WFDB_BACKEND}/jobs/${id}/wfstatus/${name}?value=${status}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+    }
+
     addDoer = (doers) => {
         console.log(doers);
         this.setState({doers});
@@ -328,7 +332,7 @@ class ProductJob extends Component {
             return (
                 <Table.Row
                     negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
-                    className={active} key={id} onClick={() => this.selectJob(data)}>
+                    className={active} key={id} >
                     <Table.Cell>
                         <Popup mountNode={document.getElementById("ltr-modal-mount")}
                                trigger={<Icon name='mail' size='large' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
@@ -342,20 +346,27 @@ class ProductJob extends Component {
                                     onClick={() => this.addNote(data)} >Add note</Button>
                         </Popup>
                     </Table.Cell>
-                    <Table.Cell>
-                        {subtitles ? <Modal trigger={<Icon name='wordpress forms' size='large' color={subtitles ? 'green' : 'grey'} />}
-                               mountNode={document.getElementById("ltr-modal-mount")} >
-                            <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />
-                        </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}
-                    </Table.Cell>
-                    <Table.Cell>{locked ? d : ""}{title}</Table.Cell>
+                    {/*<Table.Cell>*/}
+                    {/*    {subtitles ? <Modal trigger={<Icon name='wordpress forms' size='large' color={subtitles ? 'green' : 'grey'} />}*/}
+                    {/*           mountNode={document.getElementById("ltr-modal-mount")} >*/}
+                    {/*        <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />*/}
+                    {/*    </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}*/}
+                    {/*</Table.Cell>*/}
+                    <Table.Cell onClick={() => this.selectJob(data)}>{locked ? d : ""}{title}</Table.Cell>
                     <Table.Cell>{firstName + " " + lastName + " (" + email + ")"}</Table.Cell>
                     <Table.Cell>{date}</Table.Cell>
-                    <Table.Cell negative={!checked}>{censored && !checked ? p : checked ? v : x}</Table.Cell>
-                    <Table.Cell negative={!fixed}>{fix_req && !fixed ? p : fixed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!posted}>{post_req && !posted ? p : posted ? v : x}</Table.Cell>
-                    <Table.Cell negative={!subed}>{sub_req && !subed ? p : subed ? v : x}</Table.Cell>
-                    <Table.Cell negative={!aricha}>{aricha ? v : x}</Table.Cell>
+                    {JOB_STATUS.map(s => {
+                        const st = wfstatus[s.status] ? wfstatus[s.status] : false;
+                        return (
+                            <Popup trigger={<Table.Cell negative={!st}>{st ? v : x}</Table.Cell>} flowing hoverable>
+                                <p>{s.desc}</p>
+                                <Button.Group>
+                                    <Button onClick={() => this.changeStatus(id, s.status, true)} icon>{v}</Button>
+                                    <Button onClick={() => this.changeStatus(id, s.status, false)} icon>{x}</Button>
+                                </Button.Group>
+                        </Popup>
+                        )
+                    })}
                 </Table.Row>
             )
         });
@@ -461,15 +472,13 @@ class ProductJob extends Component {
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={1}>Msg</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={1}>Sub</Table.HeaderCell>*/}
                             <Table.HeaderCell width={7}>Title</Table.HeaderCell>
                             <Table.HeaderCell width={4}>Editor</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Censor</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Fix</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Post</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Sub</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Done</Table.HeaderCell>
+                            {JOB_STATUS.map(s => {
+                                return (<Table.HeaderCell width={1}>{s.name}</Table.HeaderCell>)
+                            })}
                         </Table.Row>
                     </Table.Header>
 
