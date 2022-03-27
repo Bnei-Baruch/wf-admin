@@ -1,37 +1,7 @@
 import React, {Component} from 'react'
 import {JOB_STATUS} from "../../shared/consts";
-import {
-    getData,
-    putData,
-    removeData,
-    getUnits,
-    IVAL,
-    WFDB_BACKEND,
-    WFSRV_BACKEND,
-    getDCT,
-    insertName,
-    arichaName,
-    MDB_FINDSHA, newJobMeta, postData, getToken
-} from '../../shared/tools';
-import {
-    Menu,
-    Segment,
-    Label,
-    Icon,
-    Table,
-    Loader,
-    Button,
-    Grid,
-    Select,
-    Message,
-    Dropdown,
-    Popup,
-    TextArea,
-    Input
-} from 'semantic-ui-react'
-import MediaPlayer from "../../components/Media/MediaPlayer";
-import InsertModal from "../Insert/InsertModal"
-import CIT from '../CIT/CIT';
+import {getData, putData, WFDB_BACKEND, newJobMeta, postData, getToken} from '../../shared/tools';
+import {Menu, Segment, Label, Icon, Table, Loader, Button, Message, Dropdown, Popup, TextArea, Input} from 'semantic-ui-react'
 import mqtt from "../../shared/mqtt";
 
 class ProductJob extends Component {
@@ -50,7 +20,6 @@ class ProductJob extends Component {
         filedata: {},
         kmedia_option: false,
         metadata: {},
-        input_id: "",
         topic: null,
         renaming: false,
         rename_button: false,
@@ -89,35 +58,9 @@ class ProductJob extends Component {
 
     selectJob = (job_data) => {
         console.log(":: ArichaJobs - selected job: ", job_data);
+        const {job_id, job_name, parent} = job_data;
         this.getJobFiles(job_data.job_id);
-        this.setState({job_data, active: job_data.job_id});
-        // Check if master file is added
-        // if(!job_data.original) {
-        //     this.setState({job_data, source: null, active: job_data.job_id});
-        //     return
-        // } else {
-        //     // Build url for preview (take proxy if exist)
-        //     let path = job_data.proxy ? job_data.proxy.format.filename : job_data.original.format.filename;
-        //     let source = `${WFSRV_BACKEND}${path}`;
-        //     this.setState({job_data, source, active: job_data.job_id});
-        // }
-
-        // Check SHA1 in WFDB
-        // getData(`trimmer/sha1?value=${job_data.original.format.sha1}`, (trimmer) => {
-        //     if(trimmer.length > 0) {
-        //         console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
-        //         alert("File did NOT changed from trimmer");
-        //     } else {
-        //         // Check SHA1 in MDB
-        //         let sha1 = job_data.original.format.sha1;
-        //         let fetch_url = `${MDB_FINDSHA}/${sha1}`;
-        //         getUnits(fetch_url, (units) => {
-        //             if (units.total > 0) {
-        //                 console.log("The SHA1 exist in MDB!", units);
-        //             }
-        //         });
-        //     }
-        // });
+        this.setState({job_data, job_name, active: job_id, doers: parent.doers});
     };
 
     getJobFiles = (job_id) => {
@@ -133,46 +76,6 @@ class ProductJob extends Component {
         //this.setState({player: player});
     };
 
-    renameFile = (newline) => {
-        console.log(":: Cit callback: ", newline);
-        let {job_data} = this.state;
-        job_data.line = newline;
-        let newfile_name = newline.final_name;
-        let oldfile_name = job_data.file_name;
-        if(job_data.original) {
-            let path = job_data.original.format.filename.split('/').slice(0,-1).join('/');
-            let opath = `${path}/${newfile_name}_${job_data.job_id}o.mp4`;
-            job_data.original.format.filename = opath;
-        }
-        if(job_data.proxy) {
-            let path = job_data.proxy.format.filename.split('/').slice(0,-1).join('/');
-            let ppath = `${path}/${newfile_name}_${job_data.job_id}p.mp4`;
-            job_data.proxy.format.filename = ppath;
-        }
-        this.setState({cit_open: false, renaming: true});
-        if(job_data.original) {
-            job_data.parent.file_name = oldfile_name;
-            job_data.file_name = newfile_name;
-            job_data.wfstatus.renamed = true;
-            putData(`${WFSRV_BACKEND}/workflow/rename`, job_data, (cb) => {
-                console.log(":: Ingest - rename respond: ",cb);
-                if(cb.status === "ok") {
-                    setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                    this.selectJob(job_data);
-                } else {
-                    setTimeout(() => this.setState({renaming: false, disabled: job_data.wfstatus.wfsend}), 2000);
-                }
-            });
-        } else {
-            postData(`${WFDB_BACKEND}/jobs/${job_data.job_id}/line`, newline, (cb) => {
-                console.log(":: Post line in WFDB: ",cb);
-                setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
-                this.selectJob(job_data);
-            });
-        }
-
-    };
-
     openCit = () => {
         let {job_data} = this.state;
         job_data.line = {manual_name: job_data.file_name};
@@ -181,31 +84,6 @@ class ProductJob extends Component {
 
     onCancel = () => {
         this.setState({cit_open: false, insert_open: false});
-    };
-
-    setSpecial = (special) => {
-        console.log(":: Selected send options: ", special);
-        this.setState({special});
-    };
-
-    sendFile = () => {
-        let {job_data,special} = this.state;
-        job_data.special = special;
-        console.log(":: Going to send File: ", job_data + " : to: ", special);
-        this.setState({ sending: true, send_button: true });
-        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/${special}?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}});
-        setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
-        // putData(`${WFSRV_BACKEND}/workflow/send_aricha`, job_data, (cb) => {
-        //     console.log(":: Aricha - send respond: ",cb);
-        //     // While polling done it does not necessary
-        //     //this.selectJob(job_data);
-        //     if(cb.status === "ok") {
-        //         setTimeout(() => this.setState({sending: false, disabled: false}), 2000);
-        //     } else {
-        //         alert("Something goes wrong!");
-        //     }
-        // });
-
     };
 
     setJobName = (job_name) => {
@@ -224,32 +102,37 @@ class ProductJob extends Component {
         this.setState({job_name: "", doers: []});
     };
 
-    removeJob = () => {
-        const {job_data} = this.state;
-        removeData(`${WFDB_BACKEND}/jobs/${job_data.job_id}`, (cb) => {
-            console.log(":: DELETE Respond: ",cb);
+    editJob = () => {
+        const {job_name, doers, job_data} = this.state;
+        job_data.job_name = job_name;
+        if(doers.length !== job_data.parent.doers.length)
+            job_data.parent.doers = doers;
+        console.log(" :: Edit Meta: ", job_data);
+        putData(`${WFDB_BACKEND}/jobs/${job_data.job_id}`, job_data, (cb) => {
+            console.log(":: PUT Respond: ",cb);
+            this.clearSelection();
         });
     };
 
     setRemoved = () => {
         let {job_data} = this.state;
         console.log(":: Censor - set removed: ", job_data);
-        this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
         fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        this.clearSelection();
     };
 
     changeStatus = (id, name, status) => {
         console.log(":: changeStatus - set: ", id, name, status);
         fetch(`${WFDB_BACKEND}/jobs/${id}/wfstatus/${name}?value=${status}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+    };
+
+    clearSelection = () => {
+        this.setState({active: null, doers: [], job_name: "", job_data: {}})
     }
 
     addDoer = (doers) => {
         console.log(doers);
         this.setState({doers});
-    };
-
-    uploadMaster = () => {
-        this.props.masterUpload(this.state.job_data.job_id);
     };
 
     openJob = () => {
@@ -285,8 +168,7 @@ class ProductJob extends Component {
 
     render() {
 
-        const {job_data, source, renaming, rename_button, cit_open, inserting, insert_button, note_area,
-            filedata, metadata, special, send_button, sending, job_name, doers} = this.state;
+        const {job_data, job_name, doers, active} = this.state;
         const {users} = this.props;
 
         const send_options = [
@@ -307,7 +189,7 @@ class ProductJob extends Component {
         let p = (<Icon color='blue' name='cogs'/>);
 
         let jobs = this.state.jobs.map((data) => {
-            const {date, job_name, product, parent, wfstatus} = data;
+            const {date, job_name, product, parent, wfstatus, note_area} = data;
             const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = wfstatus;
             let notes = product ? product.notes : [];
             let subtitles = product && product.subtitle ? product.subtitle.url : null;
@@ -383,9 +265,9 @@ class ProductJob extends Component {
                 </Label>
                 <Menu secondary >
                     <Menu.Item>
-                        <Button positive={true}
+                        <Button color={active ? "blue" : "green"}
                                 disabled={job_name === "" || doers.length === 0}
-                                onClick={this.newJob}>New Job
+                                onClick={active ? this.editJob : this.newJob}>{active ? "Edit" : "New"} Job
                         </Button>
                     </Menu.Item>
                     <Menu.Item>
@@ -407,6 +289,11 @@ class ProductJob extends Component {
                         <Button negative={true}
                                 disabled={job_data.job_id === undefined}
                                 onClick={this.setRemoved}>Remove Job
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button disabled={!active}
+                                onClick={this.clearSelection}>Clear
                         </Button>
                     </Menu.Item>
                 </Menu>
