@@ -4,7 +4,7 @@ import { Modal, Button, Table } from 'semantic-ui-react'
 class NestedModal extends Component {
     state = {
         open: false,
-        actived: null,
+        selected: null,
     };
 
     componentDidUpdate(prevProps) {
@@ -16,7 +16,7 @@ class NestedModal extends Component {
     };
 
     rawClick = (publisher) => {
-        this.setState({actived: publisher.uid, publisher});
+        this.setState({selected: publisher.uid, publisher});
     };
 
     selectPublisher  = () => {
@@ -29,14 +29,16 @@ class NestedModal extends Component {
     close = () => this.setState({ open: false });
 
     render() {
-        const {open,actived} = this.state;
+        const {locale} = this.props;
+        const {open, selected} = this.state;
         let pub_list = this.props.publishers.map((pub) => {
-            let name = (pub.i18n.he) ? pub.i18n.he.name : "Name not found";
-            let active = (actived === pub.uid ? 'active' : '');
+            const {pattern, i18n, id, uid} = pub;
+            let name = i18n?.[locale]?.name || pattern;
+            let active = selected === uid ? 'active' : '';
             return (
-                <Table.Row className={active} key={pub.id} onClick={() => this.rawClick(pub)}>
-                    <Table.Cell textAlign='right'
-                                className={(pub.i18n.he ? "rtl-dir" : "negative")}>{name}</Table.Cell>
+                <Table.Row className={active} key={id} onClick={() => this.rawClick(pub)}>
+                    <Table.Cell>{name}</Table.Cell>
+                    <Table.Cell>{pattern}</Table.Cell>
                 </Table.Row>
             );
         });
@@ -54,11 +56,12 @@ class NestedModal extends Component {
                 mountNode={document.getElementById("ltr-modal-mount")}
             >
                 <Modal.Header>Publishers</Modal.Header>
-                <Modal.Content className="tabContent">
+                <Modal.Content className="publishers">
                     <Table selectable compact='very' color='grey' key='teal'>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell />
+                                <Table.HeaderCell>Name</Table.HeaderCell>
+                                <Table.HeaderCell>Pattern</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -67,7 +70,7 @@ class NestedModal extends Component {
                     </Table>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button color='blue' content='Select' disabled={!actived} onClick={this.selectPublisher} />
+                    <Button color='blue' content='Select' disabled={!selected} onClick={this.selectPublisher} />
                 </Modal.Actions>
             </Modal>
         )

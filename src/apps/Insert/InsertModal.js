@@ -401,6 +401,7 @@ class InsertModal extends Component {
                             </Grid.Column>
                         </Grid>
                         <NestedModal
+                            locale={locale}
                             upload_type={upload_type}
                             publishers={this.state.store.publishers}
                             onUidSelect={this.setUnitID}
