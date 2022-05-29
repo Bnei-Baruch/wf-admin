@@ -28,11 +28,17 @@ class MqttMsg {
             connectTimeout: 10 * 1000,
             clientId: user.sub + "-" + randomString(5)  ,
             protocolId: 'MQTT',
-            protocolVersion: 4,
+            protocolVersion: 5,
             clean: true,
             username: user.email,
             password: this.token,
             transformWsUrl: transformUrl,
+            properties: {
+                sessionExpiryInterval: 5,
+                maximumPacketSize: 256000,
+                requestResponseInformation: true,
+                requestProblemInformation: true,
+            },
         };
 
         // const local = true;

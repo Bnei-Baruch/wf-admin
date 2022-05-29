@@ -22,28 +22,32 @@ class KtaimTrimmed extends Component {
     };
 
     componentDidMount() {
-        // let ival = setInterval(() => getData('trim', (data) => {
-        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-        //             this.setState({trimmed: data})
-        //     }), IVAL );
-        // this.setState({ival});
         getUnits('titles.json', (tags) => {
             this.setState({tags});
         });
     };
 
-    componentWillUnmount() {
-        //clearInterval(this.state.ival);
-    };
-
     selectFile = (file_data) => {
-        console.log(":: Trimmed - selected file: ",file_data);
-        let path = file_data.proxy.format.filename;
-        let source = `${WFSRV_BACKEND}${path}`;
-        let active = file_data.trim_id;
-        const {wfsend,censored} = file_data.wfstatus;
-        let disabled = wfsend || censored;
-        this.setState({source, active, file_data, disabled});
+        getData(`trimmer/find?key=file_name&value=${file_data.date}_lesson`, (data) => {
+            let languages = {}
+            let parts = data.filter(b => b.line.part > 0 && b.wfstatus.wfsend);
+            let langs = parts.map(l => l.original.languages);
+            for(let i=0; i<langs.length; i++) {
+                for(let l in langs[i]) {
+                    languages[l] = languages[l] || langs[i][l];
+                }
+            }
+            console.log(":: Get parts: ", languages);
+            file_data.original.languages = languages;
+            file_data.wfstatus.langcheck = true;
+            let path = file_data.proxy.format.filename;
+            let source = `${WFSRV_BACKEND}${path}`;
+            let active = file_data.trim_id;
+            const {wfsend,censored} = file_data.wfstatus;
+            let disabled = wfsend || censored;
+            console.log(":: Trimmed - selected file: ",file_data);
+            this.setState({source, active, file_data, disabled});
+        });
     };
 
     makeLinks = (file_data) => {
