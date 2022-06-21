@@ -88,7 +88,7 @@ export const mime_list = {
     "application/x-zip-compressed": "zip"
 };
 
-export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn","amh","hin","per"];
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn","amh","hin","per","ara","ind"];
 
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
@@ -118,6 +118,8 @@ export const language_options = [
     { key: 'et', value: 'amh', flag: 'et', text: 'Amharic' },
     { key: 'in', value: 'hin', flag: 'in', text: 'Hindi' },
     { key: 'ir', value: 'per', flag: 'ir', text: 'Persian' },
+    { key: 'ar', value: 'ara', flag: 'sa', text: 'Arabic' },
+    { key: 'id', value: 'ind', flag: 'id', text: 'Indonesian' },
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
@@ -180,7 +182,7 @@ export const LANG_FRENCH     = 'fre';
 export const LANG_PORTUGUESE = 'por';
 export const LANG_TURKISH    = 'trk';
 export const LANG_POLISH     = 'pol';
-// export const LANG_ARABIC     = 'ar';
+export const LANG_ARABIC     = 'ara';
 export const LANG_HUNGARIAN  = 'hun';
 export const LANG_FINNISH    = 'fin';
 export const LANG_LITHUANIAN = 'lit';
@@ -195,12 +197,10 @@ export const LANG_PERSIAN    = 'per';
 export const LANG_ROMANIAN   = 'ron';
 export const LANG_HINDI      = 'hin';
 export const LANG_UKRAINIAN  = 'ukr';
-// export const LANG_MACEDONIAN = 'mk';
 export const LANG_SLOVENIAN  = 'slv';
 export const LANG_LATVIAN    = 'lit';
-// export const LANG_SLOVAK     = 'sk';
-// export const LANG_CZECH      = 'cs';
 export const LANG_AMHARIC    = 'amh';
+export const LANG_INDONESIAN = 'ind';
 export const LANG_MULTI      = 'mtl';
 export const LANG_UNKNOWN    = 'xxx';
 
@@ -216,7 +216,7 @@ export const LANG_MAP = {
     [LANG_PORTUGUESE]: { text: 'Portuguese', value: LANG_PORTUGUESE, flag: 'pt' },
     [LANG_TURKISH]: { text: 'Turkish', value: LANG_TURKISH, flag: 'tr' },
     [LANG_POLISH]: { text: 'Polish', value: LANG_POLISH, flag: 'pl' },
-    // [LANG_ARABIC]: { text: 'Arabic', value: LANG_ARABIC, flag: 'sa' },
+    [LANG_ARABIC]: { text: 'Arabic', value: LANG_ARABIC, flag: 'sa' },
     [LANG_HUNGARIAN]: { text: 'Hungarian', value: LANG_HUNGARIAN, flag: 'hu' },
     [LANG_FINNISH]: { text: 'Finnish', value: LANG_FINNISH, flag: 'fi' },
     [LANG_LITHUANIAN]: { text: 'Lithuanian', value: LANG_LITHUANIAN, flag: 'lt' },
@@ -231,12 +231,10 @@ export const LANG_MAP = {
     [LANG_ROMANIAN]: { text: 'Romanian', value: LANG_ROMANIAN, flag: 'ro' },
     [LANG_HINDI]: { text: 'Hindi', value: LANG_HINDI, flag: 'in' },
     [LANG_UKRAINIAN]: { text: 'Ukrainian', value: LANG_UKRAINIAN, flag: 'ua' },
-    // [LANG_MACEDONIAN]: { text: 'Macedonian', value: LANG_MACEDONIAN, flag: 'mk' },
     [LANG_SLOVENIAN]: { text: 'Slovenian', value: LANG_SLOVENIAN, flag: 'si' },
     [LANG_LATVIAN]: { text: 'Latvian', value: LANG_LATVIAN, flag: 'lv' },
-    // [LANG_SLOVAK]: { text: 'Slovak', value: LANG_SLOVAK, flag: 'sk' },
-    // [LANG_CZECH]: { text: 'Czech', value: LANG_CZECH, flag: 'cz' },
     [LANG_AMHARIC]: { text: 'Amharic', value: LANG_AMHARIC, flag: 'et' },
+    [LANG_INDONESIAN]: { text: 'Indonesian', value: LANG_INDONESIAN, flag: 'id' },
     [LANG_MULTI]: { text: 'Multi', value: LANG_MULTI },
     [LANG_UNKNOWN]: { text: 'Unknown', value: LANG_UNKNOWN },
 };
@@ -274,7 +272,8 @@ export const MDB_LANGUAGES = {
   pt: 'por',
   tr: 'trk',
   pl: 'pol',
-  ar: 'arb',
+  ar: 'ara',
+  id: 'ind',
   hu: 'hun',
   fi: 'fin',
   lt: 'lit',
