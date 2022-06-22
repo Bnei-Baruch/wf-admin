@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {WFSRV_BACKEND} from "../../shared/tools";
+import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 
 class ProductUpload extends Component {
 
@@ -22,6 +22,7 @@ class ProductUpload extends Component {
 
         const props = {
             action: `${WFSRV_BACKEND}/job/upload`,
+            headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '.mp4',
             beforeUpload(file) {
