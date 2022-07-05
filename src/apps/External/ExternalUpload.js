@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Progress,Message,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getToken, WF_BACKEND} from "../../shared/tools";
+import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 
 class ExternalUpload extends Component {
 
@@ -21,7 +21,7 @@ class ExternalUpload extends Component {
     render() {
 
         const props = {
-            action: `${WF_BACKEND}/dgima/upload`,
+            action: `${WFSRV_BACKEND}/dgima/upload`,
             headers: {'Authorization': 'bearer ' + getToken()},
             type: 'drag',
             accept: '.mp4, .mp3, .m4a, .mov, .mpg, .wav, .mkv, .avi',
