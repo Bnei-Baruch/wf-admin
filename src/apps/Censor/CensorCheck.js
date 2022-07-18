@@ -36,21 +36,6 @@ class CensorCheck extends Component {
     };
 
     componentDidMount() {
-        // let ival = setInterval(() => {
-        //     getData('trim', (data) => {
-        //         if (JSON.stringify(this.state.trimmed) !== JSON.stringify(data))
-        //             this.setState({trimmed: data})
-        //     });
-        //     getData('drim', (data) => {
-        //         if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
-        //             this.setState({dgima: data})
-        //     });
-        //     getData('cassette', (data) => {
-        //         if (JSON.stringify(this.state.cassette) !== JSON.stringify(data))
-        //             this.setState({cassette: data})
-        //     });
-        // }, 1000 );
-        // this.setState({ival});
     };
 
     componentWillUnmount() {
@@ -58,7 +43,14 @@ class CensorCheck extends Component {
     };
 
     selectFile = (file_data) => {
-        console.log(":: Trimmed - selected file: ",file_data);
+        console.log(":: Selected file: ",file_data);
+        if(file_data?.aricha_id) {
+            let path = file_data.proxy?.format ? file_data.proxy.format.filename : file_data.original.format.filename;
+            let source = `${WFSRV_BACKEND}${path}`;
+            this.setState({source, active: file_data.aricha_id, file_data, trim_src: "aricha", disabled: true});
+            return
+        }
+
         let id = file_data.trim_id || file_data.dgima_id;
         const {wfsend,fixed,kmedia} = file_data.wfstatus;
         let path = file_data.proxy.format.format_name === "mp3" ? file_data.original.format.filename : file_data.proxy.format.filename;
@@ -246,13 +238,39 @@ class CensorCheck extends Component {
             )
         });
 
+        let aricha_data = this.props.aricha.map((data) => {
+            const {aricha, buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
+            let id = data.aricha_id;
+            let name = aricha ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
+            let time = data.original ? toHms(data.original.format.duration).split('.')[0] : "";
+            if(!censored || buffer)
+                return false;
+            let rowcolor = secured && !checked;
+            let active = this.state.active === id ? 'active' : '';
+            return (
+                <Table.Row
+                    negative={rowcolor} positive={checked} warning={!wfsend} disabled={!aricha || locked}
+                    className={active} key={id} onClick={() => this.selectFile(data)}>
+                    <Table.Cell>
+                        {secured ? s : ""}
+                        {censored && aricha ? c : ""}
+                        {fixed ? f : ""}
+                        {locked ? d : ""}
+                        {name}</Table.Cell>
+                    <Table.Cell>{time}</Table.Cell>
+                </Table.Row>
+            )
+        });
+
         const lt = trimmed.filter(n => n).length;
         const lc = cassette_data.filter(n => n).length;
         const ld = dgima_data.filter(n => n).length;
+        const la = aricha_data.filter(n => n).length;
 
         let ct = (<Label key='Carbon' circular size='mini' color='red'>{lt}</Label>);
         let cc = (<Label key='Carbon' circular size='mini' color='red'>{lc}</Label>);
         let cd = (<Label key='Carbon' circular size='mini' color='red'>{ld}</Label>);
+        let ca = (<Label key='Carbon' circular size='mini' color='red'>{la}</Label>);
 
         return (
             <Segment textAlign='center' className="ingest_segment" color='red' raised>
@@ -344,6 +362,19 @@ class CensorCheck extends Component {
                                 </Table.Body>
                             </Table>
                         </Accordion.Content>
+
+                        <Accordion.Title active={activeIndex === 3} index={3} onClick={this.handleClick}>
+                            <Icon name='dropdown' />
+                            Aricha {la > 0 ? ca : ""}
+                        </Accordion.Title>
+                        <Accordion.Content active={activeIndex === 3}>
+                            <Table selectable compact='very' basic structured className="ingest_table">
+                                <Table.Body>
+                                    {aricha_data}
+                                </Table.Body>
+                            </Table>
+                        </Accordion.Content>
+
                     </Accordion>
 
 

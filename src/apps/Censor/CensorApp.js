@@ -8,6 +8,7 @@ class CensorApp extends Component {
     state = {
         trimmer: [],
         dgima: [],
+        aricha: [],
     };
 
     componentDidMount() {
@@ -35,12 +36,12 @@ class CensorApp extends Component {
     };
 
     render() {
-        const {dgima, trimmer} = this.state;
+        const {dgima, trimmer, aricha} = this.state;
 
         return (
             <Fragment>
                 {/*<CensorTrimmer/>*/}
-                <CensorCheck user={this.props.user} trimmed={trimmer} dgima={dgima} />
+                <CensorCheck user={this.props.user} trimmed={trimmer} dgima={dgima} aricha={aricha} />
             </Fragment>
         );
     }

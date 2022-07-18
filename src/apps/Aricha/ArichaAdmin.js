@@ -42,11 +42,6 @@ class ArichaAdmin extends Component {
     };
 
     componentDidMount() {
-        // let ival = setInterval(() => getData('bdika', (data) => {
-        //         if (JSON.stringify(this.state.aricha) !== JSON.stringify(data))
-        //             this.setState({aricha: data})
-        //     }), IVAL );
-        // this.setState({ival});
     };
 
     componentWillUnmount() {
@@ -285,6 +280,7 @@ class ArichaAdmin extends Component {
             { key: 'youtube', text: 'Youtube', value: 'youtube' },
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
+            { key: 'censor', text: 'Censor', value: 'censor' },
         ];
 
         let v = (<Icon name='checkmark'/>);
@@ -308,7 +304,7 @@ class ArichaAdmin extends Component {
             let active = this.state.active === id ? 'active' : 'admin_raw';
             return (
                 <Table.Row
-                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
+                    negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked || (censored && !checked)}
                     className={active} key={id} onClick={() => this.selectFile(data)}>
                     <Table.Cell>{censored ? c : ""}{fixed ? f : ""}{locked ? d : ""}{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
