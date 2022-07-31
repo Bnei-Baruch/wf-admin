@@ -241,22 +241,98 @@ export const LANG_MAP = {
 
 export const PRODUCT_FILE_TYPES = {
     [LANG_HEBREW]: {
-        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "4x4_FB", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB", "4x4_FB_SUB", "16x9_Telegram_8M", "16x9_Whatsapp_64M"],
-        audio: ["voice", "music", "sfx", "mix"],
-        other: ["Text", "SRT"]
+        video: [
+            "16x9_Clean",
+            "16x9_Logo-Kab",
+            "16x9_No-LOGO",
+            "4x4_FB",
+            "16x9_Logo-Kab_SUB",
+            "16x9_No-LOGO_SUB",
+            "4x4_FB_SUB",
+            "16x9_Telegram_8M",
+            "16x9_Whatsapp_64M",
+            "4x4",
+            "4x4_KAB",
+        ],
+        audio: [
+            "voice",
+            "music",
+            "sfx",
+            "mix"
+        ],
+        other: [
+            "Text",
+            "SRT",
+            "text_masah",
+            "text_roller",
+            "text_tzitut",
+        ]
     },
     [LANG_RUSSIAN]: {
-        video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK",
-            "16x9_Strelka", "4x4_MAK", "4x4_OpTV", "16x9_Logo-Kab_SUB", "16x9_Logo-Kab-Strelka_SUB", "16x9_Logo-OpTV_SUB",
-            "16x9_Logo-MAK_SUB", "16x9_Strelka_SUB", "4x4_MAK_SUB", "4x4_OpTV_SUB"],
-        audio: ["voice", "music", "sfx", "mix"],
-        other: ["Text", "SRT"]
+        video: [
+            "16x9_Clean",
+            "16x9_Logo-Kab",
+            "16x9_Logo-Kab-Strelka",
+            "16x9_Logo-OpTV",
+            "16x9_Logo-MAK",
+            "16x9_Strelka",
+            "4x4_MAK",
+            "4x4_OpTV",
+            "16x9_Logo-Kab_SUB",
+            "16x9_Logo-Kab-Strelka_SUB",
+            "16x9_Logo-OpTV_SUB",
+            "16x9_Logo-MAK_SUB",
+            "16x9_Strelka_SUB",
+            "4x4_MAK_SUB",
+            "4x4_OpTV_SUB",
+            "4x4",
+            "4x4_KAB",
+        ],
+        audio: [
+            "voice",
+            "music",
+            "sfx",
+            "mix"
+        ],
+        other: [
+            "Text",
+            "SRT",
+            "text_masah",
+            "text_roller",
+            "text_tzitut",
+        ]
     }
 };
 
+export const PRODUCT_FILE_TYPES_ALL = {
+    video: [
+        "16x9_Clean",
+        "16x9_Logo-Kab",
+        "16x9_No-LOGO",
+        "16x9_Logo-Kab_SUB",
+        "16x9_No-LOGO_SUB",
+        "4x4",
+        "4x4_KAB",
+    ],
+    audio: [
+        "voice",
+        "music",
+        "sfx",
+        "mix"
+    ],
+    other: [
+        "Text",
+        "SRT",
+        "text_masah",
+        "text_roller",
+        "text_tzitut",
+    ]
+}
+
 export const PRODUCT_FILE_TYPES_LIST = ["16x9_Clean", "16x9_Logo-Kab", "16x9_Logo-Kab-Strelka", "16x9_Logo-OpTV", "16x9_Logo-MAK",
         "16x9_Strelka", "4x4_MAK", "4x4_OpTV", "16x9_Logo-Kab_SUB", "16x9_Logo-Kab-Strelka_SUB", "16x9_Logo-OpTV_SUB", "16x9_Telegram_8M", "16x9_Whatsapp_64M",
-        "16x9_Logo-MAK_SUB", "16x9_Strelka_SUB", "4x4_MAK_SUB", "4x4_OpTV_SUB", "voice", "music", "sfx", "mix", "Text", "SRT"].map(data => {
+        "16x9_Logo-MAK_SUB", "16x9_Strelka_SUB", "4x4_MAK_SUB", "4x4_OpTV_SUB", "4x4", "4x4_KAB", "voice", "music", "sfx", "mix", "Text", "SRT", "text_masah",
+        "text_roller", "text_tzitut"].map(data => {
     return ({key: data, value: data, text: data})})
 
 

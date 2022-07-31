@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select, Grid, Checkbox} from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {getData, getMediaType, getToken, putData, toHms, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
-import {LANG_MAP, PRODUCT_FILE_TYPES} from "../../shared/consts";
+import {LANG_MAP, PRODUCT_FILE_TYPES, PRODUCT_FILE_TYPES_ALL} from "../../shared/consts";
 
 class FilesUpload extends Component {
 
@@ -40,13 +40,7 @@ class FilesUpload extends Component {
                 file_data.mime_type = file_data.type;
                 file_data.properties = {upload_name: file_data.file_name};
                 const file_type = getMediaType(file_data.type)
-                const def_types = {
-                    video: ["16x9_Clean", "16x9_Logo-Kab", "16x9_No-LOGO", "16x9_Logo-Kab_SUB", "16x9_No-LOGO_SUB"],
-                    audio: ["voice", "music", "sfx", "mix"],
-                    other: ["Text", "SRT"]
-                }
-
-                const options = PRODUCT_FILE_TYPES[language] ? PRODUCT_FILE_TYPES[language][file_type] : def_types[file_type];
+                const options = PRODUCT_FILE_TYPES[language] ? PRODUCT_FILE_TYPES[language][file_type] : PRODUCT_FILE_TYPES_ALL[file_type];
                 const file_type_options = options.map(data => {
                     return ({key: data, value: data, text: data})
                 });
