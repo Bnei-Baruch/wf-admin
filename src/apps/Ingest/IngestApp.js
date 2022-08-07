@@ -159,7 +159,7 @@ class IngestApp extends Component {
                         : null}
                 </Segment> : null}
                 <IngestTrimmer />
-                <IngestTrimmed trimmed={trimmed} />
+                <IngestTrimmed trimmed={trimmed} admin={this.props.admin}/>
                 {this.props.admin ? "" : <IngestPresets />}
             </Fragment>
         );

@@ -89,7 +89,7 @@ class IngestTrimmed extends Component {
         this.setState({mdb_open: false, unit: data});
     };
 
-    sendFile = () => {
+    sendFile = (censor) => {
         const {file_data, unit} = this.state;
         const {file_name, wfstatus, line, parent} = file_data;
 
@@ -124,6 +124,11 @@ class IngestTrimmed extends Component {
             alert("Lesson part must be renamed");
             this.setState({ sending: false });
             return
+        }
+
+        // Send to Censor
+        if(censor) {
+            file_data.line.require_test = true;
         }
 
         // Check if already got unit with same name
@@ -228,9 +233,15 @@ class IngestTrimmed extends Component {
                         </Menu.Item>
                         <Menu.Item>
                             <Button positive disabled={disabled}
-                                    onClick={this.sendFile} loading={sending}>Send
+                                    onClick={() => this.sendFile(false)} loading={sending}>Send
                             </Button>
                         </Menu.Item>
+                        {this.props.admin ? "" :
+                            <Menu.Item>
+                                <Button negative disabled={disabled}
+                                        onClick={() => this.sendFile(true)} loading={sending}>Censor
+                                </Button>
+                            </Menu.Item>}
                     </Menu.Menu>
                 </Menu>
                 </Message>
