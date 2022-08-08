@@ -471,16 +471,19 @@ export const insertLine = (metadata,unit) => {
     }
 };
 
-const setRemuxSrc = (metadata, published) => {
+const setRemuxSrc = (metadata, published, original_language) => {
     const {language} = metadata;
     //ARCHIVE_BUG: Not in all files we got original_language property so we going to check string
-    //let remux_src = published.filter(s => s.language === properties.original_language && s.mime_type === "video/mp4");
     //ARCHIVE_BUG: We got case where two langueags wa with _o_ name, so there is no normal way to know original language
     // So we going to check filename string for heb and rus order
-    let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
-    if(remux_src.length === 0) {
-        remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
-    }
+    //let remux_src = published.filter(s => s.name.match("heb_o_") && s.mime_type === "video/mp4");
+    // if(remux_src.length === 0) {
+    //     remux_src = published.filter(s => s.name.match("rus_o_") && s.mime_type === "video/mp4");
+    // }
+
+
+    //WFBUG - Now we take this from unit
+    let remux_src = published.filter(s => s.language === original_language && s.mime_type === "video/mp4");
     console.log(" :: Got sources for remux: ", remux_src);
     // We must get here 1 or 2 files and save their url
     if(remux_src.length === 0 || remux_src.length > 2) {
@@ -507,7 +510,7 @@ const setRemuxSrc = (metadata, published) => {
 
 export const remuxLine = (unit, metadata, cb) => {
     const {language} = metadata;
-    let {uid,id} = unit;
+    let {uid, id, properties: {original_language}} = unit;
     fetchUnits(`${id}/files/`, (data) => {
         console.log(" :: Fetch files: ", data);
         let published = data.filter(p => p.published && p.removed_at === null && p.secure === 0);
@@ -523,7 +526,7 @@ export const remuxLine = (unit, metadata, cb) => {
             insertData(uid, "uid", (data) => {
                 console.log(":: insert data - got: ",data);
                 if(data.length > 0 && data[0].upload_type === metadata.upload_type) {
-                    metadata = setRemuxSrc(metadata, published);
+                    metadata = setRemuxSrc(metadata, published, original_language);
                     metadata.insert_type = "5";
                     metadata.insert_id = data[0].insert_id;
                     cb(metadata);
@@ -553,7 +556,7 @@ export const remuxLine = (unit, metadata, cb) => {
                         metadata.line.fix_hd_sha1 = null;
                     }
 
-                    metadata = setRemuxSrc(metadata, published);
+                    metadata = setRemuxSrc(metadata, published, original_language);
                     metadata.insert_type = "6";
                     cb(metadata);
                 }
@@ -563,7 +566,7 @@ export const remuxLine = (unit, metadata, cb) => {
             alert("Not ready yet");
             cb(null);
         } else {
-            metadata = setRemuxSrc(metadata, published);
+            metadata = setRemuxSrc(metadata, published, original_language);
             metadata.insert_type = "4";
             cb(metadata);
         }
