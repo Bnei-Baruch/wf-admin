@@ -510,7 +510,7 @@ export const remuxLine = (unit, metadata, cb) => {
     let {uid,id} = unit;
     fetchUnits(`${id}/files/`, (data) => {
         console.log(" :: Fetch files: ", data);
-        let published = data.filter(p => p.published && p.removed_at === null);
+        let published = data.filter(p => p.published && p.removed_at === null && p.secure === 0);
         console.log(" :: Published: ", published);
         let lchk = published.find(l => l.name.match(language+"_"));
         console.log(" :: Check: ", lchk);
