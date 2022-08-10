@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
-import {getData, WFDB_BACKEND, MDB_UNIT_URL, getToken, WFSRV_BACKEND, WFNAS_STP, putData} from '../../shared/tools';
+import {
+    getData,
+    WFDB_BACKEND,
+    MDB_UNIT_URL,
+    getToken,
+    WFSRV_BACKEND,
+    WFNAS_STP,
+    putData,
+    postData
+} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -24,6 +33,7 @@ class CloudFiles extends Component {
         files: [],
         jobs: [],
         job_id: null,
+        job_name: "",
         filters: {},
         wfstatus: {},
         line: {},
@@ -45,7 +55,9 @@ class CloudFiles extends Component {
     };
 
     selectJob = (job_id) => {
-        this.setState({job_id});
+        const {jobs} = this.state;
+        const selected_job = jobs.find(j => j.job_id === job_id)
+        this.setState({job_id, job_name: selected_job.job_name});
         this.getFiles(job_id)
     };
 
@@ -77,14 +89,23 @@ class CloudFiles extends Component {
     };
 
     jobWorkflow = (filedata) => {
+        const {job_name, job_id} = this.state;
         filedata.archive_type = "job";
         filedata.source = "upload";
         filedata.source_path = "/backup/tmp/upload";
-        filedata.wid = this.state.job_id;
+        filedata.wid = job_id;
         console.log(":: JobsApp - got data: ", filedata);
         putData(`${WFSRV_BACKEND}/workflow/upload`, filedata, (cb) => {
             console.log(":: JobsApp - workflow respond: ",cb);
-            this.setState({job_id: null})
+            const data = {
+                subject: "Product Ready - " + job_name,
+                body: "Job ID - " + job_id,
+                to: ["amnonbb@gmail.com", "lenazivbb@gmail.com"]
+            }
+            postData(`${WFSRV_BACKEND}/wf/notify`, data, (cb) => {
+                console.log("notify respond: ", cb);
+                this.setState({job_id: null, job_name: ""});
+            });
         });
     };
 
