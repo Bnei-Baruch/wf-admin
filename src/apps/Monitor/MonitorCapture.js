@@ -1,27 +1,10 @@
 import React, { Component } from 'react'
-
-import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
 class MonitorCapture extends Component {
 
     state = {
         ingest: [],
-        ival: null,
-    };
-
-    componentDidMount() {
-        // let ival = setInterval(() =>
-        //     getData('ingest/find?key=date&value='+new Date().toLocaleDateString('sv'), (data) => {
-        //         if (JSON.stringify(this.state.ingest) !== JSON.stringify(data))
-        //             this.setState({ingest: data})
-        //     }), IVAL
-        // );
-        // this.setState({ival: ival});
-    };
-
-    componentWillUnmount() {
-        clearInterval(this.state.ival);
     };
 
     render() {

@@ -1,28 +1,10 @@
 import React, { Component } from 'react'
-
-import { getData, IVAL } from '../../shared/tools';
 import { Icon, Table, Container, Loader } from 'semantic-ui-react'
 
 class MonitorTrimmer extends Component {
 
     state = {
         trimmer: [],
-        ival: null,
-    };
-
-    componentDidMount() {
-        // let ival = setInterval(() =>
-        //     getData('trimmer/find?key=date&value='+new Date().toLocaleDateString('sv'), (data) => {
-        //         if (JSON.stringify(this.state.trimmer) !== JSON.stringify(data))
-        //             this.setState({trimmer: data})
-        //     }), IVAL
-        // );
-        // this.setState({ival: ival});
-    };
-
-
-    componentWillUnmount() {
-        clearInterval(this.state.ival);
     };
 
     render() {

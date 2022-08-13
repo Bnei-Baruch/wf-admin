@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react'
-
-import { getData, IVAL } from '../../shared/tools';
 import { Table, Container } from 'semantic-ui-react'
 import {langs_bb} from '../../shared/consts';
 
@@ -9,30 +7,20 @@ class MonitorKmedia extends Component {
     state = {
         archive: [],
         json: {},
-        ival: null,
     };
 
     componentDidMount() {
-        // let ival = setInterval(() =>
-        //     getData('archive/find?key=date&value='+new Date().toLocaleDateString('sv'), (data) => {
-        //         if (JSON.stringify(this.state.archive) !== JSON.stringify(data)) {
-        //             //let kmdeia = data.filter(k => k.source.match(/(insert|carbon|langcheck)/));
-        //             this.setState({archive: data});
-        //             this.restructure(data);
-        //         }
-        //     }), IVAL
-        // );
-        // this.setState({ival: ival});
-    };
-
-
-    componentWillUnmount() {
-        clearInterval(this.state.ival);
+        setTimeout(() => {
+            this.scrollToBottom();
+        }, 3000);
     };
 
     componentDidUpdate(prevProps) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
             this.restructure(this.props.archive);
+            setTimeout(() => {
+                this.scrollToBottom();
+            }, 1000);
         }
     };
 
@@ -59,6 +47,10 @@ class MonitorKmedia extends Component {
             json[n][ext][lng].filename = name;
         }
         this.setState({json: json})
+    };
+
+    scrollToBottom = () => {
+        this.refs.end.scrollIntoView({behavior: "smooth"});
     };
 
     render() {
@@ -116,6 +108,7 @@ class MonitorKmedia extends Component {
                     </Table.Header>
                     <Table.Body>
                         {this.props.kmedia_full ? full_kmedia_data : short_kmedia_data}
+                        <div ref="end" />
                     </Table.Body>
                 </Table>
             </div>
