@@ -191,15 +191,11 @@ class EventPartForm extends BaseForm {
                 {this.renderHasTranslation()}
               </Grid.Column>
             </Grid.Row>
-            {
-              metadata.label_id ?
-                <Grid.Row>
-                  <Grid.Column>
-                    {this.renderFilmDate()}
-                  </Grid.Column>
-                </Grid.Row> :
-                null
-            }
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderFilmDate()}
+              </Grid.Column>
+            </Grid.Row>
           </Grid>
         </Grid.Column>
       </Grid.Row>
