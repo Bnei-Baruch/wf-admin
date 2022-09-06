@@ -1,13 +1,23 @@
 import React, { Component } from 'react';
 import {Progress, Modal, Segment, Icon, Button, Divider, Header, Select, Grid, Checkbox} from 'semantic-ui-react';
 import Upload from 'rc-upload';
-import {getData, getMediaType, getToken, putData, toHms, WFDB_BACKEND, WFNAS_BACKEND} from "../../shared/tools";
+import {
+    getData,
+    getMediaType,
+    getToken,
+    insertName,
+    putData,
+    toHms,
+    WFDB_BACKEND,
+    WFNAS_BACKEND, WFSRV_BACKEND
+} from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES, PRODUCT_FILE_TYPES_ALL} from "../../shared/consts";
 
 class FilesUpload extends Component {
 
     state = {
         archive: false,
+        change: false,
         file_data: null,
         progress: {},
         file_type: null,
@@ -52,12 +62,49 @@ class FilesUpload extends Component {
         });
     };
 
+    changeFile = () => {
+        const {file_data} = this.state;
+        const {to_mdb} = this.props;
+        insertName(to_mdb.sha1, "sha1", (data) => {
+            console.log(":: insert data - got: ",data);
+            if(data.length > 0) {
+                data.insert_type = "2";
+                data.line.old_sha1 = to_mdb.sha1;
+                data.line.old_file_id = to_mdb.file_id;
+                data.sha1 = file_data.sha1;
+                putData(`${WFSRV_BACKEND}/workflow/insert`, data, (cb) => {
+                    console.log(":: WFSRV respond: ",cb);
+                    if(cb.status === "ok") {
+                        this.saveFile();
+                        fetch(`${WFDB_BACKEND}/files/${to_mdb.file_id}/status/removed?value=true`,
+                            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+                    } else {
+                        alert("Something gone wrong :(");
+                    }
+                });
+            } else {
+                alert("Did not found insert object");
+            }
+        });
+    };
+
+    handleApply = () => {
+        const {change} = this.state;
+
+        if(change) {
+            this.changeFile()
+        } else {
+            this.saveFile()
+        }
+    };
+
     saveFile = () => {
-        const {file_data, file_type, archive} = this.state;
+        const {file_data, file_type, archive, change} = this.state;
+
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
         file_data.properties.archive = archive;
-        file_data.properties.mdb = false;
+        file_data.properties.mdb = change;
         putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
             console.log(":: UploadApp - workflow respond: ",file_meta);
             if(archive && file_meta.media_info) {
@@ -84,7 +131,7 @@ class FilesUpload extends Component {
 
     render() {
 
-        const {progress, file_type, file_type_options, archive, uploading} = this.state;
+        const {progress, file_type, file_type_options, archive, change, uploading} = this.state;
 
         let files_progress = Object.keys(progress).map((id) => {
             let count = progress[id];
@@ -131,6 +178,10 @@ class FilesUpload extends Component {
                                     <Checkbox label='File for Archive' checked={archive} disabled={this.props.to_mdb}
                                               onChange={() => this.setState({archive: !archive})} />
                                 </Segment>
+                                <Segment size='mini' basic>
+                                    <Checkbox label='Change in Archive' checked={change} disabled={!this.props.to_mdb}
+                                              onChange={() => this.setState({change: !change, archive: !change})} />
+                                </Segment>
                             </Grid.Column>
                         </Grid>
                         : null}
@@ -152,7 +203,7 @@ class FilesUpload extends Component {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.closeModal} >Cancel</Button>
-                    <Button positive={true} disabled={!file_type} onClick={this.saveFile} >Apply</Button>
+                    <Button positive={true} disabled={!file_type} onClick={this.handleApply} >Apply</Button>
                 </Modal.Actions>
             </Modal>
         );
