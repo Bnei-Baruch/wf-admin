@@ -7,7 +7,7 @@ import {
     newMdbUnit,
     updateMdbUnit,
     WFSRV_BACKEND,
-    toHms, CNV_BACKEND
+    toHms, CNV_BACKEND, insertName
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -92,6 +92,14 @@ class FileManager extends Component {
     };
 
     makeUnit = () => {
+        const {file_data} = this.props;
+        const {properties:{change_sha1}} = file_data;
+
+        if(change_sha1) {
+            this.chnageUnit();
+            return
+        }
+
         const {line, parent, i18n} = this.props.product;
         this.setState({inserting: true});
 
@@ -122,6 +130,32 @@ class FileManager extends Component {
                 })
         }
     };
+
+    chnageUnit = () => {
+        const {sha1, properties:{change_sha1, change_id, url}} = this.props.file_data;
+        insertName(sha1, "sha1", (data) => {
+            console.log(":: insert data - got: ", data);
+            if(data.length > 0) {
+                let insert_meta = data[0]
+                insert_meta.insert_type = "2";
+                insert_meta.line.old_sha1 = change_sha1;
+                insert_meta.sha1 = sha1;
+                insert_meta.line.url = url;
+                putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
+                    console.log(":: WFSRV respond: ",cb);
+                    if(cb.status === "ok") {
+                        fetch(`${WFDB_BACKEND}/files/${change_id}/status/removed?value=true`,
+                            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+                        //TODO: Put uid property to file object
+                    } else {
+                        alert("Something gone wrong :(");
+                    }
+                });
+            } else {
+                alert("Did not found insert object");
+            }
+        });
+    }
 
     archiveInsert = (unit) => {
         const {file_data, product, user} = this.props;

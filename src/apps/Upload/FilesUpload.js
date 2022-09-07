@@ -5,11 +5,10 @@ import {
     getData,
     getMediaType,
     getToken,
-    insertName,
     putData,
     toHms,
     WFDB_BACKEND,
-    WFNAS_BACKEND, WFSRV_BACKEND
+    WFNAS_BACKEND,
 } from "../../shared/tools";
 import {LANG_MAP, PRODUCT_FILE_TYPES, PRODUCT_FILE_TYPES_ALL} from "../../shared/consts";
 
@@ -62,50 +61,18 @@ class FilesUpload extends Component {
         });
     };
 
-    changeFile = () => {
-        const {file_data} = this.state;
-        const {to_mdb} = this.props;
-        insertName(to_mdb.sha1, "sha1", (data) => {
-            console.log(":: insert data - got: ", data);
-            if(data.length > 0) {
-                let insert_meta = data[0]
-                insert_meta.insert_type = "2";
-                insert_meta.line.old_sha1 = to_mdb.sha1;
-                insert_meta.line.old_file_id = to_mdb.file_id;
-                insert_meta.sha1 = file_data.sha1;
-                putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
-                    console.log(":: WFSRV respond: ",cb);
-                    if(cb.status === "ok") {
-                        this.saveFile();
-                        fetch(`${WFDB_BACKEND}/files/${to_mdb.file_id}/status/removed?value=true`,
-                            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-                    } else {
-                        alert("Something gone wrong :(");
-                    }
-                });
-            } else {
-                alert("Did not found insert object");
-            }
-        });
-    };
-
-    handleApply = () => {
-        const {change} = this.state;
-
-        if(change) {
-            this.changeFile()
-        } else {
-            this.saveFile()
-        }
-    };
-
     saveFile = () => {
         const {file_data, file_type, archive, change} = this.state;
+        const {to_mdb} = this.props;
 
         file_data.file_type = file_type;
         file_data.file_name = this.props.file_name;
         file_data.properties.archive = archive;
-        file_data.properties.mdb = change;
+        file_data.properties.mdb = false;
+        if(change) {
+            file_data.properties.change_sha1 = to_mdb.sha1;
+            file_data.properties.change_id = to_mdb.file_id;
+        }
         putData(`${WFNAS_BACKEND}/file/save`, file_data, (file_meta) => {
             console.log(":: UploadApp - workflow respond: ",file_meta);
             if(archive && file_meta.media_info) {
@@ -204,7 +171,7 @@ class FilesUpload extends Component {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.closeModal} >Cancel</Button>
-                    <Button positive={true} disabled={!file_type} onClick={this.handleApply} >Apply</Button>
+                    <Button positive={true} disabled={!file_type} onClick={this.saveFile} >Apply</Button>
                 </Modal.Actions>
             </Modal>
         );
