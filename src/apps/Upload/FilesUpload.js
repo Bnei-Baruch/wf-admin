@@ -66,13 +66,14 @@ class FilesUpload extends Component {
         const {file_data} = this.state;
         const {to_mdb} = this.props;
         insertName(to_mdb.sha1, "sha1", (data) => {
-            console.log(":: insert data - got: ",data);
+            console.log(":: insert data - got: ", data);
             if(data.length > 0) {
-                data.insert_type = "2";
-                data.line.old_sha1 = to_mdb.sha1;
-                data.line.old_file_id = to_mdb.file_id;
-                data.sha1 = file_data.sha1;
-                putData(`${WFSRV_BACKEND}/workflow/insert`, data, (cb) => {
+                let insert_meta = data[0]
+                insert_meta.insert_type = "2";
+                insert_meta.line.old_sha1 = to_mdb.sha1;
+                insert_meta.line.old_file_id = to_mdb.file_id;
+                insert_meta.sha1 = file_data.sha1;
+                putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
                     console.log(":: WFSRV respond: ",cb);
                     if(cb.status === "ok") {
                         this.saveFile();
