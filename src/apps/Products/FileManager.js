@@ -132,7 +132,10 @@ class FileManager extends Component {
     };
 
     chnageUnit = () => {
-        const {sha1, properties:{change_sha1, change_id, url}} = this.props.file_data;
+        const {file_data} = this.props;
+        const {file_id, sha1, properties:{change_sha1, change_id, url}} = file_data;
+
+        // Take insert data
         insertName(sha1, "sha1", (data) => {
             console.log(":: insert data - got: ", data);
             if(data.length > 0) {
@@ -141,12 +144,29 @@ class FileManager extends Component {
                 insert_meta.line.old_sha1 = change_sha1;
                 insert_meta.sha1 = sha1;
                 insert_meta.line.url = url;
+
+                // Update insert data
                 putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
                     console.log(":: WFSRV respond: ",cb);
                     if(cb.status === "ok") {
+
+                        // Mark changed file as removed
                         fetch(`${WFDB_BACKEND}/files/${change_id}/status/removed?value=true`,
                             { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-                        //TODO: Put uid property to file object
+
+                        file_data.uid = insert_meta.line.uid;
+                        file_data.properties.archive = true;
+                        file_data.properties.mdb = true;
+                        delete file_data.properties.change_sha1;
+                        delete file_data.id;
+
+                        // Update file with new data
+                        putData(`${WFDB_BACKEND}/files/${file_id}`, file_data, (cb) => {
+                            console.log(":: saveFile: ",cb);
+                            this.props.getProductFiles();
+                            this.setState({inserting: false});
+                            alert("Change successful :)");
+                        });
                     } else {
                         alert("Something gone wrong :(");
                     }
