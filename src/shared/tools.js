@@ -34,6 +34,7 @@ const AUTH_URL = 'https://accounts.kab.info/auth/realms/main';
 export const MQTT_LCL_URL = process.env.REACT_APP_MQTT_LCL_URL;
 export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
 export const AUTH_API = process.env.REACT_APP_AUTH_API_BACKEND;
+export const KM_CDN_URL = process.env.REACT_APP_KM_CDN_URL;
 
 export const IVAL = 1000;
 
@@ -491,7 +492,7 @@ const setRemuxSrc = (metadata, published, original_language) => {
         return null;
         // It's mean we did not get HD here
     } else if(remux_src.length === 1) {
-        metadata.line.nHD = remux_src[0].properties.url;
+        metadata.line.nHD = KM_CDN_URL+'/'+remux_src[0].uid;
         metadata.line.nHD_sha1 = remux_src[0].sha1;
         metadata.line.HD = null;
         metadata.line.HD_sha1 = null;
@@ -499,7 +500,7 @@ const setRemuxSrc = (metadata, published, original_language) => {
         // It's mean we get HD and nHD here
     } else {
         for (let i = 0; i < remux_src.length; i++) {
-            metadata.line[remux_src[i].properties.video_size] = remux_src[i].properties.url;
+            metadata.line[remux_src[i].properties.video_size] = KM_CDN_URL+'/'+remux_src[i].uid;
             metadata.line[remux_src[i].properties.video_size + "_sha1"] = remux_src[i].sha1;
             if (remux_src[i].properties.video_size === "nHD")
                 metadata.insert_name = language + "_t_" + remux_src[i].name.split("_").slice(2).join("_").split(".")[0] + ".wav";
