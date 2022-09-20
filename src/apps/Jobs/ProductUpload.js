@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Progress,Message } from 'semantic-ui-react';
+import { Progress,Segment } from 'semantic-ui-react';
 import Upload from 'rc-upload';
 import {getToken, WFSRV_BACKEND} from "../../shared/tools";
 
 class ProductUpload extends Component {
 
     state = {
+        done: false,
         file: null,
         percent: 0,
         uploading: false,
@@ -35,11 +36,11 @@ class ProductUpload extends Component {
 
     uploadDone = (file) => {
         this.props.onFileData(file);
-        this.setState({percent: 0, uploading: false, file: null});
+        this.setState({percent: 0, uploading: false, file: null, done: true});
     };
 
     render() {
-        const {uploading, file} = this.state;
+        const {uploading, file, done} = this.state;
 
         const props = {
             action: `${WFSRV_BACKEND}/job/upload`,
@@ -49,12 +50,14 @@ class ProductUpload extends Component {
         };
 
         return (
-            <Message>
+            <Segment loading={done} >
                 <Upload
                     {...this.props}
                     {...props}
                     className={uploading ? "uploading" : "aricha"}
                     openFileDialogOnClick={!uploading}
+                    disabled={uploading}
+                    multiple={false}
                     onStart={this.onStart}
                     beforeUpload={this.beforeUpload}
                     onError={this.onError}
@@ -63,7 +66,7 @@ class ProductUpload extends Component {
                     {uploading ? "Uploading... " : "Drop your complete product here or click me for select from local disk"}
                 </Upload>
                 <Progress label={file?.name ? file?.name : ''} percent={this.state.percent} indicating progress='percent' />
-            </Message>
+            </Segment>
         );
     }
 }
