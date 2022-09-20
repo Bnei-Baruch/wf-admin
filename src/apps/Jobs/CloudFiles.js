@@ -14,7 +14,6 @@ import {
     Icon,
     Table,
     Loader,
-    Popup,
     Checkbox,
     Menu,
     Button,
@@ -22,9 +21,9 @@ import {
     Modal,
     Message, Dropdown
 } from 'semantic-ui-react'
-import DatePicker from "react-datepicker";
+//import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
-import {dep_options} from "../../shared/consts";
+//import {dep_options} from "../../shared/consts";
 import ProductUpload from "./ProductUpload";
 
 class CloudFiles extends Component {
@@ -104,7 +103,7 @@ class CloudFiles extends Component {
             }
             postData(`${WFSRV_BACKEND}/wf/notify`, data, (cb) => {
                 console.log("notify respond: ", cb);
-                this.setState({job_id: null, job_name: ""});
+                this.setState({job_id: null, job_name: "", show_upload: false});
             });
         });
     };
@@ -240,7 +239,6 @@ class CloudFiles extends Component {
 
         return (
             <Segment basic className="wfdb_app">
-                {show_upload ? <ProductUpload onFileData={this.jobWorkflow} /> : ''}
                 <Message size='large'>
                     <Grid columns='equal'>
                         <Grid.Column width={8}>
@@ -258,7 +256,7 @@ class CloudFiles extends Component {
                                 <Menu.Menu position='right'>
                                     <Menu.Item>
                                         <Button color='orange' icon='upload' disabled={!job_id}
-                                                onClick={() => this.setState({show_upload: !show_upload})} />
+                                                onClick={() => this.setState({show_upload: true})} />
                                     </Menu.Item>
                                     <Menu.Item>
                                         <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}
@@ -275,6 +273,13 @@ class CloudFiles extends Component {
                         </Grid.Column>
                     </Grid>
                 </Message>
+                <Modal open={show_upload} closeOnDimmerClick={false} closeIcon onClose={() => this.setState({show_upload: false})} >
+                <Modal.Content>
+                    <Modal.Description>
+                        <ProductUpload onFileData={this.jobWorkflow} />
+                    </Modal.Description>
+                </Modal.Content>
+                </Modal>
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
