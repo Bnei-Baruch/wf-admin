@@ -28,7 +28,6 @@ class UploadApp extends Component {
         const upload_topic = 'workflow/server/local/upload';
         this.setState({upload_topic})
         mqtt.join(upload_topic);
-        getLocalUpload(() => {})
         mqtt.watch((message, type, source) => {
             console.log("[Upload] Got msg: ", message, " | from: " + source, " | type: " + type);
             this.setState({[type]: message})
@@ -38,6 +37,9 @@ class UploadApp extends Component {
     selectTab = (e, data) => {
         let tab = data.panes[data.activeIndex].menuItem.key;
         console.log(" :: Tab selected: ",tab);
+        if(tab === "upload") {
+            getLocalUpload(() => {})
+        }
         this.setState({tab});
     };
 
