@@ -355,6 +355,21 @@ export const getStatus = (ep, cb) => {
         .catch(ex => console.log(`getUpload`, ex));
 };
 
+export const getLocalUpload = (cb) => {
+    fetch(`${WFSRV_BACKEND}/local/upload`, {
+        headers: {
+            'Authorization': 'bearer ' + getToken(),
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json().then(data => cb(data));
+            }
+        })
+        .catch(ex => console.log(`getUpload`, ex));
+};
+
 
 export const getLang = (lang) => {
     return Object.keys(MDB_LANGUAGES).find(key => MDB_LANGUAGES[key] === lang);

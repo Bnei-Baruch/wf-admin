@@ -1,21 +1,39 @@
 import React, {Component, Fragment} from 'react'
 import AkladaUpload from "./AkladaUpload";
 import BackupUpload from "./BackupUpload";
-import {WFSRV_BACKEND, putData} from "../../shared/tools";
+import {WFSRV_BACKEND, putData, getLocalUpload} from "../../shared/tools";
 import RawUpload from "./RawUpload";
 import {Tab} from "semantic-ui-react";
+import mqtt from "../../shared/mqtt";
+import MonitorUpload from "../Monitor/MonitorUpload";
 
 class UploadApp extends Component {
 
     state = {
         tab: "backup",
         ival: null,
+        upload_topic: "",
+        local: ["", ""],
     };
 
-    // componentDidMount() {
-    //     let files_product = !kc.hasRealmRole("wf_products_root");
-    //     this.setState({files_product});
-    // };
+    componentDidMount() {
+        this.initMQTT();
+    };
+
+    componentWillUnmount() {
+        mqtt.exit(this.state.upload_topic);
+    };
+
+    initMQTT = () => {
+        const upload_topic = 'workflow/server/local/upload';
+        this.setState({upload_topic})
+        mqtt.join(upload_topic);
+        getLocalUpload(() => {})
+        mqtt.watch((message, type, source) => {
+            console.log("[Upload] Got msg: ", message, " | from: " + source, " | type: " + type);
+            this.setState({[type]: message})
+        }, true)
+    };
 
     selectTab = (e, data) => {
         let tab = data.panes[data.activeIndex].menuItem.key;
@@ -62,6 +80,8 @@ class UploadApp extends Component {
                 render: () => <Tab.Pane attached ><RawUpload onFileData={this.rawWorkflow} /></Tab.Pane> },
             { menuItem: { key: 'akladot', content: 'Akladot', disabled: false},
                 render: () => <Tab.Pane attached ><AkladaUpload onFileData={this.akladaWorkflow} /></Tab.Pane> },
+            { menuItem: { key: 'upload', content: 'Monitor', disabled: false},
+                render: () => <Tab.Pane attached ><MonitorUpload upload={this.state.local} /></Tab.Pane> },
         ]
 
         return (
