@@ -529,7 +529,14 @@ export const DATE_FORMAT = 'YYYY-MM-DD';
 
 export const JOB_STATUS = [
     {name: "M", desc: "Materials", status: "materials", value: false},
-    {name: "P", desc: "Product", status: "product", value: false},
-    {name: "F", desc: "Fix", status: "fixed", value: false},
-    {name: "S", desc: "Subtitles", status: "subed", value: false},
+    {name: "GP", desc: "Got Product", status: "product", value: false},
+    {name: "TC", desc: "To Censor", status: "censored", value: false},
+    {name: "C", desc: "Censor Checked", status: "checked", value: false},
+    {name: "TF", desc: "To Fix", status: "fix_req", value: false},
+    {name: "F", desc: "Fix Done", status: "fixed", value: false},
+    {name: "TS", desc: "To Sub", status: "sub_req", value: false},
+    {name: "S", desc: "Sub Done", status: "subed", value: false},
+    {name: "TP", desc: "To Post", status: "post_req", value: false},
+    {name: "P", desc: "Post Done", status: "subed", value: false},
+    {name: "J", desc: "Job Finished", status: "wfsend", value: false},
 ]

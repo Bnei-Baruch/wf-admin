@@ -661,12 +661,12 @@ export const newInsertMeta = (file_data) => {
     return metadata;
 };
 
-export const newJobMeta = (job_name) => {
+export const newJobMeta = (job_name, file_name) => {
     let job_id = "j" + Math.floor(Date.now() / 1000);
     let date = new Date(job_id.substr(1) * 1000).toLocaleDateString('sv');
     let metadata = {
         job_id, date,
-        file_name: null,
+        file_name: file_name,
         job_name: job_name,
         job_type: "video",
         line: null,

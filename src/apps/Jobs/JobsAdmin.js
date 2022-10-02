@@ -14,6 +14,7 @@ class JobsAdmin extends Component {
         insert_open: false,
         insert_button: true,
         inserting: false,
+        file_name: "",
         job_name: "",
         jobs: [],
         job_data: null,
@@ -59,9 +60,9 @@ class JobsAdmin extends Component {
 
     selectJob = (job_data) => {
         console.log(":: ArichaJobs - selected job: ", job_data);
-        const {job_id, job_name, parent} = job_data;
+        const {job_id, job_name, file_name, parent} = job_data;
         this.getJobFiles(job_data.job_id);
-        this.setState({job_data, job_name, active: job_id, doers: parent.doers, open_edit: true});
+        this.setState({job_data, job_name, file_name, active: job_id, doers: parent.doers, open_edit: true});
     };
 
     getJobFiles = (job_id) => {
@@ -188,7 +189,7 @@ class JobsAdmin extends Component {
                     {/*    </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}*/}
                     {/*</Table.Cell>*/}
                     <Table.Cell onClick={() => this.selectJob(data)}>{locked ? d : ""}{title}</Table.Cell>
-                    <Table.Cell>{firstName + " " + lastName + " (" + email + ")"}</Table.Cell>
+                    {/*<Table.Cell>{firstName + " " + lastName + " (" + email + ")"}</Table.Cell>*/}
                     <Table.Cell>{date}</Table.Cell>
                     {JOB_STATUS.map(s => {
                         const st = wfstatus[s.status] ? wfstatus[s.status] : false;
@@ -222,7 +223,7 @@ class JobsAdmin extends Component {
                             <Table.HeaderCell width={1}>Msg</Table.HeaderCell>
                             {/*<Table.HeaderCell width={1}>Sub</Table.HeaderCell>*/}
                             <Table.HeaderCell width={7}>Title</Table.HeaderCell>
-                            <Table.HeaderCell width={4}>Editor</Table.HeaderCell>
+                            {/*<Table.HeaderCell width={4}>Editor</Table.HeaderCell>*/}
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             {JOB_STATUS.map(s => {
                                 return (<Table.HeaderCell width={1}>{s.name}</Table.HeaderCell>)

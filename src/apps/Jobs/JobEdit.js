@@ -1,21 +1,7 @@
 import React, {Component} from 'react'
 import {JOB_STATUS} from "../../shared/consts";
-import {getData, putData, WFDB_BACKEND, newJobMeta, postData, getToken} from '../../shared/tools';
-import {
-    Menu,
-    Modal,
-    Grid,
-    Icon,
-    Table,
-    Loader,
-    Button,
-    Message,
-    Dropdown,
-    Popup,
-    TextArea,
-    Input,
-    Header
-} from 'semantic-ui-react'
+import {putData, WFDB_BACKEND, newJobMeta, postData, getToken} from '../../shared/tools';
+import {Menu, Modal, Icon, Table, Loader, Button, Popup, Form, Header} from 'semantic-ui-react'
 
 class JobsAdmin extends Component {
 
@@ -42,8 +28,8 @@ class JobsAdmin extends Component {
     };
 
     newJob = () => {
-        const {job_name,doers} = this.props;
-        let job_meta = newJobMeta(job_name);
+        const {file_name, job_name, doers} = this.props;
+        let job_meta = newJobMeta(job_name, file_name);
         if(doers)
             job_meta.parent.doers = doers;
         console.log(" :: New Meta: ", job_meta);
@@ -54,8 +40,9 @@ class JobsAdmin extends Component {
     };
 
     editJob = () => {
-        const {job_name, doers, job_data} = this.props;
+        const {file_name, job_name, doers, job_data} = this.props;
         job_data.job_name = job_name;
+        job_data.file_name = file_name;
         if(doers.length !== job_data.parent.doers.length)
             job_data.parent.doers = doers;
         console.log(" :: Edit Meta: ", job_data);
@@ -73,12 +60,19 @@ class JobsAdmin extends Component {
     };
 
     changeStatus = (id, name, status) => {
+        const {job_data} = this.props;
         console.log(":: changeStatus - set: ", id, name, status);
+        job_data.wfstatus[name] = status;
         fetch(`${WFDB_BACKEND}/jobs/${id}/wfstatus/${name}?value=${status}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        this.props.setProps({job_data});
     };
 
     setJobName = (job_name) => {
         this.props.setProps({job_name});
+    };
+
+    setFileName = (file_name) => {
+        this.props.setProps({file_name});
     };
 
     addDoer = (doers) => {
@@ -117,17 +111,7 @@ class JobsAdmin extends Component {
     };
 
     render() {
-
-        const {doers, active, users, open_edit, job_data, job_name} = this.props;
-
-        const send_options = [
-            {key: 'Censor', text: 'Censor', value: 'censored'},
-            {key: 'ToFix', text: 'ToFix', value: 'fix_req'},
-            {key: 'Fixed', text: 'Fixed', value: 'fixed'},
-            {key: 'Checked', text: 'Checked', value: 'checked'},
-            {key: 'Aricha', text: 'Aricha', value: 'aricha'},
-            {key: 'Buffer', text: 'Buffer', value: 'buffer'},
-        ];
+        const {doers, active, users, open_edit, job_data, job_name, file_name} = this.props;
 
         let v = (<Icon name='checkmark' color='green' />);
         let x = (<Icon name='close'/>);
@@ -136,71 +120,6 @@ class JobsAdmin extends Component {
         let f = (<Icon color='blue' name='configure'/>);
         let d = (<Icon color='blue' name='lock'/>);
         let p = (<Icon color='blue' name='cogs'/>);
-
-        // let jobs = this.state.jobs.map((data) => {
-        //     const {date, job_name, product, parent, wfstatus, note_area} = data;
-        //     const {aricha,removed,wfsend,censored,checked,fixed,fix_req,post_req,posted,sub_req,subed,locked} = wfstatus;
-        //     let notes = product ? product.notes : [];
-        //     let subtitles = product && product.subtitle ? product.subtitle.url : null;
-        //     const editor = users.find(u => u.user_id === parent.doers[0]);
-        //     const {firstName, lastName, email} = editor;
-        //     let notes_list = notes.map((note,i) => {
-        //         const {message,name,date} = note;
-        //         let h = (<div><b>{name}</b><i style={{color: 'grey'}}> @ {date}</i></div>)
-        //         return  (
-        //             <Message key={i} warning className='note_message' attached icon='copyright'
-        //                      header={h} onDismiss={() => this.delNote(data,i)}
-        //                      content={message} />
-        //         )
-        //     });
-        //     let id = data.job_id;
-        //     let ready = true;
-        //     let title = ready ? job_name : <div>{l}&nbsp;&nbsp;&nbsp;{job_name}</div>;
-        //     //let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
-        //     if(removed) return false;
-        //     let rowcolor = censored && !checked;
-        //     let active = this.state.active === id ? 'active' : 'admin_raw';
-        //     return (
-        //         <Table.Row
-        //             negative={rowcolor} positive={wfsend} warning={!ready} disabled={!ready || locked}
-        //             className={active} key={id} >
-        //             <Table.Cell>
-        //                 <Popup mountNode={document.getElementById("ltr-modal-mount")}
-        //                        trigger={<Icon name='mail' size='large' color={notes.length > 0 ? 'red' : 'grey'} />} flowing hoverable>
-        //                     {notes_list}
-        //                     <Message warning attached>
-        //                         <TextArea value={note_area} className='note_area'
-        //                                   rows={5} placeholder='Notes...'
-        //                                   onChange={(e,{value}) => this.setState({note_area: value})} />
-        //                     </Message>
-        //                     <Button attached='bottom' positive
-        //                             onClick={() => this.addNote(data)} >Add note</Button>
-        //                 </Popup>
-        //             </Table.Cell>
-        //             {/*<Table.Cell>*/}
-        //             {/*    {subtitles ? <Modal trigger={<Icon name='wordpress forms' size='large' color={subtitles ? 'green' : 'grey'} />}*/}
-        //             {/*           mountNode={document.getElementById("ltr-modal-mount")} >*/}
-        //             {/*        <FileViewer filePath={`${WFSRV_BACKEND}${subtitles}`} fileType='docx' />*/}
-        //             {/*    </Modal> : <Icon name='file' size='large' color={subtitles ? 'green' : 'grey'} />}*/}
-        //             {/*</Table.Cell>*/}
-        //             <Table.Cell onClick={() => this.selectJob(data)}>{locked ? d : ""}{title}</Table.Cell>
-        //             <Table.Cell>{firstName + " " + lastName + " (" + email + ")"}</Table.Cell>
-        //             <Table.Cell>{date}</Table.Cell>
-        //             {JOB_STATUS.map(s => {
-        //                 const st = wfstatus[s.status] ? wfstatus[s.status] : false;
-        //                 return (
-        //                     <Popup trigger={<Table.Cell negative={!st}>{st ? v : x}</Table.Cell>} flowing hoverable>
-        //                         <p>{s.desc}</p>
-        //                         <Button.Group>
-        //                             <Button onClick={() => this.changeStatus(id, s.status, true)} icon>{v}</Button>
-        //                             <Button onClick={() => this.changeStatus(id, s.status, false)} icon>{x}</Button>
-        //                         </Button.Group>
-        //                     </Popup>
-        //                 )
-        //             })}
-        //         </Table.Row>
-        //     )
-        // });
 
         const doers_list = users.map( u => {
             const {user_id, firstName, lastName, email} = u;
@@ -213,58 +132,53 @@ class JobsAdmin extends Component {
                     <Header textAlign="center" >{job_data ? job_data.job_name : ""}</Header>
                 </Modal.Header>
                 <Modal.Content>
+                    <Form size='large'>
+                        <Form.Group widths='equal'>
+                            <Form.Input fluid label='Job name' placeholder="Job name.." required
+                                        onChange={e => this.setJobName(e.target.value)}
+                                        value={job_name} />
+                            <Form.Input fluid label='File name' placeholder="File name.."
+                                        onChange={e => this.setFileName(e.target.value)}
+                                        value={file_name} />
+                        </Form.Group>
+                        <Form.Select placeholder="Add doer.." required
+                                     label='Job doers'
+                                     selection
+                                     multiple
+                                     options={doers_list}
+                                     value={doers}
+                                     onChange={(e, {value}) => this.addDoer(value)} />
+                        <Form.Field
+                            id='status'
+                            disabled={!active}
+                            control={Button}
+                            content={<Table selectable compact='very' className="ingest_table" fixed>
+                                <Table.Header>
+                                    <Table.Row className='table_header'>
+                                        {JOB_STATUS.map(s => {
+                                            return (<Table.HeaderCell width={1}>{s.desc}</Table.HeaderCell>)
+                                        })}
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {JOB_STATUS.map(s => {
+                                        const st = job_data?.wfstatus ? job_data.wfstatus[s.status] : false;
+                                        return (
+                                            <Popup trigger={<Table.Cell negative={!st}>{st ? v : x}</Table.Cell>} flowing hoverable>
+                                                <p>{s.desc}</p>
+                                                <Button.Group>
+                                                    <Button onClick={() => this.changeStatus(job_data.job_id, s.status, true)} icon>{v}</Button>
+                                                    <Button onClick={() => this.changeStatus(job_data.job_id, s.status, false)} icon>{x}</Button>
+                                                </Button.Group>
+                                            </Popup>
+                                        )
+                                    })}
+                                </Table.Body>
+                            </Table>}
+                            label='Job Progress Status'
+                        />
+                    </Form>
                     {/*<Modal.Description>*/}
-                        <Grid columns='equal'>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Input className="job_input"
-                                           placeholder="Project name.."
-                                           onChange={e => this.setJobName(e.target.value)}
-                                           value={job_name} />
-                                </Grid.Column>
-                                <Grid.Column>
-
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Dropdown
-                                        placeholder="Add doer.."
-                                        selection
-                                        multiple
-                                        options={doers_list}
-                                        value={doers}
-                                        onChange={(e, {value}) => this.addDoer(value)} />
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Table selectable compact='very' basic structured className="ingest_table" fixed>
-                                        <Table.Header>
-                                            <Table.Row className='table_header'>
-                                                {JOB_STATUS.map(s => {
-                                                    return (<Table.HeaderCell width={1}>{s.desc}</Table.HeaderCell>)
-                                                })}
-                                            </Table.Row>
-                                        </Table.Header>
-                                        <Table.Body>
-                                            {JOB_STATUS.map(s => {
-                                                const st = job_data?.wfstatus ? job_data.wfstatus[s.status] : false;
-                                                return (
-                                                    <Popup trigger={<Table.Cell negative={!st}>{st ? v : x}</Table.Cell>} flowing hoverable>
-                                                        <p>{s.desc}</p>
-                                                        <Button.Group>
-                                                            <Button onClick={() => this.changeStatus(job_data.job_id, s.status, true)} icon>{v}</Button>
-                                                            <Button onClick={() => this.changeStatus(job_data.job_id, s.status, false)} icon>{x}</Button>
-                                                        </Button.Group>
-                                                    </Popup>
-                                                )
-                                            })}
-                                        </Table.Body>
-                                    </Table>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
                     {/*<Button fluid disabled={!active} onClick={this.clearSelection}>Clear</Button>*/}
                     {/*</Modal.Description>*/}
                 </Modal.Content>
