@@ -3,8 +3,9 @@ import {JOB_STATUS} from "../../shared/consts";
 import {getData, putData, WFDB_BACKEND, newJobMeta, postData, getToken} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Message, Dropdown, Popup, TextArea, Input} from 'semantic-ui-react'
 import mqtt from "../../shared/mqtt";
+import JobEdit from "./JobEdit";
 
-class ProductJob extends Component {
+class JobsAdmin extends Component {
 
     state = {
         active: null,
@@ -15,7 +16,7 @@ class ProductJob extends Component {
         inserting: false,
         job_name: "",
         jobs: [],
-        job_data: {},
+        job_data: null,
         job_files: [],
         filedata: {},
         kmedia_option: false,
@@ -28,7 +29,7 @@ class ProductJob extends Component {
         special: "censored",
         source: null,
         note_area: "",
-
+        open_edit: false,
     };
 
     componentDidMount() {
@@ -60,7 +61,7 @@ class ProductJob extends Component {
         console.log(":: ArichaJobs - selected job: ", job_data);
         const {job_id, job_name, parent} = job_data;
         this.getJobFiles(job_data.job_id);
-        this.setState({job_data, job_name, active: job_id, doers: parent.doers});
+        this.setState({job_data, job_name, active: job_id, doers: parent.doers, open_edit: true});
     };
 
     getJobFiles = (job_id) => {
@@ -86,62 +87,14 @@ class ProductJob extends Component {
         this.setState({cit_open: false, insert_open: false});
     };
 
-    setJobName = (job_name) => {
-        this.setState({job_name});
-    };
-
-    newJob = () => {
-        const {job_name,doers} = this.state;
-        let job_meta = newJobMeta(job_name);
-        if(doers)
-            job_meta.parent.doers = doers;
-        console.log(" :: New Meta: ", job_meta);
-        putData(`${WFDB_BACKEND}/jobs/${job_meta.job_id}`, job_meta, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-        });
-        this.setState({job_name: "", doers: []});
-    };
-
-    editJob = () => {
-        const {job_name, doers, job_data} = this.state;
-        job_data.job_name = job_name;
-        if(doers.length !== job_data.parent.doers.length)
-            job_data.parent.doers = doers;
-        console.log(" :: Edit Meta: ", job_data);
-        putData(`${WFDB_BACKEND}/jobs/${job_data.job_id}`, job_data, (cb) => {
-            console.log(":: PUT Respond: ",cb);
-            this.clearSelection();
-        });
-    };
-
-    setRemoved = () => {
-        let {job_data} = this.state;
-        console.log(":: Censor - set removed: ", job_data);
-        fetch(`${WFDB_BACKEND}/jobs/${job_data.job_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
-        this.clearSelection();
-    };
-
     changeStatus = (id, name, status) => {
         console.log(":: changeStatus - set: ", id, name, status);
         fetch(`${WFDB_BACKEND}/jobs/${id}/wfstatus/${name}?value=${status}`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     clearSelection = () => {
-        this.setState({active: null, doers: [], job_name: "", job_data: {}})
+        this.setState({active: null, doers: [], job_name: "", job_data: {}, open_edit: false})
     }
-
-    addDoer = (doers) => {
-        console.log(doers);
-        this.setState({doers});
-    };
-
-    openJob = () => {
-        //TODO: Open modal with job files and options
-    };
-
-    newUnit = () => {
-        //TODO: Make new unit
-    };
 
     addNote = (job_data) => {
         const {note_area} = this.state;
@@ -253,107 +206,15 @@ class ProductJob extends Component {
             )
         });
 
-        const doers_list = users.map( u => {
-            const {user_id, firstName, lastName, email} = u;
-            return ({key: user_id, text: firstName + " " + lastName + " (" + email + ")", value: user_id})
-        });
-
         return (
             <Segment textAlign='center' className="ingest_segment" basic>
-                <Label  attached='top' className="trimmed_label">
-                    {job_data.job_name ? job_data.job_name : ""}
-                </Label>
-                <Menu secondary >
-                    <Menu.Item>
-                        <Button color={active ? "blue" : "green"}
-                                disabled={job_name === "" || doers.length === 0}
-                                onClick={active ? this.editJob : this.newJob}>{active ? "Edit" : "New"} Job
-                        </Button>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Input className="job_input"
-                               placeholder="Project name.."
-                               onChange={e => this.setJobName(e.target.value)}
-                               value={job_name} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Dropdown
-                            placeholder="Add doer.."
-                            selection
-                            multiple
-                            options={doers_list}
-                            value={doers}
-                            onChange={(e, {value}) => this.addDoer(value)} />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Button negative={true}
-                                disabled={job_data.job_id === undefined}
-                                onClick={this.setRemoved}>Remove Job
-                        </Button>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Button disabled={!active}
-                                onClick={this.clearSelection}>Clear
-                        </Button>
-                    </Menu.Item>
-                </Menu>
+                <JobEdit
+                    {...this.state}
+                    setProps={(props) => this.setState({...props})}
+                    closeModal={this.clearSelection}
+                    users={users} />
                 <Message>
-                    {/*<Menu size='large' secondary >*/}
-                    {/*    <Menu.Item>*/}
-                    {/*        <Modal trigger={<Button color='brown' icon='play' disabled={!source} />}*/}
-                    {/*               size='tiny'*/}
-                    {/*               mountNode={document.getElementById("ltr-modal-mount")}>*/}
-                    {/*            <MediaPlayer player={this.getPlayer} source={source} type='video/mp4' />*/}
-                    {/*        </Modal>*/}
-                    {/*    </Menu.Item>*/}
-                    {/*    <Menu.Item>*/}
-                    {/*        <Modal closeOnDimmerClick={false}*/}
-                    {/*               trigger={<Button color='blue' icon='tags'*/}
-                    {/*                                loading={renaming}*/}
-                    {/*                                disabled={job_data.job_id === undefined}*/}
-                    {/*                                onClick={this.openCit} />}*/}
-                    {/*               onClose={this.onCancel}*/}
-                    {/*               open={cit_open}*/}
-                    {/*               closeIcon="close"*/}
-                    {/*               mountNode={document.getElementById("cit-modal-mount")}>*/}
-                    {/*            <Modal.Content>*/}
-                    {/*                <CIT metadata={job_data.line}*/}
-                    {/*                     onCancel={this.onCancel}*/}
-                    {/*                     onComplete={(x) => this.renameFile(x)}/>*/}
-                    {/*            </Modal.Content>*/}
-                    {/*        </Modal>*/}
-                    {/*    </Menu.Item>*/}
-                    {/*    <Menu.Menu position='left'>*/}
-                    {/*        <Menu.Item>*/}
-                    {/*            <Button color='teal' icon='archive'*/}
-                    {/*                    loading={inserting}*/}
-                    {/*                    disabled={!source}*/}
-                    {/*                    onClick={this.newUnit} />*/}
-                    {/*        </Menu.Item>*/}
-                    {/*        <Menu.Item>*/}
-                    {/*            <Button color='orange' icon='upload' disabled={job_data.job_id === undefined}*/}
-                    {/*                    onClick={this.uploadMaster} />*/}
-                    {/*        </Menu.Item>*/}
-                    {/*        <Menu.Item>*/}
-                    {/*            <Button color='red' icon='close' disabled={job_data.job_id === undefined}*/}
-                    {/*                    onClick={this.setRemoved} />*/}
-                    {/*        </Menu.Item>*/}
-                    {/*    </Menu.Menu>*/}
-                    {/*    <Menu.Menu position='right'>*/}
-                    {/*        <Menu.Item>*/}
-                    {/*                <Select compact options={send_options}*/}
-                    {/*                        defaultValue={special}*/}
-                    {/*                        placeholder='Send options'*/}
-                    {/*                        onChange={(e, {value}) => this.setSpecial(value)} />*/}
-                    {/*        </Menu.Item>*/}
-                    {/*        <Menu.Item>*/}
-                    {/*            <Button positive icon="arrow right"*/}
-                    {/*                    //disabled={send_button}*/}
-                    {/*                    disabled={job_data.job_id === undefined}*/}
-                    {/*                    onClick={this.sendFile} loading={sending} />*/}
-                    {/*        </Menu.Item>*/}
-                    {/*    </Menu.Menu>*/}
-                    {/*</Menu>*/}
+                    <Button fluid positive onClick={() => this.setState({open_edit: true})}>Add New Job</Button>
                 </Message>
                 <Table selectable compact='very' basic structured className="ingest_table" fixed>
                     <Table.Header>
@@ -378,4 +239,4 @@ class ProductJob extends Component {
     }
 }
 
-export default ProductJob;
+export default JobsAdmin;

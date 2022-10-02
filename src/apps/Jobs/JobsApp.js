@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {getData} from "../../shared/tools";
-import ProductJob from "./ProductJob";
+import JobsAdmin from "./JobsAdmin";
 import {kc} from "../../components/UserManager";
 import {Tab} from "semantic-ui-react";
 import CloudFiles from "./CloudFiles";
@@ -49,7 +49,7 @@ class JobsApp extends Component {
             { menuItem: { key: 'Home', content: 'Board', disabled: false },
                 render: () => <Tab.Pane attached={true} ><BoardJob {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'jobs', content: 'Admin', disabled: adminer},
-                render: () => <Tab.Pane><ProductJob {...this.state} /></Tab.Pane> },
+                render: () => <Tab.Pane><JobsAdmin {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'files', content: 'Files', disabled: false },
                 render: () => <Tab.Pane ><CloudFiles {...this.state} /></Tab.Pane> },
             { menuItem: { key: 'products', content: 'Products', disabled: false },
