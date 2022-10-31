@@ -17,6 +17,7 @@ export const getUploadOptions = (roles, content_type) => {
         { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
         { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
         { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_media },
+        { value: 'summary', text: 'Summary', icon: 'sun'},
     ]
 };
 
@@ -59,6 +60,7 @@ export const upload_extensions = {
     "declamation": ["mp3"],
     "source": ["doc","docx","pdf","mp3"],
     "media": ["mp4","mp3"],
+    "summary": ["doc","docx"],
 };
 
 export const DCT_OPTS = {

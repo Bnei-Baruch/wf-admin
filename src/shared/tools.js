@@ -408,6 +408,8 @@ export const getName = (metadata) => {
 
     if(upload_type === "akladot") {
         name[4] = "akladot";
+    } else if(upload_type === "summary") {
+        name[4] = "summary";
     } else if(upload_type === "tamlil") {
         name[4] = line.send_name.split("_").slice(4).join("_").replace(/([^-_a-zA-Z0-9]+)/g, '').toLowerCase();
         name.splice(-1,1);

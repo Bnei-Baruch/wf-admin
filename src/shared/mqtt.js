@@ -35,7 +35,7 @@ class MqttMsg {
             transformWsUrl: transformUrl,
             properties: {
                 sessionExpiryInterval: 5,
-                maximumPacketSize: 256000,
+                maximumPacketSize: 2256000,
                 requestResponseInformation: true,
                 requestProblemInformation: true,
             },
