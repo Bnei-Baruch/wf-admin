@@ -80,17 +80,15 @@ class IngestApp extends Component {
             this.setState({trimmed: message})
         } else {
             let services = message.data;
-            for(let i=0; i<services?.length; i++) {
-                if(source === "mltcap") {
-                    let multi_online = services[i].alive;
-                    let multi_timer = multi_online ? toHms(services[i].runtime).split(".")[0] : "00:00:00";
-                    this.setState({multi_timer, multi_online});
-                }
-                if(source === "maincap") {
-                    let single_online = services[i].alive;
-                    let single_timer = single_online ? toHms(services[i].runtime).split(".")[0] : "00:00:00";
-                    this.setState({single_timer, single_online});
-                }
+            if(source === "mltcap") {
+                let multi_online = message.message === "On";
+                let multi_timer = multi_online && services?.out_time ? services.out_time.split('.')[0] : "00:00:00";
+                this.setState({multi_timer, multi_online});
+            }
+            if(source === "maincap") {
+                let single_online = message.message === "On";
+                let single_timer = single_online && services?.out_time ? services.out_time.split('.')[0] : "00:00:00";
+                this.setState({single_timer, single_online});
             }
         }
     };
