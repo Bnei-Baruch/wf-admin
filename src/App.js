@@ -87,23 +87,23 @@ class App extends Component {
                 const local = true;
                 const topic = data
                 this.setState({topic})
-                mqtt.join(topic);
-                mqtt.watch((message, type, source) => {
-                    if(type === "langcheck") {
-                        console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
-                        const count = Object.keys(message).filter(d => /t/.test(d)).length
-                        if (this.state.count !== count) {
-                            let {wf_panes} = this.state;
-                            for(let i=0; i<wf_panes.length; i++) {
-                                if(wf_panes[i].menuItem.key === "carbon") {
-                                    let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
-                                    wf_panes[i].menuItem.content = <div>Carbon{count > 0 ? l : ""}</div>;
-                                    this.setState({wf_panes,count})
-                                }
-                            }
-                        }
-                    }
-                }, local)
+                // mqtt.join(topic);
+                // mqtt.watch((message, type, source) => {
+                //     if(type === "langcheck") {
+                //         console.log("[Monitor] Got msg: ", message, " | from: " + source, " | type: " + type);
+                //         const count = Object.keys(message).filter(d => /t/.test(d)).length
+                //         if (this.state.count !== count) {
+                //             let {wf_panes} = this.state;
+                //             for(let i=0; i<wf_panes.length; i++) {
+                //                 if(wf_panes[i].menuItem.key === "carbon") {
+                //                     let l = (<Label key='Carbon' floating circular size='mini' color='red'>{count}</Label>);
+                //                     wf_panes[i].menuItem.content = <div>Carbon{count > 0 ? l : ""}</div>;
+                //                     this.setState({wf_panes,count})
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }, local)
             }
         })
     };

@@ -92,7 +92,7 @@ class MqttMsg {
             const type = topic.split("/")[2+i]
             const source = topic.split("/")[3+i]
             const message = JSON.parse(data.toString());
-            console.debug("[mqtt] message: ", message, ", on topic: ", topic, ", source: ", source, type);
+            //console.debug("[mqtt] message: ", message, ", on topic: ", topic, ", source: ", source, type);
             callback(message, type, source)
         })
     }
