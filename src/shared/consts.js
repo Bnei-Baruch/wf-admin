@@ -49,7 +49,7 @@ export const upload_extensions = {
     "akladot": ["doc","docx"],
     "tamlil": ["doc","docx"],
     "kitei-makor": ["doc","docx"],
-    "likutim": ["doc","docx"],
+    "likutim": ["doc","docx","mp3"],
     "research-material": ["doc","docx"],
     "sirtutim": ["zip"],
     "dibuv": ["wav"],

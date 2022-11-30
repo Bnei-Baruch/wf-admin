@@ -79,6 +79,7 @@ class Trimmer extends Component {
 
         let root =(
             <div><Checkbox label='Wfsend' onClick={() => this.toggle("wfsend")} checked={this.state.wfstatus.wfsend} /><br />
+                <Checkbox label='Langcheck' onClick={() => this.toggle("langcheck")} checked={this.state.wfstatus.langcheck} /><br />
             <Checkbox label='Kmedia' onClick={() => this.toggle("kmedia")} checked={this.state.wfstatus.kmedia} /><br />
             <Checkbox label='Checked' onClick={() => this.toggle("checked")} checked={this.state.wfstatus.checked} /><br />
             <Checkbox label='Censored' onClick={() => this.toggle("censored")} checked={this.state.wfstatus.censored} /><br />
