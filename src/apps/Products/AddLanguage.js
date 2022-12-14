@@ -39,10 +39,10 @@ class AddLanguage extends Component {
         const data = {name, description};
         postData(`${WFDB_BACKEND}/products/${product_id}/i18n/${WF_LANGUAGES[language]}`, data, (cb) => {
             console.log(":: PUT Respond: ",cb);
-            const {line, i18n} = this.props.product;
+            const {line} = this.props.product;
             if(line?.unit_id) {
                 const mdb_lang = WF_LANGUAGES[language];
-                const lang = i18n[mdb_lang]
+                const lang = data
                 lang.language = mdb_lang;
                 updateMdbUnit(line.unit_id, lang)
                     .then(unit => {

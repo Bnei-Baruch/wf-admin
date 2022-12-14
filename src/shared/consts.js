@@ -375,13 +375,7 @@ export const MDB_LANGUAGES = {
   xx: 'unk',
 };
 
-export const WF_LANGUAGES = function() {
-    let ret = {};
-    for(let key in MDB_LANGUAGES) {
-        ret[MDB_LANGUAGES[key]] = key;
-    }
-    return ret;
-}()
+export const WF_LANGUAGES = {"eng":"en","heb":"he","rus":"ru","spa":"es","ita":"it","ger":"de","dut":"nl","fre":"fr","por":"pt","trk":"tr","pol":"pl","ara":"ar","ind":"id","hun":"hu","fin":"fi","lit":"lt","jpn":"ja","bul":"bg","geo":"ka","nor":"no","swe":"sv","hrv":"hr","chn":"zh","far":"fa","ron":"ro","hin":"hi","mkd":"mk","slv":"sl","lav":"lv","slk":"sk","cze":"cs","ukr":"ua","mlt":"zz","unk":"xx"}
 
 export const LECTURERS = [
   { text: 'רב', value: 'rav' },
