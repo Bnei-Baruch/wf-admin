@@ -132,7 +132,7 @@ class InsertModal extends Component {
         metadata = insertLine(metadata,unit);
 
         // Source - that does not has unit
-        if(upload_type === "source") {
+        if(upload_type === "source" || upload_type === "source-scan") {
             this.checkMeta(metadata);
             return
         }
@@ -223,7 +223,7 @@ class InsertModal extends Component {
         [metadata.file_name, metadata.extension] = metadata.insert_name.split('.');
 
         // Check valid string
-        if(insert_name.length < 30 && upload_type !== "source") {
+        if(insert_name.length < 30 && (upload_type !== "source" || upload_type !== "source-scan")) {
             alert("Something wrong in file name building");
             this.setState({ isValidated: false });
             return
@@ -334,7 +334,7 @@ class InsertModal extends Component {
                             <Dropdown
                                 className="large"
                                 error={!upload_type}
-                                disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "SOURCE" || content_type === "LIKUTIM"}
+                                disabled={this.props.metadata.upload_type !== "" || content_type === "" || content_type === "BLOG_POST" || content_type === "LIKUTIM"}
                                 placeholder="Upload Type:"
                                 selection
                                 options={upload_options}

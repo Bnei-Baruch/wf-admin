@@ -5,20 +5,27 @@ export const EMPTY_OBJECT = Object.freeze({});
 export const getUploadOptions = (roles, content_type) => {
     let archive_typist = roles.find(r => r === "archive_typist");
     let archive_media = roles.find(r => r === "archive_media");
-    return [
-        { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
-        { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'research-material', text: 'נספחים', icon: 'copy', disabled: (archive_typist || content_type === "ARTICLES") },
-        { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
-        { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
-        { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
-        { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
-        { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_media },
-        { value: 'summary', text: 'Summary', icon: 'sun'},
-    ]
+    if(content_type === "SOURCE") {
+        return [
+            { value: 'source', text: 'Text', icon: 'file video outline'},
+            { value: 'source-scan', text: 'Scan', icon: 'sun'},
+        ]
+    } else {
+        return [
+            { value: 'akladot', text: ' ‏הקלדות', icon: 'file word outline', disabled: (!archive_typist || content_type === "ARTICLES") },
+            { value: 'tamlil', text: 'תמליל', icon: 'indent', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'kitei-makor', text: 'קיטעי-מקור', icon: 'copyright', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'sirtutim', text: ' ‏שרטוטים', icon: 'edit', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'dibuv', text: 'דיבוב', icon: 'translate', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'research-material', text: 'נספחים', icon: 'copy', disabled: (archive_typist || content_type === "ARTICLES") },
+            { value: 'aricha', text: ' עריכה', icon: 'paint brush', disabled: true},
+            { value: 'declamation', text: ' דיקלום', icon: 'unmute', disabled: true},
+            { value: 'article', text: 'מאמרים ', icon: 'newspaper', disabled: (archive_typist || content_type !== "ARTICLES") },
+            { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
+            { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_media },
+            { value: 'summary', text: 'Summary', icon: 'sun'},
+        ]
+    }
 };
 
 export const getContentOptions = (roles, type) => {
@@ -59,6 +66,7 @@ export const upload_extensions = {
     "publication": ["zip"],
     "declamation": ["mp3"],
     "source": ["doc","docx","pdf","mp3"],
+    "source-scan": ["pdf"],
     "media": ["mp4","mp3"],
     "summary": ["doc","docx"],
 };
