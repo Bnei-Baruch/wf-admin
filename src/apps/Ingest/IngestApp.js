@@ -22,6 +22,7 @@ class IngestApp extends Component {
         out: null,
         wfst: null,
         wfdb: null,
+        loading: false,
     };
 
     componentDidMount() {
@@ -117,6 +118,7 @@ class IngestApp extends Component {
     };
 
     addLang = () => {
+        this.setState({loading: true})
         let {langcheck, multi_timer, langstate, captures, check_count} = this.state;
         const languages = Object.assign({}, this.state.languages);
         const io = toSeconds(multi_timer);
@@ -131,11 +133,14 @@ class IngestApp extends Component {
             console.log(":: Add preset: ",cb);
             check_count++
             this.setState({langcheck, langstate, check_count});
+            setTimeout(() => {
+                this.setState({loading: false})
+            }, 3000)
         });
     };
 
     render() {
-        const {langcheck, languages, captures, multi_timer, check_count, trimmed} = this.state;
+        const {langcheck, languages, captures, multi_timer, check_count, trimmed, loading} = this.state;
         const {multi} = captures;
         const capture_title = multi ? multi.stop_name || multi.start_name : "";
         const save_disable = JSON.stringify(languages) === JSON.stringify(langcheck.languages);
@@ -152,7 +157,7 @@ class IngestApp extends Component {
                     {captures?.multi?.line ?
                         <ButtonGroup fluid>
                             {/*<Button positive disabled={save_disable} onClick={this.saveLang}>Save Languages</Button>*/}
-                            <Button positive disabled={save_disable} onClick={this.addLang}>Add Languages</Button>
+                            <Button positive loading={loading} disabled={loading || save_disable} onClick={this.addLang}>Add Languages</Button>
                         </ButtonGroup>
                         : null}
                 </Segment> : null}
