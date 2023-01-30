@@ -223,7 +223,7 @@ class InsertModal extends Component {
         [metadata.file_name, metadata.extension] = metadata.insert_name.split('.');
 
         // Check valid string
-        if(insert_name.length < 30 && (upload_type !== "source" || upload_type !== "source-scan")) {
+        if(insert_name.length < 30 && !upload_type.match(/^(source|source-scan)$/)) {
             alert("Something wrong in file name building");
             this.setState({ isValidated: false });
             return
