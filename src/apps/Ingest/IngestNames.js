@@ -23,7 +23,7 @@ class IngestNames extends Component {
     };
 
     getLines = () => {
-        getData(`names/lines`, (lines) => {
+        getData(`state/names/lines`, (lines) => {
             console.log(":: Got Lines: ",lines);
             this.setState({lines});
         });
@@ -50,7 +50,7 @@ class IngestNames extends Component {
         let new_id = randomString(8);
         console.log(":: New Line: ", newline);
         this.setState({open: false, newline });
-        putData(`${WFDB_BACKEND}/names/lines/${new_id}`, newline, (cb) => {
+        putData(`${WFDB_BACKEND}/state/names/lines/${new_id}`, newline, (cb) => {
             console.log(":: Added newline: ",cb);
             lines[new_id] = newline;
             this.setState({lines});
@@ -60,7 +60,7 @@ class IngestNames extends Component {
     removeLine = () => {
         let {line_id,lines} = this.state;
         console.log(":: Remove Line: ",line_id);
-        removeData(`${WFDB_BACKEND}/names/lines/${line_id}`, (cb) => {
+        removeData(`${WFDB_BACKEND}/state/names/lines/${line_id}`, (cb) => {
             console.log(":: Remove Line: ",cb);
             delete lines[line_id];
             this.setState({lines, file_name: ""});

@@ -106,14 +106,14 @@ class ProductsManager extends Component {
         const {filters, page} = this.state;
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? `products/find?limit=10&offset=${offset}` : `products/find?limit=10&offset=${offset}&` + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `products/kv?limit=10&offset=${offset}` : `products/kv?limit=10&offset=${offset}&` + query.join('&');
 
         if(filters.pattern) {
             let id = filters.pattern;
             if(id.match(/^([a-zA-Z0-9]{8})$/)) {
-                path = `products/find?pattern=${id}`
+                path = `products/kv?pattern=${id}`
             } else {
-                path = `products/find?product_id=${id}`
+                path = `products/kv?product_id=${id}`
             }
         }
 
@@ -123,23 +123,23 @@ class ProductsManager extends Component {
         });
     };
 
-    findProducts = () => {
+    kvProducts = () => {
         const {language, film_date} = this.state;
-        getData(`products/find?language=${language}&film_date=${film_date}`, products => {
+        getData(`products/kv?language=${language}&film_date=${film_date}`, products => {
             console.log(products)
             this.setState({products: products, product_id: null, files: [], show_languages: false, selected_language: null, show_files: false})
         });
     };
 
     getProductFiles = () => {
-        getData(`files/find?product_id=${this.state.product_id}`, (files) => {
+        getData(`files/kv?product_id=${this.state.product_id}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({files});
         });
     };
 
     getProductFilesByLang = (product_id, lang) => {
-        getData(`files/find?product_id=${product_id}&languages=${lang}`, (files) => {
+        getData(`files/kv?product_id=${product_id}&languages=${lang}`, (files) => {
             console.log(":: Files DB Data: ", files);
             this.setState({product_id, files, drop_zone: false}, () => {
                 //this.refs.files.sortFiles();

@@ -33,7 +33,7 @@ class FilesIngest extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/+/monitor';
+        const data = 'wf-api/service/+/monitor';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

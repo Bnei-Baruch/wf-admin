@@ -20,7 +20,7 @@ class ExternalApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/dgima/state';
+        const data = 'wf-api/service/dgima/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

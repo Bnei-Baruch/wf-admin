@@ -43,7 +43,7 @@ class IngestApp extends Component {
     initMQTT = () => {
         const data = 'exec/service/data/#';
         const state = 'workflow/state/capture/#';
-        const trim = 'wfdb/service/trimmer/state';
+        const trim = 'wf-api/service/trimmer/state';
         const local = true;
         const out = local ? data : 'bb/' + data;
         const wfst = local ? state : 'bb/' + state;

@@ -81,7 +81,7 @@ class App extends Component {
         mqtt.init(user, (data) => {
             console.log("[mqtt] init: ", data);
             if(!wf_ingest) {
-                const data = 'wfdb/service/langcheck/state';
+                const data = 'wf-api/service/langcheck/state';
                 // const local = true;
                 // const topic = local ? data : 'bb/' + data;
                 const local = true;

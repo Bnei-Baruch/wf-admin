@@ -40,7 +40,7 @@ class MonitorApp extends Component {
     };
 
     initMQTT = () => {
-        const wfdb_data = 'wfdb/service/+/monitor';
+        const wfdb_data = 'wf-api/service/+/monitor';
         const upload_data = 'workflow/server/upload/monitor';
         const convert_data = 'workflow/server/convert/monitor';
         const local = true;

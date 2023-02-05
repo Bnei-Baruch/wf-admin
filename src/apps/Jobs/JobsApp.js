@@ -30,7 +30,7 @@ class JobsApp extends Component {
     };
 
     getUsers = () => {
-        getData('users', (users) => {
+        getData('users/kv', (users) => {
             console.log(" :: Users: ", users);
             this.setState({users})
         });

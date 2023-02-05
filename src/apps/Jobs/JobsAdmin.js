@@ -42,7 +42,7 @@ class JobsAdmin extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/jobs/state';
+        const data = 'wf-api/service/jobs/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
@@ -66,7 +66,7 @@ class JobsAdmin extends Component {
     };
 
     getJobFiles = (job_id) => {
-        const path = `cloud/find?wid=${job_id}&type=job`
+        const path = `cloud/kv?wid=${job_id}&type=job`
         getData(path, job_files => {
             console.log("getJobFiles :: ", job_files);
             this.setState({job_files})

@@ -20,7 +20,7 @@ class CensorApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/+/state';
+        const data = 'wf-api/service/+/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
