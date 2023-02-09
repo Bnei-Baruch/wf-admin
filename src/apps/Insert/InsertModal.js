@@ -22,7 +22,14 @@ import {
     insertLine,
     remuxLine,
 } from '../../shared/tools';
-import {language_options, upload_extensions, CONTENT_TYPE_BY_ID, getContentOptions, getUploadOptions} from '../../shared/consts';
+import {
+    language_options,
+    upload_extensions,
+    CONTENT_TYPE_BY_ID,
+    getContentOptions,
+    getUploadOptions,
+    insert_language_options
+} from '../../shared/consts';
 import { fetchSources } from '../CIT/shared/store';
 
 import MdbData from './MdbData';
@@ -324,7 +331,7 @@ class InsertModal extends Component {
                                 className="large"
                                 placeholder="Language:"
                                 selection
-                                options={language_options}
+                                options={insert_language_options}
                                 language={language}
                                 onChange={(e,{value}) => this.selectLanguage(value)}
                                 value={language} >
