@@ -98,7 +98,7 @@ export const mime_list = {
     "application/x-zip-compressed": "zip"
 };
 
-export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","trk","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chn","amh","hin","per","ara","ind"];
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chi","amh","hin","per","ara","ind","arm"];
 
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
@@ -108,7 +108,7 @@ export const language_options = [
     { key: 'fr', value: 'fre', flag: 'fr', text: 'French' },
     { key: 'it', value: 'ita', flag: 'it', text: 'Italian' },
     { key: 'de', value: 'ger', flag: 'de', text: 'German' },
-    { key: 'tr', value: 'trk', flag: 'tr', text: 'Turkish' },
+    { key: 'tr', value: 'tur', flag: 'tr', text: 'Turkish' },
     { key: 'pt', value: 'por', flag: 'pt', text: 'Portuguese' },
     { key: 'bg', value: 'bul', flag: 'bg', text: 'Bulgarian' },
     { key: 'ka', value: 'geo', flag: 'ge', text: 'Georgian' },
@@ -124,12 +124,13 @@ export const language_options = [
     { key: 'lv', value: 'lav', flag: 'lv', text: 'Latvian' },
     { key: 'ua', value: 'ukr', flag: 'ua', text: 'Ukrainian' },
     { key: 'nl', value: 'dut', flag: 'nl', text: 'Dutch' },
-    { key: 'cn', value: 'chn', flag: 'cn', text: 'Chinese' },
+    { key: 'cn', value: 'chi', flag: 'cn', text: 'Chinese' },
     { key: 'et', value: 'amh', flag: 'et', text: 'Amharic' },
     { key: 'in', value: 'hin', flag: 'in', text: 'Hindi' },
     { key: 'ir', value: 'per', flag: 'ir', text: 'Persian' },
     { key: 'ar', value: 'ara', flag: 'sa', text: 'Arabic' },
     { key: 'id', value: 'ind', flag: 'id', text: 'Indonesian' },
+    { key: 'am', value: 'arm', flag: 'am', text: 'Armenian' },
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
@@ -164,6 +165,7 @@ export const insert_language_options = [
     { key: 'ar', value: 'ara', flag: 'sa', text: 'Arabic' },
     { key: 'id', value: 'ind', flag: 'id', text: 'Indonesian' },
     { key: 'cs', value: 'cze', flag: 'cz', text: 'Czech' },
+    { key: 'am', value: 'arm', flag: 'am', text: 'Armenian' },
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
@@ -193,7 +195,7 @@ export const LANGUAGES = [
   { text: 'הולנדית', value: 'dut' },
   { text: 'צרפתית', value: 'fre' },
   { text: 'פורטוגזית', value: 'por' },
-  { text: 'טורקית', value: 'trk' },
+  { text: 'טורקית', value: 'tur' },
   { text: 'פולנית', value: 'pol' },
   { text: 'ערבית', value: 'arb' },
   { text: 'הונגרית', value: 'hun' },
@@ -205,7 +207,7 @@ export const LANGUAGES = [
   { text: 'נורבגית', value: 'nor' },
   { text: 'שבדית', value: 'swe' },
   { text: 'קרואטית', value: 'hrv' },
-  { text: 'סינית', value: 'chn' },
+  { text: 'סינית', value: 'chi' },
   { text: 'פרסית', value: 'far' },
   { text: 'רומנית', value: 'ron' },
   { text: 'הינדי', value: 'hin' },
@@ -225,7 +227,7 @@ export const LANG_GERMAN     = 'ger';
 export const LANG_DUTCH      = 'dut';
 export const LANG_FRENCH     = 'fre';
 export const LANG_PORTUGUESE = 'por';
-export const LANG_TURKISH    = 'trk';
+export const LANG_TURKISH    = 'tur';
 export const LANG_POLISH     = 'pol';
 export const LANG_ARABIC     = 'ara';
 export const LANG_HUNGARIAN  = 'hun';
@@ -237,7 +239,7 @@ export const LANG_GEORGIAN   = 'geo';
 export const LANG_NORWEGIAN  = 'nor';
 export const LANG_SWEDISH    = 'swe';
 export const LANG_CROATIAN   = 'hrv';
-export const LANG_CHINESE    = 'chn';
+export const LANG_CHINESE    = 'chi';
 export const LANG_PERSIAN    = 'per';
 export const LANG_ROMANIAN   = 'ron';
 export const LANG_HINDI      = 'hin';
@@ -391,7 +393,7 @@ export const MDB_LANGUAGES = {
   nl: 'dut',
   fr: 'fre',
   pt: 'por',
-  tr: 'trk',
+  tr: 'tur',
   pl: 'pol',
   ar: 'ara',
   id: 'ind',
@@ -404,7 +406,7 @@ export const MDB_LANGUAGES = {
   no: 'nor',
   sv: 'swe',
   hr: 'hrv',
-  zh: 'chn',
+  zh: 'chi',
   fa: 'far',
   ro: 'ron',
   hi: 'hin',
@@ -418,7 +420,7 @@ export const MDB_LANGUAGES = {
   xx: 'unk',
 };
 
-export const WF_LANGUAGES = {"eng":"en","heb":"he","rus":"ru","spa":"es","ita":"it","ger":"de","dut":"nl","fre":"fr","por":"pt","trk":"tr","pol":"pl","ara":"ar","ind":"id","hun":"hu","fin":"fi","lit":"lt","jpn":"ja","bul":"bg","geo":"ka","nor":"no","swe":"sv","hrv":"hr","chn":"zh","far":"fa","ron":"ro","hin":"hi","mkd":"mk","slv":"sl","lav":"lv","slk":"sk","cze":"cs","ukr":"ua","mlt":"zz","unk":"xx"}
+export const WF_LANGUAGES = {"eng":"en","heb":"he","rus":"ru","spa":"es","ita":"it","ger":"de","dut":"nl","fre":"fr","por":"pt","tur":"tr","pol":"pl","ara":"ar","ind":"id","hun":"hu","fin":"fi","lit":"lt","jpn":"ja","bul":"bg","geo":"ka","nor":"no","swe":"sv","hrv":"hr","chi":"zh","far":"fa","ron":"ro","hin":"hi","mkd":"mk","slv":"sl","lav":"lv","slk":"sk","cze":"cs","ukr":"ua","mlt":"zz","unk":"xx"}
 
 export const LECTURERS = [
   { text: 'רב', value: 'rav' },
