@@ -122,7 +122,7 @@ class RawUpload extends Component {
                         >Notify Doers<Icon name='mail' /></Button>
                     </Segment>
                 </Segment.Group>
-                {index ?
+                {index !== "" ?
                     <Message>
                         <Upload
                             {...this.props}
