@@ -136,7 +136,7 @@ class FileManager extends Component {
         const {file_id, sha1, properties:{change_sha1, change_id, url}} = file_data;
 
         // Take insert data
-        insertName(sha1, "sha1", (data) => {
+        insertName(change_sha1, "sha1", (data) => {
             console.log(":: insert data - got: ", data);
             if(data.length > 0) {
                 let insert_meta = data[0]
