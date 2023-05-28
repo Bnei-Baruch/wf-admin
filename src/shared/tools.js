@@ -543,7 +543,7 @@ export const remuxLine = (unit, metadata, cb) => {
             //FIXME: search by UID is wrong here! We can get not expected data!
             insertData(uid, "uid", (data) => {
                 console.log(":: insert data - got: ",data);
-                if(data.length > 0 && data[0].upload_type === metadata.upload_type) {
+                if(data.length > 0 && data[0].upload_type === metadata.upload_type && data[0].language === metadata.language) {
                     metadata = setRemuxSrc(metadata, published, original_language);
                     metadata.insert_type = "5";
                     metadata.insert_id = data[0].insert_id;
