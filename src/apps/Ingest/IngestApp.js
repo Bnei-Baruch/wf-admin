@@ -6,6 +6,7 @@ import LangSelector from "../../components/LangSelector";
 import {getData, newLanguages, putData, toHms, toSeconds, WFDB_BACKEND} from "../../shared/tools";
 import mqtt from "../../shared/mqtt";
 import {Button, ButtonGroup, Label, Message, Segment} from "semantic-ui-react";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class IngestApp extends Component {
 
@@ -43,7 +44,7 @@ class IngestApp extends Component {
     initMQTT = () => {
         const data = 'exec/service/data/#';
         const state = 'workflow/state/capture/#';
-        const trim = 'wf-api/service/trimmer/state';
+        const trim = MQTT_ROOT + '/service/trimmer/state';
         const local = true;
         const out = local ? data : 'bb/' + data;
         const wfst = local ? state : 'bb/' + state;

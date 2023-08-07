@@ -3,6 +3,7 @@ import ArichaAdmin from "./ArichaAdmin";
 import ArichaUpload from "./ArichaUpload";
 import {WFSRV_BACKEND, putData, getData, MDB_FINDSHA, getUnits} from "../../shared/tools";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class ArichaApp extends Component {
 
@@ -19,7 +20,7 @@ class ArichaApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wf-api/service/aricha/state';
+        const data = MQTT_ROOT + '/service/aricha/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

@@ -4,6 +4,7 @@ import ExternalTrimmed from "./ExternalTrimmed";
 import {captureSha, putData, WFSRV_BACKEND} from "../../shared/tools";
 import ExternalTrimmer from "../Trimmer/ExternalTrimmer";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class ExternalApp extends Component {
 
@@ -20,7 +21,7 @@ class ExternalApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wf-api/service/dgima/state';
+        const data = MQTT_ROOT + '/service/dgima/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

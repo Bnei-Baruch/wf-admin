@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react'
 import AdminTrimmer from "../Trimmer/AdminTrimmer";
 import AdminTrimmed from "./AdminTrimmed";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class AdminApp extends Component {
 
@@ -18,7 +19,7 @@ class AdminApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wf-api/service/trimmer/state';
+        const data = MQTT_ROOT + '/service/trimmer/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

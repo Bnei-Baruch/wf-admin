@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage';
 import 'semantic-ui-css/semantic.min.css'
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
+import {MQTT_ROOT} from "./shared/consts";
 
 const MonitorApp = lazy(() => import("./apps/Monitor/MonitorApp"));
 const IngestApp = lazy(() => import("./apps/Ingest/IngestApp"));
@@ -81,7 +82,7 @@ class App extends Component {
         mqtt.init(user, (data) => {
             console.log("[mqtt] init: ", data);
             if(!wf_ingest) {
-                const data = 'wf-api/service/langcheck/state';
+                const data = MQTT_ROOT + '/service/langcheck/state';
                 // const local = true;
                 // const topic = local ? data : 'bb/' + data;
                 const local = true;

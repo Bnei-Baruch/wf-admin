@@ -4,6 +4,7 @@ import {getData, MDB_ADMIN_URL, KMEDIA_URL, WFSRV_BACKEND} from '../../shared/to
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Modal, Message} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class FilesIngest extends Component {
 
@@ -33,7 +34,7 @@ class FilesIngest extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wf-api/service/+/monitor';
+        const data = MQTT_ROOT + '/service/+/monitor';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})

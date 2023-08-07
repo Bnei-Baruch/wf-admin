@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react'
 //import CensorTrimmer from "../Trimmer/CensorTrimmer";
 import CensorCheck from "./CensorCheck";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class CensorApp extends Component {
 
@@ -20,7 +21,7 @@ class CensorApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wf-api/service/+/state';
+    const data = MQTT_ROOT + '/service/+/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
