@@ -130,7 +130,7 @@ class IngestApp extends Component {
         }
         langstate[li].push(lngs);
         console.log(":: Add langcheck: ",langstate);
-        putData(`${WFDB_BACKEND}/state/${li}`, langstate, (cb) => {
+        putData(`${WFDB_BACKEND}/state/state/${li}`, langstate, (cb) => {
             console.log(":: Add preset: ",cb);
             check_count++
             this.setState({langcheck, langstate, check_count});
