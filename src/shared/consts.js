@@ -1,6 +1,7 @@
 // Use these for immutable default values
 export const EMPTY_ARRAY  = Object.freeze([]);
 export const EMPTY_OBJECT = Object.freeze({});
+export const MQTT_ROOT = "wfdb"
 
 export const getUploadOptions = (roles, content_type) => {
     let archive_typist = roles.find(r => r === "archive_typist");

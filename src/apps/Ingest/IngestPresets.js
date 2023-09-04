@@ -21,7 +21,7 @@ class IngestPresets extends Component {
     };
 
     getPresets = () => {
-        getData(`names/presets`, (presets) => {
+        getData(`state/names/presets`, (presets) => {
             console.log(":: Got Presets: ",presets);
             this.setState({presets});
         });
@@ -32,8 +32,8 @@ class IngestPresets extends Component {
         if(!presets[date]) presets[date] = [];
         presets[date].push(preset);
         console.log(":: Add preset: ",presets);
-        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
-            console.log(":: Add preset: ",cb);
+        putData(`${WFDB_BACKEND}/state/names/presets`, presets, (cb) => {
+            console.log(":: Preset Callback: ", cb);
             this.setState({presets});
         });
     };
@@ -44,7 +44,6 @@ class IngestPresets extends Component {
     };
 
     setLine = (preset) => {
-        console.log(":: Preset Callback: ",preset);
         this.setState({preset, disabled: false});
     };
 
@@ -52,7 +51,7 @@ class IngestPresets extends Component {
         let {presets} = this.state;
         delete presets[date];
         console.log(":: Remove Date: ",date);
-        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
+        putData(`${WFDB_BACKEND}/state/names/presets`, presets, (cb) => {
             console.log(":: Add preset: ",cb);
             this.setState({presets});
         });
@@ -65,7 +64,7 @@ class IngestPresets extends Component {
         preset.splice(i, 1);
         presets[date] = preset;
         console.log(":: After Remove: ",presets);
-        putData(`${WFDB_BACKEND}/names/presets`, presets, (cb) => {
+        putData(`${WFDB_BACKEND}/state/names/presets`, presets, (cb) => {
             console.log(":: Names remove preset: ",cb);
             this.setState({preset: {id:"", name:""}, presets});
         });

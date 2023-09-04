@@ -77,7 +77,7 @@ class FilesUpload extends Component {
             console.log(":: UploadApp - workflow respond: ",file_meta);
             if(archive && file_meta.media_info) {
                 const d = toHms(file_meta.media_info.format.duration);
-                fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
+                fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/properties?key=duration&value=${d}`,
                     { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
             }
             this.saveMeta(file_meta);

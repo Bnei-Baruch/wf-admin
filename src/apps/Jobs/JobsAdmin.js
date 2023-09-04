@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {JOB_STATUS} from "../../shared/consts";
+import {JOB_STATUS, MQTT_ROOT} from "../../shared/consts";
 import {getData, putData, WFDB_BACKEND, newJobMeta, postData, getToken} from '../../shared/tools';
 import {Menu, Segment, Label, Icon, Table, Loader, Button, Message, Dropdown, Popup, TextArea, Input} from 'semantic-ui-react'
 import mqtt from "../../shared/mqtt";
@@ -42,7 +42,7 @@ class JobsAdmin extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/jobs/state';
+        const data = MQTT_ROOT + '/service/jobs/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
@@ -66,7 +66,7 @@ class JobsAdmin extends Component {
     };
 
     getJobFiles = (job_id) => {
-        const path = `cloud/find?wid=${job_id}&type=job`
+        const path = `cloud/kv?wid=${job_id}&type=job`
         getData(path, job_files => {
             console.log("getJobFiles :: ", job_files);
             this.setState({job_files})

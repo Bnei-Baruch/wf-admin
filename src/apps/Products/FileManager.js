@@ -60,7 +60,7 @@ class FileManager extends Component {
     setRemoved = () => {
         let {file_data} = this.props;
         console.log(":: FileManager - set removed: ", file_data);
-        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/status/removed?value=true`,
+        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/properties/removed?value=true`,
             { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({showConfirm: false});
         setTimeout(() => {
@@ -73,12 +73,12 @@ class FileManager extends Component {
         const {file_data, mdb_file} = this.props;
         const {file_type, archive} = this.state;
         if(mdb_file && archive) {
-            fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/status/archive?value=false`,
+            fetch(`${WFDB_BACKEND}/files/${mdb_file.file_id}/properties/archive?value=false`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         }
         if(archive) {
             const d = toHms(file_data.media_info.format.duration);
-            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/prop?key=duration&value=${d}`,
+            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/properties?key=duration&value=${d}`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         }
         file_data.file_type = file_type;
@@ -151,7 +151,7 @@ class FileManager extends Component {
                     if(cb.status === "ok") {
 
                         // Mark changed file as removed
-                        fetch(`${WFDB_BACKEND}/files/${change_id}/status/removed?value=true`,
+                        fetch(`${WFDB_BACKEND}/files/${change_id}/properties/removed?value=true`,
                             { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
 
                         file_data.uid = insert_meta.line.uid;

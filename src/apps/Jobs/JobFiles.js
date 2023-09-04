@@ -36,7 +36,7 @@ class JobFiles extends Component {
 
     componentDidMount() {
         const {user_id, adminer} = this.props.user;
-        const path = !adminer ? 'jobs/find?limit=200' : 'jobs/find?doers='+user_id;
+        const path = !adminer ? 'jobs/kv?limit=200' : 'jobs/kv?doers='+user_id;
         getData(path, (jobs) => {
             console.log(jobs)
             this.setState({jobs});
@@ -52,7 +52,7 @@ class JobFiles extends Component {
         const {filters, page} = this.state;
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? `cloud/find?limit=20&offset=${offset}` : `cloud/find?limit=20&offset=${offset}&` + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `cloud/kv?limit=20&offset=${offset}` : `cloud/kv?limit=20&offset=${offset}&` + query.join('&');
 
         if(filters.archive) {
             path = path + `&archive=true&uid=`
@@ -61,13 +61,13 @@ class JobFiles extends Component {
         if(filters.pattern) {
             let id = filters.pattern;
             if(id.match(/^([a-zA-Z0-9]{8})$/)) {
-                path = `cloud/find?pattern=${id}`
+                path = `cloud/kv?pattern=${id}`
             } else {
-                path = `cloud/find?product_id=${id}`
+                path = `cloud/kv?product_id=${id}`
             }
         }
 
-        path = `cloud/find?wid=${job_id}&type=job&limit=200`
+        path = `cloud/kv?wid=${job_id}&type=job&limit=200`
 
         getData(path, files => {
             console.log(files)

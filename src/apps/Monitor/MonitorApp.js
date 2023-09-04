@@ -7,6 +7,7 @@ import MonitorUpload from './MonitorUpload';
 import MonitorConvert from "./MonitorConvert";
 import './MonitorApp.css';
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 //import MonitorCarbon from './MonitorCarbon';
 
 class MonitorApp extends Component {
@@ -40,7 +41,7 @@ class MonitorApp extends Component {
     };
 
     initMQTT = () => {
-        const wfdb_data = 'wfdb/service/+/monitor';
+        const wfdb_data = MQTT_ROOT + '/service/+/monitor';
         const upload_data = 'workflow/server/upload/monitor';
         const convert_data = 'workflow/server/convert/monitor';
         const local = true;

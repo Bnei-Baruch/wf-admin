@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react'
 import KtaimTrimmed from "./KtaimTrimmed";
 import KtaimTrimmer from "../Trimmer/KtaimTrimmer";
 import mqtt from "../../shared/mqtt";
+import {MQTT_ROOT} from "../../shared/consts";
 
 class KtaimApp extends Component {
 
@@ -18,7 +19,7 @@ class KtaimApp extends Component {
     };
 
     initMQTT = () => {
-        const data = 'wfdb/service/trimmer/state';
+        const data = MQTT_ROOT + '/service/trimmer/state';
         const local = true;
         const topic = local ? data : 'bb/' + data;
         this.setState({topic})
