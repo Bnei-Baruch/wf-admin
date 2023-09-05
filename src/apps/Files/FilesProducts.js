@@ -39,7 +39,7 @@ class FilesProducts extends Component {
         const {filters, page} = this.state;
         offset = offset < 0 ? 0 : offset !== undefined ? offset : page;
         const query = Object.keys(filters).map(f => f + "=" + filters[f]);
-        let path = Object.keys(filters).length === 0 ? `files/find?limit=20&offset=${offset}` : `files/find?limit=20&offset=${offset}&` + query.join('&');
+        let path = Object.keys(filters).length === 0 ? `files/kv?limit=20&offset=${offset}` : `files/kv?limit=20&offset=${offset}&` + query.join('&');
 
         if(filters.archive) {
             path = path + `&archive=true&uid=`
@@ -48,9 +48,9 @@ class FilesProducts extends Component {
         if(filters.pattern) {
             let id = filters.pattern;
             if(id.match(/^([a-zA-Z0-9]{8})$/)) {
-                path = `files/find?pattern=${id}`
+                path = `files/kv?pattern=${id}`
             } else {
-                path = `files/find?product_id=${id}`
+                path = `files/kv?product_id=${id}`
             }
         }
 

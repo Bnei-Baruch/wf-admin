@@ -37,7 +37,7 @@ class FilesUpload extends Component {
     uploadDone = (file_data) => {
         console.log(":: ProductFiles - got data: ", file_data);
         let {progress} = this.state;
-        getData(`files/find?sha1=${file_data.sha1}`, (files_sha) => {
+        getData(`files/kv?sha1=${file_data.sha1}`, (files_sha) => {
             console.log(":: Files DB Data: ", files_sha);
             if(files_sha.length > 0) {
                 alert("File already exist!");
