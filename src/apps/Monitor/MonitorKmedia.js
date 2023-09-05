@@ -9,18 +9,9 @@ class MonitorKmedia extends Component {
         json: {},
     };
 
-    componentDidMount() {
-        setTimeout(() => {
-            this.scrollToBottom();
-        }, 3000);
-    };
-
     componentDidUpdate(prevProps) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
             this.restructure(this.props.archive);
-            setTimeout(() => {
-                this.scrollToBottom();
-            }, 1000);
         }
     };
 

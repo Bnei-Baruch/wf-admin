@@ -20,7 +20,7 @@ class RawUpload extends Component {
             console.log(":: Jobs: ", jobs)
             this.setState({jobs});
         })
-        getData('users', (users) => {
+        getData('users/kv', (users) => {
             console.log(" :: Users: ", users);
             this.setState({users})
         });
