@@ -78,7 +78,7 @@ class FileManager extends Component {
         }
         if(archive) {
             const d = toHms(file_data.media_info.format.duration);
-            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/properties?key=duration&value=${d}`,
+            fetch(`${WFDB_BACKEND}/products/${file_data.product_id}/properties/duration?value=${d}`,
                 { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
         }
         file_data.file_type = file_type;

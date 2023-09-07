@@ -143,7 +143,7 @@ export const insert_language_options = [
     { key: 'fr', value: 'fre', flag: 'fr', text: 'French' },
     { key: 'it', value: 'ita', flag: 'it', text: 'Italian' },
     { key: 'de', value: 'ger', flag: 'de', text: 'German' },
-    { key: 'tr', value: 'trk', flag: 'tr', text: 'Turkish' },
+    { key: 'tr', value: 'tur', flag: 'tr', text: 'Turkish' },
     { key: 'pt', value: 'por', flag: 'pt', text: 'Portuguese' },
     { key: 'bg', value: 'bul', flag: 'bg', text: 'Bulgarian' },
     { key: 'ka', value: 'geo', flag: 'ge', text: 'Georgian' },
