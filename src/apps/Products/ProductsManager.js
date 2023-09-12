@@ -36,6 +36,7 @@ class ProductsManager extends Component {
         date: null,
         film_date: null,
         filters: {},
+        file_name: "",
         drop_zone: false,
         insert_open: false,
         insert_button: true,
@@ -85,6 +86,14 @@ class ProductsManager extends Component {
     componentWillUnmount() {
         clearInterval(this.state.ival);
     };
+
+    searchByProductName = () => {
+        const {file_name} = this.state;
+        getData(`products/find?key=product_name&value=${file_name}`, products => {
+            console.log(products)
+            this.setState({products: products, file_name: ""})
+        });
+    }
 
     // eslint-disable-next-line class-methods-use-this
     getActiveCollections = (collections, type) => {
@@ -307,7 +316,7 @@ class ProductsManager extends Component {
     }
 
     render() {
-        const {page, ui_language, ct_option_type, collection_uid, pattern, collections, film_date, product, products, parent_info, language, files, show_languages, selected_language} = this.state;
+        const {file_name, page, ui_language, ct_option_type, collection_uid, pattern, collections, film_date, product, products, parent_info, language, files, show_languages, selected_language} = this.state;
         const {rooter, adminer, archer, viewer} = this.props.user;
         const product_permission = adminer || rooter;
         const lang_permission = archer || adminer || rooter;
@@ -408,6 +417,16 @@ class ProductsManager extends Component {
         return (
             <Segment textAlign='left' basic>
                 <Menu secondary >
+                    <Menu.Item>
+                        <Input className="product_name" type='text' placeholder='Search by product name..' action value={file_name}
+                               onChange={(e, { value }) => this.setState({file_name: value})}>
+                            <input />
+                            {/*<Select compact options={options} value={search}*/}
+                            {/*        onChange={(e, { value }) => this.setState({search: value})}/>*/}
+                            <Button type='submit' color='blue' disabled={!file_name}
+                                    onClick={() => this.searchByProductName(file_name)}>Search</Button>
+                        </Input>
+                    </Menu.Item>
                     <Menu.Item>Filter by:</Menu.Item>
                     <Menu.Item>
                         <Dropdown

@@ -461,6 +461,10 @@ body {
     border-radius: .28571429rem;
 }
 
+.product_name {
+    width:350px!important;
+}
+
 .react-datepicker {
     font-size: 1.3em;
 }
