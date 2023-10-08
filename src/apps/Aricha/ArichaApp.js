@@ -39,7 +39,7 @@ class ArichaApp extends Component {
     arichaWorkflow = (file_data) => {
         console.log(":: Upload file: ", file_data)
         // Check SHA1 in WFDB
-        getData(`trimmer/sha1?value=${file_data.sha1}`, (trimmer) => {
+        getData(`trimmer/kv?sha1=${file_data.sha1}`, (trimmer) => {
             if(trimmer.length > 0) {
                 console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
                 alert("File exist in ingest after trim");
