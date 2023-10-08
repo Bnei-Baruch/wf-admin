@@ -69,7 +69,7 @@ class ArichaAdmin extends Component {
         });
 
         // Check SHA1 in WFDB
-        getData(`trimmer/sha1?value=${file_data.original.format.sha1}`, (trimmer) => {
+        getData(`trimmer/kv?sha1=${file_data.original.format.sha1}`, (trimmer) => {
             if(trimmer.length > 0) {
                 console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
                 alert("File did NOT changed from trimmer");
