@@ -60,8 +60,8 @@ class FileManager extends Component {
     setRemoved = () => {
         let {file_data} = this.props;
         console.log(":: FileManager - set removed: ", file_data);
-        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}/properties/removed?value=true`,
-            { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        fetch(`${WFDB_BACKEND}/files/${file_data.file_id}`,
+            { method: 'DELETE',headers: {'Authorization': 'bearer ' + getToken()}})
         this.setState({showConfirm: false});
         setTimeout(() => {
             this.props.getProductFiles();
