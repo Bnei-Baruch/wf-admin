@@ -25,6 +25,7 @@ export const getUploadOptions = (roles, content_type) => {
             { value: 'publication', text: 'פירסומים ', icon: 'announcement', disabled: (archive_typist || content_type !== "ARTICLES") },
             { value: 'media', text: 'Media', icon: 'file video outline', disabled: !archive_media },
             { value: 'summary', text: 'Summary', icon: 'sun'},
+            { value: 'subtitles', text: 'Subtitles', icon: 'closed captioning'},
         ]
     }
 };
@@ -70,6 +71,7 @@ export const upload_extensions = {
     "source-scan": ["pdf"],
     "media": ["mp4","mp3"],
     "summary": ["doc","docx"],
+    "subtitles": ["vtt"]
 };
 
 export const DCT_OPTS = {
@@ -96,7 +98,8 @@ export const mime_list = {
     "application/pdf": "pdf",
     "video/mpeg": "mpg",
     "application/zip": "zip",
-    "application/x-zip-compressed": "zip"
+    "application/x-zip-compressed": "zip",
+    "text/vtt": "vtt"
 };
 
 export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chi","amh","hin","per","ara","ind","arm"];
