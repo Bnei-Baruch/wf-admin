@@ -102,7 +102,7 @@ export const mime_list = {
     "text/vtt": "vtt"
 };
 
-export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","chi","amh","hin","per","ara","ind","arm"];
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","dut","chi","amh","hin","per","ara","ind","arm"];
 
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
