@@ -36,7 +36,7 @@ class JobFiles extends Component {
 
     componentDidMount() {
         const {user_id, adminer} = this.props.user;
-        const path = !adminer ? 'jobs/kv?limit=200' : 'jobs/list?doers='+user_id;
+        const path = !adminer ? 'jobs/list?limit=200' : 'jobs/list?doers='+user_id;
         getData(path, (jobs) => {
             console.log(jobs)
             this.setState({jobs});
