@@ -195,6 +195,10 @@ class JobFiles extends Component {
                 <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>
         );
 
+        if(!jobs) {
+            return (<Segment basic className="wfdb_app">No jobs for you</Segment>)
+        }
+
         const jobs_list = jobs.map(j => {
             const {job_id, job_name} = j;
             return ({key: job_id, text: job_name, value: job_id})
