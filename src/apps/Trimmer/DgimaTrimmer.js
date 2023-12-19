@@ -43,7 +43,7 @@ class DgimaTrimmer extends Component {
                     this.getLabelsData("date", label.date);
             });
         } else {
-            getData(`labels/find?key=${skey}&value=${svalue}`, (labels) => {
+            getData(`label/find?key=${skey}&value=${svalue}`, (labels) => {
                 console.log(" Labels with same date: ", labels);
                 this.setState({labels});
             });

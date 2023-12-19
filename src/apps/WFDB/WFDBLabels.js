@@ -18,7 +18,7 @@ class WFDBLabels extends Component {
         if(skey === "id") {
             getData(`label/${svalue}`, (capture) => { this.setState({capture: [capture]}) });
         } else {
-            getData(`labels/find?key=${skey}&value=${search}`, (capture) => { this.setState({capture}) });
+            getData(`label/find?key=${skey}&value=${search}`, (capture) => { this.setState({capture}) });
         }
     };
 
@@ -30,7 +30,7 @@ class WFDBLabels extends Component {
         if(skey === "id") {
             getData(`label/${svalue}`, (capture) => { this.setState({capture: [capture]}) });
         } else {
-            getData(`labels/find?key=${skey}&value=${search}`, (capture) => { this.setState({capture}) });
+            getData(`label/find?key=${skey}&value=${search}`, (capture) => { this.setState({capture}) });
         }
     };
 

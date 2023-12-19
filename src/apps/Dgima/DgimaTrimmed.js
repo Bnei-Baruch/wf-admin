@@ -49,7 +49,7 @@ class DgimaTrimmed extends Component {
 
     componentDidMount() {
         let wf_admin = !!this.props.user.roles.find(role => role === 'wf_admin');
-        let ival = setInterval(() => getData('drim/cassette', (data) => {
+        let ival = setInterval(() => getData('cassette', (data) => {
                 if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
                     this.setState({dgima: data})
             }), 5000 );
