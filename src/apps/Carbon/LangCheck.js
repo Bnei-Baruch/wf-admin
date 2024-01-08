@@ -43,9 +43,8 @@ class LangCheck extends Component {
 
     setSource = (lang) => {
         const {file_name,lang_data} = this.state;
-        let ot = lang_data.language === lang ? "o" : "t";
-        let name = lang + '_' + ot + file_name.substring(5) + '.mp3';
-        let url = `${WFSRV_BACKEND}/backup/tmp/carbon`;
+        let name = file_name + '_a.mp4/master-l'+lang+'.m3u8';
+        let url = `https://wfsrv.bbdomain.org/converted`;
         let source = `${url}/${name}`;
         this.state.player.setSrc(source);
         this.state.player.play();
