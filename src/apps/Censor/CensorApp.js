@@ -7,6 +7,7 @@ import {MQTT_ROOT} from "../../shared/consts";
 class CensorApp extends Component {
 
     state = {
+        cassette: [],
         trimmer: [],
         dgima: [],
         aricha: [],
@@ -37,12 +38,12 @@ class CensorApp extends Component {
     };
 
     render() {
-        const {dgima, trimmer, aricha} = this.state;
+        const {dgima, trimmer, aricha, cassette} = this.state;
 
         return (
             <Fragment>
                 {/*<CensorTrimmer/>*/}
-                <CensorCheck user={this.props.user} trimmed={trimmer} dgima={dgima} aricha={aricha} />
+                <CensorCheck user={this.props.user} cassette={cassette} trimmed={trimmer} dgima={dgima} aricha={aricha} />
             </Fragment>
         );
     }

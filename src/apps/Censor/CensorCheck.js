@@ -214,7 +214,7 @@ class CensorCheck extends Component {
             )
         });
 
-        let cassette_data = this.state.cassette.map((data) => {
+        let cassette_data = this.props.cassette.map((data) => {
             const {trimmed,buffer,censored,checked,fixed,locked,secured,wfsend} = data.wfstatus;
             let id = data.dgima_id;
             let name = trimmed ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
