@@ -49,15 +49,15 @@ class DgimaTrimmed extends Component {
 
     componentDidMount() {
         let wf_admin = !!this.props.user.roles.find(role => role === 'wf_admin');
-        let ival = setInterval(() => getData('cassette', (data) => {
-                if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
-                    this.setState({dgima: data})
-            }), 5000 );
-        this.setState({wf_admin,ival});
+        // let ival = setInterval(() => getData('cassette', (data) => {
+        //         if (JSON.stringify(this.state.dgima) !== JSON.stringify(data))
+        //             this.setState({dgima: data})
+        //     }), 5000 );
+        this.setState({wf_admin});
     };
 
     componentWillUnmount() {
-        clearInterval(this.state.ival);
+        //clearInterval(this.state.ival);
     };
 
     selectFile = (file_data) => {
@@ -503,7 +503,7 @@ class DgimaTrimmed extends Component {
         let j = (<Icon color='blue' name='linkify'/>);
         let s = (<Icon color='red' name='key'/>);
 
-        let cassette_data = dgima.map((data) => {
+        let cassette_data = this.props.dgima.map((data) => {
             const {locked,trimmed,backup,kmedia,removed,wfsend,censored,checked,joined,secured,fixed} = data.wfstatus;
             if(data.parent.source === "cassette") {
                 let id = data.dgima_id;
