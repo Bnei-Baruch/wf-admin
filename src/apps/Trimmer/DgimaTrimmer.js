@@ -51,8 +51,8 @@ class DgimaTrimmer extends Component {
     };
 
     changeDate = (data) => {
-        //let date = data.format(this.state.dgima_src === "search" ? 'YYYY/MM/DD' : 'YYYY-MM-DD');
-        let date = data.toLocaleDateString('sv')
+        let cd = data.toLocaleDateString('sv')
+        let date = this.state.dgima_src === "search" ? cd.replaceAll("-", "/") : cd;
         this.setState({startDate: data, date: date, disabled: true});
         if(this.state.dgima_src === "search") {
             this.getLabelsData("date", date);
@@ -92,9 +92,9 @@ class DgimaTrimmer extends Component {
     selectLabel = (active_label) => {
         this.setState({active_label});
         if(active_label && this.state.dgima_src === "search") {
-            getData(`capture/${active_label}`, (data) => {
-                if(data) {
-                    this.selectFile(data);
+            getData(`capture/kv?stop_name=${active_label}`, (data) => {
+                if(data.length > 0) {
+                    this.selectFile(data[0]);
                     this.setState({cassette_id: active_label});
                 } else {
                     let {disable_ids} = this.state;
