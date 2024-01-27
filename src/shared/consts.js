@@ -564,6 +564,8 @@ export const EVENT_PART_TYPES = [
     { text: 'הענקת תעודות', content_type: CT_EVENT_PART, pattern: 'haanakat-teudot' },
     { text: 'חתימת ספרים', content_type: CT_EVENT_PART, pattern: 'hatimat-sfarim' },
     { text: 'אחר', content_type: CT_EVENT_PART, pattern: 'event' },
+    { text: 'אולפן פתוח', content_type: CT_EVENT_PART, pattern: 'ulpan-patuach' },
+    { text: 'זמן חברתי', content_type: CT_EVENT_PART, pattern: 'zman-hevrati' },
 ];
 
 export const LESSON_PARTS_OPTIONS = [{ text: 'הכנה', value: 0 }]
