@@ -550,7 +550,6 @@ export const remuxLine = (unit, metadata, cb) => {
                     cb(metadata);
                 } else {
                     // If we not found insert and in update mode mean we want to replace translation
-
                     let aud_remux_src = published.filter(s => s.name.match(language + "_t_") && s.type === "audio");
                     if(aud_remux_src.length === 0) {
                         alert("Fail to get valid audio sources for remux");
@@ -788,7 +787,7 @@ export const insertName = (filename, key, cb) => fetch(`${WFDB_BACKEND}/insert/f
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
-export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/line?key=${key}&value=${value}`,{
+export const insertData = (value, key, cb) => fetch(`${WFDB_BACKEND}/insert/js/line?${key}=${value}`,{
     headers: {
         'Authorization': 'bearer ' + getToken(),
         'Content-Type': 'application/json'
