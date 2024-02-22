@@ -29,8 +29,9 @@ class InsertApp extends Component {
                 alert("File already exist in MDB!");
             } else if (data.total > 0 && insert === "2") {
                 console.log(":: File with SHA1: " + filedata.sha1 + " - already exist - Set rename mode");
-                this.setState({insert: "3"});
-                this.setMetaData(filedata);
+                this.setState({insert: "3"}, () => {
+                    this.setMetaData(filedata);
+                });
             } else {
                 this.setMetaData(filedata);
             }
