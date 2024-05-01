@@ -52,6 +52,7 @@ const setData = () => {
     document.cookie = `token=${kc.token};`;
     const {realm_access: {roles}} = kc.tokenParsed;
     let user = {...kc.tokenParsed, token: kc.token, roles};
+    console.log(user)
     mqtt.setToken(kc.token);
     return user;
 }
