@@ -471,8 +471,9 @@ export const CT_BLOG_POST             = 'BLOG_POST';
 export const CT_KTAIM_NIVCHARIM       = 'KTAIM_NIVCHARIM';
 export const CT_SOURCE                = 'SOURCE';
 export const CT_LIKUTIM               = 'LIKUTIM';
+export const CT_PUBLIC_EVENTS         = 'PUBLIC_EVENTS';
 
-export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY];
+export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY, CT_PUBLIC_EVENTS];
 export const LECTURE_CONTENT_TYPES = [CT_LECTURE_SERIES, CT_CHILDREN_LESSONS, CT_WOMEN_LESSONS, CT_VIRTUAL_LESSONS];
 
 export const ARTIFACT_TYPES = [
@@ -519,6 +520,7 @@ export const CONTENT_TYPE_BY_ID = {
     46: CT_KTAIM_NIVCHARIM,
     47: CT_SOURCE,
     48: CT_LIKUTIM,
+    49: CT_PUBLIC_EVENTS,
 };
 
 export const CONTENT_ID_BY_TYPE = function() {
