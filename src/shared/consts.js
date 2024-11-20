@@ -102,7 +102,7 @@ export const mime_list = {
     "text/vtt": "vtt"
 };
 
-export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","dut","chi","amh","hin","per","ara","ind","arm"];
+export const langs_bb = ["heb","rus","eng","spa","fre","ita","ger","por","tur","bul","geo","ron","hun","swe","lit","hrv","jpn","slv","pol","nor","lav","ukr","dut","chi","amh","hin","per","ara","ind","arm","dan","est","gre","tgl","aze"];
 
 export const language_options = [
     { key: 'he', value: 'heb', flag: 'il', text: 'Hebrew' },
@@ -135,6 +135,11 @@ export const language_options = [
     { key: 'ar', value: 'ara', flag: 'sa', text: 'Arabic' },
     { key: 'id', value: 'ind', flag: 'id', text: 'Indonesian' },
     { key: 'am', value: 'arm', flag: 'am', text: 'Armenian' },
+    { key: 'da', value: 'dan', flag: 'dk', text: 'Danish' },
+    { key: 'et', value: 'est', flag: 'ee', text: 'Estonian' },
+    { key: 'el', value: 'gre', flag: 'gr', text: 'Greek' },
+    { key: 'tl', value: 'tgl', flag: 'tg', text: 'Tagalog' },
+    { key: 'ab', value: 'aze', flag: 'az', text: 'Azerbaijani' },
     { key: 'zz', value: 'mlt', text: 'Multi', icon: 'world' },
 ];
 
