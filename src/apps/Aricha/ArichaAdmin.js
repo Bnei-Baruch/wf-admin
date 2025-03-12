@@ -281,6 +281,7 @@ class ArichaAdmin extends Component {
             { key: 'metus', text: 'Metus', value: 'metus' },
             { key: 'Backup', text: 'Backup', value: 'backup' },
             { key: 'censor', text: 'Censor', value: 'censor' },
+            { key: 'source', text: 'Source', value: 'source' },
         ];
 
         let v = (<Icon name='checkmark'/>);
