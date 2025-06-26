@@ -295,7 +295,7 @@ class ArichaAdmin extends Component {
             if(this.props.user.preferred_username === "zoya.kutsina@gmail.com" && !data.file_name.match("rus")) {
                 return false;
             }
-            const {backup,kmedia,metus,youtube,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
+            const {backup,kmedia,metus,source,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
             let id = data.aricha_id;
             let ready = data.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
@@ -311,7 +311,7 @@ class ArichaAdmin extends Component {
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell negative={!backup}>{backup ? v : x}</Table.Cell>
                     <Table.Cell negative={!kmedia}>{kmedia ? v : x}</Table.Cell>
-                    <Table.Cell negative={!youtube}>{youtube ? v : x}</Table.Cell>
+                    <Table.Cell negative={!source}>{source ? v : x}</Table.Cell>
                     <Table.Cell negative={!metus}>{metus ? v : x}</Table.Cell>
                 </Table.Row>
             )
@@ -394,7 +394,7 @@ class ArichaAdmin extends Component {
                             <Table.HeaderCell width={2}>Time</Table.HeaderCell>
                             <Table.HeaderCell width={1}>BA</Table.HeaderCell>
                             <Table.HeaderCell width={1}>KM</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>YT</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>SR</Table.HeaderCell>
                             <Table.HeaderCell width={1}>ME</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
