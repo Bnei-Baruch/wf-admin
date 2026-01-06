@@ -832,7 +832,13 @@ class BaseForm extends Component {
     this.setState({ likutimQuery: data.value });
   };
 
-  resultRendererLikutim = ({ i18n }) => <Label content={i18n?.he?.name} />;
+  resultRendererLikutim = (item) => {
+    const name = item.i18n?.he?.name;
+    // Try different possible date fields
+    const date = item.film_date || item.properties?.film_date || item.created_at || '';
+    const dateStr = date ? ` (${date.split('T')[0]})` : '';
+    return <Label content={`${name}${dateStr}`} />;
+  };
 
   renderSelectedLikutim() {
     const { likutims, major } = this.state;
