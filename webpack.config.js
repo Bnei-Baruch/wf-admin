@@ -12,7 +12,7 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 
 module.exports = {
   devServer: {
-    port: '3002',
+    port: '3000',
     compress: true,
   },
   devtool: "source-map",
