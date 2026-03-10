@@ -8,6 +8,7 @@ import {
   CT_LECTURE,
   CT_LELO_MIKUD,
   CT_LESSON_PART,
+  CT_MEAL,
   CT_UNKNOWN,
   CT_VIDEO_PROGRAM_CHAPTER,
   CT_VIRTUAL_LESSON,
@@ -22,6 +23,7 @@ import LessonForm from './forms/LessonForm';
 import TVShowForm from './forms/TVShowForm';
 import VirtualLessonForm from './forms/VirtualLessonForm';
 import EventPartForm from './forms/EventPartForm';
+import MealForm from './forms/MealForm';
 import './forms/forms.css';
 import ClipForm from './forms/ClipForm';
 
@@ -149,6 +151,9 @@ class CIT extends Component {
           break;
         case CT_CLIP:
           FormComponent = ClipForm;
+          break;
+        case CT_MEAL:
+          FormComponent = MealForm;
           break;
         case CT_LECTURE:
         case CT_CHILDREN_LESSON:
