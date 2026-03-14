@@ -304,6 +304,93 @@ class FileManager extends Component {
         }
     };
 
+    insertSrtToMdb = async () => {
+        const {file_data, product, user} = this.props;
+        const {name, email} = user;
+        const {date, file_name, language, properties: {url}} = file_data;
+        const vtt_name = `${file_name}.vtt`;
+
+        this.setState({inserting: true});
+
+        try {
+            const file_response = await fetch(`${WFSRV_BACKEND}${url}`, {
+                headers: {'Authorization': 'bearer ' + getToken()}
+            });
+            if(!file_response.ok) throw new Error(`Download failed: ${file_response.status}`);
+            const buffer = await file_response.arrayBuffer();
+            let srtText;
+            try {
+                srtText = new TextDecoder('utf-8', {fatal: true}).decode(buffer);
+            } catch(_) {
+                srtText = new TextDecoder('windows-1255').decode(buffer);
+            }
+
+            const vttContent = 'WEBVTT\n\n' + srtText
+                .replace(/\r\n/g, '\n')
+                .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2')
+                .trim();
+
+            const vttBlob = new Blob([vttContent], {type: 'text/vtt'});
+            const formData = new FormData();
+            formData.append('file', vttBlob, vtt_name);
+            const upload_response = await fetch(`${WFSRV_BACKEND}/insert/upload`, {
+                method: 'POST',
+                headers: {'Authorization': 'bearer ' + getToken()},
+                body: formData
+            });
+            if(!upload_response.ok) throw new Error(`Upload failed: ${upload_response.status}`);
+            const uploaded = await upload_response.json();
+
+            const mime_type = 'text/vtt';
+            const line = {
+                ...product.line,
+                name, email, url: uploaded.url, mime_type,
+                send_name: file_name,
+                original_language: language,
+                upload_filename: vtt_name,
+            };
+
+            const insert_name = getName({language, upload_type: "subtitles", line}) || vtt_name;
+
+            const insert_meta = {
+                date, extension: "vtt", file_name,
+                insert_id: "i" + Math.floor(Date.now() / 1000),
+                insert_name,
+                insert_type: "1",
+                language,
+                line,
+                send_id: product.product_id,
+                sha1: uploaded.sha1,
+                size: uploaded.size,
+                upload_type: "subtitles",
+            };
+
+            console.log(":: insertSrtToMdb payload: ", JSON.stringify(insert_meta, null, 2));
+            putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
+                console.log(":: WFSRV subtitles respond: ", cb);
+                if(cb.status === "ok") {
+                    file_data.uid = product.line.uid;
+                    file_data.properties.archive = true;
+                    file_data.properties.mdb = true;
+                    delete file_data.id;
+                    putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                        console.log(":: saveFile: ", cb);
+                        this.props.getProductFiles();
+                        this.setState({inserting: false});
+                    });
+                    alert("Insert successful :)");
+                } else {
+                    alert("Something gone wrong :(");
+                    this.setState({inserting: false});
+                }
+            });
+        } catch(e) {
+            console.log(":: insertSrtToMdb error: ", e);
+            alert("Something gone wrong :(");
+            this.setState({inserting: false});
+        }
+    };
+
     closeModal = () => {
         this.setState({file_type: "", archive: false});
         this.props.toggleFileManager();
@@ -334,6 +421,7 @@ class FileManager extends Component {
 
         const full_name = file_data.file_name+'.'+file_data.extension;
         const is_docx = file_data.extension === "docx";
+        const is_srt  = file_data.extension === "srt";
 
         const type = getMediaType(file_data.mime_type);
         const options = PRODUCT_FILE_TYPES[file_data.language] ? PRODUCT_FILE_TYPES[file_data.language][type] : PRODUCT_FILE_TYPES_ALL[type];
@@ -428,10 +516,10 @@ class FileManager extends Component {
                             {lang_permission ?
                             <Grid.Column>
                                 <Button color='yellow' basic content='Mdb' loading={inserting}
-                                        disabled={is_docx
+                                        disabled={(is_docx || is_srt)
                                             ? (!this.props.product?.line?.uid || !!file_data.uid || inserting)
                                             : (!name || inserting || !file_data.properties?.archive || !!file_data.uid)}
-                                        onClick={is_docx ? this.insertDocxToMdb : this.makeUnit} />
+                                        onClick={is_docx ? this.insertDocxToMdb : is_srt ? this.insertSrtToMdb : this.makeUnit} />
                             </Grid.Column>
                                 : null}
                         </Grid.Row>
