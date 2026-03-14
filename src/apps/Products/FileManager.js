@@ -322,7 +322,9 @@ class FileManager extends Component {
             try {
                 srtText = new TextDecoder('utf-8', {fatal: true}).decode(buffer);
             } catch(_) {
-                srtText = new TextDecoder('windows-1255').decode(buffer);
+                const cyrillic = ['rus', 'ukr', 'bul'];
+                const fallback = cyrillic.includes(language) ? 'windows-1251' : 'windows-1255';
+                srtText = new TextDecoder(fallback).decode(buffer);
             }
 
             const vttContent = 'WEBVTT\n\n' + srtText
