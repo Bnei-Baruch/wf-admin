@@ -7,7 +7,7 @@ import {
     newMdbUnit,
     updateMdbUnit,
     WFSRV_BACKEND,
-    toHms, CNV_BACKEND, insertName
+    toHms, CNV_BACKEND, insertName, getName
 } from '../../shared/tools';
 import {Divider, Button, Modal, Grid, Confirm, Segment, Select, Checkbox} from 'semantic-ui-react'
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -229,6 +229,81 @@ class FileManager extends Component {
         });
     };
 
+    insertDocxToMdb = async () => {
+        const {file_data, product, user} = this.props;
+        const {name, email} = user;
+        const {date, extension, file_name, language, mime_type, properties: {url}} = file_data;
+        const full_name = `${file_name}.${extension}`;
+
+        this.setState({inserting: true});
+
+        try {
+            // Re-upload to insert staging area so server finds file at /backup/tmp/insert/<sha1>
+            const file_response = await fetch(`${WFSRV_BACKEND}${url}`, {
+                headers: {'Authorization': 'bearer ' + getToken()}
+            });
+            if(!file_response.ok) throw new Error(`Download failed: ${file_response.status}`);
+            const blob = await file_response.blob();
+
+            const formData = new FormData();
+            formData.append('file', blob, full_name);
+            const upload_response = await fetch(`${WFSRV_BACKEND}/insert/upload`, {
+                method: 'POST',
+                headers: {'Authorization': 'bearer ' + getToken()},
+                body: formData
+            });
+            if(!upload_response.ok) throw new Error(`Upload failed: ${upload_response.status}`);
+            const uploaded = await upload_response.json();
+
+            const line = {
+                ...product.line,
+                name, email, url: uploaded.url, mime_type,
+                send_name: file_name,
+                original_language: language,
+                upload_filename: full_name,
+            };
+
+            const insert_name = getName({language, upload_type: "tamlil", line}) || full_name;
+
+            const insert_meta = {
+                date, extension, file_name,
+                insert_id: "i" + Math.floor(Date.now() / 1000),
+                insert_name,
+                insert_type: "1",
+                language,
+                line,
+                send_id: product.product_id,
+                sha1: uploaded.sha1,
+                size: uploaded.size,
+                upload_type: "tamlil",
+            };
+
+            console.log(":: insertDocxToMdb payload: ", JSON.stringify(insert_meta, null, 2));
+            putData(`${WFSRV_BACKEND}/workflow/insert`, insert_meta, (cb) => {
+                console.log(":: WFSRV tamlil respond: ", cb);
+                if(cb.status === "ok") {
+                    file_data.uid = product.line.uid;
+                    file_data.properties.archive = true;
+                    file_data.properties.mdb = true;
+                    delete file_data.id;
+                    putData(`${WFDB_BACKEND}/files/${file_data.file_id}`, file_data, (cb) => {
+                        console.log(":: saveFile: ", cb);
+                        this.props.getProductFiles();
+                        this.setState({inserting: false});
+                    });
+                    alert("Insert successful :)");
+                } else {
+                    alert("Something gone wrong :(");
+                    this.setState({inserting: false});
+                }
+            });
+        } catch(e) {
+            console.log(":: insertDocxToMdb error: ", e);
+            alert("Something gone wrong :(");
+            this.setState({inserting: false});
+        }
+    };
+
     closeModal = () => {
         this.setState({file_type: "", archive: false});
         this.props.toggleFileManager();
@@ -258,6 +333,7 @@ class FileManager extends Component {
         if(Object.keys(file_data).length === 0) return null
 
         const full_name = file_data.file_name+'.'+file_data.extension;
+        const is_docx = file_data.extension === "docx";
 
         const type = getMediaType(file_data.mime_type);
         const options = PRODUCT_FILE_TYPES[file_data.language] ? PRODUCT_FILE_TYPES[file_data.language][type] : PRODUCT_FILE_TYPES_ALL[type];
@@ -352,8 +428,10 @@ class FileManager extends Component {
                             {lang_permission ?
                             <Grid.Column>
                                 <Button color='yellow' basic content='Mdb' loading={inserting}
-                                        disabled={!name || inserting || !file_data.properties?.archive || file_data.uid}
-                                        onClick={this.makeUnit} />
+                                        disabled={is_docx
+                                            ? (!this.props.product?.line?.uid || !!file_data.uid || inserting)
+                                            : (!name || inserting || !file_data.properties?.archive || !!file_data.uid)}
+                                        onClick={is_docx ? this.insertDocxToMdb : this.makeUnit} />
                             </Grid.Column>
                                 : null}
                         </Grid.Row>

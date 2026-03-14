@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const dotenv = require('dotenv');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const env = dotenv.config().parsed;
+const env = dotenv.config().parsed || {};
 
 const envKeys = Object.keys(env).reduce((prev, next) => {
   prev[`process.env.${next}`] = JSON.stringify(env[next]);
