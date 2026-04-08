@@ -14,6 +14,14 @@ module.exports = {
   devServer: {
     port: '3000',
     compress: true,
+    historyApiFallback: true,
+    proxy: {
+      '/vod-proxy': {
+        target: 'http://10.66.1.76',
+        changeOrigin: true,
+        pathRewrite: {'^/vod-proxy': ''},
+      },
+    },
   },
   devtool: "source-map",
   output: {

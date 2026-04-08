@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+# hls-from-full.sh
+# Usage: ./hls-from-full.sh <folder_with_full_mp4s>
+#
+# For each *_full*.mp4 in the folder, queries WFDB to find all LESSON_PARTs
+# and outputs trim in/out points (seconds, WFDB format) to cut each part from
+# the full file with ffmpeg.
+#
+# Output per file:
+#   FILE: <filename>
+#   PART <n> <uid> <in_sec> <out_sec>
+#
+# Dependencies: curl, jq, python3
+
+set -euo pipefail
+
+WFDB="http://wfsrv.bbdomain.org/wfdb"
+
+usage() { echo "Usage: $0 <folder>" >&2; exit 1; }
+[[ $# -lt 1 ]] && usage
+FOLDER="$1"
+[[ ! -d "$FOLDER" ]] && { echo "ERROR: '$FOLDER' is not a directory" >&2; exit 1; }
+
+# Write the Python helper to a temp file
+PYHELPER=$(mktemp /tmp/hls_helper_XXXXXX.py)
+trap 'rm -f "$PYHELPER"' EXIT
+
+cat > "$PYHELPER" << 'PYEOF'
+#!/usr/bin/env python3
+"""
+hls_helper.py
+Args: <fl_json_file> <parts_json_file>
+Prints: PART <n> <uid> <in_sec> <out_sec> [seg <i>]
+"""
+import sys, json
+
+with open(sys.argv[1]) as f:
+    fl = json.load(f)
+with open(sys.argv[2]) as f:
+    parts_raw = json.load(f)
+
+fl_lid     = fl['line']['lid']
+fl_cap_id  = fl['parent'].get('capture_id') or fl['parent'].get('id', '')
+fl_cap_ts  = int(fl_cap_id[1:]) / 1000.0
+fl_segs    = list(zip(fl['inpoints'], fl['outpoints']))
+
+print(f"FILE_INFO lid={fl_lid} date={fl['date']} cap_id={fl_cap_id}")
+print(f"FL_IN  {fl['inpoints']}")
+print(f"FL_OUT {fl['outpoints']}")
+
+# Filter parts: matching lid + LESSON_PART
+parts = [p for p in (parts_raw if isinstance(parts_raw, list) else [parts_raw])
+         if p.get('line', {}).get('lid') == fl_lid
+         and p.get('line', {}).get('content_type') == 'LESSON_PART']
+parts.sort(key=lambda p: p.get('line', {}).get('part', 99))
+
+if not parts:
+    print("NO_PARTS")
+    sys.exit(0)
+
+def map_to_fl(ct):
+    fp = 0.0
+    for si, so in fl_segs:
+        if si <= ct <= so:
+            return fp + (ct - si)
+        fp += so - si
+    return None
+
+for p in parts:
+    line       = p.get('line', {})
+    part_num   = line.get('part', '?')
+    uid        = line.get('uid', '?')
+    cap_id     = p['parent'].get('capture_id') or p['parent'].get('id', '')
+    lp_cap_ts  = int(cap_id[1:]) / 1000.0
+    cap_offset = lp_cap_ts - fl_cap_ts
+
+    if abs(cap_offset) > 50000:
+        print(f"PART {part_num} {uid} SKIP_BOGUS_OFFSET {cap_offset:.0f}")
+        continue
+
+    inpoints  = p['inpoints']
+    outpoints = p['outpoints']
+    n_segs    = len(inpoints)
+
+    for i, (ip, op) in enumerate(zip(inpoints, outpoints)):
+        fl_in  = map_to_fl(cap_offset + ip)
+        fl_out = map_to_fl(cap_offset + op)
+        in_s   = f"{fl_in:.3f}"  if fl_in  is not None else "OUTSIDE"
+        out_s  = f"{fl_out:.3f}" if fl_out is not None else "OUTSIDE"
+        seg    = f" seg={i}" if n_segs > 1 else ""
+        print(f"PART {part_num} {uid} {in_s} {out_s}{seg}")
+PYEOF
+
+process_file() {
+    local mp4="$1"
+    local filename
+    filename=$(basename "$mp4" .mp4)
+
+    echo "═══════════════════════════════════════════════════"
+    echo "FILE: $(basename "$mp4")"
+
+    # --- FL lookup ---
+    local fl_json
+    fl_json=$(curl -sf "${WFDB}/trimmer/find?key=file_name&value=${filename}") || {
+        echo "  ERROR: WFDB lookup failed for $filename" >&2; return
+    }
+
+    # Normalise: take first element if array
+    local fl_file
+    fl_file=$(mktemp /tmp/fl_XXXXXX.json)
+    python3 -c "
+import sys, json
+data = json.loads(sys.stdin.read())
+item = data[0] if isinstance(data, list) else data
+if not item or item.get('line', {}).get('content_type') not in ('FULL_LESSON', None, ''):
+    # accept any as long as it looks like a full lesson
+    pass
+print(json.dumps(item))
+" <<< "$fl_json" > "$fl_file" 2>/dev/null || {
+        echo "  ERROR: No WFDB record for $filename" >&2; rm -f "$fl_file"; return
+    }
+
+    local fl_date
+    fl_date=$(jq -r '.date' "$fl_file")
+
+    # --- Parts lookup ---
+    local parts_file
+    parts_file=$(mktemp /tmp/parts_XXXXXX.json)
+    curl -sf "${WFDB}/trimmer/find?key=date&value=${fl_date}" > "$parts_file" || {
+        echo "  ERROR: WFDB date lookup failed for ${fl_date}" >&2
+        rm -f "$fl_file" "$parts_file"; return
+    }
+
+    # --- Compute & print ---
+    python3 "$PYHELPER" "$fl_file" "$parts_file"
+
+    rm -f "$fl_file" "$parts_file"
+}
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+shopt -s nullglob
+mapfile -t files < <(find "$FOLDER" -maxdepth 1 \( -name "*_full*.mp4" -o -name "*_full*.MP4" \) | sort)
+
+if [[ ${#files[@]} -eq 0 ]]; then
+    echo "No *_full*.mp4 files found in '$FOLDER'" >&2; exit 1
+fi
+
+for mp4 in "${files[@]}"; do
+    process_file "$mp4"
+done

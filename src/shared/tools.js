@@ -35,6 +35,8 @@ export const MQTT_LCL_URL = process.env.REACT_APP_MQTT_LCL_URL;
 export const MQTT_EXT_URL = process.env.REACT_APP_MQTT_EXT_URL;
 export const AUTH_API = process.env.REACT_APP_AUTH_API_BACKEND;
 export const KM_CDN_URL = process.env.REACT_APP_KM_CDN_URL;
+export const FILES_URL = process.env.REACT_APP_FILES_URL;
+export const CDN_URL = process.env.NODE_ENV !== 'production' ? '/cdn-proxy' : 'https://cdn.kab.info';
 
 export const IVAL = 1000;
 

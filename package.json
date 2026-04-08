@@ -14,6 +14,7 @@
   "dependencies": {
     "@babel/runtime": "^7.16.5",
     "@kevincobain2000/json-to-html-table": "^1.0.1",
+    "hls.js": "^1.6.15",
     "keycloak-js": "24.0.2",
     "lodash": "^4.17.21",
     "mediaelement": "^4.2.16",

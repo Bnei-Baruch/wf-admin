@@ -25,6 +25,8 @@ const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
 const InsertApp = lazy(() => import("./apps/Insert/InsertApp"));
 const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
 const FilesApp = lazy(() => import("./apps/Files/FilesApp"));
+const ClipsApp = lazy(() => import("./apps/Clips/ClipsApp"));
+const VerifyApp = lazy(() => import("./apps/Verify/VerifyApp"));
 
 class App extends Component {
 
@@ -132,6 +134,8 @@ class App extends Component {
         let upload = (<Suspense fallback={loading}><UploadApp user={user} /></Suspense>);
         let metus = (<Suspense fallback={loading}><MetusApp user={user} /></Suspense>);
         let wfdb = (<Suspense fallback={loading}><WFDB user={user} /></Suspense>);
+        let clips = (<Suspense fallback={loading}><ClipsApp user={user} /></Suspense>);
+        let verify = (<Suspense fallback={loading}><VerifyApp user={user} /></Suspense>);
 
 
         const panes = [
@@ -171,6 +175,10 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{metus}</Tab.Pane> },
             { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
                 render: () => <Tab.Pane attached={false} >{wfdb}</Tab.Pane> },
+            { menuItem: { key: 'clips', icon: 'cut', content: 'Clips', disabled: false },
+                render: () => <Tab.Pane attached={false} >{clips}</Tab.Pane> },
+            { menuItem: { key: 'verify', icon: 'check circle outline', content: 'Verify', disabled: false },
+                render: () => <Tab.Pane attached={false} >{verify}</Tab.Pane> },
         ];
 
         const wf_panes = panes.filter(p => !p.menuItem.disabled);
