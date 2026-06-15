@@ -919,7 +919,7 @@ class BaseForm extends Component {
             {this.renderHasTranslation()}
           </Grid.Column>
           {
-            afterClear ?
+            afterClear || this.state.content_type === CT_FULL_LESSON ?
               <Grid.Column width={4}>
                 {this.renderNumber()}
               </Grid.Column> :
