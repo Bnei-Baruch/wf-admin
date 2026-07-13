@@ -25,6 +25,7 @@ const SirtutimApp = lazy(() => import("./apps/Sirtutim/SirtutimApp"));
 const InsertApp = lazy(() => import("./apps/Insert/InsertApp"));
 const KtaimApp = lazy(() => import("./apps/Ktaim/KtaimApp"));
 const FilesApp = lazy(() => import("./apps/Files/FilesApp"));
+const MediaApp = lazy(() => import("./apps/Media/MediaApp"));
 
 class App extends Component {
 
@@ -45,6 +46,7 @@ class App extends Component {
         wf_ktaim: true,
         wf_files: true,
         wf_products:true,
+        wf_media: true,
         wf_panes: []
     };
 
@@ -67,8 +69,9 @@ class App extends Component {
         let wf_ktaim = !kc.hasRealmRole("wf_ktaim");
         let wf_files = !kc.hasRealmRole("wf_files");
         let wf_products = !kc.hasRealmRole("wf_products");
+        let wf_media = !kc.hasRealmRole("wf_media");
         if(!wf_public) {
-            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products}, () => {
+            this.setState({user,wf_public,wf_admin,wf_censor,wf_ingest,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products,wf_media}, () => {
                 this.loadApps();
                 this.initMQTT(user, wf_ingest);
             });
@@ -110,7 +113,7 @@ class App extends Component {
     };
 
     loadApps = () => {
-        const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products,user} = this.state;
+        const {wf_ingest,wf_censor,wf_admin,wf_aricha,wf_dgima,wf_insert,wf_external,wf_upload,wf_jobs,wf_sirtutim,wf_ktaim,wf_files,wf_products,wf_media,user} = this.state;
 
         const loading = (<Tab.Pane loading />);
 
@@ -127,6 +130,7 @@ class App extends Component {
         let products = (<Suspense fallback={loading}><ProductsApp user={user} /></Suspense>);
         let aricha = (<Suspense fallback={loading}><ArichaApp user={user} /></Suspense>);
         let dgima= (<Suspense fallback={loading}><DgimaApp user={user} /></Suspense>);
+        let media = (<Suspense fallback={loading}><MediaApp user={user} /></Suspense>);
         let external = (<Suspense fallback={loading}><ExternalApp user={user} /></Suspense>);
         let mainpage = (<Suspense fallback={loading}><InsertApp user={user} /></Suspense>);
         let upload = (<Suspense fallback={loading}><UploadApp user={user} /></Suspense>);
@@ -161,6 +165,8 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{aricha}</Tab.Pane> },
             { menuItem: { key: 'dgima', icon: 'film', content: 'Dgima', disabled: wf_dgima },
                 render: () => <Tab.Pane attached={false} >{dgima}</Tab.Pane> },
+            { menuItem: { key: 'media', icon: 'video play', content: 'Media', disabled: wf_media },
+                render: () => <Tab.Pane attached={false} >{media}</Tab.Pane> },
             { menuItem: { key: 'external', icon: 'download', content: 'External', disabled: wf_external },
                 render: () => <Tab.Pane attached={false} >{external}</Tab.Pane> },
             { menuItem: { key: 'insert', icon: 'archive', content: 'Insert', disabled: wf_insert },

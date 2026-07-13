@@ -826,6 +826,19 @@ export const arichaName = (filename, cb) => fetch(`${WFDB_BACKEND}/aricha/find?k
     })
     .catch(ex => console.log(`get ${filename}`, ex));
 
+export const mediaName = (filename, cb) => fetch(`${WFDB_BACKEND}/media/find?key=file_name&value=${filename}`,{
+    headers: {
+        'Authorization': 'bearer ' + getToken(),
+        'Content-Type': 'application/json'
+    }
+})
+    .then((response) => {
+        if (response.ok) {
+            return response.json().then(data => cb(data));
+        }
+    })
+    .catch(ex => console.log(`get ${filename}`, ex));
+
 export const insertSha = (sha, cb) => fetch(`${MDB_BACKEND}/files/?sha1=${sha}`, {
     headers: {
         'Authorization': 'bearer ' + getToken(),
