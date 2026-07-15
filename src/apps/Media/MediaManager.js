@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {Modal, Segment, Grid, Select, Checkbox, Button} from "semantic-ui-react";
+import {Modal, Segment, Grid, Select, Checkbox, Button, Form, TextArea} from "semantic-ui-react";
 import MediaAdmin from "./MediaAdmin";
 import MediaUpload from "./MediaUpload";
 import {WFSRV_BACKEND, putData, getData, MDB_FINDSHA, getUnits} from "../../shared/tools";
@@ -14,6 +14,7 @@ class MediaManager extends Component {
         file_data: null,
         label_id: "",
         cassette: false,
+        description: "",
         labels: [],
         selected_label: null,
         label_loading: false,
@@ -87,7 +88,7 @@ class MediaManager extends Component {
                         // File passed all checks and does not exist yet - ask for metadata
                         console.log(":: MediaApp - new file, open modal: ", file_data);
                         this.setState({file_data, modal_open: true, label_id: "", cassette: false,
-                            selected_label: null, labels: [], label_query: ""});
+                            description: "", selected_label: null, labels: [], label_query: ""});
                     }
                 });
             }
@@ -97,17 +98,19 @@ class MediaManager extends Component {
     closeModal = () => {
         clearTimeout(this.searchTimer);
         this.setState({modal_open: false, file_data: null, label_id: "", cassette: false,
-            selected_label: null, labels: [], label_query: "", label_loading: false});
+            description: "", selected_label: null, labels: [], label_query: "", label_loading: false});
     };
 
     selectLabel = (value) => {
         const selected = this.state.labels.find(d => d.id === value) || null;
-        this.setState({label_id: value, selected_label: selected});
+        this.setState({label_id: value, selected_label: selected, label: value});
     };
 
     applyMedia = () => {
-        let {file_data, label_id, cassette} = this.state;
+        let {file_data, label_id, cassette, label, description} = this.state;
         file_data.label_id = label_id;
+        file_data.label = label;
+        file_data.description = description;
         file_data.wfstatus = {...(file_data.wfstatus || {}), cassette};
         console.log(":: MediaApp - apply media: ", file_data);
         putData(`${WFSRV_BACKEND}/workflow/media`, file_data, (cb) => {
@@ -117,7 +120,7 @@ class MediaManager extends Component {
     };
 
     render() {
-        const {modal_open, label_id, cassette, labels, selected_label, label_loading, label_query} = this.state;
+        const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query} = this.state;
 
         let label_options = labels.map(this.labelOption);
         // keep the currently selected label visible even after the search results change
@@ -160,6 +163,16 @@ class MediaManager extends Component {
                                 </Segment>
                             </Grid.Column>
                         </Grid>
+                        <Form>
+                            <Form.Field>
+                                <label>Description</label>
+                                <TextArea
+                                    placeholder='Описание, примечание или заметки…'
+                                    value={description}
+                                    onChange={(e, {value}) => this.setState({description: value})}
+                                />
+                            </Form.Field>
+                        </Form>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.closeModal}>Cancel</Button>
