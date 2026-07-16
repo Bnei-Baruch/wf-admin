@@ -13,7 +13,7 @@ class MediaManager extends Component {
         modal_open: false,
         file_data: null,
         label_id: "",
-        cassette: false,
+        cassette: true,
         description: "",
         labels: [],
         selected_label: null,
@@ -72,22 +72,22 @@ class MediaManager extends Component {
     mediaWorkflow = (file_data) => {
         console.log(":: Upload file: ", file_data)
         // Check SHA1 in WFDB
-        getData(`trimmer/kv?sha1=${file_data.sha1}`, (trimmer) => {
+        getData(`media/kv?sha1=${file_data.sha1}`, (trimmer) => {
             if(trimmer.length > 0) {
-                console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
-                alert("File exist in ingest after trim");
+                console.log(":: Found data in media DB by SHA1: ",trimmer);
+                alert("File already exist in Workflow DB!");
             } else {
                 // Check SHA1 in MDB
                 let sha1 = file_data.sha1;
                 let fetch_url = `${MDB_FINDSHA}/${sha1}`;
                 getUnits(fetch_url, (units) => {
                     if (units.total > 0) {
-                        console.log("The SHA1 exist in MDB!", units);
-                        alert("File already in MDB!");
+                        console.log("The file exist in MDB!", units);
+                        alert("File already exist in MDB!");
                     } else {
                         // File passed all checks and does not exist yet - ask for metadata
                         console.log(":: MediaApp - new file, open modal: ", file_data);
-                        this.setState({file_data, modal_open: true, label_id: "", cassette: false,
+                        this.setState({file_data, modal_open: true, label_id: "", cassette: true,
                             description: "", selected_label: null, labels: [], label_query: ""});
                     }
                 });
@@ -103,13 +103,13 @@ class MediaManager extends Component {
 
     selectLabel = (value) => {
         const selected = this.state.labels.find(d => d.id === value) || null;
-        this.setState({label_id: value, selected_label: selected, label: value});
+        this.setState({label_id: value, selected_label: selected});
     };
 
     applyMedia = () => {
-        let {file_data, label_id, cassette, label, description} = this.state;
+        let {file_data, label_id, cassette, selected_label, description} = this.state;
         file_data.label_id = label_id;
-        file_data.label = label;
+        file_data.label = selected_label;
         file_data.description = description;
         file_data.wfstatus = {...(file_data.wfstatus || {}), cassette};
         console.log(":: MediaApp - apply media: ", file_data);
@@ -167,7 +167,7 @@ class MediaManager extends Component {
                             <Form.Field>
                                 <label>Description</label>
                                 <TextArea
-                                    placeholder='Описание, примечание или заметки…'
+                                    placeholder='Notes...'
                                     value={description}
                                     onChange={(e, {value}) => this.setState({description: value})}
                                 />

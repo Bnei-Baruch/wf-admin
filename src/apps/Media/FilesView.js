@@ -9,15 +9,14 @@ import {
     Button,
     Menu,
     Modal,
-    Message
+    Message,
+    Popup,
+    List
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
 
-// NOTE: media-адаптация Products/FilesView.
-// Таблица media НЕ имеет колонки properties, поэтому фильтры archive/mdb (мапятся
-// backend'ом в properties['...']) убраны. Оставлены фильтры по реальным колонкам media:
-// date и uid. Продукт-специфичный FileManager заменён на превью через MediaPlayer.
+
 class FilesView extends Component {
 
     state = {
@@ -28,6 +27,7 @@ class FilesView extends Component {
         source: "",
         date: null,
         uid: "",
+        label_id: "",
         active: null,
     };
 
@@ -78,6 +78,18 @@ class FilesView extends Component {
         });
     };
 
+    setLabelFilter = (label_id) => {
+        if(!label_id) {
+            this.removeFilter("label_id");
+            return
+        }
+        const {filters} = this.state;
+        filters.label_id = label_id;
+        this.setState({filters, label_id, page: 0}, () => {
+            this.getFiles();
+        });
+    };
+
     removeFilter = (f) => {
         const {filters} = this.state;
         delete filters[f];
@@ -91,25 +103,50 @@ class FilesView extends Component {
         console.log(":: Media - got player: ", player);
     };
 
+    // Render the full label object (extra.label) as a key/value list for the hover popup
+    labelContent = (label) => {
+        return (
+            <List size='small'>
+                {Object.keys(label).map((k) => (
+                    <List.Item key={k}>
+                        <List.Content>
+                            <b>{k}:</b> {String(label[k])}
+                        </List.Content>
+                    </List.Item>
+                ))}
+            </List>
+        );
+    };
+
     render() {
-        const {files, source, page, date, uid} = this.state;
+        const {files, source, page, date, uid, label_id} = this.state;
 
         let l = (<Loader size='mini' active inline />);
 
         let files_data = files.map((data) => {
-            const {media_id, file_name, date, size, sha1, uid, wfstatus} = data;
+            const {media_id, file_name, label_id, extra, uid, wfstatus} = data;
             let name = wfstatus?.removed ? <div>{l}&nbsp;&nbsp;&nbsp;{file_name}</div> : file_name;
             let time = data.date || "";
+            let notes = extra?.notes || "";
+            let label = extra?.label;
+            let label_cell = label ? (
+                <Popup
+                    on='hover'
+                    hoverable
+                    mountNode={document.getElementById("ltr-modal-mount")}
+                    trigger={<span>{label_id}</span>}
+                    content={this.labelContent(label)} />
+            ) : label_id;
             let active = this.state.active === media_id ? 'active' : 'monitor_tr';
             return (
                 <Table.Row key={media_id} positive={wfstatus?.kmedia} className={active}
                            onClick={() => this.selectFile(data)}>
                     <Table.Cell>{media_id}</Table.Cell>
+                    <Table.Cell onClick={(e) => e.stopPropagation()}>{label_cell}</Table.Cell>
                     <Table.Cell>{uid}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
-                    <Table.Cell>{size}</Table.Cell>
-                    <Table.Cell>{sha1}</Table.Cell>
+                    <Table.Cell>{notes}</Table.Cell>
                 </Table.Row>
             )
         });
@@ -148,6 +185,13 @@ class FilesView extends Component {
                                 icon={<Icon name={uid ? 'close' : 'search'} link onClick={() => uid && this.removeFilter("uid")} />}
                                 onChange={(e, {value}) => this.setUnitFilter(value)} />
                         </Menu.Item>
+                        <Menu.Item>
+                            <Input
+                                placeholder="Label ID:"
+                                value={label_id}
+                                icon={<Icon name={label_id ? 'close' : 'search'} link onClick={() => label_id && this.removeFilter("label_id")} />}
+                                onChange={(e, {value}) => this.setLabelFilter(value)} />
+                        </Menu.Item>
                         <Menu.Menu position='right'>
                         </Menu.Menu>
                     </Menu>
@@ -156,11 +200,11 @@ class FilesView extends Component {
                     <Table.Header>
                         <Table.Row className='table_header'>
                             <Table.HeaderCell width={2}>Media ID</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
-                            <Table.HeaderCell width={5}>File Name</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Label ID</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>UID</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={1}>Size</Table.HeaderCell>
-                            <Table.HeaderCell width={3}>SHA1</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>Notes</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
