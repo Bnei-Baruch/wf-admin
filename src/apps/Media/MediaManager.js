@@ -2,7 +2,8 @@ import React, {Component, Fragment} from 'react'
 import {Modal, Segment, Grid, Select, Checkbox, Button, Form, TextArea} from "semantic-ui-react";
 import MediaAdmin from "./MediaAdmin";
 import MediaUpload from "./MediaUpload";
-import {WFSRV_BACKEND, putData, getData, MDB_FINDSHA, getUnits} from "../../shared/tools";
+import {WFSRV_BACKEND, putData, getData, MDB_FINDSHA, getUnits,
+    mdbUpload, findMdbFile, newMediaUnit, insertFile} from "../../shared/tools";
 import mqtt from "../../shared/mqtt";
 import {MQTT_ROOT} from "../../shared/consts";
 
@@ -19,6 +20,7 @@ class MediaManager extends Component {
         selected_label: null,
         label_loading: false,
         label_query: "",
+        saving: false,
     };
 
     componentDidMount() {
@@ -98,7 +100,8 @@ class MediaManager extends Component {
     closeModal = () => {
         clearTimeout(this.searchTimer);
         this.setState({modal_open: false, file_data: null, label_id: "", cassette: false,
-            description: "", selected_label: null, labels: [], label_query: "", label_loading: false});
+            description: "", selected_label: null, labels: [], label_query: "", label_loading: false,
+            saving: false});
     };
 
     selectLabel = (value) => {
@@ -106,12 +109,42 @@ class MediaManager extends Component {
         this.setState({label_id: value, selected_label: selected});
     };
 
-    applyMedia = () => {
+    // The file passed all checks (not in WFDB, not in MDB), so before handing it over
+    // to the workflow we archive it in MDB:
+    //   1. register the file     - POST operations/upload
+    //   2. resolve its id/uid    - GET rest/files/?sha1=  (upload responds with status only)
+    //   3. create UNKNOWN unit   - POST rest/content_units/
+    //   4. link file to the unit - PUT rest/files/:id/
+    // Resulting ids go to extra, unit_uid is duplicated into the root uid.
+    applyMedia = async () => {
         let {file_data, label_id, cassette, selected_label, description} = this.state;
         file_data.label_id = label_id;
         file_data.label = selected_label;
         file_data.description = description;
         file_data.wfstatus = {...(file_data.wfstatus || {}), cassette};
+
+        this.setState({saving: true});
+
+        try {
+            await mdbUpload(file_data, this.props.user, selected_label);
+
+            const mdb_file = await findMdbFile(file_data.sha1);
+            if(!mdb_file) throw new Error("File not found in MDB after upload");
+
+            const unit = await newMediaUnit(file_data, selected_label, description);
+            await insertFile(mdb_file.id, unit.id);
+
+            file_data.extra = {...(file_data.extra || {}),
+                file_id: mdb_file.id, file_uid: mdb_file.uid,
+                unit_id: unit.id, unit_uid: unit.uid};
+            file_data.uid = unit.uid;
+        } catch (err) {
+            console.error(":: MediaApp - MDB error: ", err);
+            alert(`MDB error: ${err.message}`);
+            this.setState({saving: false});
+            return;
+        }
+
         console.log(":: MediaApp - apply media: ", file_data);
         putData(`${WFSRV_BACKEND}/workflow/media`, file_data, (cb) => {
             console.log(":: MediaApp - workflow respond: ",cb);
@@ -120,7 +153,7 @@ class MediaManager extends Component {
     };
 
     render() {
-        const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query} = this.state;
+        const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query, saving} = this.state;
 
         let label_options = labels.map(this.labelOption);
         // keep the currently selected label visible even after the search results change
@@ -175,8 +208,8 @@ class MediaManager extends Component {
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={this.closeModal}>Cancel</Button>
-                        <Button positive disabled={!label_id} onClick={this.applyMedia}>Apply</Button>
+                        <Button onClick={this.closeModal} disabled={saving}>Cancel</Button>
+                        <Button positive loading={saving} disabled={!label_id || saving} onClick={this.applyMedia}>Apply</Button>
                     </Modal.Actions>
                 </Modal>
             </Fragment>

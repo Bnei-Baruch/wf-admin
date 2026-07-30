@@ -5,7 +5,7 @@ import {
     DCT_OPTS,
     CONTENT_TYPE_BY_ID,
     langs_bb,
-    WF_LANGUAGES, CONTENT_ID_BY_TYPE
+    WF_LANGUAGES, CONTENT_ID_BY_TYPE, CT_UNKNOWN
 } from './consts';
 
 import kc from "../components/UserManager";
@@ -13,6 +13,7 @@ import kc from "../components/UserManager";
 //export const MDB_BACKEND = 'http://dev.mdb.bbdomain.org/rest';
 export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
 export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
+export const MDB_OPERATIONS = process.env.REACT_APP_MDB_OPERATIONS;
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
@@ -123,6 +124,71 @@ export const newMdbUnit = async(line, derived_id, metadata) => {
     }
 
     return unit;
+}
+
+// Station reported to MDB for all media operations
+export const MDB_STATION = "10.66.1.122";
+
+// Register the uploaded media file in MDB archive.
+// NOTE: operations/upload responds with {"status":"ok"} only - the created file
+// id/uid are NOT returned, they must be looked up afterwards by sha1 (findMdbFile).
+export const mdbUpload = async(file_data, user, label) => {
+    const {media_id, file_name, file_path, url, sha1, size, type, mod_time, media_info} = file_data;
+    const path = file_path || url;
+
+    const body = {
+        station: MDB_STATION,
+        user: user.email,
+        workflow_id: media_id || "",
+        file_name: file_name || (path ? path.split('/').pop() : ""),
+        sha1,
+        size,
+        created_at: mod_time || Math.floor(Date.now() / 1000),   // MDB Timestamp is unix seconds
+        type: "video",
+        mime_type: type || "video/mp4",
+        language: WF_LANGUAGES[label?.language] || "",
+        duration: parseFloat(media_info?.format?.duration) || 0,
+        url: path,
+    };
+
+    const r = await fetch(`${MDB_OPERATIONS}/upload`, getRequestOptions(body));
+    if(!r.ok) throw new Error(`MDB upload failed: ${r.status}`);
+    return await r.json();
+}
+
+// Lookup an MDB file by sha1 - async variant of insertSha, returns the file or undefined
+export const findMdbFile = async(sha1) => {
+    const r = await fetch(`${MDB_BACKEND}/files/?sha1=${sha1}`, {
+        headers: {'Authorization': 'bearer ' + getToken(), 'Content-Type': 'application/json'}
+    });
+    if(!r.ok) throw new Error(`MDB file lookup failed: ${r.status}`);
+    const files = await r.json();
+    return files?.data?.[0];
+}
+
+// Create a content unit of type UNKNOWN for a media file (no collection involved)
+export const newMediaUnit = async(file_data, label, description) => {
+    const {file_name, date} = file_data;
+    const language = WF_LANGUAGES[label?.language];
+    const type_id = parseInt(CONTENT_ID_BY_TYPE[CT_UNKNOWN], 10);
+
+    // label date comes as YYYY/MM/DD while MDB expects YYYY-MM-DD
+    const film_date = label?.date ? label.date.split('/').join('-') : date;
+
+    // upload gives the name with extension (WhatsApp.mp4), the unit is named without it
+    const name = file_name ? file_name.replace(/\.[^./]+$/, "") : "";
+
+    // MDB rejects unknown languages, so i18n is added only when the language is known
+    const i18n = {};
+    if(language) {
+        i18n[language] = {language, name};
+        if(description) i18n[language].description = description;
+    }
+
+    const body = {type_id, properties: {film_date, original_language: language}, i18n};
+    const r = await fetch(`${MDB_BACKEND}/content_units/`, getRequestOptions(body));
+    if(!r.ok) throw new Error(`MDB create unit failed: ${r.status}`);
+    return await r.json();
 }
 
 export const getCollectionByID = async(id) => {
