@@ -46,7 +46,7 @@ class TagsSearch extends Component {
           s = node.children.concat(s);
         }
 
-        if (regex.test(node.label)) {
+        if (regex.test(node.label) || regex.test(node.uid)) {
           results.push({ id: node.uid, title: node.label, key: node.uid });
         }
       }

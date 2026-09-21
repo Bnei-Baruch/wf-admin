@@ -904,7 +904,7 @@ class BaseForm extends Component {
   };
 
   renderForm() {
-    const { metadata, afterClear } = this.props;
+    const { afterClear } = this.props;
 
     return (
       <Fragment>
@@ -926,6 +926,15 @@ class BaseForm extends Component {
               null
           }
         </Grid.Row>
+        {
+          this.state.content_type === CT_FULL_LESSON ?
+            <Grid.Row>
+              <Grid.Column width={4}>
+                {this.renderFilmDate()}
+              </Grid.Column>
+            </Grid.Row> :
+            null
+        }
       </Fragment>
     );
   }

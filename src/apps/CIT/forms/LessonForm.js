@@ -76,8 +76,6 @@ class LessonForm extends BaseForm {
   }
 
   renderForm() {
-    const { metadata } = this.props;
-
     return (
       <Grid.Row columns={2} className="bb-interesting">
         <Grid.Column width={12}>
@@ -140,15 +138,11 @@ class LessonForm extends BaseForm {
                 {this.renderRequireTest()}
               </Grid.Column>
             </Grid.Row>
-            {
-              !metadata.capture_date ?
-                <Grid.Row>
-                  <Grid.Column>
-                    {this.renderFilmDate()}
-                  </Grid.Column>
-                </Grid.Row> :
-                null
-            }
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderFilmDate()}
+              </Grid.Column>
+            </Grid.Row>
           </Grid>
         </Grid.Column>
       </Grid.Row>

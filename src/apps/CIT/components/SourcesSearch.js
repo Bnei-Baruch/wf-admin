@@ -37,7 +37,7 @@ class SourcesSearch extends Component {
 
       // search in author's collections themselves
       let results = collections
-        .filter(x => regex.test(x.name))
+        .filter(x => regex.test(x.name) || regex.test(x.uid))
         .map(x => ({ id: x.uid, title: x.name, key: x.uid }));
       if (results.length > 0) {
         acc.push({ name: author.name, results });
@@ -55,7 +55,7 @@ class SourcesSearch extends Component {
             s = node.children.concat(s);
           }
 
-          if (regex.test(node.name)) {
+          if (regex.test(node.name) || regex.test(node.uid)) {
             results.push({ id: node.uid, title: node.name, key: node.uid });
           }
         }
