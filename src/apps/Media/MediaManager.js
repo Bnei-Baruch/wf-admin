@@ -48,17 +48,19 @@ class MediaManager extends Component {
         this.setState({media: message});
     };
 
-    // Server-side search: query labels as the user types instead of loading the whole list
+    // Lookup label by cassette id. The id column is an integer, so this is an exact
+    // match (labels/kv?id=) - non numeric input is ignored, it would break the query.
     searchLabels = (e, {searchQuery}) => {
         this.setState({label_query: searchQuery});
         clearTimeout(this.searchTimer);
-        if(!searchQuery || searchQuery.length < 2) {
+        const query = (searchQuery || "").trim();
+        if(!/^\d+$/.test(query)) {
             this.setState({labels: [], label_loading: false});
             return;
         }
         this.setState({label_loading: true});
         this.searchTimer = setTimeout(() => {
-            getData(`label/find?key=comments&value=${encodeURIComponent(searchQuery)}`, (labels) => {
+            getData(`labels/kv?id=${query}`, (labels) => {
                 console.log(":: Got labels: ", labels);
                 this.setState({labels: labels || [], label_loading: false});
             });
@@ -179,14 +181,14 @@ class MediaManager extends Component {
                                     selection
                                     clearable
                                     search={(options) => options}
-                                    minCharacters={2}
+                                    minCharacters={1}
                                     loading={label_loading}
                                     options={label_options}
-                                    placeholder='Search label...'
+                                    placeholder='Cassette id...'
                                     value={label_id}
                                     onSearchChange={this.searchLabels}
                                     onChange={(e, {value}) => this.selectLabel(value)}
-                                    noResultsMessage={label_query.length < 2 ? 'Type to search…' : (label_loading ? 'Searching…' : 'No labels found')}
+                                    noResultsMessage={!/^\d+$/.test(label_query.trim()) ? 'Enter cassette id…' : (label_loading ? 'Searching…' : 'No labels found')}
                                 />
                             </Grid.Column>
                             <Grid.Column>
