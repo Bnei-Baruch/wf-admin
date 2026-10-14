@@ -113,7 +113,7 @@ class MediaManager extends Component {
     // to the workflow we archive it in MDB:
     //   1. register the file     - POST operations/upload
     //   2. resolve its id/uid    - GET rest/files/?sha1=  (upload responds with status only)
-    //   3. create UNKNOWN unit   - POST rest/content_units/
+    //   3. create TAPE unit   - POST rest/content_units/
     //   4. link file to the unit - PUT rest/files/:id/
     // Resulting ids go to extra, unit_uid is duplicated into the root uid.
     applyMedia = async () => {

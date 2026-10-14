@@ -5,7 +5,7 @@ import {
     DCT_OPTS,
     CONTENT_TYPE_BY_ID,
     langs_bb,
-    WF_LANGUAGES, CONTENT_ID_BY_TYPE, CT_UNKNOWN
+    WF_LANGUAGES, CONTENT_ID_BY_TYPE, CT_TAPE
 } from './consts';
 
 import kc from "../components/UserManager";
@@ -166,11 +166,11 @@ export const findMdbFile = async(sha1) => {
     return files?.data?.[0];
 }
 
-// Create a content unit of type UNKNOWN for a media file (no collection involved)
+// Create a content unit of type TAPE for a media file (no collection involved)
 export const newMediaUnit = async(file_data, label, description) => {
     const {file_name, date} = file_data;
     const language = WF_LANGUAGES[label?.language];
-    const type_id = parseInt(CONTENT_ID_BY_TYPE[CT_UNKNOWN], 10);
+    const type_id = parseInt(CONTENT_ID_BY_TYPE[CT_TAPE], 10);
 
     // label date comes as YYYY/MM/DD while MDB expects YYYY-MM-DD
     const film_date = label?.date ? label.date.split('/').join('-') : date;

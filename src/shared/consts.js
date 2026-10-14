@@ -489,6 +489,7 @@ export const CT_KTAIM_NIVCHARIM       = 'KTAIM_NIVCHARIM';
 export const CT_SOURCE                = 'SOURCE';
 export const CT_LIKUTIM               = 'LIKUTIM';
 export const CT_PUBLIC_EVENTS         = 'PUBLIC_EVENTS';
+export const CT_TAPE                  = 'TAPE';
 
 export const EVENT_CONTENT_TYPES   = [CT_CONGRESS, CT_HOLIDAY, CT_PICNIC, CT_UNITY_DAY, CT_PUBLIC_EVENTS];
 export const LECTURE_CONTENT_TYPES = [CT_LECTURE_SERIES, CT_CHILDREN_LESSONS, CT_WOMEN_LESSONS, CT_VIRTUAL_LESSONS];
@@ -538,6 +539,7 @@ export const CONTENT_TYPE_BY_ID = {
     47: CT_SOURCE,
     48: CT_LIKUTIM,
     49: CT_PUBLIC_EVENTS,
+    50: CT_TAPE,
 };
 
 export const CONTENT_ID_BY_TYPE = function() {
@@ -569,6 +571,7 @@ export const CONTENT_TYPES_MAPPINGS = {
     [CT_BLOG_POST]: { collection_type: null, pattern: 'declamation' },
     [CT_RESEARCH_MATERIAL]: { collection_type: null, pattern: 'research-material' },
     [CT_LIKUTIM]: { collection_type: null, pattern: 'likutim' },
+    [CT_TAPE]: { collection_type: null, pattern: 'tape' },
 };
 
 export const EVENT_PART_TYPES = [
