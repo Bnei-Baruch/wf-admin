@@ -13,7 +13,7 @@ import kc from "../components/UserManager";
 //export const MDB_BACKEND = 'http://dev.mdb.bbdomain.org/rest';
 export const MDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_BACKEND : '/mdb';
 export const MDB_FINDSHA = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_FINDSHA : '/sha';
-export const MDB_OPERATIONS = process.env.REACT_APP_MDB_OPERATIONS;
+export const MDB_OPERATIONS = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_MDB_OPERATIONS : '/mdbops';
 export const WFDB_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFDB_BACKEND : '/wfdb';
 export const WFRP_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFRP_BACKEND : '/wfrp';
 export const WFSRV_BACKEND = process.env.NODE_ENV !== 'production' ? process.env.REACT_APP_WFSRV_BACKEND : '/wfapi';
