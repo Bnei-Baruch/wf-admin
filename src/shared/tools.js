@@ -168,22 +168,19 @@ export const findMdbFile = async(sha1) => {
 
 // Create a content unit of type TAPE for a media file (no collection involved)
 export const newMediaUnit = async(file_data, label, description) => {
-    const {file_name, date} = file_data;
-    const language = WF_LANGUAGES[label?.language];
+    const {file_name} = file_data;
+    // cassette language codes may be compound or unknown (e.g. "h/r") - fall back to hebrew
+    const language = WF_LANGUAGES[label?.language] || "he";
     const type_id = parseInt(CONTENT_ID_BY_TYPE[CT_TAPE], 10);
 
-    // label date comes as YYYY/MM/DD while MDB expects YYYY-MM-DD
-    const film_date = label?.date ? label.date.split('/').join('-') : date;
+    // archiving date, not the date from the cassette label (it is free text there)
+    const film_date = new Date().toLocaleDateString('sv');
 
     // upload gives the name with extension (WhatsApp.mp4), the unit is named without it
     const name = file_name ? file_name.replace(/\.[^./]+$/, "") : "";
 
-    // MDB rejects unknown languages, so i18n is added only when the language is known
-    const i18n = {};
-    if(language) {
-        i18n[language] = {language, name};
-        if(description) i18n[language].description = description;
-    }
+    const i18n = {[language]: {language, name}};
+    if(description) i18n[language].description = description;
 
     const body = {type_id, properties: {film_date, original_language: language}, i18n};
     const r = await fetch(`${MDB_BACKEND}/content_units/`, getRequestOptions(body));
