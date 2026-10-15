@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getData, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, MDB_UNIT_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -125,7 +125,10 @@ class FilesView extends Component {
 
         let files_data = files.map((data) => {
             const {media_id, file_name, label_id, extra, uid, wfstatus} = data;
+            let duration = toHms(extra.format.duration)
             let name = wfstatus?.removed ? <div>{l}&nbsp;&nbsp;&nbsp;{file_name}</div> : file_name;
+            let href = `${MDB_UNIT_URL}/${extra.unit_id}`;
+            let link = (<a target="_blank" rel="noopener noreferrer" href={href}>{uid}</a>);
             let time = data.date || "";
             let notes = extra?.notes || "";
             let label = extra?.label;
@@ -141,9 +144,9 @@ class FilesView extends Component {
             return (
                 <Table.Row key={media_id} positive={wfstatus?.kmedia} className={active}
                            onClick={() => this.selectFile(data)}>
-                    <Table.Cell>{media_id}</Table.Cell>
+                    <Table.Cell>{duration}</Table.Cell>
                     <Table.Cell onClick={(e) => e.stopPropagation()}>{label_cell}</Table.Cell>
-                    <Table.Cell>{uid}</Table.Cell>
+                    <Table.Cell>{link}</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{time}</Table.Cell>
                     <Table.Cell>{notes}</Table.Cell>
@@ -199,10 +202,10 @@ class FilesView extends Component {
                 <Table selectable compact='very' basic size='small' structured>
                     <Table.Header>
                         <Table.Row className='table_header'>
-                            <Table.HeaderCell width={2}>Media ID</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Label ID</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>UID</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>File Name</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>Label ID</Table.HeaderCell>
+                            <Table.HeaderCell width={1}>UID</Table.HeaderCell>
+                            <Table.HeaderCell width={3}>File Name</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
                             <Table.HeaderCell width={5}>Notes</Table.HeaderCell>
                         </Table.Row>

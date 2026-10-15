@@ -20,6 +20,7 @@ class MediaManager extends Component {
         selected_label: null,
         label_loading: false,
         label_query: "",
+        label_checking: false,
         saving: false,
     };
 
@@ -109,6 +110,20 @@ class MediaManager extends Component {
     selectLabel = (value) => {
         const selected = this.state.labels.find(d => d.id === value) || null;
         this.setState({label_id: value, selected_label: selected});
+        if(!value) return;
+
+        // This cassette may have been digitized before - warn the operator and let him decide
+        this.setState({label_checking: true});
+        getData(`media/kv?label_id=${value}`, (media) => {
+            this.setState({label_checking: false});
+            if(media && media.length > 0) {
+                console.log(":: MediaApp - label already used: ", media);
+                const names = media.map(d => d.file_name).join("\n");
+                const ok = window.confirm(
+                    `Label ${value} is already used by ${media.length} file(s):\n\n${names}\n\nContinue anyway?`);
+                if(!ok) this.setState({label_id: "", selected_label: null});
+            }
+        });
     };
 
     // The file passed all checks (not in WFDB, not in MDB), so before handing it over
@@ -155,7 +170,7 @@ class MediaManager extends Component {
     };
 
     render() {
-        const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query, saving} = this.state;
+        const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query, label_checking, saving} = this.state;
 
         let label_options = labels.map(this.labelOption);
         // keep the currently selected label visible even after the search results change
@@ -211,7 +226,7 @@ class MediaManager extends Component {
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.closeModal} disabled={saving}>Cancel</Button>
-                        <Button positive loading={saving} disabled={!label_id || saving} onClick={this.applyMedia}>Apply</Button>
+                        <Button positive loading={saving || label_checking} disabled={!label_id || saving || label_checking} onClick={this.applyMedia}>Apply</Button>
                     </Modal.Actions>
                 </Modal>
             </Fragment>
