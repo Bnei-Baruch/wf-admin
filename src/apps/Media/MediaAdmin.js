@@ -295,9 +295,8 @@ class MediaAdmin extends Component {
 
         let media = this.props.media.map((data) => {
             const {backup,kmedia,metus,source,removed,wfsend,censored,checked,fixed,locked} = data.wfstatus;
-            let id = data.media_id;
-            // TODO: media has no "proxy" field like aricha - treat ready by extra.proxy or file_path presence
-            let ready = data.extra?.proxy ?? !!data.file_path;
+            let id = data.aricha_id;
+            let ready = data?.proxy;
             let name = ready ? data.file_name : <div>{l}&nbsp;&nbsp;&nbsp;{data.file_name}</div>;
             let time = new Date(id.substr(1) * 1000).toLocaleString('sv').slice(11,19) || "";
             if(removed) return false;

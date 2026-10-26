@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getData, MDB_UNIT_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, MDB_FINDSHA, MDB_UNIT_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -15,6 +15,7 @@ import {
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
+import MediaUpload from "./MediaUpload";
 
 
 class FilesView extends Component {
@@ -118,6 +119,32 @@ class FilesView extends Component {
         );
     };
 
+    mediaWorkflow = (file_data) => {
+        console.log(":: Upload file: ", file_data)
+        // Check SHA1 in WFDB
+        getData(`media/kv?sha1=${file_data.sha1}`, (trimmer) => {
+            if(trimmer.length > 0) {
+                console.log(":: Found data in media DB by SHA1: ",trimmer);
+                alert("File already exist in Workflow DB!");
+            } else {
+                // Check SHA1 in MDB
+                let sha1 = file_data.sha1;
+                let fetch_url = `${MDB_FINDSHA}/${sha1}`;
+                getUnits(fetch_url, (units) => {
+                    if (units.total > 0) {
+                        console.log("The file exist in MDB!", units);
+                        alert("File already exist in MDB!");
+                    } else {
+                        // File passed all checks and does not exist yet - ask for metadata
+                        console.log(":: MediaApp - new file, open modal: ", file_data);
+                        this.setState({file_data, modal_open: true, label_id: "", cassette: true,
+                            description: "", selected_label: null, labels: [], label_query: ""});
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const {files, source, page, date, uid, label_id} = this.state;
 
@@ -156,6 +183,7 @@ class FilesView extends Component {
 
         return (
             <Segment basic className="wfdb_app">
+                <MediaUpload onFileData={this.mediaWorkflow}/>
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>

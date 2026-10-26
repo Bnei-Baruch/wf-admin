@@ -134,7 +134,7 @@ class App extends Component {
         let external = (<Suspense fallback={loading}><ExternalApp user={user} /></Suspense>);
         let mainpage = (<Suspense fallback={loading}><InsertApp user={user} /></Suspense>);
         let upload = (<Suspense fallback={loading}><UploadApp user={user} /></Suspense>);
-        let metus = (<Suspense fallback={loading}><MetusApp user={user} /></Suspense>);
+        //let metus = (<Suspense fallback={loading}><MetusApp user={user} /></Suspense>);
         let wfdb = (<Suspense fallback={loading}><WFDB user={user} /></Suspense>);
 
 
@@ -173,8 +173,8 @@ class App extends Component {
                 render: () => <Tab.Pane attached={false} >{mainpage}</Tab.Pane> },
             { menuItem: { key: 'upload', icon: 'upload', content: 'Upload', disabled: wf_upload },
                 render: () => <Tab.Pane attached={false} >{upload}</Tab.Pane> },
-            { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
-                render: () => <Tab.Pane attached={false} >{metus}</Tab.Pane> },
+            // { menuItem: { key: 'metus', icon: 'braille', content: 'Metus', disabled: wf_admin },
+            //     render: () => <Tab.Pane attached={false} >{metus}</Tab.Pane> },
             { menuItem: { key: 'wfdb', icon: 'heartbeat', content: 'Status', disabled: wf_admin},
                 render: () => <Tab.Pane attached={false} >{wfdb}</Tab.Pane> },
         ];

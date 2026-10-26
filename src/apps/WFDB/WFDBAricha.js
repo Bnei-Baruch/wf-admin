@@ -63,6 +63,7 @@ class WFDBAricha extends Component {
             <Checkbox label='Fixed' onClick={() => this.toggle("fixed")} checked={this.state.wfstatus.fixed} /><br />
             <Checkbox label='Renamed' onClick={() => this.toggle("renamed")} checked={this.state.wfstatus.renamed} /><br />
             <Checkbox label='Locked' onClick={() => this.toggle("locked")} checked={this.state.wfstatus.locked} /><br />
+            <Checkbox label='Media' onClick={() => this.toggle("media")} checked={this.state.wfstatus.media} /><br />
             <Checkbox label='Removed' onClick={() => this.toggle("removed")} checked={this.state.wfstatus.removed} /><br /></div>);
 
         let aricha_data = this.state.aricha.map((data) => {

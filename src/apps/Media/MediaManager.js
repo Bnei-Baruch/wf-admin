@@ -6,6 +6,7 @@ import {WFSRV_BACKEND, putData, getData, MDB_FINDSHA, getUnits,
     mdbUpload, findMdbFile, newMediaUnit, insertFile} from "../../shared/tools";
 import mqtt from "../../shared/mqtt";
 import {MQTT_ROOT} from "../../shared/consts";
+import ArichaUpload from "../Aricha/ArichaUpload";
 
 class MediaManager extends Component {
 
@@ -169,6 +170,33 @@ class MediaManager extends Component {
         this.closeModal();
     };
 
+    arichaWorkflow = (file_data) => {
+        console.log(":: Upload file: ", file_data)
+        file_data.media = true;
+        // Check SHA1 in WFDB
+        getData(`trimmer/kv?sha1=${file_data.sha1}`, (trimmer) => {
+            if(trimmer.length > 0) {
+                console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
+                alert("File exist in ingest after trim");
+            } else {
+                // Check SHA1 in MDB
+                let sha1 = file_data.sha1;
+                let fetch_url = `${MDB_FINDSHA}/${sha1}`;
+                getUnits(fetch_url, (units) => {
+                    if (units.total > 0) {
+                        console.log("The SHA1 exist in MDB!", units);
+                        alert("File already in MDB!");
+                    } else {
+                        console.log(":: ArichaApp - got data: ", file_data);
+                        putData(`${WFSRV_BACKEND}/workflow/aricha`, file_data, (cb) => {
+                            console.log(":: ArichaApp - workflow respond: ",cb);
+                        });
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const {modal_open, label_id, cassette, description, labels, selected_label, label_loading, label_query, label_checking, saving} = this.state;
 
@@ -180,7 +208,7 @@ class MediaManager extends Component {
 
         return (
             <Fragment>
-                <MediaUpload onFileData={this.mediaWorkflow}/>
+                <ArichaUpload onFileData={this.arichaWorkflow}/>
                 <MediaAdmin user={this.props.user} media={this.state.media} />
                 <Modal closeOnDimmerClick={false}
                        onClose={this.closeModal}
