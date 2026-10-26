@@ -52,14 +52,14 @@ class MediaAdmin extends Component {
         const {wfsend} = file_data.wfstatus;
 
         // Build url for preview
-        let path = file_data.file_path;
+        let path = file_data.original.format.filename;
         let source = `${WFSRV_BACKEND}${path}`;
         if(!file_data.line?.hasOwnProperty('content_type')) {
             file_data.line = {language: "heb", content_type: "CLIP", has_translation: false};
         }
         this.setState({
             file_data, source,
-            active: file_data.media_id,
+            active: file_data.aricha_id,
             rename_button: false,
             send_button: !wfsend,
             filedata: {file_name: file_data.file_name},
@@ -68,7 +68,7 @@ class MediaAdmin extends Component {
         });
 
         // Check SHA1 in WFDB
-        getData(`trimmer/kv?sha1=${file_data.sha1}`, (trimmer) => {
+        getData(`trimmer/kv?sha1=${file_data.original.format.sha1}`, (trimmer) => {
             if(trimmer.length > 0) {
                 console.log(":: Found data in trimmer DB by SHA1: ",trimmer);
                 alert("File did NOT changed from trimmer");
@@ -76,7 +76,7 @@ class MediaAdmin extends Component {
             } else {
 
                 // Check SHA1 in MDB
-                let sha1 = file_data.sha1;
+                let sha1 = file_data.original.format.sha1;
                 let fetch_url = `${MDB_FINDSHA}/${sha1}`;
                 getUnits(fetch_url, (units) => {
                     if (units.total > 0) {
@@ -174,7 +174,7 @@ class MediaAdmin extends Component {
 
     setMeta = (insert_data) => {
         let {file_data} = this.state;
-        file_data.extra = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
+        file_data.parent = {insert_id: insert_data.insert_id, name: insert_data.line.send_name};
         file_data.line.uid = insert_data.line.uid;
         file_data.line.mime_type = "video/mp4";
         file_data.wfstatus.wfsend = true;
@@ -182,15 +182,14 @@ class MediaAdmin extends Component {
             file_data.wfstatus.fixed = true;
         }
         this.setState({inserting: true, insert_button: true });
-        insert_data.send_id = file_data.media_id;
+        insert_data.send_id = file_data.aricha_id;
 
         // Now we put metadata to mdb on backend
-        // TODO: media backend - /workflow/insert media flow not verified yet
         putData(`${WFSRV_BACKEND}/workflow/insert`, insert_data, (cb) => {
-            console.log(":: MediaApp - workflow respond: ",cb);
+            console.log(":: ArichaApp - workflow respond: ",cb);
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({file_data, inserting: false, send_button: false, kmedia_option: true}), 2000);
-                putData(`${WFDB_BACKEND}/media/${file_data.media_id}`, file_data, (cb) => {
+                putData(`${WFDB_BACKEND}/aricha/${file_data.aricha_id}`, file_data, (cb) => {
                     console.log(":: PUT Respond: ",cb);
                     this.selectFile(file_data);
                 });
@@ -207,11 +206,11 @@ class MediaAdmin extends Component {
         let {file_data} = this.state;
         let newfile_name = newline.final_name;
         let oldfile_name = file_data.file_name;
-        let opath = `/backup/media/${newfile_name}_${file_data.media_id}o.mp4`;
+        let opath = `/backup/aricha/${newfile_name}_${file_data.aricha_id}o.mp4`;
         file_data.line = {...newline};
-        file_data.extra = {...{file_name: oldfile_name}};
+        file_data.parent = {...{file_name: oldfile_name}};
         //file_data.line.title = this.state.tags[newline.pattern] || "";
-        file_data.file_path = opath;
+        file_data.original.format.filename = opath;
         file_data.file_name = newfile_name;
         file_data.wfstatus.renamed = true;
 
@@ -221,9 +220,8 @@ class MediaAdmin extends Component {
         }
         console.log(":: Old Meta: ", this.state.file_data+" :: New Meta: ",file_data);
         this.setState({upload_filename: oldfile_name, cit_open: false, insert_button: true, renaming: true});
-        // TODO: media backend - /workflow/rename media flow not verified yet
         putData(`${WFSRV_BACKEND}/workflow/rename`, file_data, (cb) => {
-            console.log(":: Media - rename respond: ",cb);
+            console.log(":: Ingest - rename respond: ",cb);
             if(cb.status === "ok") {
                 setTimeout(() => this.setState({renaming: false, insert_button: false}), 2000);
                 this.selectFile(file_data);
@@ -269,7 +267,7 @@ class MediaAdmin extends Component {
         let {file_data} = this.state;
         console.log(":: Censor - set removed: ", file_data);
         this.setState({source: "", rename_button: true, send_button: true, insert_button: true});
-        fetch(`${WFDB_BACKEND}/media/${file_data.media_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
+        fetch(`${WFDB_BACKEND}/media/${file_data.aricha_id}/wfstatus/removed?value=true`, { method: 'POST',headers: {'Authorization': 'bearer ' + getToken()}})
     };
 
     render() {
