@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {getData, getUnits, MDB_FINDSHA, MDB_UNIT_URL, toHms, WFSRV_BACKEND} from '../../shared/tools';
+import {getData, getUnits, putData, MDB_FINDSHA, MDB_UNIT_URL, toHms, WFSRV_BACKEND,
+    mdbUpload, findMdbFile, newMediaUnit, insertFile} from '../../shared/tools';
 import {
     Segment,
     Icon,
@@ -11,7 +12,12 @@ import {
     Modal,
     Message,
     Popup,
-    List
+    List,
+    Grid,
+    Select,
+    Checkbox,
+    Form,
+    TextArea
 } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import MediaPlayer from "../../components/Media/MediaPlayer";
@@ -30,6 +36,22 @@ class FilesView extends Component {
         uid: "",
         label_id: "",
         active: null,
+        // Upload metadata modal (separate from the table filters above)
+        modal_open: false,
+        upload_data: null,
+        modal_label_id: "",
+        cassette: true,
+        description: "",
+        labels: [],
+        selected_label: null,
+        label_loading: false,
+        label_query: "",
+        label_checking: false,
+        saving: false,
+    };
+
+    componentWillUnmount() {
+        clearTimeout(this.searchTimer);
     };
 
     componentDidMount() {
@@ -137,7 +159,7 @@ class FilesView extends Component {
                     } else {
                         // File passed all checks and does not exist yet - ask for metadata
                         console.log(":: MediaApp - new file, open modal: ", file_data);
-                        this.setState({file_data, modal_open: true, label_id: "", cassette: true,
+                        this.setState({upload_data: file_data, modal_open: true, modal_label_id: "", cassette: true,
                             description: "", selected_label: null, labels: [], label_query: ""});
                     }
                 });
@@ -145,8 +167,111 @@ class FilesView extends Component {
         });
     };
 
+    // Lookup label by cassette id. The id column is an integer, so this is an exact
+    // match (labels/kv?id=) - non numeric input is ignored, it would break the query.
+    searchLabels = (e, {searchQuery}) => {
+        this.setState({label_query: searchQuery});
+        clearTimeout(this.searchTimer);
+        const query = (searchQuery || "").trim();
+        if(!/^\d+$/.test(query)) {
+            this.setState({labels: [], label_loading: false});
+            return;
+        }
+        this.setState({label_loading: true});
+        this.searchTimer = setTimeout(() => {
+            getData(`labels/kv?id=${query}`, (labels) => {
+                console.log(":: Got labels: ", labels);
+                this.setState({labels: labels || [], label_loading: false});
+            });
+        }, 400);
+    };
+
+    labelOption = (data) => {
+        const {id, date, comments, lecturer} = data;
+        let text = [id, date, comments || lecturer].filter(Boolean).join(" — ");
+        return ({key: id, value: id, text});
+    };
+
+    closeModal = () => {
+        clearTimeout(this.searchTimer);
+        this.setState({modal_open: false, upload_data: null, modal_label_id: "", cassette: false,
+            description: "", selected_label: null, labels: [], label_query: "", label_loading: false,
+            saving: false});
+    };
+
+    selectLabel = (value) => {
+        const selected = this.state.labels.find(d => d.id === value) || null;
+        this.setState({modal_label_id: value, selected_label: selected});
+        if(!value) return;
+
+        // This cassette may have been digitized before - warn the operator and let him decide
+        this.setState({label_checking: true});
+        getData(`media/kv?label_id=${value}`, (media) => {
+            this.setState({label_checking: false});
+            if(media && media.length > 0) {
+                console.log(":: MediaApp - label already used: ", media);
+                const names = media.map(d => d.file_name).join("\n");
+                const ok = window.confirm(
+                    `Label ${value} is already used by ${media.length} file(s):\n\n${names}\n\nContinue anyway?`);
+                if(!ok) this.setState({modal_label_id: "", selected_label: null});
+            }
+        });
+    };
+
+    // The file passed all checks (not in WFDB, not in MDB), so before handing it over
+    // to the workflow we archive it in MDB:
+    //   1. register the file     - POST operations/upload
+    //   2. resolve its id/uid    - GET rest/files/?sha1=  (upload responds with status only)
+    //   3. create TAPE unit   - POST rest/content_units/
+    //   4. link file to the unit - PUT rest/files/:id/
+    // Resulting ids go to extra, unit_uid is duplicated into the root uid.
+    applyMedia = async () => {
+        let {upload_data: file_data, modal_label_id, cassette, selected_label, description} = this.state;
+        file_data.label_id = modal_label_id;
+        file_data.label = selected_label;
+        file_data.description = description;
+        file_data.wfstatus = {...(file_data.wfstatus || {}), cassette};
+
+        this.setState({saving: true});
+
+        try {
+            await mdbUpload(file_data, this.props.user, selected_label);
+
+            const mdb_file = await findMdbFile(file_data.sha1);
+            if(!mdb_file) throw new Error("File not found in MDB after upload");
+
+            const unit = await newMediaUnit(file_data, selected_label, description);
+            await insertFile(mdb_file.id, unit.id);
+
+            file_data.extra = {...(file_data.extra || {}),
+                file_id: mdb_file.id, file_uid: mdb_file.uid,
+                unit_id: unit.id, unit_uid: unit.uid};
+            file_data.uid = unit.uid;
+        } catch (err) {
+            console.error(":: MediaApp - MDB error: ", err);
+            alert(`MDB error: ${err.message}`);
+            this.setState({saving: false});
+            return;
+        }
+
+        console.log(":: MediaApp - apply media: ", file_data);
+        putData(`${WFSRV_BACKEND}/workflow/media`, file_data, (cb) => {
+            console.log(":: MediaApp - workflow respond: ",cb);
+            this.getFiles();
+        });
+        this.closeModal();
+    };
+
     render() {
         const {files, source, page, date, uid, label_id} = this.state;
+        const {modal_open, modal_label_id, cassette, description, labels, selected_label,
+            label_loading, label_query, label_checking, saving} = this.state;
+
+        let label_options = labels.map(this.labelOption);
+        // keep the currently selected label visible even after the search results change
+        if(selected_label && !labels.find(d => d.id === selected_label.id)) {
+            label_options = [this.labelOption(selected_label), ...label_options];
+        }
 
         let l = (<Loader size='mini' active inline />);
 
@@ -184,6 +309,53 @@ class FilesView extends Component {
         return (
             <Segment basic className="wfdb_app">
                 <MediaUpload onFileData={this.mediaWorkflow}/>
+                <Modal closeOnDimmerClick={false}
+                       onClose={this.closeModal}
+                       open={modal_open}
+                       size='tiny'
+                       closeIcon="close">
+                    <Modal.Header>Dgima</Modal.Header>
+                    <Modal.Content>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Select
+                                    fluid
+                                    selection
+                                    clearable
+                                    search={(options) => options}
+                                    minCharacters={1}
+                                    loading={label_loading}
+                                    options={label_options}
+                                    placeholder='Cassette id...'
+                                    value={modal_label_id}
+                                    onSearchChange={this.searchLabels}
+                                    onChange={(e, {value}) => this.selectLabel(value)}
+                                    noResultsMessage={!/^\d+$/.test(label_query.trim()) ? 'Enter cassette id…' : (label_loading ? 'Searching…' : 'No labels found')}
+                                />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Segment size='mini' basic>
+                                    <Checkbox label='Cassette' checked={cassette}
+                                              onChange={() => this.setState({cassette: !cassette})} />
+                                </Segment>
+                            </Grid.Column>
+                        </Grid>
+                        <Form>
+                            <Form.Field>
+                                <label>Description</label>
+                                <TextArea
+                                    placeholder='Notes...'
+                                    value={description}
+                                    onChange={(e, {value}) => this.setState({description: value})}
+                                />
+                            </Form.Field>
+                        </Form>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button onClick={this.closeModal} disabled={saving}>Cancel</Button>
+                        <Button positive loading={saving || label_checking} disabled={!modal_label_id || saving || label_checking} onClick={this.applyMedia}>Apply</Button>
+                    </Modal.Actions>
+                </Modal>
                 <Message size='large'>
                     <Menu size='large' secondary >
                         <Menu.Item>
