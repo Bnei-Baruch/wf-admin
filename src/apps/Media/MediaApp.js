@@ -34,10 +34,10 @@ class MediaApp extends Component {
         const {files_media} = this.state;
 
         const panes = [
-            { menuItem: { key: 'metadata', content: 'Metadata', disabled: false},
-                render: () => <Tab.Pane attached ><MediaManager {...this.state} user={this.props.user} /></Tab.Pane> },
-            { menuItem: { key: 'files', content: 'Files', disabled: files_media },
+            { menuItem: { key: 'files', content: 'Dgima', disabled: files_media },
                 render: () => <Tab.Pane ><FilesView {...this.state} user={this.props.user} /></Tab.Pane> },
+            { menuItem: { key: 'metadata', content: 'Aricha', disabled: false},
+                render: () => <Tab.Pane attached ><MediaManager {...this.state} user={this.props.user} /></Tab.Pane> },
         ]
 
         return (
