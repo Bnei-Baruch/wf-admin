@@ -41,6 +41,7 @@ class FilesView extends Component {
         upload_data: null,
         modal_label_id: "",
         cassette: true,
+        parts_count: 1,
         description: "",
         labels: [],
         selected_label: null,
@@ -159,7 +160,7 @@ class FilesView extends Component {
                     } else {
                         // File passed all checks and does not exist yet - ask for metadata
                         console.log(":: MediaApp - new file, open modal: ", file_data);
-                        this.setState({upload_data: file_data, modal_open: true, modal_label_id: "", cassette: true,
+                        this.setState({upload_data: file_data, modal_open: true, modal_label_id: "", cassette: true, parts_count: 1,
                             description: "", selected_label: null, labels: [], label_query: ""});
                     }
                 });
@@ -194,7 +195,7 @@ class FilesView extends Component {
 
     closeModal = () => {
         clearTimeout(this.searchTimer);
-        this.setState({modal_open: false, upload_data: null, modal_label_id: "", cassette: false,
+        this.setState({modal_open: false, upload_data: null, modal_label_id: "", cassette: false, parts_count: 1,
             description: "", selected_label: null, labels: [], label_query: "", label_loading: false,
             saving: false});
     };
@@ -226,8 +227,9 @@ class FilesView extends Component {
     //   4. link file to the unit - PUT rest/files/:id/
     // Resulting ids go to extra, unit_uid is duplicated into the root uid.
     applyMedia = async () => {
-        let {upload_data: file_data, modal_label_id, cassette, selected_label, description} = this.state;
+        let {upload_data: file_data, modal_label_id, cassette, selected_label, description, parts_count} = this.state;
         file_data.label_id = modal_label_id;
+        file_data.parts_count = parts_count;
         file_data.label = selected_label;
         file_data.description = description;
         file_data.wfstatus = {...(file_data.wfstatus || {}), cassette};
@@ -264,7 +266,7 @@ class FilesView extends Component {
 
     render() {
         const {files, source, page, date, uid, label_id} = this.state;
-        const {modal_open, modal_label_id, cassette, description, labels, selected_label,
+        const {modal_open, modal_label_id, cassette, parts_count, description, labels, selected_label,
             label_loading, label_query, label_checking, saving} = this.state;
 
         let label_options = labels.map(this.labelOption);
@@ -331,6 +333,15 @@ class FilesView extends Component {
                                     onSearchChange={this.searchLabels}
                                     onChange={(e, {value}) => this.selectLabel(value)}
                                     noResultsMessage={!/^\d+$/.test(label_query.trim()) ? 'Enter cassette id…' : (label_loading ? 'Searching…' : 'No labels found')}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={4}>
+                                <Select
+                                    fluid
+                                    title='Parts count'
+                                    options={[1, 2, 3, 4].map(n => ({key: n, value: n, text: `Parts: ${n}`}))}
+                                    value={parts_count}
+                                    onChange={(e, {value}) => this.setState({parts_count: value})}
                                 />
                             </Grid.Column>
                             <Grid.Column>
