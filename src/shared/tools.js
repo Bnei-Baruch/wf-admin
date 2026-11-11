@@ -168,7 +168,7 @@ export const findMdbFile = async(sha1) => {
 
 // Create a content unit of type TAPE for a media file (no collection involved)
 export const newMediaUnit = async(file_data, label, description) => {
-    const {file_name} = file_data;
+    const {file_name, label_id} = file_data;
     // cassette language codes may be compound or unknown (e.g. "h/r") - fall back to hebrew
     const language = WF_LANGUAGES[label?.language] || "he";
     const type_id = parseInt(CONTENT_ID_BY_TYPE[CT_TAPE], 10);
@@ -182,7 +182,10 @@ export const newMediaUnit = async(file_data, label, description) => {
     const i18n = {[language]: {language, name}};
     if(description) i18n[language].description = description;
 
-    const body = {type_id, properties: {film_date, original_language: language}, i18n};
+    const properties = {film_date, original_language: language};
+    if(label_id) properties.label_id = label_id;
+
+    const body = {type_id, properties, i18n};
     const r = await fetch(`${MDB_BACKEND}/content_units/`, getRequestOptions(body));
     if(!r.ok) throw new Error(`MDB create unit failed: ${r.status}`);
     return await r.json();
